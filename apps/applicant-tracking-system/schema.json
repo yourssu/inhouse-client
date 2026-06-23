@@ -1,0 +1,4460 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Scouter API",
+    "description": "Changelog v1.1.2\n- Mail Templates: 변수 키 형식을 var-{UUID} 형식으로 통일\n- Mail Templates: VariableType에 APPLICANT, PARTNAME 추가 (type으로 자동 채움/사용자 입력 구분)\n\nChangelog v1.1.1\n- Members: POST /members/include-from-applicants(및 /{semesterString}) 생성 시 201 Created + Location 헤더, 생성 0건 시 200 OK\n- Applicants: POST /applicants/include-from-forms(및 /semesters/{semesterId}) 201 Created + Location 헤더\n",
+    "version": "v1.1.2"
+  },
+  "servers": [
+    {
+      "url": "https://api.dev.scouter.yourssu.com",
+      "description": "production server"
+    }
+  ],
+  "security": [
+    {
+      "oauth2": []
+    }
+  ],
+  "paths": {
+    "/recruiter/schedule/part/{partId}": {
+      "put": {
+        "tags": ["면접 일정"],
+        "summary": "파트 스케줄 수정 API",
+        "description": "특정 파트의 스케줄을 전체 수정합니다.",
+        "operationId": "updateByPart",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CreateScheduleCommand"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "404": {
+            "description": "파트/지원자를 찾을 수 없음",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["면접 일정"],
+        "summary": "파트별 스케줄 삭제 API",
+        "description": "특정 파트의 모든 면접 스케줄을 삭제합니다.",
+        "operationId": "deleteByPart",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteByPartResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "파트를 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteByPartResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/templates/{templateId}": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "메일 템플릿 상세 조회",
+        "description": "특정 메일 템플릿의 상세 내용을 조회합니다. (편집용)",
+        "operationId": "readDetail",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "description": "템플릿 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadMailTemplateDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["메일"],
+        "summary": "메일 템플릿 수정",
+        "description": "특정 메일 템플릿을 수정합니다. 전체 메일 템플릿의 내용을 보내야 합니다.\n\n**변수 규칙:**\n- 모든 변수 키는 `var-{UUID}` 형식이어야 합니다 (예: `var-550e8400-e29b-41d4-a716-446655440000`)",
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMailTemplateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateMailTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["메일"],
+        "summary": "메일 템플릿 삭제",
+        "description": "특정 메일 템플릿을 삭제합니다. 해당 메일 템플릿이 없을 시 404를 반환합니다.",
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {}
+          },
+          "404": {
+            "description": "Not Found - 템플릿을 찾을 수 없음",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/mails/reservation/{reservationId}": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "예약 메일 단건 조회",
+        "description": "예약 ID에 해당하는 메일 예약 상세를 조회합니다. status: SCHEDULED, PENDING_SEND, SENT. 다른 사용자의 예약에는 접근할 수 없습니다.",
+        "operationId": "getReservationDetail",
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MailReservationDetailResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "다른 사용자의 예약에 대한 접근 거부",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "예약을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["메일"],
+        "summary": "예약 메일 수정",
+        "description": "기존 예약 메일의 발송 시각과 내용을 수정합니다. 요청 바디는 생성과 동일한 MailReserveRequest 형식을 사용하며, 전체를 교체합니다.",
+        "operationId": "updateReservation",
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MailReserveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {}
+          },
+          "403": {
+            "description": "다른 사용자의 예약에 대한 접근 거부",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "예약을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["메일"],
+        "summary": "예약 메일 취소",
+        "description": "아직 발송되지 않은 예약 메일을 취소합니다.",
+        "operationId": "cancelReservation",
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "취소 성공",
+            "content": {}
+          },
+          "403": {
+            "description": "다른 사용자의 예약에 대한 접근 거부",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "예약을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/withdrawal": {
+      "post": {
+        "tags": ["인증/인가"],
+        "summary": "회원 탈퇴",
+        "operationId": "withdraw",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/semesters": {
+      "get": {
+        "tags": ["학과/학기/단과대"],
+        "summary": "학기 전체 조회",
+        "description": "생성된 전체 학기 정보를 조회합니다.",
+        "operationId": "readAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadSemesterResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["학과/학기/단과대"],
+        "summary": "학기 생성",
+        "description": "연도, 학기 조합으로 학기를 생성합니다.",
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSemesterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/refresh-token": {
+      "post": {
+        "tags": ["인증/인가"],
+        "summary": "토큰 재발급",
+        "description": "Authorization 헤더는 무시되며, 바디의 refreshToken(순수 JWT)만 사용합니다.",
+        "operationId": "refreshToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenRefreshResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth-001 (리프레시 토큰이 아닙니다. 등)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenRefreshResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/recruiter/schedule": {
+      "get": {
+        "tags": ["면접 일정"],
+        "summary": "면접 스케줄 조회 API",
+        "description": "면접 스케줄 조회 API 입니다. 추후 partID를 입력하지 않으면 전체 조회가 되도록 변경 예정",
+        "operationId": "getSchedules",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadScheduleResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["면접 일정"],
+        "summary": "면접 스케줄 추가 API",
+        "description": "면접 스케줄을 추가하는 API 입니다.",
+        "operationId": "createSchedules",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CreateScheduleRequest"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/oauth2/login/{oauth2Type}": {
+      "post": {
+        "tags": ["OAUTH2", "인증/인가"],
+        "summary": "로그인",
+        "description": "/oauth2/{oauth2Type}에서 얻은 code를 이용해 로그인을 진행합니다. 등록된 멤버만 로그인할 수 있습니다.",
+        "operationId": "login",
+        "parameters": [
+          {
+            "name": "oauth2Type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["GOOGLE"]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuth2LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "로그인 성공 — 토큰 반환",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Member-005 (등록된 멤버가 아닙니다)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/members/include-from-applicants": {
+      "post": {
+        "tags": ["합격자 동기화 API", "유어슈 멤버"],
+        "summary": "지원자 중 합격자 멤버 동기화",
+        "description": "리크루팅 지원자 중 합격자를 멤버에 동기화 합니다.",
+        "operationId": "includeFromApplicants",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberSyncResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "CREATED",
+            "headers": {
+              "Location": {
+                "description": "/members",
+                "style": "simple"
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/include-from-applicants/{semesterString}": {
+      "post": {
+        "tags": ["합격자 동기화 API", "유어슈 멤버"],
+        "summary": "지정 학기 합격자 멤버 동기화",
+        "description": "지정한 학기(semesterString, 예: 2025-1)의 합격자만 멤버에 동기화합니다. 없으면 전체 동기화와 동일.",
+        "operationId": "includeFromApplicants_1",
+        "parameters": [
+          {
+            "name": "semesterString",
+            "in": "path",
+            "description": "학기 문자열 (예: 2025-1)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberSyncResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "CREATED",
+            "headers": {
+              "Location": {
+                "description": "/members",
+                "style": "simple",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": ["인증/인가"],
+        "summary": "로그아웃",
+        "operationId": "logout",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/internal/dev/member-privacy/privileged/self/enable": {
+      "post": {
+        "tags": ["[DEV] 멤버 민감정보 권한 테스트"],
+        "summary": "나를 권한자로 복원 (테스트용)",
+        "description": "비권한자로 전환한 상태를 해제하고, 다시 민감정보 열람 권한이 있는 상태로 돌립니다.",
+        "operationId": "enablePrivilegeForSelf",
+        "responses": {
+          "204": {
+            "description": "적용됨",
+            "content": {}
+          },
+          "403": {
+            "description": "스카우터 팀원이 아님",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/internal/dev/member-privacy/privileged/self/disable": {
+      "post": {
+        "tags": ["[DEV] 멤버 민감정보 권한 테스트"],
+        "summary": "나를 비권한자로 전환 (테스트용)",
+        "description": "이후 멤버 API 호출 시 내 계정은 민감정보가 마스킹된 응답을 받습니다. 스카우터 팀원만 호출 가능.",
+        "operationId": "disablePrivilegeForSelf",
+        "responses": {
+          "204": {
+            "description": "적용됨",
+            "content": {}
+          },
+          "403": {
+            "description": "스카우터 팀원이 아님",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/applicants": {
+      "get": {
+        "tags": ["리크루팅 지원자"],
+        "summary": "지원자 목록 조회",
+        "description": "지원자 목록을 검색, 필터링을 통해 얻습니다. 필터링에 필요한 정보는 각 api에서 얻어야 합니다.",
+        "operationId": "readAll_1",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "semesterId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadApplicantResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["리크루팅 지원자"],
+        "summary": "지원자 추가 API",
+        "operationId": "create_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApplicantRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "headers": {
+              "Location": {
+                "description": "/applicants/{applicantId}",
+                "style": "simple"
+              }
+            },
+            "content": {}
+          }
+        }
+      }
+    },
+    "/applicants/include-from-forms": {
+      "post": {
+        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "summary": "구글폼 응답을 지원자 목록에 업데이트",
+        "description": "현재 로그인 되어있는 사용자의 계정을 이용해 지원자의 구글폼 응답을 동기화 합니다.",
+        "operationId": "includeFromForms",
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "headers": {
+              "Location": {
+                "description": "/applicants",
+                "style": "simple"
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicantSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/include-from-forms/semesters/{semesterId}": {
+      "post": {
+        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "operationId": "includeFromFormsBySemesterAndPart",
+        "parameters": [
+          {
+            "name": "semesterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "headers": {
+              "Location": {
+                "description": "/applicants",
+                "style": "simple"
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicantSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/templates": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "메일 템플릿 목록 조회",
+        "description": "현재 등록된 전체 메일 템플릿을 조회합니다.",
+        "operationId": "readAll_2",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "updatedAt,desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseReadMailTemplateSummaryResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["메일"],
+        "summary": "메일 템플릿 생성",
+        "description": "제목과 양식을 지정해 새로운 메일 템플릿을 생성합니다.\n\n**변수 규칙:**\n- 모든 변수 키는 `var-{UUID}` 형식이어야 합니다 (예: `var-550e8400-e29b-41d4-a716-446655440000`)\n- 메일 본문에서 변수는 `{{var-{UUID}}}` 형식으로 사용합니다\n\n**변수 타입:**\n- **사용자 입력 변수**: PERSON, DATE, LINK, TEXT\n- **자동 채움 변수**: APPLICANT, PARTNAME",
+        "operationId": "create_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMailTemplateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateMailTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/send": {
+      "post": {
+        "tags": ["메일"],
+        "summary": "메일 즉시 발송",
+        "description": "메일을 즉시 발송합니다. DB에 저장하지 않고 바로 발송됩니다. 파일은 사전에 /api/mails/files/* API로 업로드/확정한 뒤, fileId 참조만 전달합니다.",
+        "operationId": "sendMail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MailSendRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "발송 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "잘못된 요청 (bodyFormat 오류, fileId 검증 실패 등)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "메일 발송 실패 (OAuth 토큰/네트워크 등)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/reservation": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "예약 메일 목록 조회",
+        "description": "현재 사용자가 예약한 메일 목록을 조회합니다. status: SCHEDULED(예약됨), PENDING_SEND(발송 실패/재시도 대기), SENT(발송 완료)",
+        "operationId": "getReservations",
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MailReservationListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["메일"],
+        "summary": "메일 전송 예약",
+        "description": "application/json으로 요청합니다. 파일은 사전에 /api/mails/files/* API로 업로드/확정한 뒤, 예약 시 fileId 참조만 전달합니다.",
+        "operationId": "reserveMail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MailReserveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "예약 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "잘못된 요청 (bodyFormat 오류, fileId 검증 실패 등)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/reservation/{reservationId}/retry": {
+      "post": {
+        "tags": ["메일"],
+        "summary": "예약 메일 재전송",
+        "description": "예약 시간이 지났는데 발송 실패(PENDING_SEND)인 메일을 즉시 재전송 시도합니다. 이미 발송된 메일(SENT)이나 예약 시간 전에는 호출할 수 없습니다.",
+        "operationId": "retryReservation",
+        "parameters": [
+          {
+            "name": "reservationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "재전송 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "재전송 불가 (이미 발송됨, 예약 시간 전, 발송 실패)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "다른 사용자의 예약에 대한 접근 거부",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "예약을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "메일 발송 실패 (OAuth 토큰/네트워크 등)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/files/presign": {
+      "post": {
+        "tags": ["메일"],
+        "summary": "메일 파일 업로드용 presigned URL 발급",
+        "operationId": "createPresignedUploadUrls",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MailFilePresignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MailFilePresignResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/files/confirm": {
+      "post": {
+        "tags": ["메일"],
+        "summary": "업로드 완료 파일 등록",
+        "operationId": "confirmUploads",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MailFileConfirmRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MailFileConfirmResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruiter/schedule/{scheduleId}/location": {
+      "patch": {
+        "tags": ["면접 일정"],
+        "summary": "면접 장소 변경 API",
+        "description": "스케줄 ID를 기준으로 면접 장소 대분류와 세부장소를 수정합니다.",
+        "operationId": "updateLocation",
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScheduleLocationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          },
+          "404": {
+            "description": "스케줄을 찾을 수 없음",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/members/withdrawn/{memberId}": {
+      "patch": {
+        "tags": ["유어슈 멤버"],
+        "summary": "탈퇴 멤버 정보 수정",
+        "description": "변경되지 않은 정보는 보내면 안됩니다.",
+        "operationId": "updateWithdrawnById",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWithdrawnMemberRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "Member-002 (잘못된 수정 요청: 한 번에 하나의 필드만 수정 가능 등)",
+            "content": {}
+          },
+          "403": {
+            "description": "Member-006 (멤버 정보를 수정할 권한이 없습니다. HR·스카우터 개발자만 가능)",
+            "content": {}
+          },
+          "404": {
+            "description": "Member-001 (해당하는 멤버를 찾을 수 없습니다)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/members/inactive/{memberId}": {
+      "patch": {
+        "tags": ["유어슈 멤버"],
+        "summary": "비액티브 멤버 정보 수정",
+        "description": "변경되지 않은 정보는 보내면 안됩니다.",
+        "operationId": "updateInactiveById",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInactiveMemberRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "Member-002 (잘못된 수정 요청: 한 번에 하나의 필드만 수정 가능 등)",
+            "content": {}
+          },
+          "403": {
+            "description": "Member-006 (멤버 정보를 수정할 권한이 없습니다. HR·스카우터 개발자만 가능)",
+            "content": {}
+          },
+          "404": {
+            "description": "Member-001 (해당하는 멤버를 찾을 수 없습니다)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/members/graduated/{memberId}": {
+      "patch": {
+        "tags": ["유어슈 멤버"],
+        "summary": "졸업 멤버 정보 수정",
+        "description": "변경되지 않은 정보는 보내면 안됩니다.",
+        "operationId": "updateGraduatedById",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGraduatedMemberRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "Member-002 (잘못된 수정 요청: 한 번에 하나의 필드만 수정 가능 등)",
+            "content": {}
+          },
+          "403": {
+            "description": "Member-006 (멤버 정보를 수정할 권한이 없습니다. HR·스카우터 개발자만 가능)",
+            "content": {}
+          },
+          "404": {
+            "description": "Member-001 (해당하는 멤버를 찾을 수 없습니다)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/members/completed/{memberId}": {
+      "patch": {
+        "tags": ["유어슈 멤버"],
+        "summary": "수료 멤버 정보 수정",
+        "description": "변경되지 않은 정보는 보내면 안됩니다.",
+        "operationId": "updateCompletedById",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompletedMemberRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "Member-002 (잘못된 수정 요청: 수정할 필드 1개 이상 필요 등)",
+            "content": {}
+          },
+          "403": {
+            "description": "Member-006 (멤버 정보를 수정할 권한이 없습니다. HR·스카우터 개발자만 가능)",
+            "content": {}
+          },
+          "404": {
+            "description": "Member-001 (해당하는 멤버를 찾을 수 없습니다)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/members/active/{memberId}": {
+      "patch": {
+        "tags": ["유어슈 멤버"],
+        "summary": "액티브 멤버 정보 수정",
+        "description": "변경되지 않은 정보는 보내면 안됩니다.",
+        "operationId": "updateActiveById",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateActiveMemberRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {}
+          },
+          "400": {
+            "description": "Member-002 (잘못된 수정 요청: 회원정보와 회비/학년/재휴학 동시 수정 불가, 수정 필드 1개 이상 필요 등)",
+            "content": {}
+          },
+          "403": {
+            "description": "Member-006 (멤버 정보를 수정할 권한이 없습니다. HR·스카우터 개발자만 가능)",
+            "content": {}
+          },
+          "404": {
+            "description": "Member-001 (해당하는 멤버를 찾을 수 없습니다)",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/applicants/{applicantId}": {
+      "get": {
+        "tags": ["리크루팅 지원자"],
+        "summary": "지원자 단일 조회",
+        "description": "지원자 목록 조회에서 얻은 applicantId를 이용해 지원자의 세부정보를 확인합니다.",
+        "operationId": "readById",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadApplicantResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["리크루팅 지원자"],
+        "summary": "지원자 삭제",
+        "description": "지원자 목록 조회에서 얻은 applicantId를 이용해 지원자를 삭제합니다.",
+        "operationId": "deleteById",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT",
+            "content": {}
+          }
+        }
+      },
+      "patch": {
+        "tags": ["리크루팅 지원자"],
+        "summary": "지원자 정보 수정",
+        "description": "변경할 지원자 정보의 값을 보냅니다. 변경되지 않은 값은 보내면 안 됩니다.",
+        "operationId": "updateById",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicantRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/validate-token": {
+      "get": {
+        "tags": ["인증/인가"],
+        "summary": "AccessToken 유효성 검사",
+        "operationId": "validateToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateTokenResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/semesters/now": {
+      "get": {
+        "tags": ["학과/학기/단과대"],
+        "summary": "현재 학기 조회",
+        "description": "현재 학기에 해당하는 정보를 조회합니다.",
+        "operationId": "readByDate",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadSemesterResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recruiter/schedule/auto/{partId}": {
+      "get": {
+        "tags": ["면접 일정"],
+        "summary": "면접 스케줄 자동 생성 API",
+        "description": "\n            백트래킹 알고리즘을 사용하여 면접 스케줄을 자동 생성합니다.\n            - 같은 파트의 같은 시간에는 중복 배정하지 않습니다.\n            - 모든 지원자를 배정할 수 없는 경우 400 에러를 반환합니다.\n            - 지원자가 많을 경우 응답 시간이 길어질 수 있습니다.\n            - **주의**: 저장은 되지 않으며, 미리보기 용도입니다.\n        ",
+        "operationId": "getAutoSchedules",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "request",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AutoScheduleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AutoScheduleResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parts": {
+      "get": {
+        "tags": ["구분/파트"],
+        "summary": "파트(팀) 목록 조회",
+        "description": "Head lead, Finance 등 파트 목록을 조회합니다.",
+        "operationId": "readAll_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadPartsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth2/{oauth2Type}": {
+      "get": {
+        "tags": ["OAUTH2", "인증/인가"],
+        "summary": "OAuth2 로그인 페이지 리다이렉트",
+        "description": "여기에서는 리다이렉트가 되지 않습니다. Authorize 이용.",
+        "operationId": "redirectAuthCodeRequestUrl",
+        "parameters": [
+          {
+            "name": "oauth2Type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["GOOGLE"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/oauth2/google-refresh-token-status": {
+      "get": {
+        "tags": ["OAUTH2", "인증/인가"],
+        "summary": "Google refresh token 유효 여부 조회",
+        "description": "현재 사용자의 Google OAuth2 refresh token이 유효한지 검사합니다. 무효일 때는 401을 반환하며, 다른 인증 실패(401)와 동일하게 재로그인 유도 처리하면 됩니다. 메일 예약, 구글 폼/드라이브 동기화 등 Google API 연동 기능에서 공통으로 사용할 수 있습니다.",
+        "operationId": "getGoogleRefreshTokenStatus",
+        "responses": {
+          "200": {
+            "description": "유효함",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Google 토큰 무효 — 재로그인 필요 (body.errorCode: OAuth-Token-Refresh-Fail)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/withdrawn": {
+      "get": {
+        "tags": ["유어슈 멤버"],
+        "summary": "탈퇴 멤버 목록 조회/검색",
+        "description": "HR·스카우터가 아니면 isSensitiveMasked true, 연락처·생년월일·학번·탈퇴일자·비고 등 null.",
+        "operationId": "readAllWithdrawn",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "이름 또는 닉네임 검색어",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "description": "파트 ID로 필터",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "목록 조회 성공.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberListResponseReadWithdrawnMemberListItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/states": {
+      "get": {
+        "tags": ["유어슈 멤버"],
+        "summary": "멤버 상태 목록 조회",
+        "description": "액티브, 비액티브, 수료, 졸업, 탈퇴 등 상태를 조회합니다.",
+        "operationId": "readAllMemberStates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/roles": {
+      "get": {
+        "tags": ["유어슈 멤버"],
+        "summary": "멤버 역할 목록 조회",
+        "description": "Lead, Vice Lead, Member 등 역할을 조회합니다.",
+        "operationId": "readAllMemberRoles",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/me": {
+      "get": {
+        "tags": ["내 정보"],
+        "summary": "내 정보 조회",
+        "description": "액세스 토큰으로 현재 로그인한 사용자의 멤버 정보와 프로필 이미지를 조회합니다.",
+        "operationId": "getMe",
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Member-005 (등록된 멤버가 아닙니다)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/lastUpdatedTime": {
+      "get": {
+        "tags": ["합격자 동기화 API", "유어슈 멤버"],
+        "summary": "마지막 동기화 시간 조회",
+        "description": "유어슈 멤버의 마지막 동기화 시간을 조회합니다.",
+        "operationId": "lastSyncTime",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LastMemberSyncTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/inactive": {
+      "get": {
+        "tags": ["유어슈 멤버"],
+        "summary": "비액티브 멤버 목록 조회/검색",
+        "description": "HR·스카우터가 아니면 isSensitiveMasked true, 연락처·생년월일·학번·복귀예정·사유·문자회신·비고 등 null.",
+        "operationId": "readAllInActive",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "이름 또는 닉네임 검색어",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "description": "파트 ID로 필터",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "목록 조회 성공.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberListResponseReadInactiveMemberListItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/graduated": {
+      "get": {
+        "tags": ["유어슈 멤버"],
+        "summary": "졸업 멤버 목록 조회/검색",
+        "description": "HR·스카우터가 아니면 isSensitiveMasked true, 민감 필드 및 졸업 기간(activePeriod) null.",
+        "operationId": "readAllGraduated",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "이름 또는 닉네임 검색어",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "description": "파트 ID로 필터",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "목록 조회 성공.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberListResponseReadGraduatedMemberListItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/completed": {
+      "get": {
+        "tags": ["유어슈 멤버"],
+        "summary": "수료 멤버 목록 조회/검색",
+        "description": "HR·스카우터가 아니면 isSensitiveMasked true, 민감 필드 및 수료 기간(activePeriod) null.",
+        "operationId": "readAllCompleted",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "이름 또는 닉네임 검색어",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "description": "파트 ID로 필터",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "목록 조회 성공.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberListResponseReadCompletedMemberListItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/active": {
+      "get": {
+        "tags": ["유어슈 멤버"],
+        "summary": "액티브 멤버 목록 조회/검색",
+        "description": "HR·스카우터 개발자가 아니면 isSensitiveMasked가 true이고, 연락처·생년월일·학번·회비·비고 등 민감 필드는 null로 내려갑니다.",
+        "operationId": "readAllActive",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "이름 또는 닉네임 검색어",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "description": "파트 ID로 필터",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "목록 조회 성공. isSensitiveMasked에 따라 민감 필드 null 여부 결정.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberListResponseReadActiveMemberListItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/divisions": {
+      "get": {
+        "tags": ["구분/파트"],
+        "summary": "멤버 구분 목록 조회",
+        "description": "운영, 개발, 디자인 등 각 구분의 목록을 조회합니다.",
+        "operationId": "readAll_4",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadDivisionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/departments": {
+      "get": {
+        "tags": ["학과/학기/단과대"],
+        "summary": "전체 학과 조회",
+        "description": "전체 학과 정보를 조회합니다.",
+        "operationId": "readAll_5",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadDepartmentsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/colleges": {
+      "get": {
+        "tags": ["학과/학기/단과대"],
+        "summary": "전체 단과대 조회",
+        "description": "전체 단과대의 정보를 조회합니다.",
+        "operationId": "readAll_6",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadCollegeResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/colleges/{collegeId}/departments": {
+      "get": {
+        "tags": ["학과/학기/단과대"],
+        "summary": "단과대 소속 학과 조회",
+        "description": "특정 단과대에 소속된 전체 학과 정보를 조회합니다.",
+        "operationId": "readAllByCollegeId",
+        "parameters": [
+          {
+            "name": "collegeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadDepartmentsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/states": {
+      "get": {
+        "tags": ["리크루팅 지원자"],
+        "summary": "지원자 상태 목록 조회",
+        "description": "전체 지원자의 가능한 상태 목록을 확인합니다. 현재 지원자와는 관련이 없습니다.",
+        "operationId": "readAllMemberStates_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "example": [
+                  "심사 진행 중",
+                  "서류 불합",
+                  "면접 불합",
+                  "인큐베이팅 불합",
+                  "최종 합격"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applicants/lastUpdatedTime": {
+      "get": {
+        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "summary": "마지막 동기화 시간 조회",
+        "operationId": "lastSyncTime_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LastApplicantSyncTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/reservation/status": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "예약 메일 발송 상태 조회",
+        "description": "현재 사용자의 미발송 예약 목록과 발송 실패 사유를 조회합니다. failureErrorCode가 OAuth-Token-Refresh-Fail이면 재로그인 후 다음 스케줄 실행 시 자동 발송됩니다.",
+        "operationId": "getReservationStatus",
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MailReservationStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/images": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "메일 이미지 조회 (302 Redirect)",
+        "description": "S3에 업로드된 이미지의 공개 URL로 302 리다이렉트합니다.\n\n**공개 엔드포인트:**\n- 인증 없이 접근 가능합니다.\n\n**사용 방법:**\n- `<img src=\"/api/mails/images?cid=xxx\">` 형태로 HTML에서 직접 사용 가능합니다.",
+        "operationId": "redirectToImage",
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "query",
+            "description": "이미지 콘텐츠 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Found - S3 공개 URL로 리다이렉트"
+          }
+        }
+      }
+    },
+    "/api/mails/files": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "내 메일 파일 목록 조회",
+        "operationId": "readFiles",
+        "parameters": [
+          {
+            "name": "usage",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["INLINE", "ATTACHMENT"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MailFileListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mails/files/download-url": {
+      "get": {
+        "tags": ["메일"],
+        "summary": "메일 파일 다운로드용 presigned URL 발급",
+        "operationId": "createPresignedDownloadUrl",
+        "parameters": [
+          {
+            "name": "storageKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MailFileDownloadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/semesters/{semesterId}": {
+      "delete": {
+        "tags": ["학과/학기/단과대"],
+        "summary": "학기 삭제",
+        "description": "특정 학기 정보를 삭제합니다.",
+        "operationId": "deleteById_1",
+        "parameters": [
+          {
+            "name": "semesterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/api/mails/files/{fileId}": {
+      "delete": {
+        "tags": ["메일"],
+        "summary": "내 메일 파일 삭제",
+        "operationId": "deleteFile",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateScheduleCommand": {
+        "type": "object",
+        "properties": {
+          "applicantId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "partId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "locationType": {
+            "type": "string",
+            "enum": ["CLUB_ROOM", "CLASS_ROOM", "ONLINE", "ETC"]
+          },
+          "locationDetail": {
+            "type": "string"
+          }
+        },
+        "required": ["applicantId", "endTime", "locationType", "partId", "startTime"]
+      },
+      "AttachmentReferenceRequest": {
+        "type": "object",
+        "description": "첨부파일 참조 정보",
+        "properties": {
+          "fileId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "업로드된 파일 ID",
+            "example": 11
+          }
+        },
+        "required": ["fileId"]
+      },
+      "CreateMailTemplateRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "메일 템플릿 제목",
+            "example": "합격 안내 메일",
+            "minLength": 1
+          },
+          "bodyHtml": {
+            "type": "string",
+            "description": "메일 본문 HTML. 변수는 {{var-{UUID}}} 형식으로 사용",
+            "example": "<p>안녕하세요 {{var-550e8400-e29b-41d4-a716-446655440000}}님</p>",
+            "maxLength": 100000,
+            "minLength": 0
+          },
+          "variables": {
+            "type": "array",
+            "description": "템플릿 변수 목록",
+            "items": {
+              "$ref": "#/components/schemas/TemplateVariableRequest"
+            }
+          },
+          "attachmentReferences": {
+            "type": "array",
+            "description": "첨부파일 참조 목록",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentReferenceRequest"
+            }
+          }
+        },
+        "required": ["attachmentReferences", "bodyHtml", "title", "variables"]
+      },
+      "TemplateVariableRequest": {
+        "type": "object",
+        "description": "템플릿 변수 정보",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "변수 키. var-{UUID} 형식이어야 함 (예: var-550e8400-e29b-41d4-a716-446655440000)",
+            "example": "var-550e8400-e29b-41d4-a716-446655440000",
+            "pattern": "^var-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "type": {
+            "type": "string",
+            "description": "변수 타입. PERSON, DATE, LINK, TEXT는 사용자 입력 변수. APPLICANT, PARTNAME은 자동 채움 변수",
+            "enum": ["PERSON", "DATE", "LINK", "TEXT", "APPLICANT", "PARTNAME"],
+            "example": "TEXT"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "변수 표시 이름",
+            "example": "면접 일시"
+          },
+          "perRecipient": {
+            "type": "boolean",
+            "description": "수신자별로 다른 값 입력 여부",
+            "example": true
+          }
+        },
+        "required": ["displayName", "key", "perRecipient", "type"]
+      },
+      "CreateMailTemplateResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "title", "updatedAt"]
+      },
+      "MailReserveRequest": {
+        "type": "object",
+        "description": "메일 예약 요청",
+        "properties": {
+          "receiverEmailAddresses": {
+            "type": "array",
+            "description": "수신자 이메일 주소 목록",
+            "example": ["user@example.com"],
+            "items": {
+              "type": "string"
+            }
+          },
+          "ccEmailAddresses": {
+            "type": "array",
+            "description": "참조(CC) 이메일 주소 목록",
+            "example": [],
+            "items": {
+              "type": "string"
+            }
+          },
+          "bccEmailAddresses": {
+            "type": "array",
+            "description": "숨은참조(BCC) 이메일 주소 목록",
+            "example": [],
+            "items": {
+              "type": "string"
+            }
+          },
+          "mailSubject": {
+            "type": "string",
+            "description": "메일 제목",
+            "example": "면접 안내"
+          },
+          "mailBody": {
+            "type": "string",
+            "description": "메일 본문",
+            "example": "<p>안녕하세요</p>"
+          },
+          "bodyFormat": {
+            "type": "string",
+            "description": "본문 형식",
+            "enum": ["HTML", "PLAIN_TEXT"],
+            "example": "HTML"
+          },
+          "reservationTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "예약 발송 시간 (ISO 8601, UTC)",
+            "example": "2026-02-06T02:00:00Z"
+          },
+          "attachmentReferences": {
+            "type": "array",
+            "description": "첨부파일 참조 목록",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentReferenceRequest"
+            }
+          }
+        },
+        "required": [
+          "attachmentReferences",
+          "bodyFormat",
+          "mailBody",
+          "mailSubject",
+          "receiverEmailAddresses",
+          "reservationTime"
+        ]
+      },
+      "ExceptionResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["errorCode", "message", "status", "timestamp"]
+      },
+      "WithdrawalRequest": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "CreateSemesterRequest": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "term": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": ["term", "year"]
+      },
+      "TokenRefreshRequest": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "TokenRefreshResponse": {
+        "type": "object",
+        "properties": {
+          "tokenType": {
+            "type": "string"
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        },
+        "required": ["accessToken", "refreshToken", "tokenType"]
+      },
+      "CreateScheduleRequest": {
+        "type": "object",
+        "properties": {
+          "applicantId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-11-10T10:00:00Z",
+            "pattern": "yyyy-MM-ddTHH:mm:ssZ"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-11-10T10:30:00Z",
+            "pattern": "yyyy-MM-ddTHH:mm:ssZ"
+          },
+          "partId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "locationType": {
+            "type": "string",
+            "description": "동방 | 강의실 | 비대면 | 기타",
+            "example": "동방",
+            "minLength": 1
+          },
+          "locationDetail": {
+            "type": "string"
+          }
+        },
+        "required": ["applicantId", "endTime", "locationType", "partId", "startTime"]
+      },
+      "OAuth2LoginRequest": {
+        "type": "object",
+        "properties": {
+          "authorizationCode": {
+            "type": "string",
+            "minLength": 1
+          },
+          "redirectUri": {
+            "type": "string"
+          }
+        },
+        "required": ["authorizationCode"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "description": "로그인 응답",
+        "properties": {
+          "tokenType": {
+            "type": "string",
+            "description": "토큰 타입",
+            "example": "Bearer"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "액세스 토큰"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "리프레시 토큰"
+          }
+        },
+        "required": ["accessToken", "refreshToken", "tokenType"]
+      },
+      "MemberSyncResponse": {
+        "type": "object",
+        "properties": {
+          "failureMessages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": ["createdCount", "failureMessages"]
+      },
+      "LogoutRequest": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "CreateApplicantRequest": {
+        "type": "object",
+        "properties": {
+          "partId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "description": "심사 진행 중 | 서류 불합 | 면접 불합 | 인큐베이팅 불합 | 최종 합격",
+            "example": "심사 진행 중",
+            "minLength": 1
+          },
+          "applicationDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-11-10",
+            "pattern": "yyyy-MM-dd"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^010-\\d{4}-\\d{4}$"
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "studentId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "semesterId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "age": {
+            "type": "string",
+            "minLength": 1
+          },
+          "academicSemester": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^\\d-\\d$"
+          },
+          "availableTimes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "required": [
+          "academicSemester",
+          "age",
+          "applicationDate",
+          "availableTimes",
+          "departmentId",
+          "email",
+          "name",
+          "partId",
+          "phoneNumber",
+          "semesterId",
+          "state",
+          "studentId"
+        ]
+      },
+      "ApplicantSyncResponse": {
+        "type": "object",
+        "properties": {
+          "successes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "failures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["failures", "successes"]
+      },
+      "MailSendRequest": {
+        "type": "object",
+        "description": "메일 즉시 발송 요청",
+        "properties": {
+          "receiverEmailAddresses": {
+            "type": "array",
+            "description": "수신자 이메일 주소 목록",
+            "example": ["user@example.com"],
+            "items": {
+              "type": "string"
+            }
+          },
+          "mailSubject": {
+            "type": "string",
+            "description": "메일 제목",
+            "example": "면접 안내"
+          },
+          "mailBody": {
+            "type": "string",
+            "description": "메일 본문",
+            "example": "<p>안녕하세요</p>"
+          },
+          "bodyFormat": {
+            "type": "string",
+            "description": "본문 형식",
+            "enum": ["HTML", "PLAIN_TEXT"],
+            "example": "HTML"
+          },
+          "attachmentReferences": {
+            "type": "array",
+            "description": "첨부파일 참조 목록",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentReferenceRequest"
+            }
+          }
+        },
+        "required": [
+          "attachmentReferences",
+          "bodyFormat",
+          "mailBody",
+          "mailSubject",
+          "receiverEmailAddresses"
+        ]
+      },
+      "FileSpec": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "파일명",
+            "example": "guide.pdf"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "파일 MIME 타입",
+            "example": "application/pdf"
+          },
+          "usage": {
+            "type": "string",
+            "description": "파일 용도",
+            "enum": ["INLINE", "ATTACHMENT"]
+          }
+        },
+        "required": ["contentType", "fileName", "usage"]
+      },
+      "MailFilePresignRequest": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "description": "업로드 대상 파일 목록",
+            "items": {
+              "$ref": "#/components/schemas/FileSpec"
+            }
+          }
+        },
+        "required": ["files"]
+      },
+      "MailFilePresignResponse": {
+        "type": "object",
+        "properties": {
+          "uploads": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PresignedUpload"
+            }
+          }
+        },
+        "required": ["uploads"]
+      },
+      "PresignedUpload": {
+        "type": "object",
+        "properties": {
+          "cid": {
+            "type": "string"
+          },
+          "putUrl": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "contentType": {
+            "type": "string"
+          }
+        },
+        "required": ["cid", "contentType", "expiresAt", "putUrl"]
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "cid": {
+            "type": "string",
+            "description": "콘텐츠 ID",
+            "example": "inline/uuid-logo.png"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "파일명",
+            "example": "logo.png"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "파일 MIME 타입",
+            "example": "image/png"
+          },
+          "usage": {
+            "type": "string",
+            "description": "파일 용도",
+            "enum": ["INLINE", "ATTACHMENT"]
+          }
+        },
+        "required": ["cid", "contentType", "fileName", "usage"]
+      },
+      "MailFileConfirmRequest": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          }
+        },
+        "required": ["files"]
+      },
+      "MailFileConfirmResponse": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MailFileSummary"
+            }
+          }
+        },
+        "required": ["files"]
+      },
+      "MailFileSummary": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usage": {
+            "type": "string",
+            "enum": ["INLINE", "ATTACHMENT"]
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "cid": {
+            "type": "string"
+          },
+          "used": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["cid", "contentType", "fileId", "fileName", "usage", "used"]
+      },
+      "UpdateScheduleLocationRequest": {
+        "type": "object",
+        "properties": {
+          "locationType": {
+            "type": "string",
+            "description": "동방 | 강의실 | 비대면 | 기타",
+            "example": "동방",
+            "minLength": 1
+          },
+          "locationDetail": {
+            "type": "string"
+          }
+        },
+        "required": ["locationType"]
+      },
+      "UpdateWithdrawnMemberRequest": {
+        "type": "object",
+        "properties": {
+          "partIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2003-09-23"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-01-01"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateInactiveMemberRequest": {
+        "type": "object",
+        "properties": {
+          "partIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2003-09-23"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-01-01"
+          },
+          "expectedReturnSemesterId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateGraduatedMemberRequest": {
+        "type": "object",
+        "properties": {
+          "partIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2003-09-23"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-01-01"
+          },
+          "isAdvisorDesired": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateCompletedMemberRequest": {
+        "type": "object",
+        "properties": {
+          "partIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2003-09-23"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-01-01"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateActiveMemberRequest": {
+        "type": "object",
+        "properties": {
+          "partIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2003-09-23"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2024-01-01"
+          },
+          "membershipFee": {
+            "type": "boolean"
+          },
+          "grade": {
+            "type": "integer",
+            "format": "int32",
+            "description": "학년 (API 전용, 엑셀 파싱 X). 미전송 시 null 유지.",
+            "example": 3
+          },
+          "isOnLeave": {
+            "type": "boolean",
+            "description": "재휴학 여부 (API 전용, 엑셀 파싱 X). 미전송 시 null 유지.",
+            "example": false
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateApplicantRequest": {
+        "type": "object",
+        "properties": {
+          "partId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "description": "심사 진행 중 | 서류 불합 | 면접 불합 | 인큐베이팅 불합 | 최종 합격",
+            "example": "심사 진행 중"
+          },
+          "applicationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "pattern": "^010-\\d{4}-\\d{4}$"
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "semesterId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "age": {
+            "type": "string"
+          },
+          "academicSemester": {
+            "type": "string",
+            "pattern": "^\\d-\\d$"
+          },
+          "availableTimes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      },
+      "ValidateTokenResponse": {
+        "type": "object",
+        "properties": {
+          "validated": {
+            "type": "boolean"
+          }
+        },
+        "required": ["validated"]
+      },
+      "ReadSemesterResponse": {
+        "type": "object",
+        "properties": {
+          "semesterId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "semester": {
+            "type": "string"
+          }
+        },
+        "required": ["semester", "semesterId"]
+      },
+      "ReadScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicantId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locationType": {
+            "type": "string"
+          },
+          "locationDetail": {
+            "type": "string"
+          }
+        },
+        "required": ["applicantId", "endTime", "id", "locationType", "name", "part", "startTime"]
+      },
+      "AutoScheduleRequest": {
+        "type": "object",
+        "properties": {
+          "strategy": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "example": 5
+          },
+          "duration": {
+            "type": "integer",
+            "format": "int64",
+            "example": 60
+          }
+        },
+        "required": ["duration", "size", "strategy"]
+      },
+      "AutoScheduleResponse": {
+        "type": "object",
+        "properties": {
+          "applicantId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "applicantName": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["applicantId", "applicantName", "endTime", "part", "startTime"]
+      },
+      "ReadPartsResponse": {
+        "type": "object",
+        "properties": {
+          "partId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "partName": {
+            "type": "string"
+          }
+        },
+        "required": ["partId", "partName"]
+      },
+      "MemberListResponseReadWithdrawnMemberListItemResponse": {
+        "type": "object",
+        "description": "멤버 목록과 민감정보 마스킹 여부. isSensitiveMasked가 true면 members 내 민감 필드는 null.",
+        "example": {
+          "members": [],
+          "isSensitiveMasked": false
+        },
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadWithdrawnMemberListItemResponse"
+            }
+          },
+          "isSensitiveMasked": {
+            "type": "boolean"
+          }
+        },
+        "required": ["isSensitiveMasked", "members"]
+      },
+      "ReadDivisionAndPartInMemberResponse": {
+        "type": "object",
+        "properties": {
+          "division": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          }
+        },
+        "required": ["division", "part"]
+      },
+      "ReadWithdrawnMemberListItemResponse": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadDivisionAndPartInMemberResponse"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "withdrawnDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "department",
+          "email",
+          "joinDate",
+          "memberId",
+          "name",
+          "nickname",
+          "parts",
+          "role",
+          "state"
+        ]
+      },
+      "MeResponse": {
+        "type": "object",
+        "description": "내 정보 응답",
+        "properties": {
+          "profileImageUrl": {
+            "type": "string",
+            "description": "구글 프로필 이미지 URL"
+          },
+          "memberId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "멤버 ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "이름",
+            "example": "홍길동"
+          },
+          "email": {
+            "type": "string",
+            "description": "이메일",
+            "example": "hong@soongsil.ac.kr"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "전화번호",
+            "example": "010-1234-5678"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "description": "생년월일",
+            "example": "2000-01-01"
+          },
+          "department": {
+            "type": "string",
+            "description": "학과",
+            "example": "컴퓨터학부"
+          },
+          "studentId": {
+            "type": "string",
+            "description": "학번",
+            "example": 20210001
+          },
+          "parts": {
+            "type": "array",
+            "description": "소속 파트 목록",
+            "items": {
+              "$ref": "#/components/schemas/ReadDivisionAndPartInMemberResponse"
+            }
+          },
+          "role": {
+            "type": "string",
+            "description": "역할",
+            "example": "MEMBER"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "닉네임",
+            "example": "piki(피키)"
+          },
+          "state": {
+            "type": "string",
+            "description": "상태",
+            "example": "활동"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date",
+            "description": "가입일",
+            "example": "2024-03-01"
+          },
+          "stateUpdatedTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "상태 변경 시간"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "생성 시간"
+          },
+          "updatedTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "수정 시간"
+          }
+        },
+        "required": [
+          "birthDate",
+          "createdTime",
+          "department",
+          "email",
+          "joinDate",
+          "memberId",
+          "name",
+          "nickname",
+          "parts",
+          "phoneNumber",
+          "profileImageUrl",
+          "role",
+          "state",
+          "stateUpdatedTime",
+          "studentId",
+          "updatedTime"
+        ]
+      },
+      "LastMemberSyncTimeResponse": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MemberListResponseReadInactiveMemberListItemResponse": {
+        "type": "object",
+        "description": "멤버 목록과 민감정보 마스킹 여부. isSensitiveMasked가 true면 members 내 민감 필드는 null.",
+        "example": {
+          "members": [],
+          "isSensitiveMasked": false
+        },
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadInactiveMemberListItemResponse"
+            }
+          },
+          "isSensitiveMasked": {
+            "type": "boolean"
+          }
+        },
+        "required": ["isSensitiveMasked", "members"]
+      },
+      "ReadInactiveMemberListItemResponse": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadDivisionAndPartInMemberResponse"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "activePeriod": {
+            "$ref": "#/components/schemas/ReadSemesterPeriodInMemberResponse"
+          },
+          "expectedReturnSemester": {
+            "type": "string"
+          },
+          "inactivePeriod": {
+            "$ref": "#/components/schemas/ReadSemesterPeriodInMemberResponse"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "smsReplied": {
+            "type": "boolean"
+          },
+          "smsReplyDesiredPeriod": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "activePeriod",
+          "department",
+          "email",
+          "inactivePeriod",
+          "joinDate",
+          "memberId",
+          "name",
+          "nickname",
+          "parts",
+          "role",
+          "state"
+        ]
+      },
+      "ReadSemesterPeriodInMemberResponse": {
+        "type": "object",
+        "properties": {
+          "startSemester": {
+            "type": "string"
+          },
+          "endSemester": {
+            "type": "string"
+          }
+        },
+        "required": ["endSemester", "startSemester"]
+      },
+      "MemberListResponseReadGraduatedMemberListItemResponse": {
+        "type": "object",
+        "description": "멤버 목록과 민감정보 마스킹 여부. isSensitiveMasked가 true면 members 내 민감 필드는 null.",
+        "example": {
+          "members": [],
+          "isSensitiveMasked": false
+        },
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadGraduatedMemberListItemResponse"
+            }
+          },
+          "isSensitiveMasked": {
+            "type": "boolean"
+          }
+        },
+        "required": ["isSensitiveMasked", "members"]
+      },
+      "ReadGraduatedMemberListItemResponse": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadDivisionAndPartInMemberResponse"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "activePeriod": {
+            "$ref": "#/components/schemas/ReadSemesterPeriodInMemberResponse"
+          },
+          "isAdvisorDesired": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "department",
+          "email",
+          "isAdvisorDesired",
+          "joinDate",
+          "memberId",
+          "name",
+          "nickname",
+          "parts",
+          "role",
+          "state"
+        ]
+      },
+      "MemberListResponseReadCompletedMemberListItemResponse": {
+        "type": "object",
+        "description": "멤버 목록과 민감정보 마스킹 여부. isSensitiveMasked가 true면 members 내 민감 필드는 null.",
+        "example": {
+          "members": [],
+          "isSensitiveMasked": false
+        },
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadCompletedMemberListItemResponse"
+            }
+          },
+          "isSensitiveMasked": {
+            "type": "boolean"
+          }
+        },
+        "required": ["isSensitiveMasked", "members"]
+      },
+      "ReadCompletedMemberListItemResponse": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadDivisionAndPartInMemberResponse"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "activePeriod": {
+            "$ref": "#/components/schemas/ReadSemesterPeriodInMemberResponse"
+          },
+          "isAdvisorDesired": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "department",
+          "email",
+          "isAdvisorDesired",
+          "joinDate",
+          "memberId",
+          "name",
+          "nickname",
+          "parts",
+          "role",
+          "state"
+        ]
+      },
+      "MemberListResponseReadActiveMemberListItemResponse": {
+        "type": "object",
+        "description": "멤버 목록과 민감정보 마스킹 여부. isSensitiveMasked가 true면 members 내 민감 필드는 null.",
+        "example": {
+          "members": [],
+          "isSensitiveMasked": false
+        },
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadActiveMemberListItemResponse"
+            }
+          },
+          "isSensitiveMasked": {
+            "type": "boolean"
+          }
+        },
+        "required": ["isSensitiveMasked", "members"]
+      },
+      "ReadActiveMemberListItemResponse": {
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadDivisionAndPartInMemberResponse"
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "joinDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "membershipFee": {
+            "type": "boolean"
+          },
+          "grade": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOnLeave": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "department",
+          "email",
+          "joinDate",
+          "memberId",
+          "name",
+          "nickname",
+          "parts",
+          "role",
+          "state"
+        ]
+      },
+      "ReadDivisionResponse": {
+        "type": "object",
+        "properties": {
+          "divisionId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "divisionName": {
+            "type": "string"
+          }
+        },
+        "required": ["divisionId", "divisionName"]
+      },
+      "ReadDepartmentsResponse": {
+        "type": "object",
+        "properties": {
+          "departmentId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "departmentName": {
+            "type": "string"
+          }
+        },
+        "required": ["departmentId", "departmentName"]
+      },
+      "ReadCollegeResponse": {
+        "type": "object",
+        "properties": {
+          "collegeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "collegeName": {
+            "type": "string"
+          }
+        },
+        "required": ["collegeId", "collegeName"]
+      },
+      "ReadApplicantResponse": {
+        "type": "object",
+        "properties": {
+          "applicantId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "division": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "applicationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "studentId": {
+            "type": "string"
+          },
+          "semester": {
+            "type": "string"
+          },
+          "age": {
+            "type": "string"
+          },
+          "availableTimes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "required": [
+          "age",
+          "applicantId",
+          "applicationDate",
+          "availableTimes",
+          "department",
+          "division",
+          "email",
+          "name",
+          "part",
+          "phoneNumber",
+          "semester",
+          "state",
+          "studentId"
+        ]
+      },
+      "LastApplicantSyncTimeResponse": {
+        "type": "object",
+        "properties": {
+          "lastUpdatedTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PageResponseReadMailTemplateSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadMailTemplateSummaryResponse"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": ["content", "page", "size", "totalElements", "totalPages"]
+      },
+      "ReadMailTemplateSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "title", "updatedAt"]
+      },
+      "AttachmentReference": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "업로드된 파일 ID",
+            "example": 11
+          },
+          "fileName": {
+            "type": "string",
+            "description": "파일명",
+            "example": "guide.pdf"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "파일 MIME 타입",
+            "example": "application/pdf"
+          },
+          "storageKey": {
+            "type": "string",
+            "description": "S3 저장 키",
+            "example": "mail-files/attachment/uuid-guide.pdf"
+          }
+        },
+        "required": ["contentType", "fileName", "storageKey"]
+      },
+      "DetailVariable": {
+        "type": "object",
+        "description": "템플릿 변수 정보",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "변수 키. var-{UUID} 형식",
+            "example": "var-550e8400-e29b-41d4-a716-446655440000"
+          },
+          "type": {
+            "type": "string",
+            "description": "변수 타입. PERSON, DATE, LINK, TEXT는 사용자 입력 변수. APPLICANT, PARTNAME은 자동 채움 변수",
+            "enum": ["PERSON", "DATE", "LINK", "TEXT", "APPLICANT", "PARTNAME"],
+            "example": "TEXT"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "변수 표시 이름",
+            "example": "면접 일시"
+          },
+          "perRecipient": {
+            "type": "boolean",
+            "description": "수신자별로 다른 값 입력 여부",
+            "example": true
+          }
+        },
+        "required": ["displayName", "key", "perRecipient", "type"]
+      },
+      "ReadMailTemplateDetailResponse": {
+        "type": "object",
+        "description": "메일 템플릿 상세 정보",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "템플릿 ID",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "템플릿 제목",
+            "example": "합격 안내 메일"
+          },
+          "bodyHtml": {
+            "type": "string",
+            "description": "메일 본문 HTML",
+            "example": "<p>안녕하세요 {{var-550e8400-e29b-41d4-a716-446655440000}}님</p>"
+          },
+          "variables": {
+            "type": "array",
+            "description": "템플릿 변수 목록",
+            "items": {
+              "$ref": "#/components/schemas/DetailVariable"
+            }
+          },
+          "attachmentReferences": {
+            "type": "array",
+            "description": "첨부파일 참조 목록",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentReference"
+            }
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "최종 수정 시간"
+          }
+        },
+        "required": ["attachmentReferences", "bodyHtml", "id", "title", "updatedAt", "variables"]
+      },
+      "MailReservationListItem": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mailId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reservationTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "예약 상태",
+            "enum": ["SCHEDULED", "PENDING_SEND", "SENT"],
+            "example": "SCHEDULED"
+          },
+          "senderEmailAddress": {
+            "type": "string",
+            "description": "발신자 이메일",
+            "example": "sender@example.com"
+          },
+          "mailSubject": {
+            "type": "string"
+          },
+          "primaryReceiverEmailAddress": {
+            "type": "string",
+            "description": "대표 수신자 이메일 (수신자가 없으면 null)",
+            "example": "receiver@example.com"
+          },
+          "attachmentReferences": {
+            "type": "array",
+            "description": "첨부파일 참조 목록",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentReference"
+            }
+          }
+        },
+        "required": [
+          "attachmentReferences",
+          "mailId",
+          "mailSubject",
+          "reservationId",
+          "reservationTime",
+          "senderEmailAddress",
+          "status"
+        ]
+      },
+      "MailReservationListResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MailReservationListItem"
+            }
+          }
+        },
+        "required": ["items"]
+      },
+      "MailReservationDetailResponse": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mailId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reservationTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "예약 상태",
+            "enum": ["SCHEDULED", "PENDING_SEND", "SENT"],
+            "example": "SCHEDULED"
+          },
+          "senderEmailAddress": {
+            "type": "string",
+            "description": "발신자 이메일",
+            "example": "sender@example.com"
+          },
+          "mailSubject": {
+            "type": "string"
+          },
+          "mailBody": {
+            "type": "string"
+          },
+          "bodyFormat": {
+            "type": "string"
+          },
+          "receiverEmailAddresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ccEmailAddresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bccEmailAddresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "attachmentReferences": {
+            "type": "array",
+            "description": "첨부파일 참조 목록",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentReference"
+            }
+          }
+        },
+        "required": [
+          "attachmentReferences",
+          "bccEmailAddresses",
+          "bodyFormat",
+          "ccEmailAddresses",
+          "mailBody",
+          "mailId",
+          "mailSubject",
+          "receiverEmailAddresses",
+          "reservationId",
+          "reservationTime",
+          "senderEmailAddress",
+          "status"
+        ]
+      },
+      "MailReservationStatusItem": {
+        "type": "object",
+        "properties": {
+          "reservationId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mailId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reservationTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "failureErrorCode": {
+            "type": "string"
+          },
+          "failedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["mailId", "reservationId", "reservationTime"]
+      },
+      "MailReservationStatusResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MailReservationStatusItem"
+            }
+          }
+        },
+        "required": ["items"]
+      },
+      "MailFileListResponse": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MailFileSummary"
+            }
+          }
+        },
+        "required": ["files"]
+      },
+      "MailFileDownloadResponse": {
+        "type": "object",
+        "properties": {
+          "getUrl": {
+            "type": "string",
+            "description": "다운로드용 presigned URL"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "URL 만료 시각"
+          }
+        },
+        "required": ["expiresAt", "getUrl"]
+      },
+      "DeleteByPartResponse": {
+        "type": "object",
+        "properties": {
+          "deletedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": ["deletedCount"]
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+            "tokenUrl": "https://api.dev.scouter.yourssu.com/oauth2/swagger/callback",
+            "refreshUrl": "https://api.dev.scouter.yourssu.com/oauth2/swagger/callback",
+            "scopes": {
+              "openid": "OpenId Connect",
+              "profile": "기본 프로필 정보",
+              "email": "이메일 주소",
+              "https://www.googleapis.com/auth/drive.readonly": "드라이브 읽기 권한",
+              "https://www.googleapis.com/auth/forms.responses.readonly": "구글 폼 응답 읽기 권한",
+              "https://www.googleapis.com/auth/forms.body.readonly": "구글 폼 본문 읽기 권한",
+              "https://www.googleapis.com/auth/gmail.send": "메일 전송 권한"
+            }
+          }
+        }
+      }
+    }
+  }
+}

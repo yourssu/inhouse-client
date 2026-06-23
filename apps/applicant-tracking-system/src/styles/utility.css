@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+@utility calendar-header-lighting-gradient {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -30px;
+    left: 0;
+    height: 30px;
+    background: radial-gradient(
+      ellipse 70% 30px at center top,
+      var(--color-greyOpacity50),
+      transparent
+    );
+  }
+
+  [data-theme='dark'] &::after {
+    background: radial-gradient(ellipse 70% 30px at center top, rgba(0, 0, 0, 0.16), transparent);
+  }
+}
+
+@utility hide-scrollbar {
+  @apply [scrollbar-width:none]! [&::-webkit-scrollbar]:hidden!;
+}
