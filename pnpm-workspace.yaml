@@ -1,0 +1,12 @@
+allowBuilds:
+  esbuild: true
+  msw: true
+
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+catalog:
+  eslint: '^10.3.0'
+  typescript: '~6.0.2'
+

@@ -1,0 +1,23 @@
+{
+  "name": "@yourssu-inhouse/monorepo",
+  "private": true,
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "fix": "turbo run fix",
+    "fix:lint": "turbo run check:lint",
+    "fix:format": "turbo run check:format",
+    "check": "turbo run check",
+    "check:lint": "turbo run check:lint",
+    "check:format": "turbo run check:format",
+    "check:type": "turbo run check:type"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.18",
+    "typescript": "catalog:",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.8.0"
+  },
+  "packageManager": "pnpm@11.5.2+sha512.71c631e382066efc25625d5cf029075de07b61b37f6e27350fbd84b1bda5864c8c1967adc280776b45c30a715c0359a3be08fef42d5bb09e2b99029979692916"
+}

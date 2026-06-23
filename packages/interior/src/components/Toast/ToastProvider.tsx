@@ -1,0 +1,54 @@
+import { useEffectOnce } from '@yourssu-inhouse/inhouse-react/hooks';
+import { isNotNil, uniq } from 'es-toolkit';
+import { useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
+import { ToastContext } from './context';
+import { ToastAnimationGroup } from './ToastAnimationGroup';
+import { type ToastItem, ToastLottieAssetMap, type ToastType } from './type';
+
+interface ToastProviderProps {
+  duration: number;
+}
+
+export const ToastProvider = ({
+  duration,
+  children,
+}: React.PropsWithChildren<ToastProviderProps>) => {
+  const timeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  /* 
+    Cache lottie assets
+    - 첫 토스트 렌더링 시점에 로띠를 불러오면 경험이 좋지 않기 때문에 미리 캐시해둬요.
+  */
+  useEffectOnce(() => {
+    const assetSources = uniq(Object.values(ToastLottieAssetMap).filter(isNotNil));
+    assetSources.forEach((src) => fetch(src, { cache: 'force-cache' }));
+  });
+
+  useEffect(() => {
+    const current = timeouts.current;
+    return () => {
+      current.forEach((timeout) => clearTimeout(timeout));
+    };
+  }, []);
+
+  const addToast = ({ text, type }: { text: string; type: ToastType }) => {
+    const id = uuidv4();
+    setToasts((prev) => [...prev, { id, text, type }]);
+
+    const timeout = setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, duration);
+
+    timeouts.current.push(timeout);
+  };
+
+  return (
+    <ToastContext.Provider value={{ addToast, toasts }}>
+      {children}
+      <ToastAnimationGroup />
+    </ToastContext.Provider>
+  );
+};

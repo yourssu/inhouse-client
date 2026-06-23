@@ -1,0 +1,41 @@
+const fontSize = {
+  tiny: 'var(--font-size-tiny)',
+  xs: 'var(--font-size-xs)',
+  13: 'var(--font-size-13)',
+  sm: 'var(--font-size-sm)',
+  15: 'var(--font-size-15)',
+  base: 'var(--font-size-base)',
+  17: 'var(--font-size-17)',
+  lg: 'var(--font-size-lg)',
+  xl: 'var(--font-size-xl)',
+  '2xl': 'var(--font-size-2xl)',
+  '3xl': 'var(--font-size-3xl)',
+  '4xl': 'var(--font-size-4xl)',
+  '5xl': 'var(--font-size-5xl)',
+  '6xl': 'var(--font-size-6xl)',
+  '7xl': 'var(--font-size-7xl)',
+  '8xl': 'var(--font-size-8xl)',
+  '9xl': 'var(--font-size-9xl)',
+} as const;
+
+const lineHeight = {
+  tiny: 'var(--line-height-tiny)',
+  xs: 'var(--line-height-xs)',
+  13: 'var(--line-height-13)',
+  sm: 'var(--line-height-sm)',
+  15: 'var(--line-height-15)',
+  base: 'var(--line-height-base)',
+  17: 'var(--line-height-17)',
+  lg: 'var(--line-height-lg)',
+  xl: 'var(--line-height-xl)',
+  '2xl': 'var(--line-height-2xl)',
+  '3xl': 'var(--line-height-3xl)',
+  '4xl': 'var(--line-height-4xl)',
+  '5xl': 'var(--line-height-5xl)',
+  '6xl': 'var(--line-height-6xl)',
+  '7xl': 'var(--line-height-7xl)',
+  '8xl': 'var(--line-height-8xl)',
+  '9xl': 'var(--line-height-9xl)',
+} as const;
+
+export const typography = { fontSize, lineHeight } as const;

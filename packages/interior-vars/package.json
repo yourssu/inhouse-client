@@ -1,0 +1,34 @@
+{
+  "name": "@yourssu-inhouse/interior-vars",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check:type": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@vanilla-extract/rollup-plugin": "^1.4.18",
+    "@yourssu-inhouse/eslint-config": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
+    "@types/node": "^24.13.0",
+    "eslint": "catalog:",
+    "prettier": "^3.8.3",
+    "tsdown": "^0.22.2"
+  }
+}

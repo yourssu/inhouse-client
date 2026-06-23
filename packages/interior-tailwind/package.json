@@ -1,0 +1,36 @@
+{
+  "name": "@yourssu-inhouse/interior-tailwind",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./plugin": "./src/plugin.ts",
+    "./utils": "./src/utils.ts"
+  },
+  "scripts": {
+    "check:type": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "fix:lint": "eslint . --fix",
+    "check:format": "prettier --check .",
+    "fix:format": "prettier --write ."
+  },
+  "dependencies": {
+    "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@yourssu-inhouse/interior-vars": "workspace:*",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.6.0",
+    "tailwind-variants": "^3.2.2"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.0",
+    "@yourssu-inhouse/eslint-config": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "^3.8.3",
+    "tailwindcss": "^4.3.0",
+    "typescript": "catalog:"
+  }
+}

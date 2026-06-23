@@ -1,0 +1,7 @@
+{
+  "extends": "@yourssu-inhouse/typescript-config/node",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src/**/*", "tsdown.config.ts"]
+}

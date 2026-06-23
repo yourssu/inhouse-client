@@ -1,0 +1,1 @@
+export { TabDialog } from './index';
