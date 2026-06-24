@@ -47,7 +47,12 @@ export const ProfileButton = () => {
           <img alt="프로필 사진" referrerPolicy="no-referrer" src={me.profileImageUrl} />
         </button>
       </Popover.Trigger>
-      <Popover.Content align="end" className="min-w-80 rounded-[20px] p-0" side="right" sideOffset={10}>
+      <Popover.Content
+        align="end"
+        className="min-w-80 rounded-[20px] p-0"
+        side="right"
+        sideOffset={10}
+      >
         <div>
           <div className="flex items-center px-5 py-5">
             <div className="size-9 overflow-hidden rounded-full">
