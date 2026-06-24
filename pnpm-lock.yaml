@@ -6,9 +6,6 @@ settings:
 
 catalogs:
   default:
-    eslint:
-      specifier: ^10.3.0
-      version: 10.4.1
     typescript:
       specifier: ~6.0.2
       version: 6.0.3
@@ -107,6 +104,15 @@ importers:
       '@toss/lottie':
         specifier: ^1.3.2
         version: 1.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@yourssu-inhouse/interior':
+        specifier: workspace:*
+        version: link:../../packages/interior
+      '@yourssu-inhouse/interior-tailwind':
+        specifier: workspace:*
+        version: link:../../packages/interior-tailwind
+      '@yourssu-inhouse/interior-vars':
+        specifier: workspace:*
+        version: link:../../packages/interior-vars
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -439,7 +445,7 @@ importers:
         version: 3.8.4
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)
+        version: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -573,7 +579,7 @@ importers:
         version: 3.8.4
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)
+        version: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -640,7 +646,7 @@ importers:
         version: 3.8.4
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)
+        version: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
 
   packages/typescript-config: {}
 
@@ -4131,6 +4137,16 @@ packages:
     resolution: {integrity: sha512-0Mqk3AT2TZCXWKdcoaufeXNukv2mTrEZExeXlHIOZXdqYoHHr4n51pymnwV8x2BOVxwXbK2HLlI7usrqMpycdg==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
+  unrun@0.3.1:
+    resolution: {integrity: sha512-onIck/oNnCaytwths1ZVp1LK2Gq2hPoyFhiHebObuUXqR3S0uHuLLaBK8K6mRRgV7Ptip8AnNvaUsgzwWwBZuA==}
+    engines: {node: ^22.13.0 || >=24.0.0}
+    hasBin: true
+    peerDependencies:
+      synckit: ^0.11.11
+    peerDependenciesMeta:
+      synckit:
+        optional: true
+
   until-async@3.0.2:
     resolution: {integrity: sha512-IiSk4HlzAMqTUseHHe3VhIGyuFmN90zMTpD3Z3y8jeQbzLIq500MVM7Jq2vUAnTKAFPJrqwkzr6PoTcPhGcOiw==}
 
@@ -5734,7 +5750,7 @@ snapshots:
       lightningcss: 1.32.0
       postcss-load-config: 6.0.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)
       rolldown: 1.1.1
-      tsdown: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)
+      tsdown: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
     optionalDependencies:
       postcss: 8.5.15
     transitivePeerDependencies:
@@ -7661,7 +7677,7 @@ snapshots:
     optionalDependencies:
       typescript: 6.0.3
 
-  tsdown@0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3):
+  tsdown@0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1):
     dependencies:
       ansis: 4.3.1
       cac: 7.0.0
@@ -7683,6 +7699,7 @@ snapshots:
       publint: 0.3.21
       tsx: 4.22.4
       typescript: 6.0.3
+      unrun: 0.3.1
     transitivePeerDependencies:
       - '@ts-macro/tsc'
       - '@typescript/native-preview'
@@ -7781,6 +7798,11 @@ snapshots:
       '@jridgewell/remapping': 2.3.5
       picomatch: 4.0.4
       webpack-virtual-modules: 0.6.2
+
+  unrun@0.3.1:
+    dependencies:
+      rolldown: 1.1.1
+    optional: true
 
   until-async@3.0.2: {}
 
