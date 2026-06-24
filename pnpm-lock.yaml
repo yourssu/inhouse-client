@@ -504,6 +504,76 @@ importers:
         specifier: ^8.59.2
         version: 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3)
 
+  packages/exterior:
+    dependencies:
+      '@yourssu-inhouse/inhouse-utils':
+        specifier: workspace:*
+        version: link:../inhouse-utils
+      '@yourssu-inhouse/interior':
+        specifier: workspace:*
+        version: link:../interior
+      '@yourssu-inhouse/interior-tailwind':
+        specifier: workspace:*
+        version: link:../interior-tailwind
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      es-toolkit:
+        specifier: ^1.47.0
+        version: 1.47.0
+      react-icons:
+        specifier: ^5.6.0
+        version: 5.6.0(react@19.2.7)
+      react-simplikit:
+        specifier: ^0.0.51
+        version: 0.0.51(react@19.2.7)
+    devDependencies:
+      '@tanstack/react-query':
+        specifier: ^5.101.0
+        version: 5.101.0(react@19.2.7)
+      '@tanstack/react-router':
+        specifier: ^1.170.11
+        version: 1.170.15(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      motion:
+        specifier: ^12.40.0
+        version: 12.40.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      overlay-kit:
+        specifier: ^1.9.0
+        version: 1.9.0(react@19.2.7)
+      prettier:
+        specifier: ^3.8.3
+        version: 3.8.4
+      react:
+        specifier: ^19.2.6
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.2.6
+        version: 19.2.7(react@19.2.7)
+      tsdown:
+        specifier: ^0.22.2
+        version: 0.22.2(@tsdown/css@0.22.2)(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   packages/inhouse-react:
     dependencies:
       '@yourssu-inhouse/inhouse-utils':
