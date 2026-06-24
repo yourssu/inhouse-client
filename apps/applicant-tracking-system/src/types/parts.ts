@@ -1,7 +1,7 @@
+import { vars } from '@yourssu-inhouse/interior-vars';
+
 import type { PartNameType } from '@/apis/parts/schema';
 import type { ValueOf } from '@/types/misc';
-
-import { vars } from '@/styles/__generated__/colors.gen';
 
 export const partNameKo = {
   'Head lead': '리드',
@@ -18,17 +18,17 @@ export const partNameKo = {
 } as const satisfies Record<PartNameType, string>;
 
 export const partColorMap = {
-  'Head lead': { base: vars.red500, light: vars.red200 },
-  Android: { base: vars.green500, light: vars.green300 },
-  Backend: { base: vars.violet500, light: vars.violet200 },
-  Frontend: { base: vars.blue500, light: vars.blue300 },
-  iOS: { base: vars.orange500, light: vars.orange400 },
-  Marketing: { base: vars.teal500, light: vars.teal200 },
-  'Product Design': { base: vars.purple600, light: vars.purple200 },
-  Finance: { base: vars.yellow500, light: vars.yellow300 },
-  HR: { base: vars.yellow500, light: vars.yellow300 },
-  Legal: { base: vars.grey500, light: vars.grey200 },
-  PM: { base: vars.red500, light: vars.red200 },
+  'Head lead': { base: vars.color.red500, light: vars.color.red200 },
+  Android: { base: vars.color.green500, light: vars.color.green300 },
+  Backend: { base: vars.color.violet500, light: vars.color.violet200 },
+  Frontend: { base: vars.color.blue500, light: vars.color.blue300 },
+  iOS: { base: vars.color.orange500, light: vars.color.orange400 },
+  Marketing: { base: vars.color.teal500, light: vars.color.teal200 },
+  'Product Design': { base: vars.color.purple600, light: vars.color.purple200 },
+  Finance: { base: vars.color.yellow500, light: vars.color.yellow300 },
+  HR: { base: vars.color.yellow500, light: vars.color.yellow300 },
+  Legal: { base: vars.color.grey500, light: vars.color.grey200 },
+  PM: { base: vars.color.red500, light: vars.color.red200 },
 } as const satisfies Record<
   PartNameType,
   {

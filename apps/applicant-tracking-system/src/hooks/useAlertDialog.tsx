@@ -1,8 +1,7 @@
+import { Dialog } from '@yourssu-inhouse/interior';
 import { merge } from 'es-toolkit';
 import { overlay } from 'overlay-kit';
 import React from 'react';
-
-import { Dialog } from '@/components/_ui/Dialog';
 
 type OpenPayload = {
   closeAsFalse: () => void;

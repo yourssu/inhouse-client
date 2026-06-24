@@ -1,12 +1,12 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Button } from '@yourssu-inhouse/interior';
+import { InlineButton } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 import { Suspense } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { z } from 'zod/v4';
 
 import { mailReservationStatus } from '@/apis/mails/schema';
-import { Button } from '@/components/_ui/Button';
-import { InlineButton } from '@/components/_ui/InlineButton';
-import { Table } from '@/components/_ui/Table';
 import { PageLayout } from '@/components/PageLayout';
 import { Paper } from '@/components/Paper';
 import { useSearchState } from '@/hooks/useSearchState';

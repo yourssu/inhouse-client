@@ -1,9 +1,8 @@
 import type { PropsWithChildren } from 'react';
 
+import { InlineButton } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
 import { IoMdArrowBack } from 'react-icons/io';
-
-import { InlineButton } from '@/components/_ui/InlineButton';
 
 const variants = {
   enter: (direction: number) => ({

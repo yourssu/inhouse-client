@@ -5,6 +5,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useEffect, useMemo } from 'react';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';
@@ -17,7 +18,6 @@ import {
   type SlashCommandStorage,
 } from '@/utils/tiptap/extensions/SlashCommand';
 import { getEditorStorage } from '@/utils/tiptap/storage';
-import { cn } from '@/utils/tw';
 
 import { VariableSlashMenu } from './VariableSlashMenu';
 

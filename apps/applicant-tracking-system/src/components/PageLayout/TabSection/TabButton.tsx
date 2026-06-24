@@ -1,8 +1,7 @@
 import { Link } from '@tanstack/react-router';
+import { TabButton } from '@yourssu-inhouse/interior';
 
 import type { RoutePath } from '@/types/route';
-
-import { TabButton } from '@/components/_ui/TabButton';
 
 interface TabButtonProps {
   icon?: React.ReactNode;

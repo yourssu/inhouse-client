@@ -1,6 +1,7 @@
+import { Badge } from '@yourssu-inhouse/interior';
+
 import type { MailReservationStatusType } from '@/apis/mails/schema';
 
-import { Badge } from '@/components/_ui/Badge';
 import { mailStatusNameMap } from '@/types/mails';
 
 interface MailStatusBadgeProps {

@@ -1,8 +1,8 @@
+import { IconButton } from '@yourssu-inhouse/interior';
+import { TabButton } from '@yourssu-inhouse/interior';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
 
-import { IconButton } from '@/components/_ui/IconButton';
-import { TabButton } from '@/components/_ui/TabButton';
 import { AnimatedStep } from '@/components/TemplateEditorDialog/components/VariablePannel/AnimatedStep';
 import { useVariableContext } from '@/components/TemplateEditorDialog/context';
 import { variableIconMap, type VariablePannelStep } from '@/components/TemplateEditorDialog/type';

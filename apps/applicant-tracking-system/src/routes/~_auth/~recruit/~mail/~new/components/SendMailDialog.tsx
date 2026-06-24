@@ -1,4 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
+import { DatePicker } from '@yourssu-inhouse/interior';
+import { Dialog } from '@yourssu-inhouse/interior';
+import { Fieldset } from '@yourssu-inhouse/interior';
+import { SegmentedControl } from '@yourssu-inhouse/interior';
+import { TextField } from '@yourssu-inhouse/interior';
+import { useToast } from '@yourssu-inhouse/interior';
 import { set } from 'date-fns';
 import { useState } from 'react';
 import { SwitchCase, useLoading } from 'react-simplikit';
@@ -11,12 +17,6 @@ import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 import type { VariableValueType } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/type';
 
 import { postMailReservation } from '@/apis/mails';
-import { DatePicker } from '@/components/_ui/DatePicker';
-import { Dialog } from '@/components/_ui/Dialog';
-import { Fieldset } from '@/components/_ui/Fieldset';
-import { SegmentedControl } from '@/components/_ui/SegmentedControl';
-import { TextField } from '@/components/_ui/TextField';
-import { useToast } from '@/hooks/useToast';
 import { buildMailPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
 import { handleError } from '@/utils/error';
 

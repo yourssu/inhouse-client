@@ -1,7 +1,6 @@
+import { TabButton } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 import { MdCheck } from 'react-icons/md';
-
-import { TabButton } from '@/components/_ui/TabButton';
 
 const tabs = ['전체', '사람', '텍스트', '날짜', '링크'] as const;
 const sizes = ['md', 'lg'] as const;

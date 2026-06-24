@@ -1,15 +1,15 @@
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { Button } from '@yourssu-inhouse/interior';
+import { Divider } from '@yourssu-inhouse/interior';
+import { Popover } from '@yourssu-inhouse/interior';
+import { useToast } from '@yourssu-inhouse/interior';
 import { MdArrowForwardIos } from 'react-icons/md';
 
 import { logout } from '@/apis/auth';
 import { disablePrivileged, enablePrivileged } from '@/apis/internal';
 import { meOption } from '@/apis/members/query';
-import { Button } from '@/components/_ui/Button';
-import { Divider } from '@/components/_ui/Divider';
-import { Popover } from '@/components/_ui/Popover';
 import { STAGE } from '@/config';
-import { useToast } from '@/hooks/useToast';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 export const ProfileButton = () => {
@@ -42,13 +42,18 @@ export const ProfileButton = () => {
 
   return (
     <Popover>
-      <Popover.Target asChild>
+      <Popover.Trigger asChild>
         <button className="bg-grey100 size-8 cursor-pointer overflow-hidden rounded-full">
           <img alt="프로필 사진" referrerPolicy="no-referrer" src={me.profileImageUrl} />
         </button>
-      </Popover.Target>
-      <Popover.Content align="end" side="right" sideOffset={10}>
-        <div className="bg-background shadow-dialog min-w-80 rounded-[20px]">
+      </Popover.Trigger>
+      <Popover.Content
+        align="end"
+        className="min-w-80 rounded-[20px] p-0"
+        side="right"
+        sideOffset={10}
+      >
+        <div>
           <div className="flex items-center px-5 py-5">
             <div className="size-9 overflow-hidden rounded-full">
               <img alt="프로필 사진" src={me.profileImageUrl} />

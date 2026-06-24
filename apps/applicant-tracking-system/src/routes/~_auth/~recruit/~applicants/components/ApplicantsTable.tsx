@@ -1,5 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
+import { Checkbox } from '@yourssu-inhouse/interior';
+import { Pagination } from '@yourssu-inhouse/interior';
+import { Result } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
 
@@ -7,10 +11,6 @@ import type { ApplicantStateType } from '@/apis/applicants/schema';
 
 import { applicantsOption } from '@/apis/applicants/query';
 import { partsOption } from '@/apis/parts/query';
-import { Checkbox } from '@/components/_ui/Checkbox';
-import { Pagination } from '@/components/_ui/Pagination';
-import { Result } from '@/components/_ui/Result';
-import { Table } from '@/components/_ui/Table';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';

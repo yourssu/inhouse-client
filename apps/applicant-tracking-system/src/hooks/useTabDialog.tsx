@@ -1,9 +1,9 @@
+import { TabDialog } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import React, { type Dispatch, type SetStateAction, startTransition, useState } from 'react';
 
 import type { EmptyObjectType } from '@/types/misc';
 
-import { TabDialog } from '@/components/_ui/Dialog/TabDialog';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 
 type ContextType = Record<number | string | symbol, unknown>;

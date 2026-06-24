@@ -1,5 +1,5 @@
-import { Button } from '@/components/_ui/Button';
-import { useToast } from '@/hooks/useToast';
+import { Button } from '@yourssu-inhouse/interior';
+import { useToast } from '@yourssu-inhouse/interior';
 
 export const ToastView = () => {
   const toast = useToast();

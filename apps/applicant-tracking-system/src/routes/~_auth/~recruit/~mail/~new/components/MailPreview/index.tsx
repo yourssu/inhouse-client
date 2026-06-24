@@ -1,10 +1,10 @@
 import { Lottie } from '@toss/lottie';
+import { Result } from '@yourssu-inhouse/interior';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { VariableTypeName } from '@/apis/mails/schema';
 import type { TemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
 
-import { Result } from '@/components/_ui/Result';
 import { MailPreviewPaper } from '@/routes/~_auth/~recruit/~mail/~new/components/MailPreview/MailPreviewPaper';
 
 interface MailPreviewProps {

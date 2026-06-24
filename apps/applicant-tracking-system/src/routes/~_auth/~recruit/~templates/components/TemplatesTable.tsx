@@ -1,11 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { IconButton } from '@yourssu-inhouse/interior';
+import { Menu } from '@yourssu-inhouse/interior';
+import { Pagination } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 import { MdMoreHoriz } from 'react-icons/md';
 
 import { mailTemplatesOption } from '@/apis/mails/query';
-import { IconButton } from '@/components/_ui/IconButton';
-import { Menu } from '@/components/_ui/Menu';
-import { Pagination } from '@/components/_ui/Pagination';
-import { Table } from '@/components/_ui/Table';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { formatTemplates } from '@/utils/date';
@@ -42,11 +42,11 @@ export const TemplatesTable = () => {
               <Table.Cell>{formatTemplates['2026. 01. 01 23:00'](template.updatedAt)}</Table.Cell>
               <Table.Cell>
                 <Menu>
-                  <Menu.Target>
+                  <Menu.Trigger>
                     <IconButton size="sm" variant="dimmed">
                       <MdMoreHoriz className="size-4.5" />
                     </IconButton>
-                  </Menu.Target>
+                  </Menu.Trigger>
                   <Menu.Content align="end">
                     <TemplateUseButton templateId={template.id} />
                     <TemplateEditButton templateId={template.id} />

@@ -1,4 +1,4 @@
-import { Select } from '@/components/_ui/Select';
+import { Select } from '@yourssu-inhouse/interior';
 
 export const SelectView = () => {
   return (

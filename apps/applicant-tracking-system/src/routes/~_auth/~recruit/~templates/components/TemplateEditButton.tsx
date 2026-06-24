@@ -1,10 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { Menu } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import { MdEdit } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
 import { mailTemplateDetailOption } from '@/apis/mails/query';
-import { Menu } from '@/components/_ui/Menu';
 import { TemplateEditorDialog } from '@/components/TemplateEditorDialog';
 
 interface TemplateEditButtonProps {

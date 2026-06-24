@@ -1,5 +1,5 @@
-import { Button, type ButtonProps } from '@/components/_ui/Button';
-import { cn } from '@/utils/tw';
+import { Button, type ButtonProps } from '@yourssu-inhouse/interior';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 
 interface SelectionBarActionProps extends Omit<ButtonProps, 'left' | 'right' | 'size' | 'variant'> {
   icon?: React.ReactNode;

@@ -1,5 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { type Editor } from '@tiptap/react';
+import { Button } from '@yourssu-inhouse/interior';
+import { Tab } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import { type Dispatch, type SetStateAction, useCallback, useRef, useState } from 'react';
 import { SwitchCase, useLoading } from 'react-simplikit';
@@ -10,8 +12,6 @@ import type { ActiveMemberType } from '@/apis/members/schema';
 import type { VariableTab } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/type';
 
 import { mailTemplatesInfiniteOption } from '@/apis/mails/query';
-import { Button } from '@/components/_ui/Button';
-import { Tab } from '@/components/_ui/Tab';
 import { MailEditor } from '@/components/MailEditor';
 import { Paper } from '@/components/Paper';
 import {

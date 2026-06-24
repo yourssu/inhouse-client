@@ -1,11 +1,11 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
+import { Select, type SelectProps } from '@yourssu-inhouse/interior';
 import { assert } from 'es-toolkit';
 
 import type { SemesterType } from '@/apis/semesters/schema';
 import type { Merge } from '@/types/misc';
 
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
-import { Select, type SelectProps } from '@/components/_ui/Select';
 
 type SemesterSelectProps = Omit<
   Merge<SelectProps<string>, { onValueChange?: (v: SemesterType) => void }>,

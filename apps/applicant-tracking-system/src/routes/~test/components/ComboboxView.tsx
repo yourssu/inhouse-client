@@ -1,6 +1,5 @@
+import { Combobox } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
-
-import { Combobox } from '@/components/_ui/Combobox';
 
 export const ComboboxView = () => {
   const [comboboxValue, setComboboxValue] = useState<string[]>([]);

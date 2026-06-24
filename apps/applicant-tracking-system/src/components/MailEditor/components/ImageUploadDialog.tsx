@@ -1,11 +1,11 @@
+import { Dialog } from '@yourssu-inhouse/interior';
+import { useToast } from '@yourssu-inhouse/interior';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useDropzone } from 'react-dropzone';
 import { MdCloudUpload } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
 import { toMailImageUrl, uploadMailFiles } from '@/apis/mails';
-import { Dialog } from '@/components/_ui/Dialog';
-import { useToast } from '@/hooks/useToast';
-import { cn } from '@/utils/tw';
 
 interface ImageUploadDialogProps {
   close: () => void;

@@ -1,17 +1,17 @@
+import { Button } from '@yourssu-inhouse/interior';
+import { Fieldset } from '@yourssu-inhouse/interior';
+import { HoverTooltip } from '@yourssu-inhouse/interior';
+import { Switch } from '@yourssu-inhouse/interior';
+import { TextField } from '@yourssu-inhouse/interior';
+import { useToast } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 import { MdHelpOutline } from 'react-icons/md';
 
 import type { VariableTypeName } from '@/apis/mails/schema';
 import type { VariablePannelStep } from '@/components/TemplateEditorDialog/type';
 
-import { Button } from '@/components/_ui/Button';
-import { Fieldset } from '@/components/_ui/Fieldset';
-import { HoverTooltip } from '@/components/_ui/HoverTooltip';
-import { Switch } from '@/components/_ui/Switch';
-import { TextField } from '@/components/_ui/TextField';
 import { AnimatedStep } from '@/components/TemplateEditorDialog/components/VariablePannel/AnimatedStep';
 import { useVariableContext } from '@/components/TemplateEditorDialog/context';
-import { useToast } from '@/hooks/useToast';
 import { variableTypeNameKo } from '@/types/mails';
 
 interface VariableCreateStepProps {

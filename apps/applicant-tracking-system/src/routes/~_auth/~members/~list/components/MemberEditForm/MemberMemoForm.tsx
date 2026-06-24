@@ -1,6 +1,7 @@
+import { MultilineTextField } from '@yourssu-inhouse/interior';
+
 import type { EditFormContextType } from '@/routes/~_auth/~members/~list/type';
 
-import { MultilineTextField } from '@/components/_ui/MultilineTextField';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 
 interface MemberMemoFormProps {

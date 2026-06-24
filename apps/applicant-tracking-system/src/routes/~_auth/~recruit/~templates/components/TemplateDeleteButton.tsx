@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { Menu } from '@yourssu-inhouse/interior';
 import { MdDelete } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
 import { deleteMailTemplate } from '@/apis/mails';
-import { Menu } from '@/components/_ui/Menu';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 

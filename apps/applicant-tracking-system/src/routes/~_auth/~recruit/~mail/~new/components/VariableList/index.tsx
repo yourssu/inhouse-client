@@ -1,11 +1,11 @@
 import { Lottie } from '@toss/lottie';
+import { Result } from '@yourssu-inhouse/interior';
+import { TabButton } from '@yourssu-inhouse/interior';
 import { includes } from 'es-toolkit/compat';
 import { useState } from 'react';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 
-import { Result } from '@/components/_ui/Result';
-import { TabButton } from '@/components/_ui/TabButton';
 import {
   tabTypeMap,
   type VariableTab,

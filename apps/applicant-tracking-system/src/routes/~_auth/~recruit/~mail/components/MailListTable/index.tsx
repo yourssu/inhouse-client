@@ -1,15 +1,15 @@
 import { Lottie } from '@toss/lottie';
+import { IconButton } from '@yourssu-inhouse/interior';
+import { Menu } from '@yourssu-inhouse/interior';
+import { Pagination } from '@yourssu-inhouse/interior';
+import { Result } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 import { invert } from 'es-toolkit';
 import { useMemo } from 'react';
 import { MdMoreHoriz } from 'react-icons/md';
 
 import type { MailStatusNameType } from '@/types/mails';
 
-import { IconButton } from '@/components/_ui/IconButton';
-import { Menu } from '@/components/_ui/Menu';
-import { Pagination } from '@/components/_ui/Pagination';
-import { Result } from '@/components/_ui/Result';
-import { Table } from '@/components/_ui/Table';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
@@ -82,11 +82,11 @@ export const MailListTable = () => {
                 </Table.Cell>
                 <Table.Cell>
                   <Menu>
-                    <Menu.Target asChild>
+                    <Menu.Trigger asChild>
                       <IconButton size="sm" variant="dimmed">
                         <MdMoreHoriz className="size-4.5" />
                       </IconButton>
-                    </Menu.Target>
+                    </Menu.Trigger>
                     <Menu.Content align="end">
                       <Menu.ButtonItem>Todo: 백엔드 mailid 개선 완료 시 구현 예정</Menu.ButtonItem>
                     </Menu.Content>

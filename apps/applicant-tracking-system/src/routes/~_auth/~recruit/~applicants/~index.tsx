@@ -1,14 +1,14 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { ChipTab } from '@yourssu-inhouse/interior';
+import { InlineButton } from '@yourssu-inhouse/interior';
+import { SearchField } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 import { Suspense, useState } from 'react';
 import { z } from 'zod/v4';
 
 import { ApplicantStateSchema } from '@/apis/applicants/schema';
 import { semestersOption } from '@/apis/semesters/query';
-import { ChipTab } from '@/components/_ui/ChipTab';
-import { InlineButton } from '@/components/_ui/InlineButton';
-import { SearchField } from '@/components/_ui/SearchField';
-import { Table } from '@/components/_ui/Table';
 import { PageLayout } from '@/components/PageLayout';
 import { Paper } from '@/components/Paper';
 import { SemesterSelect } from '@/components/SemesterSelect';

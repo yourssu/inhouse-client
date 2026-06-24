@@ -1,4 +1,4 @@
-import { ChipTab } from '@/components/_ui/ChipTab';
+import { ChipTab } from '@yourssu-inhouse/interior';
 
 export const ChipTabView = () => {
   return (

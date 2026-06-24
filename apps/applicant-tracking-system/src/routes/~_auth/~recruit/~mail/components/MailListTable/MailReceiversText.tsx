@@ -1,4 +1,4 @@
-import { HoverTooltip } from '@/components/_ui/HoverTooltip';
+import { HoverTooltip } from '@yourssu-inhouse/interior';
 
 interface MailReceiversTextProps {
   receivers: string[];

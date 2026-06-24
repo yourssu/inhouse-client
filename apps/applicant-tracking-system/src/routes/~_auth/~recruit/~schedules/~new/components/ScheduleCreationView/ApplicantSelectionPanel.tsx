@@ -1,3 +1,6 @@
+import { Fieldset } from '@yourssu-inhouse/interior';
+import { Select } from '@yourssu-inhouse/interior';
+import { TabButton } from '@yourssu-inhouse/interior';
 import { useMemo } from 'react';
 import { MdCheck } from 'react-icons/md';
 
@@ -5,9 +8,6 @@ import type { ApplicantType } from '@/apis/applicants/schema';
 import type { PartType } from '@/apis/parts/schema';
 import type { SemesterType } from '@/apis/semesters/schema';
 
-import { Fieldset } from '@/components/_ui/Fieldset';
-import { Select } from '@/components/_ui/Select';
-import { TabButton } from '@/components/_ui/TabButton';
 import { SemesterSelect } from '@/components/SemesterSelect';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduledApplicantIds } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';

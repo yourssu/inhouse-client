@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@yourssu-inhouse/interior';
+import { SearchField } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import { Suspense } from 'react';
 import { useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { z } from 'zod/v4';
 
-import { Button } from '@/components/_ui/Button';
-import { SearchField } from '@/components/_ui/SearchField';
-import { Table } from '@/components/_ui/Table';
 import { PageLayout } from '@/components/PageLayout';
 import { TemplateEditorDialog } from '@/components/TemplateEditorDialog';
 import { useSearchState } from '@/hooks/useSearchState';

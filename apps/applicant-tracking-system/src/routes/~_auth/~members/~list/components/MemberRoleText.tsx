@@ -1,7 +1,8 @@
+import { tv } from '@yourssu-inhouse/interior-tailwind/utils';
+
 import type { MemberRoleType } from '@/apis/members/schema';
 
 import { memberRoleKo } from '@/types/members';
-import { tv } from '@/utils/tw';
 
 const role = tv({
   base: 'text-13 mr-3 min-w-10 text-center font-semibold',

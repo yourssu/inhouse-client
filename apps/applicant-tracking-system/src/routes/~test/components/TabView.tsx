@@ -1,6 +1,5 @@
+import { Tab } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
-
-import { Tab } from '@/components/_ui/Tab';
 
 export const TabView = () => {
   const [currentTab, setCurrentTab] = useState('Tab 1');

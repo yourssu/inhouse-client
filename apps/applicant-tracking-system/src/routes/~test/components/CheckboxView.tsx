@@ -1,4 +1,4 @@
-import { Checkbox } from '@/components/_ui/Checkbox';
+import { Checkbox } from '@yourssu-inhouse/interior';
 
 export const CheckboxView = () => {
   return (

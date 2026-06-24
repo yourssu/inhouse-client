@@ -1,12 +1,12 @@
 import { useQueryClient, useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { Button } from '@yourssu-inhouse/interior';
+import { Dialog } from '@yourssu-inhouse/interior';
+import { useToast } from '@yourssu-inhouse/interior';
 import { useLoading } from 'react-simplikit';
 
 import { mailTemplateDetailOption, mailTemplatesInfiniteOption } from '@/apis/mails/query';
 import { type MailTemplateDetail, type MailTemplateType } from '@/apis/mails/schema';
-import { Button } from '@/components/_ui/Button';
-import { Dialog } from '@/components/_ui/Dialog';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
-import { useToast } from '@/hooks/useToast';
 import { formatTemplates } from '@/utils/date';
 import { handleError } from '@/utils/error';
 

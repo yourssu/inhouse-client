@@ -1,5 +1,5 @@
-import { useTheme } from '@/components/Providers/ThemeProvider';
-import { cn } from '@/utils/tw';
+import { useTheme } from '@yourssu-inhouse/interior';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 
 interface AdaptiveLogoProps {
   className?: string;

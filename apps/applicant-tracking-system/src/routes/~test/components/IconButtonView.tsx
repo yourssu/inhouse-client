@@ -1,6 +1,5 @@
+import { IconButton } from '@yourssu-inhouse/interior';
 import { MdAdd } from 'react-icons/md';
-
-import { IconButton } from '@/components/_ui/IconButton';
 
 export const IconButtonView = () => {
   const sizes = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;

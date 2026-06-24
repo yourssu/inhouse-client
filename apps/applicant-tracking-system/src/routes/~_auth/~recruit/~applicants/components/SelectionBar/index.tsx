@@ -1,7 +1,7 @@
+import { cn, tv } from '@yourssu-inhouse/interior-tailwind/utils';
 import { Children, Fragment } from 'react';
 
 import { SelectionBarActionButton } from '@/routes/~_auth/~recruit/~applicants/components/SelectionBar/ActionButton';
-import { cn, tv } from '@/utils/tw';
 
 interface SelectionBarProps {
   children?: React.ReactNode;

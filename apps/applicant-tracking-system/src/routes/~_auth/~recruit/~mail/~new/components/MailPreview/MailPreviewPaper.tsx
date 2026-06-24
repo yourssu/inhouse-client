@@ -1,16 +1,16 @@
+import { SegmentedControl } from '@yourssu-inhouse/interior';
+import { Tab } from '@yourssu-inhouse/interior';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useState } from 'react';
 
 import type { VariableTypeName } from '@/apis/mails/schema';
 import type { TemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
 
-import { SegmentedControl } from '@/components/_ui/SegmentedControl';
-import { Tab } from '@/components/_ui/Tab';
 import { Paper } from '@/components/Paper';
 import { renderBodyHtml } from '@/components/TemplateEditorDialog/utils/variable';
 import { MailPreviewContent } from '@/routes/~_auth/~recruit/~mail/~new/components/MailPreview/MailPreviewContent';
 import { useVariableContext } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/context';
 import { useMailSelectionContext } from '@/routes/~_auth/~recruit/~mail/~new/context';
-import { cn } from '@/utils/tw';
 
 interface MailPreviewPaperProps {
   applicantNames: string[];

@@ -1,11 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { Select, type SelectProps } from '@yourssu-inhouse/interior';
 import { assert } from 'es-toolkit';
 
 import type { Merge } from '@/types/misc';
 
 import { partsOption } from '@/apis/parts/query';
 import { type PartNameType, type PartType as PartTypeOrigin } from '@/apis/parts/schema';
-import { Select, type SelectProps } from '@/components/_ui/Select';
 import { partNameKo } from '@/types/parts';
 
 type PartType<LeadExcluded extends boolean> = LeadExcluded extends true

@@ -1,4 +1,6 @@
 import { type Editor, useEditorState } from '@tiptap/react';
+import { IconButton, type IconButtonProps } from '@yourssu-inhouse/interior';
+import { Select } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { overlay } from 'overlay-kit';
 import { useCallback } from 'react';
@@ -13,8 +15,6 @@ import {
   MdImage,
 } from 'react-icons/md';
 
-import { IconButton, type IconButtonProps } from '@/components/_ui/IconButton';
-import { Select } from '@/components/_ui/Select';
 import { ImageUploadDialog } from '@/components/MailEditor/components/ImageUploadDialog';
 
 interface EditorToolbarProps {

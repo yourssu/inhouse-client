@@ -1,10 +1,10 @@
+import { Divider } from '@yourssu-inhouse/interior';
+import { IconButton } from '@yourssu-inhouse/interior';
+import { ItemList } from '@yourssu-inhouse/interior';
 import { MdClose, MdEdit } from 'react-icons/md';
 
 import type { BaseMemberType } from '@/apis/members/schema';
 
-import { Divider } from '@/components/_ui/Divider';
-import { IconButton } from '@/components/_ui/IconButton';
-import { ItemList } from '@/components/_ui/ItemList';
 import { useMemberEditDialog } from '@/routes/~_auth/~members/~list/hooks/useMemberEditDialog';
 import { memberRoleKo } from '@/types/members';
 import { partNameKo } from '@/types/parts';

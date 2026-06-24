@@ -1,13 +1,13 @@
+import { IconButton } from '@yourssu-inhouse/interior';
+import { type ThemeType, useTheme } from '@yourssu-inhouse/interior';
 import { Suspense } from 'react';
 import { IoMdMoon } from 'react-icons/io';
 import { MdPerson, MdPersonSearch, MdSunny } from 'react-icons/md';
 
 import type { RoutePath } from '@/types/route';
 
-import { IconButton } from '@/components/_ui/IconButton';
 import { ProfileButton } from '@/components/PageLayout/Sidebar/ProfileButton';
 import { SidebarLinkButton } from '@/components/PageLayout/Sidebar/SidebarLinkButton';
-import { type ThemeType, useTheme } from '@/components/Providers/ThemeProvider';
 
 export const Sidebar = () => {
   const { theme, toggle } = useTheme();

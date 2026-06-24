@@ -1,10 +1,11 @@
 import type { Dispatch, SetStateAction } from 'react';
 
+import { DatePicker } from '@yourssu-inhouse/interior';
+import { Fieldset } from '@yourssu-inhouse/interior';
+import { TextField } from '@yourssu-inhouse/interior';
+
 import type { EditFormContextType } from '@/routes/~_auth/~members/~list/type';
 
-import { DatePicker } from '@/components/_ui/DatePicker';
-import { Fieldset } from '@/components/_ui/Fieldset';
-import { TextField } from '@/components/_ui/TextField';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { formatTemplates } from '@/utils/date';
 

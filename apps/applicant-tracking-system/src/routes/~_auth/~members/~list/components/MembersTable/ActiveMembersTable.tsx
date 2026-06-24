@@ -1,8 +1,8 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { Badge } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 
 import { activeMembersOption } from '@/apis/members/query';
-import { Badge } from '@/components/_ui/Badge';
-import { Table } from '@/components/_ui/Table';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
 import { useSearchState } from '@/hooks/useSearchState';
 import { BaseMembersTable } from '@/routes/~_auth/~members/~list/components/MembersTable/BaseMembersTable';
