@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently 'vite' 'pnpm gen-color:watch'",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "check:type": "tsc --noEmit",
@@ -12,8 +12,6 @@
     "check:format": "prettier --check .",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write .",
-    "gen-color": "pnpm tsx ./scripts/gen-color.ts",
-    "gen-color:watch": "pnpm tsx watch --clear-screen=false --include ./src/styles/colors.css ./scripts/gen-color.ts",
     "fetch-schema": "pnpm tsx ./scripts/fetch-schema.ts"
   },
   "dependencies": {
