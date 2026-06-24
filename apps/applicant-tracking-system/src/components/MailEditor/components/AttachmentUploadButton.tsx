@@ -9,7 +9,7 @@ import { uploadMailFiles } from '@/apis/mails';
 import { Badge } from '@/components/_ui/Badge';
 import { IconButton } from '@/components/_ui/IconButton';
 import { InlineButton } from '@/components/_ui/InlineButton';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 
 interface AttachmentUploadButtonProps {
   attachments: AttachmentReference[];

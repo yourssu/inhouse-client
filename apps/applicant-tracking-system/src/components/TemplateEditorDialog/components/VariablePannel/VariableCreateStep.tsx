@@ -11,7 +11,7 @@ import { Switch } from '@/components/_ui/Switch';
 import { TextField } from '@/components/_ui/TextField';
 import { AnimatedStep } from '@/components/TemplateEditorDialog/components/VariablePannel/AnimatedStep';
 import { useVariableContext } from '@/components/TemplateEditorDialog/context';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { variableTypeNameKo } from '@/types/mails';
 
 interface VariableCreateStepProps {

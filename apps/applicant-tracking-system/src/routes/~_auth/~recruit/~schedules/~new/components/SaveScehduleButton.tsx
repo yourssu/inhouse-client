@@ -13,7 +13,7 @@ import { Button } from '@/components/_ui/Button';
 import { Dialog } from '@/components/_ui/Dialog';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduleApplicants } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
 import { partNameKo } from '@/types/parts';

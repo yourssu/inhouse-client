@@ -7,7 +7,7 @@ import type { RoutePath } from '@/types/route';
 import { IconButton } from '@/components/_ui/IconButton';
 import { ProfileButton } from '@/components/PageLayout/Sidebar/ProfileButton';
 import { SidebarLinkButton } from '@/components/PageLayout/Sidebar/SidebarLinkButton';
-import { type ThemeType, useTheme } from '@/components/Providers/ThemeProvider';
+import { type ThemeType, useTheme } from '@yourssu-inhouse/interior';
 
 export const Sidebar = () => {
   const { theme, toggle } = useTheme();

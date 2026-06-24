@@ -5,7 +5,7 @@ import { MdArrowBack } from 'react-icons/md';
 
 import { Button } from '@/components/_ui/Button';
 import { PageLayout } from '@/components/PageLayout';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { SaveScehduleButton } from '@/routes/~_auth/~recruit/~schedules/~new/components/SaveScehduleButton';
 
 import { ScheduleCreationView } from './components/ScheduleCreationView';

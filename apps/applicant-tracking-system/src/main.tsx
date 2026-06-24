@@ -2,14 +2,15 @@ import './styles/index.css';
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider } from '@tanstack/react-router';
+import { initializeTheme, ThemeProvider, ToastProvider } from '@yourssu-inhouse/interior';
 import { OverlayProvider } from 'overlay-kit';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { router } from '@/bootstrap/tanstack-router';
-import { ToastProvider } from '@/components/_ui/Toast/ToastProvider';
 import { QueryProvider } from '@/components/Providers/QueryProvider';
-import { ThemeProvider } from '@/components/Providers/ThemeProvider';
+
+initializeTheme();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

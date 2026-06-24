@@ -6,7 +6,7 @@ import { type MailTemplateDetail, type MailTemplateType } from '@/apis/mails/sch
 import { Button } from '@/components/_ui/Button';
 import { Dialog } from '@/components/_ui/Dialog';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { formatTemplates } from '@/utils/date';
 import { handleError } from '@/utils/error';
 

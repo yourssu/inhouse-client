@@ -16,7 +16,7 @@ import { Dialog } from '@/components/_ui/Dialog';
 import { Fieldset } from '@/components/_ui/Fieldset';
 import { SegmentedControl } from '@/components/_ui/SegmentedControl';
 import { TextField } from '@/components/_ui/TextField';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { buildMailPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
 import { handleError } from '@/utils/error';
 

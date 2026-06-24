@@ -1,7 +1,7 @@
 import type { RoutePath } from '@/types/route';
 
 import { TabLinkButton } from '@/components/PageLayout/TabSection/TabButton';
-import { useTheme } from '@/components/Providers/ThemeProvider';
+import { useTheme } from '@yourssu-inhouse/interior';
 
 type TabItem = {
   content: string;

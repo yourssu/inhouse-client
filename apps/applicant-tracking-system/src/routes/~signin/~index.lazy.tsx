@@ -5,10 +5,10 @@ import { useLoading } from 'react-simplikit';
 import { googleLogin } from '@/apis/auth';
 import { Button } from '@/components/_ui/Button';
 import { AdaptiveLogo } from '@/components/AdaptiveLogo';
-import { useTheme } from '@/components/Providers/ThemeProvider';
+import { useTheme } from '@yourssu-inhouse/interior';
 import { config } from '@/config';
 import { useGoogleOAuthPopup } from '@/hooks/useGoogleOAuthPopup';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { setAuthTokens } from '@/utils/auth';
 
 const Signin = () => {

@@ -1,4 +1,4 @@
-import { useTheme } from '@/components/Providers/ThemeProvider';
+import { useTheme } from '@yourssu-inhouse/interior';
 import { cn } from '@/utils/tw';
 
 interface AdaptiveLogoProps {

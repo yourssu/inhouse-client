@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useState } from 'react';
 
 import { InlineButton } from '@/components/_ui/InlineButton';
-import { useTheme } from '@/components/Providers/ThemeProvider';
+import { useTheme } from '@yourssu-inhouse/interior';
 import { useSearchState } from '@/hooks/useSearchState';
 import { BadgeView } from '@/routes/~test/components/BadgeView';
 import { TAB_CATEGORIES } from '@/routes/~test/type';

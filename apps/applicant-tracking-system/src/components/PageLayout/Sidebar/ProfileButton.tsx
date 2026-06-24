@@ -9,7 +9,7 @@ import { Button } from '@/components/_ui/Button';
 import { Divider } from '@/components/_ui/Divider';
 import { Popover } from '@/components/_ui/Popover';
 import { STAGE } from '@/config';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 export const ProfileButton = () => {

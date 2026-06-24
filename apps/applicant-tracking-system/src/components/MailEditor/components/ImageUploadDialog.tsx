@@ -4,7 +4,7 @@ import { useLoading } from 'react-simplikit';
 
 import { toMailImageUrl, uploadMailFiles } from '@/apis/mails';
 import { Dialog } from '@/components/_ui/Dialog';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { cn } from '@/utils/tw';
 
 interface ImageUploadDialogProps {

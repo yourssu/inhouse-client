@@ -1,6 +1,6 @@
 import { type DefaultError, useMutation, type UseMutationOptions } from '@tanstack/react-query';
 
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 import { handleError } from '@/utils/error';
 
 export const useToastedMutation = <
