@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { ChipTab } from '@yourssu-inhouse/interior';
+import { InlineButton } from '@yourssu-inhouse/interior';
+import { SearchField } from '@yourssu-inhouse/interior';
 import { Suspense, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 import { z } from 'zod/v4';
 
-import { ChipTab } from '@/components/_ui/ChipTab';
-import { InlineButton } from '@/components/_ui/InlineButton';
-import { SearchField } from '@/components/_ui/SearchField';
 import { PageLayout } from '@/components/PageLayout';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';

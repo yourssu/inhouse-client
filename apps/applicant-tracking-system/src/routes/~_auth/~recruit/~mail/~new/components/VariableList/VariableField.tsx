@@ -1,13 +1,13 @@
 import type { ChangeEvent } from 'react';
 
+import { DatePicker } from '@yourssu-inhouse/interior';
+import { Fieldset } from '@yourssu-inhouse/interior';
+import { Select } from '@yourssu-inhouse/interior';
+import { TextField } from '@yourssu-inhouse/interior';
 import { josa } from 'es-hangul';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 
-import { DatePicker } from '@/components/_ui/DatePicker';
-import { Fieldset } from '@/components/_ui/Fieldset';
-import { Select } from '@/components/_ui/Select';
-import { TextField } from '@/components/_ui/TextField';
 import { useVariableContext } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/context';
 import { isLinkValue } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/type';
 

@@ -1,4 +1,4 @@
-import { Button } from '@/components/_ui/Button';
+import { Button } from '@yourssu-inhouse/interior';
 
 const variants = ['primary', 'secondary', 'subPrimary', 'transparent'] as const;
 const sizes = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;

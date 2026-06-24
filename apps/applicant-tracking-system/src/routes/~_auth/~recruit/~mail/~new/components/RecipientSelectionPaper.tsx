@@ -1,10 +1,10 @@
+import { Combobox } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { useState } from 'react';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
-import { Combobox } from '@/components/_ui/Combobox';
 import { Paper } from '@/components/Paper';
 
 interface RecipientSelectionPaperProps {

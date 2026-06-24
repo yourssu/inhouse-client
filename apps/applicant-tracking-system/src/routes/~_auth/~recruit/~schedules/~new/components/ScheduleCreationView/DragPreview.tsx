@@ -1,10 +1,10 @@
+import { vars } from '@yourssu-inhouse/interior-vars';
 import { isSameDay } from 'date-fns';
 
 import {
   minutesToPixelHeight,
   minutesToPixelTop,
 } from '@/routes/~_auth/~recruit/~schedules/~new/utils/dragPosition';
-import { vars } from '@/styles/__generated__/colors.gen';
 
 interface DragPreviewProps {
   date: Date;
@@ -25,7 +25,7 @@ export const DragPreview = ({ date, isDragging, dragStart, dragCurrent }: DragPr
   const endMinutes = Math.max(dragStart.minutes, dragCurrent.minutes);
   const top = minutesToPixelTop(startMinutes);
   const height = minutesToPixelHeight(endMinutes - startMinutes);
-  const previewColor = vars.violet600;
+  const previewColor = vars.color.violet600;
 
   // 드래그 방향에 따라 그라데이션 방향 결정
   const isDraggingUp = dragCurrent.minutes < dragStart.minutes;

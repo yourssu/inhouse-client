@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { Button } from '@yourssu-inhouse/interior';
 import { Suspense } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { z } from 'zod/v4';
 
-import { Button } from '@/components/_ui/Button';
 import { PageLayout } from '@/components/PageLayout';
 
 import { MonthlyCalendar } from './components/MonthlyCalendar';

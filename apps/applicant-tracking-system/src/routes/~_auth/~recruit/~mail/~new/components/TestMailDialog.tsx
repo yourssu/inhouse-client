@@ -1,4 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { Dialog } from '@yourssu-inhouse/interior';
+import { TextField } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 import { useLoading } from 'react-simplikit';
 
@@ -9,8 +11,6 @@ import type { VariableValueType } from '@/routes/~_auth/~recruit/~mail/~new/comp
 
 import { postMailSend } from '@/apis/mails';
 import { meOption } from '@/apis/members/query';
-import { Dialog } from '@/components/_ui/Dialog';
-import { TextField } from '@/components/_ui/TextField';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { buildMailPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
 

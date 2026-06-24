@@ -1,4 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { Fieldset } from '@yourssu-inhouse/interior';
+import { Select } from '@yourssu-inhouse/interior';
+import { Switch } from '@yourssu-inhouse/interior';
 import { type Dispatch, type SetStateAction, startTransition } from 'react';
 import { SwitchCase } from 'react-simplikit';
 
@@ -6,9 +9,6 @@ import type { EditFormContextType } from '@/routes/~_auth/~members/~list/type';
 
 import { memberState } from '@/apis/members/schema';
 import { semestersOption } from '@/apis/semesters/query';
-import { Fieldset } from '@/components/_ui/Fieldset';
-import { Select } from '@/components/_ui/Select';
-import { Switch } from '@/components/_ui/Switch';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { type ExtendedMemberValues } from '@/routes/~_auth/~members/~list/utils/getExtendedMemberValues';
 

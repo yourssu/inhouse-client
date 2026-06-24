@@ -1,9 +1,9 @@
+import { Button } from '@yourssu-inhouse/interior';
+import { HoverTooltip } from '@yourssu-inhouse/interior';
 import { MdRefresh } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
 import { postMembersIncludeFromApplicants } from '@/apis/members';
-import { Button } from '@/components/_ui/Button';
-import { HoverTooltip } from '@/components/_ui/HoverTooltip';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+
 import { AttachmentUploadButton } from '@/components/MailEditor/components/AttachmentUploadButton';
 import { ContentEditor } from '@/components/MailEditor/components/ContentEditor';
 import { EditorToolbar } from '@/components/MailEditor/components/EditorToolbar';
@@ -8,7 +10,6 @@ import {
   type MailEditorContextValue,
   useMailEditorContext,
 } from '@/components/MailEditor/context';
-import { cn } from '@/utils/tw';
 
 interface MailEditorProps extends MailEditorContextValue {
   children: ReactNode;

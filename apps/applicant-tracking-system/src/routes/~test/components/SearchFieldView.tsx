@@ -1,4 +1,4 @@
-import { SearchField } from '@/components/_ui/SearchField';
+import { SearchField } from '@yourssu-inhouse/interior';
 
 export const SearchFieldView = () => {
   return (

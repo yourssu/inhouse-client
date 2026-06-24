@@ -1,5 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
+import { HoverTooltip } from '@yourssu-inhouse/interior';
+import { Pagination } from '@yourssu-inhouse/interior';
+import { Result } from '@yourssu-inhouse/interior';
+import { Table } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
@@ -8,10 +12,6 @@ import { FiMessageSquare } from 'react-icons/fi';
 import type { BaseMemberType } from '@/apis/members/schema';
 
 import { partsOption } from '@/apis/parts/query';
-import { HoverTooltip } from '@/components/_ui/HoverTooltip';
-import { Pagination } from '@/components/_ui/Pagination';
-import { Result } from '@/components/_ui/Result';
-import { Table } from '@/components/_ui/Table';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';

@@ -1,4 +1,4 @@
-import { TextField } from '@/components/_ui/TextField';
+import { TextField } from '@yourssu-inhouse/interior';
 
 export const TextFieldView = () => {
   return (

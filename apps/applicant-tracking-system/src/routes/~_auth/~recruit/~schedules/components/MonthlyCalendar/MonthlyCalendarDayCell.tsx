@@ -1,3 +1,4 @@
+import { tv } from '@yourssu-inhouse/interior-tailwind/utils';
 import clsx from 'clsx';
 import { getDate, isSunday, isToday } from 'date-fns';
 import { assert } from 'es-toolkit';
@@ -8,7 +9,6 @@ import type { InterviewScheduleType } from '@/apis/schedule/schema';
 import type { MonthlyCalendarDateState } from '@/routes/~_auth/~recruit/~schedules/utils/calendar';
 
 import { MonthlyScheduleItem } from '@/routes/~_auth/~recruit/~schedules/components/MonthlyCalendar/MonthlyScheduleItem';
-import { tv } from '@/utils/tw';
 
 interface MonthlyCalendarDayCellProps {
   applicants: ApplicantType[];

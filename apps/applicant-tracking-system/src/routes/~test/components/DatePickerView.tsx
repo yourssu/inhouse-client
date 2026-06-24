@@ -1,8 +1,7 @@
 import type { ComponentProps } from 'react';
 
+import { DatePicker, DateRangePicker } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
-
-import { DatePicker, DateRangePicker } from '@/components/_ui/DatePicker';
 
 export const DatePickerView = () => {
   const [date, setDate] = useState<Date | null>(null);

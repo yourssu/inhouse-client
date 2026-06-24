@@ -1,12 +1,12 @@
+import { DatePicker } from '@yourssu-inhouse/interior';
+import { Fieldset } from '@yourssu-inhouse/interior';
+import { Select } from '@yourssu-inhouse/interior';
+import { TextField } from '@yourssu-inhouse/interior';
 import { invert } from 'es-toolkit';
 import { type Dispatch, type SetStateAction } from 'react';
 
 import type { EditFormContextType } from '@/routes/~_auth/~members/~list/type';
 
-import { DatePicker } from '@/components/_ui/DatePicker';
-import { Fieldset } from '@/components/_ui/Fieldset';
-import { Select } from '@/components/_ui/Select';
-import { TextField } from '@/components/_ui/TextField';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { memberRoleKo } from '@/types/members';
 import { partNameKo } from '@/types/parts';

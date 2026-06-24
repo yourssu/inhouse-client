@@ -1,4 +1,5 @@
 import { type Editor } from '@tiptap/react';
+import { Dialog } from '@yourssu-inhouse/interior';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
 import { useLoading } from 'react-simplikit';
@@ -6,7 +7,6 @@ import { useLoading } from 'react-simplikit';
 import type { MailTemplateDetail } from '@/apis/mails/schema';
 
 import { createMailTemplate, updateMailTemplate } from '@/apis/mails';
-import { Dialog } from '@/components/_ui/Dialog';
 import { MailEditor } from '@/components/MailEditor';
 import { VariablePannel } from '@/components/TemplateEditorDialog/components/VariablePannel';
 import { VariableContext } from '@/components/TemplateEditorDialog/context';

@@ -1,9 +1,9 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
+import { InlineButton } from '@yourssu-inhouse/interior';
+import { useTheme } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { useState } from 'react';
 
-import { InlineButton } from '@/components/_ui/InlineButton';
-import { useTheme } from '@yourssu-inhouse/interior';
 import { useSearchState } from '@/hooks/useSearchState';
 import { BadgeView } from '@/routes/~test/components/BadgeView';
 import { TAB_CATEGORIES } from '@/routes/~test/type';

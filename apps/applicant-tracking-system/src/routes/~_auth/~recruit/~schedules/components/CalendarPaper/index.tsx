@@ -1,6 +1,6 @@
+import { SegmentedControl } from '@yourssu-inhouse/interior';
 import { startTransition } from 'react';
 
-import { SegmentedControl } from '@/components/_ui/SegmentedControl';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import {

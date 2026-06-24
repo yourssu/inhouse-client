@@ -1,6 +1,5 @@
+import { Switch } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
-
-import { Switch } from '@/components/_ui/Switch';
 
 export const SwitchView = () => {
   const [checked, setChecked] = useState(false);

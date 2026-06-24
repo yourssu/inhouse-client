@@ -1,4 +1,5 @@
-import { TabButton } from '@/components/_ui/TabButton';
+import { TabButton } from '@yourssu-inhouse/interior';
+
 import {
   type SelectableVariableType,
   variableIconMap,

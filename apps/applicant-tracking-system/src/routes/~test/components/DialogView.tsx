@@ -1,4 +1,5 @@
-import { Button } from '@/components/_ui/Button';
+import { Button } from '@yourssu-inhouse/interior';
+
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useTabDialog } from '@/hooks/useTabDialog';
 

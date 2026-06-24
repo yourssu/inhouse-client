@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { ItemList } from '@yourssu-inhouse/interior';
 
 import { withdrawnMembersOption } from '@/apis/members/query';
-import { ItemList } from '@/components/_ui/ItemList';
 import { useSearchState } from '@/hooks/useSearchState';
 import { BaseMemberDetailPaper } from '@/routes/~_auth/~members/~list/components/MemberDetailPaper/BaseMemberDetailPaper';
 

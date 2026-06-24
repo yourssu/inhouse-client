@@ -1,8 +1,8 @@
 import { Lottie } from '@toss/lottie';
+import { SegmentedControl } from '@yourssu-inhouse/interior';
 import { min, parseISO } from 'date-fns';
 import { useMemo, useState } from 'react';
 
-import { SegmentedControl } from '@/components/_ui/SegmentedControl';
 import { ApplicantSelectionPanel } from '@/routes/~_auth/~recruit/~schedules/~new/components/ScheduleCreationView/ApplicantSelectionPanel';
 import { DraggableWeeklyCalendar } from '@/routes/~_auth/~recruit/~schedules/~new/components/ScheduleCreationView/DraggableWeeklyCalendar';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';

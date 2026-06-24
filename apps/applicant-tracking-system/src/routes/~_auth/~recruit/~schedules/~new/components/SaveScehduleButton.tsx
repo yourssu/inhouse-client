@@ -1,5 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { Button } from '@yourssu-inhouse/interior';
+import { Dialog } from '@yourssu-inhouse/interior';
+import { useToast } from '@yourssu-inhouse/interior';
 import { compareAsc } from 'date-fns';
 import { assert } from 'es-toolkit';
 import { useMemo } from 'react';
@@ -9,11 +12,8 @@ import type { PartType } from '@/apis/parts/schema';
 import type { DraftScheduleType } from '@/types/schedule';
 
 import { deleteInterviewSchedulesByPart, postInterviewSchedules } from '@/apis/schedule';
-import { Button } from '@/components/_ui/Button';
-import { Dialog } from '@/components/_ui/Dialog';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import { useToast } from '@yourssu-inhouse/interior';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduleApplicants } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
 import { partNameKo } from '@/types/parts';
