@@ -44,8 +44,8 @@
     }
   },
   "devDependencies": {
-    "@tanstack/react-query": "^5.101.0",
-    "@tanstack/react-router": "^1.170.11",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
     "@types/node": "^24.13.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -55,8 +55,8 @@
     "motion": "^12.40.0",
     "overlay-kit": "^1.9.0",
     "prettier": "^3.8.3",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "tsdown": "^0.22.2",
     "typescript": "catalog:"
   }
