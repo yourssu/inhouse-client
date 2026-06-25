@@ -276,6 +276,9 @@ importers:
       '@toss/lottie':
         specifier: ^1.3.2
         version: 1.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@yourssu-inhouse/exterior':
+        specifier: workspace:*
+        version: link:../../packages/exterior
       '@yourssu-inhouse/inhouse-react':
         specifier: workspace:*
         version: link:../../packages/inhouse-react

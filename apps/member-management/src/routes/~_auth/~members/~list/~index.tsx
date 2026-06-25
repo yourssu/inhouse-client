@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { useDelayedValue } from '@yourssu-inhouse/inhouse-react/hooks';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
@@ -19,7 +20,6 @@ import { z } from 'zod/v4';
 
 import { membersQueries } from '@/apis/members/query';
 import { type MemberState, memberStateSchema, partNameSchema } from '@/apis/members/schema';
-import { PageLayout } from '@/components/PageLayout';
 import { useSearchState } from '@/hooks/useSearchState';
 import { MemberHistoryTooltip } from '@/routes/~_auth/~members/~list/components/MemberHistoryTooltip';
 import { memberPositionKo, memberStateKo, partNameKo } from '@/types/member';

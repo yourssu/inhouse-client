@@ -1,14 +1,9 @@
-import { createRouter } from '@tanstack/react-router';
+import { createAppRouter } from '@yourssu-inhouse/exterior';
 
-import { queryClient } from '@/bootstrap/tanstack-query';
+import { queryClient } from '@/bootstrap/queryClient';
 import { routeTree } from '@/routeTree.gen';
 
-export const router = createRouter({
-  routeTree,
-  context: {
-    queryClient,
-  },
-});
+export const router = createAppRouter({ routeTree, queryClient });
 
 declare module '@tanstack/react-router' {
   interface Register {
