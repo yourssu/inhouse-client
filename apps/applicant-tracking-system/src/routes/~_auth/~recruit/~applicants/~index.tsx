@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { ChipTab } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
@@ -9,7 +10,6 @@ import { z } from 'zod/v4';
 
 import { ApplicantStateSchema } from '@/apis/applicants/schema';
 import { semestersOption } from '@/apis/semesters/query';
-import { PageLayout } from '@/components/PageLayout';
 import { Paper } from '@/components/Paper';
 import { SemesterSelect } from '@/components/SemesterSelect';
 import { useMultiSelectActions } from '@/hooks/useMultiSelectActions';

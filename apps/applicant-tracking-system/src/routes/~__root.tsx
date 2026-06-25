@@ -1,6 +1,8 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
+import type { RouteContext } from '@yourssu-inhouse/exterior';
 
-export const Route = createRootRoute({
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+
+export const Route = createRootRouteWithContext<RouteContext>()({
   component: () => <Outlet />,
   // Todo: UI 완성하기 + 로그아웃 / 리셋 버튼 등
   errorComponent: ({ error, info }) => (
