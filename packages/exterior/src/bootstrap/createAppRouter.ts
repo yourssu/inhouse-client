@@ -7,8 +7,16 @@ import {
   type TrailingSlashOption,
 } from '@tanstack/react-router';
 
+import type { RouteContext } from './types';
+
+type AppRouteTree = AnyRoute & {
+  types: {
+    routerContext: RouteContext;
+  };
+};
+
 export interface CreateAppRouterOptions<
-  TRouteTree extends AnyRoute,
+  TRouteTree extends AppRouteTree,
   TTrailingSlashOption extends TrailingSlashOption = 'never',
   TDefaultStructuralSharingOption extends boolean = false,
   TRouterHistory extends RouterHistory = RouterHistory,
@@ -29,7 +37,7 @@ export interface CreateAppRouterOptions<
 }
 
 export const createAppRouter = <
-  TRouteTree extends AnyRoute,
+  TRouteTree extends AppRouteTree,
   TTrailingSlashOption extends TrailingSlashOption = 'never',
   TDefaultStructuralSharingOption extends boolean = false,
   TRouterHistory extends RouterHistory = RouterHistory,
@@ -45,23 +53,11 @@ export const createAppRouter = <
   TRouterHistory,
   TDehydrated
 >) => {
-  return createRouter<
-    TRouteTree,
-    TTrailingSlashOption,
-    TDefaultStructuralSharingOption,
-    TRouterHistory,
-    TDehydrated
-  >({
+  return createRouter({
     routeTree,
     context: {
       queryClient,
     },
     ...routerOptions,
-  } as RouterConstructorOptions<
-    TRouteTree,
-    TTrailingSlashOption,
-    TDefaultStructuralSharingOption,
-    TRouterHistory,
-    TDehydrated
-  >);
+  });
 };

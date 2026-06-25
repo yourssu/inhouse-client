@@ -16,6 +16,7 @@
   "dependencies": {
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
+    "@yourssu-inhouse/exterior": "workspace:*",
     "@yourssu-inhouse/inhouse-utils": "workspace:*",
     "@yourssu-inhouse/interior": "workspace:*",
     "@yourssu-inhouse/interior-tailwind": "workspace:*",

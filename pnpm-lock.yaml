@@ -397,6 +397,9 @@ importers:
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.15(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@yourssu-inhouse/exterior':
+        specifier: workspace:*
+        version: link:../../packages/exterior
       '@yourssu-inhouse/inhouse-utils':
         specifier: workspace:*
         version: link:../../packages/inhouse-utils

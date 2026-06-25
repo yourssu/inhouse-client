@@ -15,9 +15,14 @@ export default defineConfig({
       'react-dom',
       '@tanstack/react-query',
       '@tanstack/react-router',
+      '@tanstack/router-core',
+      '@tanstack/history',
       'motion',
       'motion/react',
       'overlay-kit',
     ],
+    dts: {
+      neverBundle: ['@tanstack/react-router', '@tanstack/router-core', '@tanstack/history'],
+    },
   },
 });
