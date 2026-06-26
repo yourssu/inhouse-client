@@ -1,6 +1,7 @@
+import type { MouseEvent, PropsWithChildren } from 'react';
+
 import { Link, type LinkComponentProps } from '@tanstack/react-router';
 import clsx from 'clsx';
-import type { MouseEvent, PropsWithChildren } from 'react';
 
 import { useTabSectionContext } from '../PageLayout/context';
 

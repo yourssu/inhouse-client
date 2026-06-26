@@ -1,11 +1,12 @@
+import type { ReactNode } from 'react';
+
 import { type LinkProps } from '@tanstack/react-router';
 import { useTheme } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
-import type { ReactNode } from 'react';
 
+import { useCollapsible } from '../../router/staticData';
 import { useTabSectionContext } from '../PageLayout/context';
 import { TabLinkButton } from './TabButton';
-import { useCollapsible } from '../../router/staticData';
 
 export interface TabItem {
   content: string;

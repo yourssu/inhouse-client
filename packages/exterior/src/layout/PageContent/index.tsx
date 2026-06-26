@@ -1,5 +1,6 @@
-import clsx from 'clsx';
 import type { PropsWithChildren, ReactNode } from 'react';
+
+import clsx from 'clsx';
 
 export interface PageContentProps {
   description?: string;

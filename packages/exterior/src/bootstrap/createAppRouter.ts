@@ -1,7 +1,8 @@
 import type { QueryClient } from '@tanstack/react-query';
+
 import {
-  createRouter,
   type AnyRoute,
+  createRouter,
   type RouterConstructorOptions,
   type RouterHistory,
   type TrailingSlashOption,
@@ -9,7 +10,7 @@ import {
 
 import type { RouteContext } from './types';
 
-type AppRouteTree = AnyRoute & {
+export type AppRouteTree = AnyRoute & {
   types: {
     routerContext: RouteContext;
   };
@@ -22,7 +23,6 @@ export interface CreateAppRouterOptions<
   TRouterHistory extends RouterHistory = RouterHistory,
   TDehydrated extends Record<string, unknown> = Record<string, unknown>,
 > {
-  routeTree: TRouteTree;
   queryClient: QueryClient;
   routerOptions?: Omit<
     RouterConstructorOptions<
@@ -32,8 +32,9 @@ export interface CreateAppRouterOptions<
       TRouterHistory,
       TDehydrated
     >,
-    'routeTree' | 'context'
+    'context' | 'routeTree'
   >;
+  routeTree: TRouteTree;
 }
 
 export const createAppRouter = <

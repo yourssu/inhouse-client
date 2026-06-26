@@ -1,13 +1,13 @@
-import { QueryClientProvider, type QueryClient } from '@tanstack/react-query';
+import { type QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, ToastProvider } from '@yourssu-inhouse/interior';
 import { OverlayProvider } from 'overlay-kit';
-import { StrictMode, type ReactNode } from 'react';
+import { type ReactNode, StrictMode } from 'react';
 
 export interface AppProvidersProps {
-  queryClient: QueryClient;
-  toastDuration?: number;
-  strictMode?: boolean;
   children: ReactNode;
+  queryClient: QueryClient;
+  strictMode?: boolean;
+  toastDuration?: number;
 }
 
 export const AppProviders = ({

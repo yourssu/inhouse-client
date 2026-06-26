@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react';
+
 import { type LinkProps } from '@tanstack/react-router';
 import { IconButton, type ThemeType, useTheme } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
-import type { ReactNode } from 'react';
 import { IoMdMoon } from 'react-icons/io';
 import { MdKeyboardDoubleArrowLeft, MdSunny } from 'react-icons/md';
 

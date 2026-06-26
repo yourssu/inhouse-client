@@ -1,17 +1,17 @@
 import './styles/index.css';
 
-import { RouterProvider } from '@tanstack/react-router';
-import { AppProviders } from '@yourssu-inhouse/exterior';
-import { initializeTheme } from '@yourssu-inhouse/interior';
-import { createRoot } from 'react-dom/client';
+import { createExteriorApp } from '@yourssu-inhouse/exterior';
 
-import { queryClient } from '@/bootstrap/queryClient';
-import { router } from '@/bootstrap/tanstack-router';
+import { routeTree } from '@/routeTree.gen';
 
-initializeTheme();
+const app = createExteriorApp({ routeTree });
 
-createRoot(document.getElementById('root')!).render(
-  <AppProviders queryClient={queryClient}>
-    <RouterProvider context={{ queryClient }} router={router} />
-  </AppProviders>,
-);
+export const router = app.router;
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+void app.mount();
