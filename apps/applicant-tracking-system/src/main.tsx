@@ -1,28 +1,28 @@
 import './styles/index.css';
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { RouterProvider } from '@tanstack/react-router';
-import { initializeTheme, ThemeProvider, ToastProvider } from '@yourssu-inhouse/interior';
-import { OverlayProvider } from 'overlay-kit';
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createExteriorApp } from '@yourssu-inhouse/exterior';
 
-import { router } from '@/bootstrap/tanstack-router';
-import { QueryProvider } from '@/components/Providers/QueryProvider';
+import { routeTree } from '@/routeTree.gen';
 
-initializeTheme();
+const app = createExteriorApp({
+  routeTree,
+  queryClientConfig: {
+    defaultOptions: {
+      queries: {
+        throwOnError: true,
+      },
+    },
+  },
+  children: <ReactQueryDevtools initialIsOpen={false} />,
+});
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <QueryProvider>
-      <ThemeProvider>
-        <ToastProvider duration={3000}>
-          <OverlayProvider>
-            <RouterProvider router={router} />
-          </OverlayProvider>
-        </ToastProvider>
-      </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryProvider>
-  </StrictMode>,
-);
+export const router = app.router;
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+void app.mount();

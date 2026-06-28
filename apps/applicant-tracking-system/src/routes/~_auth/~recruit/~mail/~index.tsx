@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { Button } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
@@ -7,7 +8,6 @@ import { MdAdd } from 'react-icons/md';
 import { z } from 'zod/v4';
 
 import { mailReservationStatus } from '@/apis/mails/schema';
-import { PageLayout } from '@/components/PageLayout';
 import { Paper } from '@/components/Paper';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';

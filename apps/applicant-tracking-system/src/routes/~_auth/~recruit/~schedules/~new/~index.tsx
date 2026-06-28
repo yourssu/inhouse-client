@@ -1,11 +1,11 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { Button } from '@yourssu-inhouse/interior';
 import { useToast } from '@yourssu-inhouse/interior';
 import { Suspense } from 'react';
 import { IoSparkles } from 'react-icons/io5';
 import { MdArrowBack } from 'react-icons/md';
 
-import { PageLayout } from '@/components/PageLayout';
 import { SaveScehduleButton } from '@/routes/~_auth/~recruit/~schedules/~new/components/SaveScehduleButton';
 
 import { ScheduleCreationView } from './components/ScheduleCreationView';

@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { ChipTab } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
@@ -6,7 +7,6 @@ import { Suspense, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 import { z } from 'zod/v4';
 
-import { PageLayout } from '@/components/PageLayout';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { ActiveMemberDetailPaper } from '@/routes/~_auth/~members/~list/components/MemberDetailPaper/ActiveMemberDetailPaper';

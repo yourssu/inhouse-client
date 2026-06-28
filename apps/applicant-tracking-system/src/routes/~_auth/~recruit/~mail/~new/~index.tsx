@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { Button } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import { Suspense, useState } from 'react';
@@ -16,7 +17,6 @@ import { applicantsOption } from '@/apis/applicants/query';
 import { mailTemplateDetailOption } from '@/apis/mails/query';
 import { activeMembersOption, meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
-import { PageLayout } from '@/components/PageLayout';
 import { useTemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
 import { useSearchState } from '@/hooks/useSearchState';
 import { MailEditPaper } from '@/routes/~_auth/~recruit/~mail/~new/components/MailEditPaper';

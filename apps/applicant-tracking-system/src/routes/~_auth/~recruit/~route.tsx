@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons/fc';
 
-import { PageLayout } from '@/components/PageLayout';
 
 const RouteComponent = () => {
   return (

@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { Button } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
@@ -8,7 +9,6 @@ import { useState } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { z } from 'zod/v4';
 
-import { PageLayout } from '@/components/PageLayout';
 import { TemplateEditorDialog } from '@/components/TemplateEditorDialog';
 import { useSearchState } from '@/hooks/useSearchState';
 import { useSetStateSelector } from '@/hooks/useSetStateSelector';

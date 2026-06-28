@@ -1,0 +1,53 @@
+{
+  "name": "@yourssu-inhouse/shell",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "check:type": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@yourssu-inhouse/exterior": "workspace:*",
+    "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@yourssu-inhouse/interior": "workspace:*",
+    "@yourssu-inhouse/interior-tailwind": "workspace:*",
+    "@yourssu-inhouse/interior-vars": "workspace:*",
+    "clsx": "^2.1.1",
+    "es-toolkit": "^1.47.0",
+    "motion": "^12.40.0",
+    "overlay-kit": "^1.9.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-icons": "^5.6.0",
+    "react-simplikit": "^0.0.51",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@tailwindcss/vite": "^4.3.0",
+    "@tanstack/router-plugin": "catalog:",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^24.13.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@yourssu-inhouse/eslint-config": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "catalog:",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "typescript": "catalog:",
+    "vite": "^8.0.12",
+    "vite-tsconfig-paths": "^6.1.1"
+  }
+}

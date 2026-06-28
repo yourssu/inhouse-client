@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
+import { PageLayout } from '@yourssu-inhouse/exterior';
 import { FcConferenceCall } from 'react-icons/fc';
 
-import { PageLayout } from '@/components/PageLayout';
 
 export const Route = createFileRoute('/_auth/members')({
   component: () => {
