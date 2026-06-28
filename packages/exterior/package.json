@@ -10,7 +10,8 @@
     ".": {
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
-    }
+    },
+    "./index.css": "./dist/index.css"
   },
   "scripts": {
     "build": "tsdown",
@@ -22,26 +23,13 @@
     "fix:format": "prettier --write ."
   },
   "dependencies": {
+    "@yourssu-inhouse/inhouse-utils": "workspace:*",
     "@yourssu-inhouse/interior": "workspace:*",
     "@yourssu-inhouse/interior-tailwind": "workspace:*",
-    "@yourssu-inhouse/inhouse-utils": "workspace:*",
     "clsx": "^2.1.1",
     "es-toolkit": "^1.47.0",
     "react-icons": "^5.6.0",
     "react-simplikit": "^0.0.51"
-  },
-  "peerDependencies": {
-    "@tanstack/react-query": "^5.101.0",
-    "@tanstack/react-router": "^1.170.11",
-    "motion": "^12.40.0",
-    "overlay-kit": "^1.9.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6"
-  },
-  "peerDependenciesMeta": {
-    "@tanstack/react-query-devtools": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@tanstack/react-query": "catalog:",
@@ -59,5 +47,18 @@
     "react-dom": "catalog:",
     "tsdown": "^0.22.2",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.101.0",
+    "@tanstack/react-router": "^1.170.11",
+    "motion": "^12.40.0",
+    "overlay-kit": "^1.9.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-query-devtools": {
+      "optional": true
+    }
   }
 }

@@ -1,6 +1,7 @@
 @layer theme, base, interior, components, utilities;
 
 @import 'tailwindcss';
+@import '@yourssu-inhouse/exterior/index.css';
 @import '@yourssu-inhouse/interior/index.css';
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
 

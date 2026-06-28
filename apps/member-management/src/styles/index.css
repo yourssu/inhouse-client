@@ -2,6 +2,7 @@
 
 @import 'tailwindcss';
 @import '@yourssu-inhouse/interior/index.css';
+@import '@yourssu-inhouse/exterior/index.css';
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
