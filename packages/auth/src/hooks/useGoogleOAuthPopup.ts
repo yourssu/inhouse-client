@@ -57,7 +57,7 @@ export const useGoogleOAuthPopup = () => {
           popup.close();
           resolveCode(code ?? undefined);
         } catch {
-          /* 
+          /*
             폴링으로 구현되어 있어 Cross-Origin-Opener-Policy로 인해서 지속적 에러가 발생해요.
             OAuth 플로우가 종료되면 다시 같은 origin으로 돌아와요.
           */

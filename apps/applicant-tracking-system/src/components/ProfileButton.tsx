@@ -1,12 +1,12 @@
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { useAuth } from '@yourssu-inhouse/auth';
 import { Button } from '@yourssu-inhouse/interior';
 import { Divider } from '@yourssu-inhouse/interior';
 import { Popover } from '@yourssu-inhouse/interior';
 import { useToast } from '@yourssu-inhouse/interior';
 import { MdArrowForwardIos } from 'react-icons/md';
 
-import { logout } from '@/apis/auth';
 import { disablePrivileged, enablePrivileged } from '@/apis/internal';
 import { meOption } from '@/apis/members/query';
 import { STAGE } from '@/config';
@@ -16,6 +16,7 @@ export const ProfileButton = () => {
   const { data: me } = useSuspenseQuery(meOption());
   const toast = useToast();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const queryClient = useQueryClient();
 

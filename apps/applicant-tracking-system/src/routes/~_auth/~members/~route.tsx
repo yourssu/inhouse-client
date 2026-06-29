@@ -2,7 +2,6 @@ import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/reac
 import { PageLayout } from '@yourssu-inhouse/exterior';
 import { FcConferenceCall } from 'react-icons/fc';
 
-
 export const Route = createFileRoute('/_auth/members')({
   component: () => {
     return (

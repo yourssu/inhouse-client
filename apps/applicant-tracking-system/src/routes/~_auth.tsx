@@ -1,5 +1,6 @@
 import { usePrefetchQuery } from '@tanstack/react-query';
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { requireAuth } from '@yourssu-inhouse/auth';
 import { PageLayout } from '@yourssu-inhouse/exterior';
 import { Suspense } from 'react';
 import { MdPerson, MdPersonSearch } from 'react-icons/md';
@@ -8,7 +9,6 @@ import { meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
 import { ProfileButton } from '@/components/ProfileButton';
-import { getAuthTokens, removeAuthTokens } from '@/utils/auth';
 
 const AuthLayout = () => {
   usePrefetchQuery(meOption());
@@ -40,14 +40,5 @@ export const Route = createFileRoute('/_auth')({
     },
   },
   component: AuthLayout,
-  beforeLoad: async () => {
-    if (getAuthTokens()) {
-      return;
-    }
-    // if ((await validateToken().catch(() => ({ validated: false }))).validated) {
-    //   return;
-    // }
-    removeAuthTokens();
-    throw redirect({ to: '/signin' });
-  },
+  beforeLoad: requireAuth(),
 });

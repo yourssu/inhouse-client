@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/~__root'
 import { Route as AuthRouteImport } from './routes/~_auth'
 import { Route as AuthMembersRouteRouteImport } from './routes/~_auth/~members/~route'
@@ -15,10 +17,19 @@ import { Route as TestIndexRouteImport } from './routes/~test/~index'
 import { Route as AuthIndexRouteImport } from './routes/~_auth/~index'
 import { Route as AuthMembersListIndexRouteImport } from './routes/~_auth/~members/~list/~index'
 
+const SigninIndexLazyRouteImport = createFileRoute('/signin/')()
+
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SigninIndexLazyRoute = SigninIndexLazyRouteImport.update({
+  id: '/signin/',
+  path: '/signin/',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/~signin/~index.lazy').then((d) => d.Route),
+)
 const AuthMembersRouteRoute = AuthMembersRouteRouteImport.update({
   id: '/members',
   path: '/members',
@@ -44,12 +55,14 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
   '/test/': typeof TestIndexRoute
   '/members': typeof AuthMembersRouteRouteWithChildren
+  '/signin/': typeof SigninIndexLazyRoute
   '/members/list/': typeof AuthMembersListIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthIndexRoute
   '/test': typeof TestIndexRoute
   '/members': typeof AuthMembersRouteRouteWithChildren
+  '/signin': typeof SigninIndexLazyRoute
   '/members/list': typeof AuthMembersListIndexRoute
 }
 export interface FileRoutesById {
@@ -58,25 +71,28 @@ export interface FileRoutesById {
   '/_auth/': typeof AuthIndexRoute
   '/test/': typeof TestIndexRoute
   '/_auth/members': typeof AuthMembersRouteRouteWithChildren
+  '/signin/': typeof SigninIndexLazyRoute
   '/_auth/members/list/': typeof AuthMembersListIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test/' | '/members' | '/members/list/'
+  fullPaths: '/' | '/test/' | '/members' | '/signin/' | '/members/list/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/test' | '/members' | '/members/list'
+  to: '/' | '/test' | '/members' | '/signin' | '/members/list'
   id:
     | '__root__'
     | '/_auth'
     | '/_auth/'
     | '/test/'
     | '/_auth/members'
+    | '/signin/'
     | '/_auth/members/list/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   TestIndexRoute: typeof TestIndexRoute
+  SigninIndexLazyRoute: typeof SigninIndexLazyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -86,6 +102,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin/': {
+      id: '/signin/'
+      path: '/signin'
+      fullPath: '/signin/'
+      preLoaderRoute: typeof SigninIndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/members': {
@@ -145,6 +168,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   TestIndexRoute: TestIndexRoute,
+  SigninIndexLazyRoute: SigninIndexLazyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
