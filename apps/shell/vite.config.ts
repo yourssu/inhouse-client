@@ -42,6 +42,15 @@ export default defineConfig(({ mode }) => {
           inhouse: { type: 'module', name: 'inhouse', entry: inhouseUrl },
         },
         shared,
+        // dev 에서 remote(scouter/inhouse) 파일 저장 시 HMR 이 전파되도록 해요.
+        // 기본(false)이면 remote 의 WS 이벤트가 host 페이지에 닿지 않아 수동 새로고침해야
+        // 반영돼요. host·remote 양쪽 모두 켜야 동작해요.
+        // - React(@vitejs/plugin-react) 감지 → native: remote 의 /@react-refresh 가
+        //   host 의 RefreshRuntime 으로 위임하고 host 는 vite:beforeUpdate 때 MF
+        //   moduleCache 를 clear 해 loadRemote() 가 fresh 모듈을 반환하게 해요.
+        // - adapter 없으면 full-reload: host 가 remote 의 __mf_hmr metadata 로
+        //   Node-to-Node WS 를 열어 변경 시 browser 에 full-reload 를 전파해요.
+        dev: { remoteHmr: true },
       }),
       tanstackRouter({
         target: 'react',
