@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { requireAuth } from '@yourssu-inhouse/auth';
 import { PageLayout } from '@yourssu-inhouse/exterior';
 import { FcConferenceCall } from 'react-icons/fc';
 import { MdPerson } from 'react-icons/md';
@@ -8,7 +9,10 @@ import { ProfileButton } from '@/components/ProfileButton';
 
 const AuthLayout = () => {
   return (
-    <PageLayout menu={[{ icon: <MdPerson />, label: '멤버', to: '/members' }]} profile={<ProfileButton />}>
+    <PageLayout
+      menu={[{ icon: <MdPerson />, label: '멤버', to: '/members' }]}
+      profile={<ProfileButton />}
+    >
       <PageLayout.TabSection
         items={[
           {
@@ -29,6 +33,7 @@ export const Route = createFileRoute('/_auth')({
       collapsible: true,
     },
   },
+  beforeLoad: requireAuth(),
   component: AuthLayout,
   loader: async ({ context }) => {
     await Promise.all([

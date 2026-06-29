@@ -1,3 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
+import { useAuth } from '@yourssu-inhouse/auth';
 import { Button, Divider, Popover, useToast } from '@yourssu-inhouse/interior';
 import { MdArrowForwardIos } from 'react-icons/md';
 
@@ -5,6 +7,8 @@ import { STAGE } from '@/config';
 
 export const ProfileButton = () => {
   const toast = useToast();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   return (
     <Popover>
@@ -49,8 +53,10 @@ export const ProfileButton = () => {
           </Button>
           <Button
             className="w-full px-2"
-            onClick={() => {
+            onClick={async () => {
+              await logout();
               toast.success('인하우스에서 로그아웃했어요');
+              navigate({ to: '/signin', replace: true });
             }}
             size="md"
             variant="transparent"

@@ -16,6 +16,7 @@
   "dependencies": {
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
+    "@yourssu-inhouse/auth": "workspace:*",
     "@yourssu-inhouse/exterior": "workspace:*",
     "@yourssu-inhouse/inhouse-utils": "workspace:*",
     "@yourssu-inhouse/interior": "workspace:*",
@@ -23,13 +24,15 @@
     "@yourssu-inhouse/interior-vars": "workspace:*",
     "clsx": "^2.1.1",
     "es-toolkit": "^1.47.0",
+    "ky": "^1.14.2",
     "motion": "^12.40.0",
     "overlay-kit": "^1.9.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-icons": "^5.6.0",
     "react-simplikit": "^0.0.51",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

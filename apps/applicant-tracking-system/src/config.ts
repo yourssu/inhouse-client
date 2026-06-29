@@ -13,3 +13,8 @@ export const config = {
     s3ImageURL: 'https://s3.ap-northeast-2.amazonaws.com/scouter.yourssu.com/dev/mail-files',
   },
 }[STAGE];
+
+export const authConfig = {
+  apiBaseURL: config.apiBaseURL,
+  googleOAuthURL: config.googleOAuthURL,
+};

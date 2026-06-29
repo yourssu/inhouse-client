@@ -1,9 +1,17 @@
 import type { RouteContext } from '@yourssu-inhouse/exterior';
 
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { AuthProvider } from '@yourssu-inhouse/auth';
+
+import { api, nativeApi } from '@/apis/api';
+import { authConfig } from '@/config';
 
 export const Route = createRootRouteWithContext<RouteContext>()({
-  component: () => <Outlet />,
+  component: () => (
+    <AuthProvider client={{ api, nativeApi }} config={authConfig}>
+      <Outlet />
+    </AuthProvider>
+  ),
   // Todo: UI 완성하기 + 로그아웃 / 리셋 버튼 등
   errorComponent: ({ error, info }) => (
     <div className="flex h-full w-full items-center justify-center">
