@@ -18,7 +18,7 @@ export const figureWrapper = style({
 });
 
 export const titleText = style({
-  color: vars.color.neutralMuted,
+  color: vars.color.fg.neutralMuted,
   ...typography['15'],
   textAlign: 'center',
   fontWeight: 600,
@@ -26,7 +26,7 @@ export const titleText = style({
 });
 
 export const descriptionText = style({
-  color: vars.color.neutralSubtle,
+  color: vars.color.fg.neutralSubtle,
   ...typography['13'],
   marginTop: 4,
   textAlign: 'center',

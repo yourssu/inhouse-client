@@ -19,9 +19,9 @@ export const item = recipe({
   base: {
     ...typography['15'],
     position: 'relative',
-    height: 38,
+    height: vars.uniformHeight.lg,
     cursor: 'pointer',
-    borderRadius: 9999,
+    borderRadius: vars.radius.full,
     paddingLeft: 16,
     paddingRight: 16,
     transition: 'color 0.2s ease',
@@ -32,24 +32,24 @@ export const item = recipe({
   variants: {
     selected: {
       true: {
-        color: vars.color.greyOpacity800,
+        color: vars.color.palette.greyOpacity800,
         fontWeight: 600,
       },
       false: {
-        color: vars.color.greyOpacity600,
+        color: vars.color.palette.greyOpacity600,
       },
     },
   },
 });
 
 export const indicator = style({
-  backgroundColor: vars.color.greyOpacity100,
+  backgroundColor: vars.color.palette.greyOpacity100,
   position: 'absolute',
   top: 0,
   left: 0,
   width: '100%',
   height: '100%',
-  borderRadius: 9999,
+  borderRadius: vars.radius.full,
 });
 
 export const label = style({

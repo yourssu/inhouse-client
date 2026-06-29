@@ -10,17 +10,17 @@ export const trigger = recipe({
     cursor: 'pointer',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderRadius: 8,
+    borderRadius: vars.radius[8],
     paddingTop: 8,
     paddingBottom: 8,
-    color: vars.color.greyOpacity800,
+    color: vars.color.palette.greyOpacity800,
     transition: 'colors 0.2s ease, box-shadow 0.2s ease',
     backgroundColor: 'transparent',
     border: 'none',
     outline: 'none',
     selectors: {
       '&:disabled': {
-        color: vars.color.greyOpacity300,
+        color: vars.color.palette.greyOpacity300,
         cursor: 'not-allowed',
       },
     },
@@ -28,44 +28,44 @@ export const trigger = recipe({
   variants: {
     variant: {
       outline: {
-        boxShadow: `inset 0 0 0 1px ${vars.color.grey200}`,
+        boxShadow: `inset 0 0 0 1px ${vars.color.palette.grey200}`,
         selectors: {
           '&:hover:not(:disabled)': {
-            boxShadow: `inset 0 0 0 1px ${vars.color.violetOpacity200}`,
+            boxShadow: `inset 0 0 0 1px ${vars.color.palette.violetOpacity200}`,
           },
         },
       },
       dimmed: {
-        backgroundColor: vars.color.greyOpacity100,
+        backgroundColor: vars.color.palette.greyOpacity100,
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.greyOpacity200,
+            backgroundColor: vars.color.palette.greyOpacity200,
           },
         },
       },
       inline: {
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.buttonTransparentBackgroundHovered,
+            backgroundColor: vars.color.palette.greyOpacity100,
           },
         },
       },
     },
     size: {
       xs: {
-        height: 24,
+        height: vars.uniformHeight.xs,
         ...typography['13'],
       },
       sm: {
-        height: 28,
+        height: vars.uniformHeight.sm,
         ...typography['13'],
       },
       md: {
-        height: 32,
+        height: vars.uniformHeight.md,
         ...typography.sm,
       },
       lg: {
-        height: 38,
+        height: vars.uniformHeight.lg,
         ...typography['15'],
       },
     },
@@ -73,7 +73,7 @@ export const trigger = recipe({
 });
 
 export const placeholder = style({
-  color: vars.color.grey400,
+  color: vars.color.palette.grey400,
 });
 
 export const triggerSpan = style({
@@ -82,9 +82,9 @@ export const triggerSpan = style({
 });
 
 export const popoverContent = style({
-  backgroundColor: vars.color.floatBackground,
+  backgroundColor: vars.color.bg.floatBackground,
   boxShadow: `0 0 0 1px ${vars.shadow.shadowMedium00}, 0 10px 30px 0 ${vars.shadow.shadowMedium01}, 0 20px 40px 0 ${vars.shadow.shadowMedium02}`,
-  borderRadius: 12,
+  borderRadius: vars.radius[12],
   padding: 16,
   outline: 'none',
 });
@@ -111,13 +111,13 @@ export const triggerRangeValue = style({
 
 export const triggerRangeSeparator = recipe({
   base: {
-    color: vars.color.greyOpacity400,
+    color: vars.color.palette.greyOpacity400,
     transition: 'color 0.2s ease',
   },
   variants: {
     disabled: {
       true: {
-        color: vars.color.greyOpacity200,
+        color: vars.color.palette.greyOpacity200,
       },
     },
   },
@@ -147,7 +147,7 @@ export const panelHeaderNav = style({
 });
 
 export const panelHeaderChevron = style({
-  color: vars.color.neutralSubtle,
+  color: vars.color.fg.neutralSubtle,
   width: 20,
   height: 20,
 });
@@ -158,7 +158,7 @@ export const selectTrigger = style({
   cursor: 'pointer',
   alignItems: 'center',
   gap: 4,
-  borderRadius: 6,
+  borderRadius: vars.radius[6],
   paddingLeft: 6,
   paddingRight: 6,
   paddingTop: 2,
@@ -171,24 +171,24 @@ export const selectTrigger = style({
   outline: 'none',
   selectors: {
     '&:hover': {
-      backgroundColor: vars.color.greyOpacity100,
+      backgroundColor: vars.color.palette.greyOpacity100,
     },
   },
 });
 
 export const selectArrow = style({
-  color: vars.color.grey500,
+  color: vars.color.palette.grey500,
   width: 16,
   height: 16,
   transition: 'transform 0.2s ease',
 });
 
 export const selectMenu = style({
-  backgroundColor: vars.color.floatBackground,
+  backgroundColor: vars.color.bg.floatBackground,
   boxShadow: `0 0 0 1px ${vars.shadow.shadowMedium00}, 0 10px 30px 0 ${vars.shadow.shadowMedium01}, 0 20px 40px 0 ${vars.shadow.shadowMedium02}`,
   maxHeight: 240,
   overflowY: 'auto',
-  borderRadius: 8,
+  borderRadius: vars.radius[8],
   paddingTop: 8,
   paddingBottom: 8,
 });
@@ -210,14 +210,14 @@ export const selectOption = recipe({
     outline: 'none',
     selectors: {
       '&:hover': {
-        backgroundColor: vars.color.greyOpacity100,
+        backgroundColor: vars.color.palette.greyOpacity100,
       },
     },
   },
   variants: {
     selected: {
       true: {
-        color: vars.color.violet500,
+        color: vars.color.palette.violet500,
         fontWeight: 500,
       },
     },
@@ -243,7 +243,7 @@ export const gridHeader = style({
 });
 
 export const gridHeaderCell = style({
-  color: vars.color.neutralMuted,
+  color: vars.color.fg.neutralMuted,
   ...typography['13'],
   paddingTop: 4,
   paddingBottom: 4,
@@ -251,7 +251,7 @@ export const gridHeaderCell = style({
   fontWeight: 500,
   selectors: {
     '&:first-of-type': {
-      color: vars.color.red500,
+      color: vars.color.palette.red500,
     },
   },
 });
@@ -279,7 +279,7 @@ export const cellButton = style({
 
 export const rangeBackdrop = recipe({
   base: {
-    backgroundColor: vars.color.greyOpacity100,
+    backgroundColor: vars.color.palette.greyOpacity100,
     position: 'absolute',
     top: 2,
     bottom: 2,
@@ -307,7 +307,7 @@ export const todayDot = recipe({
     height: 4,
     width: 4,
     transform: 'translateX(-50%)',
-    borderRadius: 9999,
+    borderRadius: vars.radius.full,
   },
   variants: {
     selected: {
@@ -315,7 +315,7 @@ export const todayDot = recipe({
         backgroundColor: '#ffffff',
       },
       false: {
-        backgroundColor: vars.color.violet600,
+        backgroundColor: vars.color.palette.violet600,
       },
     },
   },
@@ -329,14 +329,14 @@ export const cellStyle = recipe({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 9999,
+    borderRadius: vars.radius.full,
     transition: 'background-color 0.15s ease, color 0.15s ease',
     selectors: {
       'button:hover:not(:disabled) &': {
-        backgroundColor: vars.color.greyOpacity100,
+        backgroundColor: vars.color.palette.greyOpacity100,
       },
       'button:disabled &': {
-        color: vars.color.grey300,
+        color: vars.color.palette.grey300,
         cursor: 'not-allowed',
       },
     },
@@ -346,28 +346,28 @@ export const cellStyle = recipe({
       default: {},
       disabled: {},
       range: {
-        backgroundColor: vars.color.greyOpacity100,
-        color: vars.color.neutralMuted,
-        borderRadius: 0,
+        backgroundColor: vars.color.palette.greyOpacity100,
+        color: vars.color.fg.neutralMuted,
+        borderRadius: vars.radius[0],
         selectors: {
           'button:hover:not(:disabled) &': {
-            backgroundColor: vars.color.greyOpacity100,
+            backgroundColor: vars.color.palette.greyOpacity100,
           },
         },
       },
       selected: {
-        backgroundColor: vars.color.violet500,
+        backgroundColor: vars.color.palette.violet500,
         color: '#ffffff',
         position: 'relative',
         zIndex: 10,
         selectors: {
           'button:hover:not(:disabled) &': {
-            backgroundColor: vars.color.violet600,
+            backgroundColor: vars.color.palette.violet600,
           },
         },
       },
       future: {
-        color: vars.color.grey400,
+        color: vars.color.palette.grey400,
       },
     },
   },

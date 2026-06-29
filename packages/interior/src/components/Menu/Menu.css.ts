@@ -5,10 +5,10 @@ import { vars } from '@yourssu-inhouse/interior-vars';
 import { typography } from '../../styles/typography.css.ts';
 
 export const buttonItem = style({
-  color: vars.color.greyOpacity800,
+  color: vars.color.palette.greyOpacity800,
   ...typography['15'],
   cursor: 'pointer',
-  borderRadius: 8,
+  borderRadius: vars.radius[8],
   padding: 8,
   fontWeight: 500,
   transition: 'background-color 0.2s ease, color 0.2s ease',
@@ -20,7 +20,7 @@ export const buttonItem = style({
   textAlign: 'inherit',
   selectors: {
     '&:hover': {
-      backgroundColor: vars.color.greyOpacity100,
+      backgroundColor: vars.color.palette.greyOpacity100,
     },
   },
 });
@@ -31,7 +31,7 @@ export const buttonItemInner = style({
 });
 
 export const iconWrapper = style({
-  color: vars.color.greyOpacity500,
+  color: vars.color.palette.greyOpacity500,
   ...typography.base,
   display: 'flex',
   alignItems: 'center',

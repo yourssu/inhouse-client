@@ -1,12 +1,21 @@
 import type { TV } from 'tailwind-variants';
 
+import { objectKeys } from '@yourssu-inhouse/inhouse-utils/object';
+import { vars } from '@yourssu-inhouse/interior-vars';
 import { type ClassValue, clsx } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 import { tv as tvBase } from 'tailwind-variants';
 
+const toClassGroup = (keys: ReadonlyArray<number | string>, prefix: string) =>
+  keys.map((key) => `${prefix}-${key}`);
+
 const mergeConfig = {
   classGroups: {
-    'font-size': ['text-tiny', 'text-13', 'text-15', 'text-17'],
+    'font-size': toClassGroup(objectKeys(vars.typography.fontSize), 'text'),
+    leading: toClassGroup(objectKeys(vars.typography.lineHeight), 'leading'),
+    rounded: toClassGroup(objectKeys(vars.radius), 'rounded'),
+    h: toClassGroup(objectKeys(vars.uniformHeight), 'h'),
+    z: toClassGroup(objectKeys(vars.zIndex), 'z'),
   },
 };
 

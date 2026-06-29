@@ -23,101 +23,101 @@ export const button = recipe({
   variants: {
     variant: {
       primary: {
-        backgroundColor: vars.color.buttonPrimaryBackground,
-        color: vars.color.buttonPrimaryColor,
+        backgroundColor: vars.color.palette.violet500,
+        color: '#ffffff',
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.buttonPrimaryBackgroundHovered,
+            backgroundColor: vars.color.palette.violet600,
           },
           '&:disabled': {
-            color: vars.color.buttonPrimaryColorDisabled,
-            backgroundColor: vars.color.buttonPrimaryBackgroundDisabled,
+            color: 'rgba(255, 255, 255, 0.45)',
+            backgroundColor: vars.color.palette.violetOpacity200,
           },
         },
       },
       secondary: {
-        backgroundColor: vars.color.buttonSecondaryBackground,
-        color: vars.color.buttonSecondaryColor,
+        backgroundColor: vars.color.palette.greyOpacity100,
+        color: vars.color.palette.greyOpacity800,
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.buttonSecondaryBackgroundHovered,
+            backgroundColor: vars.color.palette.greyOpacity200,
           },
           '&:disabled': {
-            color: vars.color.buttonSecondaryColorDisabled,
-            backgroundColor: vars.color.buttonSecondaryBackgroundDisabled,
+            color: vars.color.palette.greyOpacity300,
+            backgroundColor: vars.color.palette.greyOpacity100,
           },
         },
       },
       subPrimary: {
-        backgroundColor: vars.color.buttonSubPrimaryBackground,
-        color: vars.color.buttonSubPrimaryColor,
+        backgroundColor: vars.color.palette.violetOpacity50,
+        color: vars.color.palette.violet600,
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.buttonSubPrimaryBackgroundHovered,
+            backgroundColor: vars.color.palette.violetOpacity100,
           },
           '&:disabled': {
-            color: vars.color.buttonSubPrimaryColorDisabled,
-            backgroundColor: vars.color.buttonSubPrimaryBackgroundDisabled,
+            color: vars.color.palette.violetOpacity100,
+            backgroundColor: vars.color.palette.violetOpacity50,
           },
         },
       },
       transparent: {
-        backgroundColor: vars.color.buttonTransparentBackground,
-        color: vars.color.buttonTransparentColor,
+        backgroundColor: 'transparent',
+        color: vars.color.palette.greyOpacity800,
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.buttonTransparentBackgroundHovered,
+            backgroundColor: vars.color.palette.greyOpacity100,
           },
           '&:disabled': {
-            color: vars.color.buttonTransparentColorDisabled,
-            backgroundColor: vars.color.buttonTransparentBackgroundDisabled,
+            color: vars.color.palette.grey500,
+            backgroundColor: 'transparent',
           },
         },
       },
     },
     size: {
       xxs: {
-        height: 20,
-        borderRadius: 6,
+        height: vars.uniformHeight.xxs,
+        borderRadius: vars.radius[6],
         paddingLeft: 6,
         paddingRight: 6,
         ...typography.tiny,
         fontWeight: 500,
       },
       xs: {
-        height: 24,
-        borderRadius: 6,
+        height: vars.uniformHeight.xs,
+        borderRadius: vars.radius[6],
         paddingLeft: 8,
         paddingRight: 8,
         ...typography.xs,
         fontWeight: 500,
       },
       sm: {
-        height: 28,
-        borderRadius: 8,
+        height: vars.uniformHeight.sm,
+        borderRadius: vars.radius[8],
         paddingLeft: 10,
         paddingRight: 10,
         ...typography['13'],
         fontWeight: 500,
       },
       md: {
-        height: 32,
-        borderRadius: 8,
+        height: vars.uniformHeight.md,
+        borderRadius: vars.radius[8],
         paddingLeft: 12,
         paddingRight: 12,
         ...typography.sm,
         fontWeight: 500,
       },
       lg: {
-        height: 38,
-        borderRadius: 10,
+        height: vars.uniformHeight.lg,
+        borderRadius: vars.radius[10],
         paddingLeft: 16,
         paddingRight: 16,
         ...typography['15'],
         fontWeight: 500,
       },
       xl: {
-        height: 48,
+        height: vars.uniformHeight.xl,
         borderRadius: 14,
         paddingLeft: 20,
         paddingRight: 20,
@@ -125,8 +125,8 @@ export const button = recipe({
         fontWeight: 500,
       },
       xxl: {
-        height: 68,
-        borderRadius: 16,
+        height: vars.uniformHeight.xxl,
+        borderRadius: vars.radius[16],
         paddingLeft: 28,
         paddingRight: 28,
         ...typography['17'],

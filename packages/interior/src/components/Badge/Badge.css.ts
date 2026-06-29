@@ -8,19 +8,28 @@ export const badge = recipe({
     display: 'inline-flex',
     width: 'fit-content',
     alignItems: 'center',
-    borderRadius: 9999,
+    borderRadius: vars.radius.full,
     paddingTop: 0,
     paddingBottom: 0,
     fontWeight: 500,
   },
   variants: {
     color: {
-      blue: { backgroundColor: vars.color.blueOpacity50, color: vars.color.blue600 },
-      green: { backgroundColor: vars.color.greenOpacity50, color: vars.color.green600 },
-      grey: { backgroundColor: vars.color.greyOpacity50, color: vars.color.grey600 },
-      red: { backgroundColor: vars.color.redOpacity50, color: vars.color.red600 },
-      violet: { backgroundColor: vars.color.violet50, color: vars.color.violet600 },
-      yellow: { backgroundColor: vars.color.yellow50, color: vars.color.yellow600 },
+      blue: {
+        backgroundColor: vars.color.palette.blueOpacity50,
+        color: vars.color.palette.blue600,
+      },
+      green: {
+        backgroundColor: vars.color.palette.greenOpacity50,
+        color: vars.color.palette.green600,
+      },
+      grey: {
+        backgroundColor: vars.color.palette.greyOpacity50,
+        color: vars.color.palette.grey600,
+      },
+      red: { backgroundColor: vars.color.palette.redOpacity50, color: vars.color.palette.red600 },
+      violet: { backgroundColor: vars.color.palette.violet50, color: vars.color.palette.violet600 },
+      yellow: { backgroundColor: vars.color.palette.yellow50, color: vars.color.palette.yellow600 },
     },
     size: {
       xs: { height: 15, paddingLeft: 6, paddingRight: 6, fontSize: 9 },

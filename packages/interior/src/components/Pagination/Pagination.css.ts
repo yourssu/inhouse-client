@@ -2,6 +2,8 @@ import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { vars } from '@yourssu-inhouse/interior-vars';
 
+import { typography } from '../../styles/typography.css.ts';
+
 export const paginationContainer = style({
   display: 'flex',
   alignItems: 'center',
@@ -9,9 +11,9 @@ export const paginationContainer = style({
 });
 
 export const ellipsis = style({
-  color: vars.color.greyOpacity500,
+  color: vars.color.palette.greyOpacity500,
   display: 'flex',
-  height: 32,
+  height: vars.uniformHeight.md,
   width: 32,
   alignItems: 'center',
   justifyContent: 'center',
@@ -19,14 +21,14 @@ export const ellipsis = style({
 
 export const navButtonRecipe = recipe({
   base: {
-    color: vars.color.greyOpacity500,
+    color: vars.color.palette.greyOpacity500,
     display: 'flex',
-    height: 32,
+    height: vars.uniformHeight.md,
     width: 32,
     cursor: 'pointer',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 9999,
+    borderRadius: vars.radius.full,
     border: 'none',
     backgroundColor: 'transparent',
     padding: 0,
@@ -35,14 +37,14 @@ export const navButtonRecipe = recipe({
   variants: {
     disabled: {
       true: {
-        color: vars.color.greyOpacity300,
+        color: vars.color.palette.greyOpacity300,
         cursor: 'not-allowed',
       },
       false: {
         selectors: {
           '&:hover': {
-            backgroundColor: vars.color.greyOpacity100,
-            color: vars.color.greyOpacity600,
+            backgroundColor: vars.color.palette.greyOpacity100,
+            color: vars.color.palette.greyOpacity600,
           },
         },
       },
@@ -56,13 +58,13 @@ export const navButtonRecipe = recipe({
 export const pageButtonRecipe = recipe({
   base: {
     display: 'flex',
-    height: 32,
+    height: vars.uniformHeight.md,
     width: 32,
     cursor: 'pointer',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 9999,
-    fontSize: 14,
+    borderRadius: vars.radius.full,
+    fontSize: typography.sm.fontSize,
     fontWeight: 500,
     border: 'none',
     backgroundColor: 'transparent',
@@ -72,19 +74,19 @@ export const pageButtonRecipe = recipe({
   variants: {
     variant: {
       default: {
-        color: vars.color.greyOpacity600,
+        color: vars.color.palette.greyOpacity600,
         selectors: {
           '&:hover': {
-            backgroundColor: vars.color.greyOpacity100,
+            backgroundColor: vars.color.palette.greyOpacity100,
           },
         },
       },
       active: {
-        backgroundColor: vars.color.greyOpacity100,
-        color: vars.color.greyOpacity800,
+        backgroundColor: vars.color.palette.greyOpacity100,
+        color: vars.color.palette.greyOpacity800,
       },
       disabled: {
-        color: vars.color.greyOpacity400,
+        color: vars.color.palette.greyOpacity400,
         cursor: 'not-allowed',
       },
     },

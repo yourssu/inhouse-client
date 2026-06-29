@@ -1,6 +1,8 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from '@yourssu-inhouse/interior-vars';
 
+import { typography } from '../../styles/typography.css.ts';
+
 export const container = style({
   display: 'flex',
   width: '100%',
@@ -17,7 +19,7 @@ export const headerInner = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   paddingBottom: 12,
-  fontSize: 20,
+  fontSize: typography.xl.fontSize,
   fontWeight: 'bold',
 });
 
@@ -26,8 +28,8 @@ export const headerDivider = style({
 });
 
 export const headerButton = style({
-  color: vars.color.neutralSubtle,
-  fontSize: 15,
+  color: vars.color.fg.neutralSubtle,
+  fontSize: typography['15'].fontSize,
   fontWeight: 'normal',
 });
 
@@ -38,7 +40,7 @@ export const body = style({
 });
 
 export const item = style({
-  fontSize: 15,
+  fontSize: typography['15'].fontSize,
   display: 'flex',
   width: '100%',
   alignItems: 'center',
@@ -49,7 +51,7 @@ export const item = style({
 });
 
 export const itemLabel = style({
-  color: vars.color.neutralSubtle,
+  color: vars.color.fg.neutralSubtle,
   display: 'flex',
   flexShrink: 0,
   alignItems: 'center',
@@ -57,6 +59,6 @@ export const itemLabel = style({
 });
 
 export const itemValue = style({
-  color: vars.color.neutralMuted,
+  color: vars.color.fg.neutralMuted,
   fontWeight: 500,
 });

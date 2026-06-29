@@ -80,7 +80,7 @@ export const ThSelect = <TValue extends string>({
               )}
               <SelectPrimitive.Icon
                 style={{
-                  color: value ? vars.color.violet600 : vars.color.neutralDisabled,
+                  color: value ? vars.color.palette.violet600 : vars.color.fg.neutralDisabled,
                   display: 'flex',
                   alignItems: 'center',
                 }}

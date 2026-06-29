@@ -22,7 +22,7 @@ export const labelWrapper = style({
 });
 
 export const labelText = style({
-  color: vars.color.grey800,
+  color: vars.color.palette.grey800,
 });
 
 export const button = recipe({
@@ -32,7 +32,7 @@ export const button = recipe({
     cursor: 'pointer',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 4,
+    borderRadius: vars.radius[4],
     transition: 'colors 0.2s ease-in-out',
     border: 'none',
     outline: 'none',
@@ -46,20 +46,20 @@ export const button = recipe({
   variants: {
     checked: {
       true: {
-        backgroundColor: vars.color.violet500,
+        backgroundColor: vars.color.palette.violet500,
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.violet600,
+            backgroundColor: vars.color.palette.violet600,
           },
         },
       },
       false: {
-        border: `1px solid ${vars.color.greyOpacity300}`,
+        border: `1px solid ${vars.color.palette.greyOpacity300}`,
         backgroundColor: 'transparent',
         selectors: {
           '&:hover:not(:disabled)': {
-            borderColor: vars.color.violet500,
-            backgroundColor: vars.color.violetOpacity50,
+            borderColor: vars.color.palette.violet500,
+            backgroundColor: vars.color.palette.violetOpacity50,
           },
         },
       },

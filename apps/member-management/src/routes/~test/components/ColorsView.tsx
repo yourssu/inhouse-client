@@ -18,15 +18,15 @@ export const ColorsView = () => {
 };
 
 const partColorMap = {
-  'Head lead': { base: vars.color.red500, light: vars.color.red200 },
-  Android: { base: vars.color.green500, light: vars.color.green300 },
-  Backend: { base: vars.color.violet500, light: vars.color.violet200 },
-  Frontend: { base: vars.color.blue500, light: vars.color.blue300 },
-  iOS: { base: vars.color.orange500, light: vars.color.orange400 },
-  Marketing: { base: vars.color.teal500, light: vars.color.teal200 },
-  'Product Design': { base: vars.color.purple600, light: vars.color.purple200 },
-  Finance: { base: vars.color.yellow500, light: vars.color.yellow300 },
-  HR: { base: vars.color.yellow500, light: vars.color.yellow300 },
-  Legal: { base: vars.color.grey500, light: vars.color.grey200 },
-  PM: { base: vars.color.red500, light: vars.color.red200 },
+  'Head lead': { base: vars.color.palette.red500, light: vars.color.palette.red200 },
+  Android: { base: vars.color.palette.green500, light: vars.color.palette.green300 },
+  Backend: { base: vars.color.palette.violet500, light: vars.color.palette.violet200 },
+  Frontend: { base: vars.color.palette.blue500, light: vars.color.palette.blue300 },
+  iOS: { base: vars.color.palette.orange500, light: vars.color.palette.orange400 },
+  Marketing: { base: vars.color.palette.teal500, light: vars.color.palette.teal200 },
+  'Product Design': { base: vars.color.palette.purple600, light: vars.color.palette.purple200 },
+  Finance: { base: vars.color.palette.yellow500, light: vars.color.palette.yellow300 },
+  HR: { base: vars.color.palette.yellow500, light: vars.color.palette.yellow300 },
+  Legal: { base: vars.color.palette.grey500, light: vars.color.palette.grey200 },
+  PM: { base: vars.color.palette.red500, light: vars.color.palette.red200 },
 } as const;

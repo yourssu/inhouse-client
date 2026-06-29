@@ -20,7 +20,7 @@ export const scrollAreaViewport = style({
 
 export const stickyIndicator = recipe({
   base: {
-    backgroundColor: vars.color.lightBackground,
+    backgroundColor: vars.color.bg.lightBackground,
     pointerEvents: 'none',
     position: 'absolute',
     top: 0,
@@ -64,10 +64,10 @@ export const scrollbar = style({
 });
 
 export const thumb = style({
-  backgroundColor: vars.color.scrollbar,
+  backgroundColor: vars.color.palette.scrollbar,
   position: 'relative',
   flex: 1,
-  borderRadius: 9999,
+  borderRadius: vars.radius.full,
   transition: 'background-color 0.15s ease',
 });
 
@@ -93,11 +93,11 @@ export const rowRecipe = recipe({
   base: {
     display: 'flex',
     height: 48,
-    borderRadius: 6,
+    borderRadius: vars.radius[6],
     ...typography.sm,
     selectors: {
       '&:nth-of-type(2n+1)': {
-        backgroundColor: vars.color.tableBackground,
+        backgroundColor: vars.color.bg.tableBackground,
       },
     },
   },
@@ -107,10 +107,10 @@ export const rowRecipe = recipe({
         cursor: 'pointer',
         selectors: {
           '&:hover': {
-            backgroundColor: vars.color.grey100,
+            backgroundColor: vars.color.palette.grey100,
           },
           '&:nth-of-type(2n+1):hover': {
-            backgroundColor: vars.color.grey100,
+            backgroundColor: vars.color.palette.grey100,
           },
           '&:focus-visible': {
             position: 'relative',
@@ -124,7 +124,7 @@ export const rowRecipe = recipe({
 
 export const cellRecipe = recipe({
   base: {
-    color: vars.color.neutralMuted,
+    color: vars.color.fg.neutralMuted,
     display: 'flex',
     height: 48,
     width: 128,
@@ -132,13 +132,13 @@ export const cellRecipe = recipe({
     flex: '1 1 0%',
     selectors: {
       '&:first-of-type': {
-        borderTopLeftRadius: 6,
-        borderBottomLeftRadius: 6,
+        borderTopLeftRadius: vars.radius[6],
+        borderBottomLeftRadius: vars.radius[6],
         paddingLeft: 8,
       },
       '&:last-of-type': {
-        borderTopRightRadius: 6,
-        borderBottomRightRadius: 6,
+        borderTopRightRadius: vars.radius[6],
+        borderBottomRightRadius: vars.radius[6],
         paddingRight: 8,
       },
     },
@@ -148,16 +148,16 @@ export const cellRecipe = recipe({
       true: {
         selectors: {
           '&:first-of-type': {
-            backgroundColor: vars.color.lightBackground,
+            backgroundColor: vars.color.bg.lightBackground,
             position: 'sticky',
             left: 0,
             zIndex: 10,
           },
           'tr:nth-of-type(2n+1) &:first-of-type': {
-            backgroundColor: vars.color.tableBackground,
+            backgroundColor: vars.color.bg.tableBackground,
           },
           'tr:hover &:first-of-type': {
-            backgroundColor: vars.color.grey100,
+            backgroundColor: vars.color.palette.grey100,
           },
         },
       },
@@ -228,7 +228,7 @@ export const cellInner = recipe({
 
 export const thRecipe = recipe({
   base: {
-    color: vars.color.neutralSubtle,
+    color: vars.color.fg.neutralSubtle,
     display: 'flex',
     height: 44,
     width: 128,
@@ -258,7 +258,7 @@ export const thRecipe = recipe({
       true: {
         selectors: {
           '&:first-of-type': {
-            backgroundColor: vars.color.lightBackground,
+            backgroundColor: vars.color.bg.lightBackground,
             position: 'sticky',
             left: 0,
             zIndex: 10,
@@ -332,7 +332,7 @@ export const thSelectTrigger = recipe({
     cursor: 'pointer',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    borderRadius: 8,
+    borderRadius: vars.radius[8],
     paddingLeft: 6,
     paddingRight: 0,
     paddingTop: 2,
@@ -343,18 +343,18 @@ export const thSelectTrigger = recipe({
     outline: 'none',
     selectors: {
       '&:hover': {
-        backgroundColor: vars.color.buttonTransparentBackgroundHovered,
+        backgroundColor: vars.color.palette.greyOpacity100,
       },
     },
   },
   variants: {
     hasValue: {
       true: {
-        color: vars.color.violet600,
+        color: vars.color.palette.violet600,
         fontWeight: 500,
       },
       false: {
-        color: vars.color.neutralSubtle,
+        color: vars.color.fg.neutralSubtle,
       },
     },
   },

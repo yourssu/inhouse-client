@@ -4,12 +4,12 @@ import { vars } from '@yourssu-inhouse/interior-vars';
 import { typography } from '../../styles/typography.css.ts';
 
 export const root = style({
-  backgroundColor: vars.color.greyOpacity100,
+  backgroundColor: vars.color.palette.greyOpacity100,
   display: 'flex',
-  height: '2rem',
+  height: vars.uniformHeight.md,
   width: 'auto',
   alignItems: 'center',
-  borderRadius: 8,
+  borderRadius: vars.radius[8],
   padding: 2,
 });
 
@@ -22,7 +22,7 @@ export const button = style({
   cursor: 'pointer',
   alignItems: 'center',
   justifyContent: 'center',
-  borderRadius: 6,
+  borderRadius: vars.radius[6],
   paddingLeft: 6,
   paddingRight: 6,
   ...typography.sm,
@@ -34,14 +34,14 @@ export const button = style({
 });
 
 export const indicator = style({
-  backgroundColor: vars.color.backgroundLevel04,
+  backgroundColor: vars.color.bg.backgroundLevel04,
   boxShadow: '0px 1px 2px 0px rgba(0, 27, 55, 0.1)',
   position: 'absolute',
   inset: 0,
   top: 0,
   left: 0,
   zIndex: 0,
-  borderRadius: 8,
+  borderRadius: vars.radius[8],
 });
 
 export const label = style({
@@ -54,9 +54,9 @@ export const label = style({
 });
 
 export const labelSelected = style({
-  color: vars.color.greyOpacity800,
+  color: vars.color.palette.greyOpacity800,
 });
 
 export const labelUnselected = style({
-  color: vars.color.greyOpacity600,
+  color: vars.color.palette.greyOpacity600,
 });
