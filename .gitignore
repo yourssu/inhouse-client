@@ -12,6 +12,10 @@ dist
 dist-ssr
 esm
 *.tgz
+
+# Module Federation generated types
+.mf
+@mf-types
 tsconfig.tsbuildinfo
 tsconfig.app.tsbuildinfo
 tsconfig.node.tsbuildinfo
