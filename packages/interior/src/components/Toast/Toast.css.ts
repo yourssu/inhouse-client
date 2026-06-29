@@ -5,12 +5,12 @@ import { vars } from '@yourssu-inhouse/interior-vars';
 import { typography } from '../../styles/typography.css.ts';
 
 export const toastContainer = style({
-  backgroundColor: vars.color.grey900,
+  backgroundColor: vars.color.palette.grey900,
   ...typography['15'],
   display: 'flex',
   width: 'fit-content',
   alignItems: 'center',
-  borderRadius: 12,
+  borderRadius: vars.radius[12],
   paddingTop: 4,
   paddingBottom: 4,
   paddingRight: 22,
@@ -19,7 +19,7 @@ export const toastContainer = style({
   color: '#ffffff',
   selectors: {
     '[data-theme="dark"] &': {
-      backgroundColor: vars.color.backgroundLevel02,
+      backgroundColor: vars.color.bg.backgroundLevel02,
     },
   },
 });
@@ -54,7 +54,7 @@ export const motionWrapper = style({
   position: 'fixed',
   top: 0,
   left: '50%',
-  zIndex: 50,
+  zIndex: vars.zIndex.notification,
   display: 'flex',
   width: 'fit-content',
   alignItems: 'center',

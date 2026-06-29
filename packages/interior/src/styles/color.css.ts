@@ -5,40 +5,15 @@ import { interiorContract } from './utils/contract';
 
 export const vars = createGlobalThemeContract(varsSource.color, interiorContract);
 
-const semanticColorAliases = {
-  neutral: vars.grey800,
-  neutralMuted: vars.grey700,
-  neutralSubtle: vars.grey600,
-  neutralDisabled: vars.grey500,
-  buttonPrimaryBackground: vars.violet500,
-  buttonPrimaryColor: '#ffffff',
-  buttonPrimaryBackgroundHovered: vars.violet600,
-  buttonPrimaryBackgroundDisabled: vars.violetOpacity200,
-  buttonPrimaryColorDisabled: 'rgba(255, 255, 255, 0.45)',
-  buttonSecondaryBackground: vars.greyOpacity100,
-  buttonSecondaryColor: vars.greyOpacity800,
-  buttonSecondaryBackgroundHovered: vars.greyOpacity200,
-  buttonSecondaryBackgroundDisabled: vars.greyOpacity100,
-  buttonSecondaryColorDisabled: vars.greyOpacity300,
-  buttonSubPrimaryBackground: vars.violetOpacity50,
-  buttonSubPrimaryColor: vars.violet600,
-  buttonSubPrimaryBackgroundHovered: vars.violetOpacity100,
-  buttonSubPrimaryBackgroundDisabled: vars.violetOpacity50,
-  buttonSubPrimaryColorDisabled: vars.violetOpacity100,
-  buttonTransparentBackground: 'transparent',
-  buttonTransparentColor: vars.greyOpacity800,
-  buttonTransparentBackgroundHovered: vars.greyOpacity100,
-  buttonTransparentBackgroundDisabled: 'transparent',
-  buttonTransparentColorDisabled: vars.grey500,
+const fgAliases = {
+  neutral: vars.palette.grey800,
+  neutralMuted: vars.palette.grey700,
+  neutralSubtle: vars.palette.grey600,
+  neutralDisabled: vars.palette.grey500,
 } as const;
 
-const lightColorTokens = {
+const lightPaletteTokens = {
   scrollbar: 'rgba(0, 29, 58, 0.18)',
-  background: '#f6f7f9',
-  sidebarBackground: '#f3f4f6',
-  lightBackground: '#ffffff',
-  tableBackground: '#f9fafb',
-  floatBackground: '#ffffff',
   grey50: '#f9fafb',
   grey100: '#f2f4f6',
   grey200: '#e5e8eb',
@@ -152,21 +127,23 @@ const lightColorTokens = {
   violetOpacity50: 'rgb(91, 77, 255, 0.15)',
   violetOpacity100: 'rgb(91, 77, 255, 0.35)',
   violetOpacity200: 'rgb(91, 77, 255, 0.45)',
+} as const;
+
+const lightBgTokens = {
+  background: '#f6f7f9',
+  sidebarBackground: '#f3f4f6',
+  lightBackground: '#ffffff',
+  tableBackground: '#f9fafb',
+  floatBackground: '#ffffff',
   backgroundLevelB01: '#f2f4f6',
   backgroundLevel01: '#ffffff',
   backgroundLevel02: '#ffffff',
   backgroundLevel03: '#ffffff',
   backgroundLevel04: '#ffffff',
-  ...semanticColorAliases,
 } as const;
 
-const darkColorTokens = {
+const darkPaletteTokens = {
   scrollbar: 'rgba(224, 224, 255, 0.27)',
-  background: '#101013',
-  sidebarBackground: '#131317',
-  lightBackground: '#17171c',
-  tableBackground: '#1c1c22',
-  floatBackground: '#2c2c35',
   grey50: '#202027',
   grey100: '#2c2c35',
   grey200: '#3c3c47',
@@ -280,12 +257,31 @@ const darkColorTokens = {
   violetOpacity50: 'rgb(107, 82, 255, 0.15)',
   violetOpacity100: 'rgb(107, 82, 255, 0.35)',
   violetOpacity200: 'rgb(107, 82, 255, 0.45)',
+} as const;
+
+const darkBgTokens = {
+  background: '#101013',
+  sidebarBackground: '#131317',
+  lightBackground: '#17171c',
+  tableBackground: '#1c1c22',
+  floatBackground: '#2c2c35',
   backgroundLevelB01: '#101013',
   backgroundLevel01: '#202027',
   backgroundLevel02: '#2c2c35',
   backgroundLevel03: '#3c3c47',
   backgroundLevel04: '#4d4d59',
-  ...semanticColorAliases,
+} as const;
+
+const lightColorTokens = {
+  palette: lightPaletteTokens,
+  fg: fgAliases,
+  bg: lightBgTokens,
+} as const;
+
+const darkColorTokens = {
+  palette: darkPaletteTokens,
+  fg: fgAliases,
+  bg: darkBgTokens,
 } as const;
 
 createGlobalTheme(':root, [data-theme="light"]', vars, lightColorTokens);

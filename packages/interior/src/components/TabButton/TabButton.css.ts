@@ -2,6 +2,8 @@ import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { vars } from '@yourssu-inhouse/interior-vars';
 
+import { typography } from '../../styles/typography.css.ts';
+
 export const container = recipe({
   base: {
     display: 'flex',
@@ -18,34 +20,34 @@ export const container = recipe({
   variants: {
     active: {
       true: {
-        backgroundColor: vars.color.greyOpacity100,
-        color: vars.color.neutral,
+        backgroundColor: vars.color.palette.greyOpacity100,
+        color: vars.color.fg.neutral,
         fontWeight: 600,
       },
       false: {
-        color: vars.color.neutralMuted,
+        color: vars.color.fg.neutralMuted,
         fontWeight: 500,
         selectors: {
           '&:hover': {
-            backgroundColor: vars.color.greyOpacity100,
+            backgroundColor: vars.color.palette.greyOpacity100,
           },
         },
       },
     },
     size: {
       md: {
-        height: 32,
-        borderRadius: 6,
+        height: vars.uniformHeight.md,
+        borderRadius: vars.radius[6],
         paddingLeft: 12,
         paddingRight: 12,
-        fontSize: 14,
+        fontSize: typography.sm.fontSize,
       },
       lg: {
-        height: 38,
-        borderRadius: 8,
+        height: vars.uniformHeight.lg,
+        borderRadius: vars.radius[8],
         paddingLeft: 14,
         paddingRight: 14,
-        fontSize: 15,
+        fontSize: typography['15'].fontSize,
       },
     },
   },

@@ -6,7 +6,7 @@ import { typography } from '../../styles/typography.css.ts';
 export const textFieldStyle = recipe({
   base: {
     width: '100%',
-    borderRadius: 8,
+    borderRadius: vars.radius[8],
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 0,
@@ -16,7 +16,7 @@ export const textFieldStyle = recipe({
     transition: 'colors 0.2s ease, box-shadow 0.2s ease',
     selectors: {
       '&:disabled': {
-        backgroundColor: vars.color.greyOpacity200,
+        backgroundColor: vars.color.palette.greyOpacity200,
         cursor: 'not-allowed',
       },
     },
@@ -24,30 +24,30 @@ export const textFieldStyle = recipe({
   variants: {
     variant: {
       outline: {
-        borderColor: vars.color.grey200,
+        borderColor: vars.color.palette.grey200,
         selectors: {
           '&:focus': {
-            borderColor: vars.color.violet500,
+            borderColor: vars.color.palette.violet500,
           },
           '&:hover:not(:focus):not(:disabled)': {
-            borderColor: vars.color.violetOpacity200,
+            borderColor: vars.color.palette.violetOpacity200,
           },
           '&:disabled': {
-            borderColor: vars.color.greyOpacity50,
+            borderColor: vars.color.palette.greyOpacity50,
           },
         },
       },
       dimmed: {
-        backgroundColor: vars.color.greyOpacity100,
+        backgroundColor: vars.color.palette.greyOpacity100,
       },
     },
     size: {
       md: {
-        height: 32,
+        height: vars.uniformHeight.md,
         ...typography.sm,
       },
       lg: {
-        height: 38,
+        height: vars.uniformHeight.lg,
         ...typography['15'],
       },
     },
@@ -60,10 +60,10 @@ export const textFieldStyle = recipe({
     {
       variants: { variant: 'outline', invalid: true },
       style: {
-        borderColor: vars.color.red500,
+        borderColor: vars.color.palette.red500,
         selectors: {
           '&:focus': {
-            borderColor: vars.color.red500,
+            borderColor: vars.color.palette.red500,
           },
         },
       },
@@ -71,7 +71,7 @@ export const textFieldStyle = recipe({
     {
       variants: { variant: 'dimmed', invalid: true },
       style: {
-        boxShadow: `0 0 0 1px ${vars.color.red500}`,
+        boxShadow: `0 0 0 1px ${vars.color.palette.red500}`,
       },
     },
   ],

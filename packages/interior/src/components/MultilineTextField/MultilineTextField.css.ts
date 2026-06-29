@@ -8,18 +8,18 @@ export const textarea = recipe({
     ...typography['15'],
     minHeight: 120,
     width: '100%',
-    borderRadius: 8,
+    borderRadius: vars.radius[8],
     border: '1px solid transparent',
     padding: 12,
     outline: 0,
     transition: 'colors 0.2s ease',
     selectors: {
       '&::placeholder': {
-        color: vars.color.grey400,
+        color: vars.color.palette.grey400,
       },
       '&:disabled': {
-        borderColor: vars.color.grey50,
-        backgroundColor: vars.color.grey100,
+        borderColor: vars.color.palette.grey50,
+        backgroundColor: vars.color.palette.grey100,
         cursor: 'not-allowed',
       },
     },
@@ -27,21 +27,21 @@ export const textarea = recipe({
   variants: {
     invalid: {
       true: {
-        borderColor: vars.color.red500,
+        borderColor: vars.color.palette.red500,
         selectors: {
           '&:focus': {
-            borderColor: vars.color.red500,
+            borderColor: vars.color.palette.red500,
           },
         },
       },
       false: {
-        borderColor: vars.color.grey200,
+        borderColor: vars.color.palette.grey200,
         selectors: {
           '&:focus': {
-            borderColor: vars.color.violet500,
+            borderColor: vars.color.palette.violet500,
           },
           '&:hover:not(:focus):not(:disabled)': {
-            borderColor: vars.color.violetOpacity200,
+            borderColor: vars.color.palette.violetOpacity200,
           },
         },
       },

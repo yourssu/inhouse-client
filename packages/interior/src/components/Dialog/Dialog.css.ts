@@ -1,6 +1,9 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from '@yourssu-inhouse/interior-vars';
 
+import { shadows } from '../../styles/shadow.css.ts';
+import { typography } from '../../styles/typography.css.ts';
+
 export const overlay = style({
   position: 'fixed',
   inset: 0,
@@ -16,16 +19,17 @@ export const content = style({
 });
 
 export const dialogWrapper = style({
-  backgroundColor: vars.color.backgroundLevel02,
-  boxShadow: `0 0 0 1px ${vars.shadow.shadowLarge00}, 0 10px 40px 0 ${vars.shadow.shadowLarge01}, 0 20px 50px 0 ${vars.shadow.shadowLarge02}, 2px 70px 80px 0 ${vars.shadow.shadowLarge02}`,
+  backgroundColor: vars.color.bg.backgroundLevel02,
+  // 인라인 조립 대신 semantic shadow 토큰을 사용해요(styles/shadow.css.ts 의 shadows.dialog).
+  boxShadow: shadows.dialog,
   height: '100%',
   overflow: 'hidden',
-  borderRadius: 16,
+  borderRadius: vars.radius[16],
   willChange: 'transform',
 });
 
 export const header = style({
-  backgroundColor: vars.color.backgroundLevel02,
+  backgroundColor: vars.color.bg.backgroundLevel02,
   display: 'flex',
   width: '100%',
 });
@@ -44,44 +48,44 @@ export const closeButtonWrapper = style({
 
 export const closeButton = style({
   display: 'inline-flex',
-  height: 32,
+  height: vars.uniformHeight.md,
   width: 32,
   flexShrink: 0,
   cursor: 'pointer',
   alignItems: 'center',
   justifyContent: 'center',
-  borderRadius: 6,
+  borderRadius: vars.radius[6],
   transition: 'background-color 0.2s ease',
   backgroundColor: 'transparent',
   border: 'none',
   outline: 'none',
   selectors: {
     '&:hover': {
-      backgroundColor: vars.color.grey200,
+      backgroundColor: vars.color.palette.grey200,
     },
     '&:active': {
-      backgroundColor: vars.color.grey200,
+      backgroundColor: vars.color.palette.grey200,
     },
     '&:focus-visible': {
-      backgroundColor: vars.color.grey200,
+      backgroundColor: vars.color.palette.grey200,
     },
   },
 });
 
 export const closeIcon = style({
-  color: vars.color.neutralSubtle,
+  color: vars.color.fg.neutralSubtle,
   height: 20,
   width: 20,
 });
 
 export const title = style({
-  fontSize: 20,
+  fontSize: typography.xl.fontSize,
   fontWeight: 600,
 });
 
 export const contentArea = style({
-  fontSize: 15,
-  color: vars.color.neutralMuted,
+  fontSize: typography['15'].fontSize,
+  color: vars.color.fg.neutralMuted,
   display: 'flex',
   maxWidth: 720,
   flexDirection: 'column',
@@ -93,7 +97,7 @@ export const contentArea = style({
 });
 
 export const buttonGroup = style({
-  backgroundColor: vars.color.backgroundLevel02,
+  backgroundColor: vars.color.bg.backgroundLevel02,
   display: 'grid',
   width: '100%',
   gridAutoColumns: 'minmax(min-content, 96px)',
@@ -110,7 +114,7 @@ export const tabDialogNavPanel = style({
   position: 'sticky',
   top: 0,
   flex: '27.8 1 0%',
-  borderRight: `1px solid ${vars.color.greyOpacity100}`,
+  borderRight: `1px solid ${vars.color.palette.greyOpacity100}`,
 });
 
 export const tabDialogNavPanelAside = style({
@@ -137,7 +141,7 @@ export const tabDialogContent = style({
 });
 
 export const tabDialogButtonGroup = style({
-  borderTop: `1px solid ${vars.color.greyOpacity100}`,
+  borderTop: `1px solid ${vars.color.palette.greyOpacity100}`,
   display: 'flex',
   paddingLeft: 24,
   paddingRight: 24,

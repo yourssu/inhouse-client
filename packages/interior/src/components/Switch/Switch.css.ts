@@ -1,6 +1,8 @@
 import { recipe } from '@vanilla-extract/recipes';
 import { vars } from '@yourssu-inhouse/interior-vars';
 
+import { shadows } from '../../styles/shadow.css.ts';
+
 export const base = recipe({
   base: {
     position: 'relative',
@@ -8,7 +10,7 @@ export const base = recipe({
     flexShrink: 0,
     cursor: 'pointer',
     alignItems: 'center',
-    borderRadius: 9999,
+    borderRadius: vars.radius.full,
     transition: 'background-color 0.2s ease-in-out',
     border: 'none',
     outline: 'none',
@@ -22,18 +24,18 @@ export const base = recipe({
   variants: {
     checked: {
       true: {
-        backgroundColor: vars.color.violet500,
+        backgroundColor: vars.color.palette.violet500,
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.violet600,
+            backgroundColor: vars.color.palette.violet600,
           },
         },
       },
       false: {
-        backgroundColor: vars.color.greyOpacity100,
+        backgroundColor: vars.color.palette.greyOpacity100,
         selectors: {
           '&:hover:not(:disabled)': {
-            backgroundColor: vars.color.greyOpacity200,
+            backgroundColor: vars.color.palette.greyOpacity200,
           },
         },
       },
@@ -65,11 +67,11 @@ export const base = recipe({
 
 export const thumb = recipe({
   base: {
-    boxShadow: `0 0 0 1px ${vars.color.greyOpacity100}, 0 2px 4px 0 rgba(0, 0, 0, 0.18)`, // shadow-switch-thumb
+    boxShadow: shadows.switchThumb,
     pointerEvents: 'none',
     margin: 2,
     display: 'block',
-    borderRadius: 9999,
+    borderRadius: vars.radius.full,
     backgroundColor: '#ffffff',
     transition: 'transform 0.2s ease-in-out',
   },

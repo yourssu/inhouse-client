@@ -12,14 +12,14 @@ export const root = style({
 
 export const label = style({
   ...typography['15'],
-  color: vars.color.neutralMuted,
+  color: vars.color.fg.neutralMuted,
   paddingTop: 6,
   paddingBottom: 6,
   fontWeight: 'normal',
 });
 
 export const help = style({
-  color: vars.color.neutralSubtle,
+  color: vars.color.fg.neutralSubtle,
   ...typography['13'],
   marginTop: 6,
   fontWeight: 'normal',

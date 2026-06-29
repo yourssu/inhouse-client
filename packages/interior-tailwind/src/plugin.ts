@@ -1,13 +1,12 @@
-import { objectEntries, objectKeys } from '@yourssu-inhouse/inhouse-utils/object';
+import { objectEntries } from '@yourssu-inhouse/inhouse-utils/object';
 import { vars } from '@yourssu-inhouse/interior-vars';
 import plugin from 'tailwindcss/plugin';
 
-const getInteriorColors = () => {
-  const colorNames = objectKeys(vars.color);
-  return {
-    ...Object.fromEntries(colorNames.map((key) => [key, vars.color[key]])),
-  };
-};
+const getInteriorColors = () => ({
+  ...vars.color.palette,
+  ...vars.color.fg,
+  ...vars.color.bg,
+});
 
 const getInteriorFontSizes = () =>
   Object.fromEntries(
@@ -17,17 +16,15 @@ const getInteriorFontSizes = () =>
     }),
   );
 
-const getInteriorLineHeights = () =>
-  Object.fromEntries(
-    objectEntries(vars.typography)
-      .filter(([key]) => key.endsWith('-line-height'))
-      .map(([key, value]) => [key.replace('-line-height', ''), value]),
-  );
+const getInteriorLineHeights = () => Object.fromEntries(objectEntries(vars.typography.lineHeight));
 
-const getShadow = () => {
-  const shadowNames = objectKeys(vars.shadow);
-  return Object.fromEntries(shadowNames.map((key) => [key, vars.shadow[key]]));
-};
+const getInteriorShadows = () => Object.fromEntries(objectEntries(vars.shadow));
+
+const getInteriorRadius = () => Object.fromEntries(objectEntries(vars.radius));
+
+const getInteriorUniformHeights = () => Object.fromEntries(objectEntries(vars.uniformHeight));
+
+const getInteriorZIndex = () => Object.fromEntries(objectEntries(vars.zIndex));
 
 export default plugin(() => {}, {
   theme: {
@@ -35,7 +32,10 @@ export default plugin(() => {}, {
       colors: getInteriorColors(),
       fontSize: getInteriorFontSizes(),
       lineHeight: getInteriorLineHeights(),
-      shadow: getShadow(),
+      shadow: getInteriorShadows(),
+      borderRadius: getInteriorRadius(),
+      height: getInteriorUniformHeights(),
+      zIndex: getInteriorZIndex(),
     },
   },
 });

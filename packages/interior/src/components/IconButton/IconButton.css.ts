@@ -7,7 +7,7 @@ export const tooltip = style({
   paddingBottom: 6,
   paddingLeft: 10,
   paddingRight: 10,
-  borderRadius: 6,
+  borderRadius: vars.radius[6],
   fontWeight: 600,
 });
 
@@ -23,10 +23,10 @@ export const button = recipe({
     outline: 'none',
     selectors: {
       '&:hover:not(:disabled)': {
-        backgroundColor: vars.color.greyOpacity200,
+        backgroundColor: vars.color.palette.greyOpacity200,
       },
       '&:disabled': {
-        color: vars.color.greyOpacity400,
+        color: vars.color.palette.greyOpacity400,
         cursor: 'not-allowed',
       },
     },
@@ -35,46 +35,46 @@ export const button = recipe({
     size: {
       xxs: {
         width: 20,
-        height: 20,
-        borderRadius: 2,
+        height: vars.uniformHeight.xxs,
+        borderRadius: vars.radius[2],
       },
       xs: {
         width: 24,
-        height: 24,
-        borderRadius: 2,
+        height: vars.uniformHeight.xs,
+        borderRadius: vars.radius[2],
       },
       sm: {
         width: 28,
-        height: 28,
-        borderRadius: 2,
+        height: vars.uniformHeight.sm,
+        borderRadius: vars.radius[2],
       },
       md: {
         width: 32,
-        height: 32,
-        borderRadius: 6,
+        height: vars.uniformHeight.md,
+        borderRadius: vars.radius[6],
       },
       lg: {
         width: 38,
-        height: 38,
-        borderRadius: 8,
+        height: vars.uniformHeight.lg,
+        borderRadius: vars.radius[8],
       },
       xl: {
         width: 48,
-        height: 48,
-        borderRadius: 12,
+        height: vars.uniformHeight.xl,
+        borderRadius: vars.radius[12],
       },
       xxl: {
         width: 68,
-        height: 68,
-        borderRadius: 16,
+        height: vars.uniformHeight.xxl,
+        borderRadius: vars.radius[16],
       },
     },
     variant: {
       dimmed: {
-        backgroundColor: vars.color.greyOpacity100,
+        backgroundColor: vars.color.palette.greyOpacity100,
         selectors: {
           '&:disabled': {
-            color: vars.color.greyOpacity300,
+            color: vars.color.palette.greyOpacity300,
           },
         },
       },

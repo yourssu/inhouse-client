@@ -15,7 +15,7 @@ export const trigger = recipe({
     flexWrap: 'wrap',
     alignItems: 'center',
     gap: 6,
-    borderRadius: 8,
+    borderRadius: vars.radius[8],
     border: '1px solid transparent',
     paddingLeft: 8,
     paddingRight: 8,
@@ -27,18 +27,18 @@ export const trigger = recipe({
   variants: {
     disabled: {
       true: {
-        borderColor: vars.color.grey50,
-        backgroundColor: vars.color.grey100,
+        borderColor: vars.color.palette.grey50,
+        backgroundColor: vars.color.palette.grey100,
         cursor: 'not-allowed',
       },
       false: {
-        borderColor: vars.color.grey200,
+        borderColor: vars.color.palette.grey200,
         selectors: {
           '&:focus-within': {
-            borderColor: vars.color.violet500,
+            borderColor: vars.color.palette.violet500,
           },
           '&:hover:not(:focus-within)': {
-            borderColor: vars.color.violetOpacity200,
+            borderColor: vars.color.palette.violetOpacity200,
           },
         },
       },
@@ -52,7 +52,7 @@ export const trigger = recipe({
     {
       variants: { disabled: false, invalid: true },
       style: {
-        borderColor: vars.color.red500,
+        borderColor: vars.color.palette.red500,
       },
     },
   ],
@@ -71,7 +71,7 @@ export const input = style({
   outline: 'none',
   selectors: {
     '&::placeholder': {
-      color: vars.color.grey400,
+      color: vars.color.palette.grey400,
     },
     '&:disabled': {
       cursor: 'not-allowed',
@@ -80,25 +80,25 @@ export const input = style({
 });
 
 export const popoverContent = style({
-  zIndex: 50,
+  zIndex: vars.zIndex.dropdown,
   width: 'var(--radix-popover-trigger-width)',
   outline: 'none',
 });
 
 export const menu = style({
-  backgroundColor: vars.color.floatBackground,
+  backgroundColor: vars.color.bg.floatBackground,
   boxShadow: `0 0 0 1px ${vars.shadow.shadowMedium00}, 0 10px 30px 0 ${vars.shadow.shadowMedium01}, 0 20px 40px 0 ${vars.shadow.shadowMedium02}`,
   maxHeight: 320,
   width: '100%',
   overflowY: 'auto',
-  borderRadius: 8,
+  borderRadius: vars.radius[8],
   paddingTop: 8,
   paddingBottom: 8,
 });
 
 export const noResult = style({
   ...typography['15'],
-  color: vars.color.grey400,
+  color: vars.color.palette.grey400,
   marginLeft: 8,
   marginRight: 8,
   minHeight: 40,
@@ -108,12 +108,12 @@ export const noResult = style({
 });
 
 export const chip = style({
-  backgroundColor: vars.color.greyOpacity100,
+  backgroundColor: vars.color.palette.greyOpacity100,
   display: 'flex',
-  height: 28,
+  height: vars.uniformHeight.sm,
   alignItems: 'center',
   gap: 4,
-  borderRadius: 8,
+  borderRadius: vars.radius[8],
   paddingLeft: 8,
   paddingRight: 8,
   paddingTop: 2,
@@ -127,7 +127,7 @@ export const chipCloseButton = style({
   cursor: 'pointer',
   alignItems: 'center',
   justifyContent: 'center',
-  borderRadius: 9999,
+  borderRadius: vars.radius.full,
   padding: 2,
   backgroundColor: 'transparent',
   border: 'none',
@@ -135,7 +135,7 @@ export const chipCloseButton = style({
   transition: 'background-color 0.2s ease',
   selectors: {
     '&:hover': {
-      backgroundColor: vars.color.greyOpacity200,
+      backgroundColor: vars.color.palette.greyOpacity200,
     },
   },
 });
@@ -147,7 +147,7 @@ export const itemStyle = recipe({
     marginRight: 8,
     minHeight: 40,
     cursor: 'pointer',
-    borderRadius: 8,
+    borderRadius: vars.radius[8],
     padding: 8,
     fontWeight: 500,
     outline: 0,
@@ -156,15 +156,15 @@ export const itemStyle = recipe({
   variants: {
     highlighted: {
       true: {
-        backgroundColor: vars.color.greyOpacity100,
+        backgroundColor: vars.color.palette.greyOpacity100,
       },
     },
     selected: {
       true: {
-        color: vars.color.violet600,
+        color: vars.color.palette.violet600,
       },
       false: {
-        color: vars.color.greyOpacity800,
+        color: vars.color.palette.greyOpacity800,
       },
     },
   },

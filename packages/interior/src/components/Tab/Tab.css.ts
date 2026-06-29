@@ -36,7 +36,7 @@ export const button = style({
 
 export const label = recipe({
   base: {
-    color: vars.color.grey800,
+    color: vars.color.palette.grey800,
     ...typography['15'],
   },
   variants: {
@@ -52,7 +52,7 @@ export const label = recipe({
 });
 
 export const indicator = style({
-  backgroundColor: vars.color.grey800,
+  backgroundColor: vars.color.palette.grey800,
   position: 'absolute',
   bottom: 0,
   left: 0,

@@ -1,9 +1,15 @@
-const primary = {
-  backgroundLevelB01: 'var(--backgroundLevelB01)',
-  backgroundLevel01: 'var(--backgroundLevel01)',
-  backgroundLevel02: 'var(--backgroundLevel02)',
-  backgroundLevel03: 'var(--backgroundLevel03)',
-  backgroundLevel04: 'var(--backgroundLevel04)',
+/**
+ * Color token taxonomy.
+ * 3계층으로 분리해요.
+ * - `palette` : 원색 스케일(색 패밀리 50–900 + opacity)과 `scrollbar`. 테마별 값이 주입돼요.
+ * - `fg`      : 전경(텍스트/아이콘) semantic. palette 의 grey 계열 alias라 테마를 자동 추종해요.
+ * - `bg`      : 표면/배경 semantic( named surfaces + backgroundLevel). 테마별 값이 주입돼요.
+ *
+ * CSS 변수명(`--grey500`, `--neutral`, …)은 그대로고, JS 객체 구조만 중첩돼요.
+ * 값 주입은 interior 패키지의 styles/color.css.ts 가 담당해요.
+ */
+const palette = {
+  scrollbar: 'var(--scrollbar)',
   grey50: 'var(--grey50)',
   grey100: 'var(--grey100)',
   grey200: 'var(--grey200)',
@@ -119,37 +125,24 @@ const primary = {
   violetOpacity200: 'var(--violetOpacity200)',
 } as const;
 
-const semantic = {
-  scrollbar: 'var(--scrollbar)',
+const fg = {
+  neutral: 'var(--neutral)',
+  neutralMuted: 'var(--neutralMuted)',
+  neutralSubtle: 'var(--neutralSubtle)',
+  neutralDisabled: 'var(--neutralDisabled)',
+} as const;
+
+const bg = {
   background: 'var(--background)',
   sidebarBackground: 'var(--sidebarBackground)',
   lightBackground: 'var(--lightBackground)',
   tableBackground: 'var(--tableBackground)',
   floatBackground: 'var(--floatBackground)',
-  neutral: 'var(--neutral)',
-  neutralMuted: 'var(--neutralMuted)',
-  neutralSubtle: 'var(--neutralSubtle)',
-  neutralDisabled: 'var(--neutralDisabled)',
-  buttonPrimaryBackground: 'var(--buttonPrimaryBackground)',
-  buttonPrimaryColor: 'var(--buttonPrimaryColor)',
-  buttonPrimaryBackgroundHovered: 'var(--buttonPrimaryBackgroundHovered)',
-  buttonPrimaryBackgroundDisabled: 'var(--buttonPrimaryBackgroundDisabled)',
-  buttonPrimaryColorDisabled: 'var(--buttonPrimaryColorDisabled)',
-  buttonSecondaryBackground: 'var(--buttonSecondaryBackground)',
-  buttonSecondaryColor: 'var(--buttonSecondaryColor)',
-  buttonSecondaryBackgroundHovered: 'var(--buttonSecondaryBackgroundHovered)',
-  buttonSecondaryBackgroundDisabled: 'var(--buttonSecondaryBackgroundDisabled)',
-  buttonSecondaryColorDisabled: 'var(--buttonSecondaryColorDisabled)',
-  buttonSubPrimaryBackground: 'var(--buttonSubPrimaryBackground)',
-  buttonSubPrimaryColor: 'var(--buttonSubPrimaryColor)',
-  buttonSubPrimaryBackgroundHovered: 'var(--buttonSubPrimaryBackgroundHovered)',
-  buttonSubPrimaryBackgroundDisabled: 'var(--buttonSubPrimaryBackgroundDisabled)',
-  buttonSubPrimaryColorDisabled: 'var(--buttonSubPrimaryColorDisabled)',
-  buttonTransparentBackground: 'var(--buttonTransparentBackground)',
-  buttonTransparentColor: 'var(--buttonTransparentColor)',
-  buttonTransparentBackgroundHovered: 'var(--buttonTransparentBackgroundHovered)',
-  buttonTransparentBackgroundDisabled: 'var(--buttonTransparentBackgroundDisabled)',
-  buttonTransparentColorDisabled: 'var(--buttonTransparentColorDisabled)',
+  backgroundLevelB01: 'var(--backgroundLevelB01)',
+  backgroundLevel01: 'var(--backgroundLevel01)',
+  backgroundLevel02: 'var(--backgroundLevel02)',
+  backgroundLevel03: 'var(--backgroundLevel03)',
+  backgroundLevel04: 'var(--backgroundLevel04)',
 } as const;
 
-export const color = { ...primary, ...semantic } as const;
+export const color = { palette, fg, bg } as const;
