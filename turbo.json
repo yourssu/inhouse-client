@@ -7,6 +7,13 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
+    "@yourssu-inhouse/shell#build": {
+      "dependsOn": [
+        "^build",
+        "@yourssu-inhouse/scouter#build",
+        "@yourssu-inhouse/inhouse#build"
+      ]
+    },
     "fix": {
       "dependsOn": ["fix:lint", "fix:format"]
     },
