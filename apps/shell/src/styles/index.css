@@ -5,6 +5,17 @@
 @import '@yourssu-inhouse/interior/index.css';
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
 
+/*
+  shell(host)는 Module Federation 으로 inhouse·scouter remote 의 routeTree 를
+  런타임에 loadRemote 로 가져와요. remote 모듈은 shell 빌드 모듈 그래프에 없으므로
+  Tailwind v4 가 shell 소스만 스캔 → remote 컴포넌트가 쓰는 utility 클래스
+  (rounded-xl, grow 등) 가 생성되지 않아 DOM 에 class 는 있어도 CSS 규칙이 없어요.
+  그래서 각 remote 앱의 소스 디렉터리를 @source 로 명시 스캔해요.
+  경로는 이 CSS 파일(apps/shell/src/styles/) 기준 3단계 상위 = apps/ .
+*/
+@source '../../../inhouse/src';
+@source '../../../scouter/src';
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 ul {

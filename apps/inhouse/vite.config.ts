@@ -34,6 +34,10 @@ export default defineConfig({
         './mocks/handlers': './src/mocks/handlers.ts',
       },
       shared,
+      // host(shell) 가 remoteHmr 을 켰을 때 대응하는 remote 측 설정.
+      // remote 가 /@react-refresh proxy(React native)와 __mf_hmr metadata(full-reload)
+      // 를 서빙하도록 해요. host·remote 양쪽 모두 켜야 cross-federation HMR 이 동작해요.
+      dev: { remoteHmr: true },
     }),
     tanstackRouter({
       target: 'react',
