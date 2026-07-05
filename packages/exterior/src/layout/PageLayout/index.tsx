@@ -1,11 +1,8 @@
 import type { ReactElement, ReactNode } from 'react';
 
-import { useCallback, useEffect, useState } from 'react';
-
 import { PageContent } from '../PageContent';
 import { Sidebar, type SidebarMenuItem } from '../Sidebar';
 import { TabSection } from '../TabSection';
-import { TabSectionContext } from './context';
 
 export interface PageLayoutProps {
   children: ReactNode;
@@ -17,36 +14,18 @@ type PageLayoutComponent = ((props: PageLayoutProps) => ReactElement) &
   Record<'Content', typeof PageContent> &
   Record<'TabSection', typeof TabSection>;
 
-const TAB_SECTION_COLLAPSED_KEY = 'tab-section-collapsed';
-
-const getInitialCollapsed = () => {
-  const storedValue = window.localStorage.getItem(TAB_SECTION_COLLAPSED_KEY);
-
-  if (!storedValue) {
-    return false;
-  }
-
-  return storedValue === 'true' || storedValue === '1';
-};
-
+/*
+  shell 의 인증 레이아웃 크롬이에요. Sidebar(좌측 아이콘 바) + 자식(Outlet)을 나열해요.
+  TabSection 접기 상태는 더 이상 context 로 내려주지 않고 Sidebar·TabSection 이 각자
+  useStorageState 로 localStorage 에서 직접 읽어와요(같은 키로 동기화). 그래서 Provider 없이도
+  shell·standalone 모두 동작해요.
+*/
 export const PageLayout = (({ menu, profile, children }: PageLayoutProps) => {
-  const [isCollapsed, setCollapsed] = useState(getInitialCollapsed);
-
-  useEffect(() => {
-    window.localStorage.setItem(TAB_SECTION_COLLAPSED_KEY, String(isCollapsed));
-  }, [isCollapsed]);
-
-  const setIsCollapsed = useCallback((value: boolean) => {
-    setCollapsed(value);
-  }, []);
-
   return (
-    <TabSectionContext.Provider value={{ isCollapsed, setIsCollapsed }}>
-      <div className="flex size-full overflow-auto">
-        <Sidebar menu={menu} profile={profile} />
-        {children}
-      </div>
-    </TabSectionContext.Provider>
+    <div className="flex size-full overflow-auto">
+      <Sidebar menu={menu} profile={profile} />
+      {children}
+    </div>
   );
 }) as PageLayoutComponent;
 

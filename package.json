@@ -14,6 +14,8 @@
     "check:type": "turbo run check:type"
   },
   "devDependencies": {
+    "@yourssu-inhouse/mfa-core": "workspace:*",
+    "@yourssu-inhouse/mfa-vite": "workspace:*",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "turbo": "^2.9.18",

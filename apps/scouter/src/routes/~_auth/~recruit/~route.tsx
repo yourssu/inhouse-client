@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior';
+import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons/fc';
 
 import { partsOption } from '@/apis/parts/query';
@@ -38,12 +38,6 @@ const RouteComponent = () => {
 };
 
 export const Route = createFileRoute('/_auth/recruit')({
-  // shell _auth 가 collapsible:true 라서, scouter(비접이)는 per-route 로 false 로 덮어요.
-  staticData: {
-    shellOptions: {
-      collapsible: false,
-    },
-  },
   component: RouteComponent,
   // graft 후 shell 라우터의 context.queryClient 로 recruit 자식 페이지들이 쓰는 옵션을 프리패치해요.
   // meOption 은 mail/new 에서 on-demand 로 가져와요.

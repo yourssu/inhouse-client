@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior';
+import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';

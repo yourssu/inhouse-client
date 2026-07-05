@@ -1,5 +1,6 @@
 import { Lottie } from '@toss/lottie';
 import { SegmentedControl } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 import { min, parseISO } from 'date-fns';
 import { useMemo, useState } from 'react';
 
@@ -66,7 +67,7 @@ export const ScheduleCreationView = () => {
 
       {!showCalendar && (
         <div className="flex h-full flex-[1_1_0] flex-col items-center justify-center">
-          <Lottie autoPlay className="size-30" delay={100} src="/lotties/left-arrow.lottie.json" />
+          <Lottie autoPlay className="size-30" delay={100} json={lotties.leftArrow} />
           <div className="text-neutralMuted text-center text-lg font-medium whitespace-pre-wrap">
             {'먼저, 왼쪽 패널에서\n학기와 파트를 선택해주세요'}
           </div>

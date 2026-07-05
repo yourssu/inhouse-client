@@ -1,5 +1,6 @@
 import { Lottie } from '@toss/lottie';
 import { Result } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { VariableTypeName } from '@/apis/mails/schema';
@@ -34,9 +35,7 @@ export const MailPreview = ({ formData, applicants, onVariableClick }: MailPrevi
         <div className="flex h-full items-center justify-center pb-16">
           <Result
             description={resultData.description}
-            figure={
-              <Lottie className="size-30" delay={0.2} src="/lotties/left-arrow.lottie.json" />
-            }
+            figure={<Lottie className="size-30" delay={0.2} json={lotties.leftArrow} />}
             title={resultData.title}
           />
         </div>

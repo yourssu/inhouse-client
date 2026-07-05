@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
-import { PageLayout } from '@yourssu-inhouse/exterior';
+import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { useDelayedValue } from '@yourssu-inhouse/inhouse-react/hooks';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
@@ -13,6 +13,7 @@ import { Result } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
 import { tv } from '@yourssu-inhouse/interior-tailwind/utils';
+import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { Suspense, useState } from 'react';
 import { match } from 'ts-pattern';
@@ -132,7 +133,7 @@ const MemberTable = ({ keyword }: { keyword: string }) => {
       {members.items.length === 0 && (
         <Result
           description="상태를 변경하거나 필터를 제거해보세요."
-          figure={<Lottie className="size-10" delay={0.2} src="/lotties/empty.json" />}
+          figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
           title="검색된 멤버가 없어요"
         />
       )}

@@ -1,0 +1,16 @@
+/*
+  scouter 전용 CSS 선언만 담은 파일이에요. standalone/preview index.css 가 @import 로 끌어와요.
+  (shell mode 에서는 scouter 전용 utility 도 shell host Tailwind 빌드의 @source glob 이
+  apps 아래 모든 src 를 스캔해 단일 CSS 에 생성하므로, 이 파일을 shell 이 별도 주입하지 않아요.)
+
+  shell 빌드는 tailwind 전체(preview/index.css) 를 자체 포함하지 않지만, standalone index.css 가
+  `@import 'tailwindcss'` 로 utilities 레이어를 세팅해요. 그래서 이 파일엔 @utility·tiptap selector
+  같은 scouter 전용 선언만 넣어요 — preflight/default theme 중복 주입을 피하려고요.
+
+  text-tiny / text-13 / shadow-dialog / ease-ease 같은 interior 계열 utility 토큰은
+  interior-tailwind plugin(standalone index.css 와 shell 빌드 모두에 로드)이 interior-vars 기반으로
+  생성하므로, 이 파일에 @theme 로 다시 선언하지 않아요.
+*/
+
+@import './utility.css';
+@import './tiptap.css';

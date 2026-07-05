@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior';
+import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button } from '@yourssu-inhouse/interior';
 import { Suspense } from 'react';
 import { MdAdd } from 'react-icons/md';

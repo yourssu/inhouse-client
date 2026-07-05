@@ -1,6 +1,7 @@
 import { Lottie } from '@toss/lottie';
 import { Result } from '@yourssu-inhouse/interior';
 import { TabButton } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 import { includes } from 'es-toolkit/compat';
 import { useState } from 'react';
 
@@ -76,7 +77,7 @@ export const VariableList = ({
         {filteredVariables.length === 0 ? (
           <Result
             description="템플릿을 불러와 변수를 지정해보세요."
-            figure={<Lottie className="size-10" delay={0.2} src="/lotties/empty.json" />}
+            figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
             title="지정할 변수가 없어요"
           />
         ) : (

@@ -1,0 +1,7 @@
+{
+  "extends": "@yourssu-inhouse/typescript-config/node",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
+  },
+  "include": ["eslint.config.js"]
+}

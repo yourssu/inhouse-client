@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
+import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
 import {
   getApplicantById,
@@ -7,29 +8,22 @@ import {
   type GetApplicantsParams,
 } from '@/apis/applicants';
 
-export const applicantsOption = (params?: GetApplicantsParams) => {
-  const queryKey = ['applicants', params];
+const qk = pluginQueryKey('scouter');
 
-  return queryOptions({
-    queryKey,
+export const applicantsOption = (params?: GetApplicantsParams) =>
+  queryOptions({
+    queryKey: qk.for('applicants', params),
     queryFn: () => getApplicants(params),
   });
-};
 
-export const applicantByIdOption = (applicantId: number) => {
-  const queryKey = ['applicants', applicantId];
-
-  return queryOptions({
-    queryKey,
+export const applicantByIdOption = (applicantId: number) =>
+  queryOptions({
+    queryKey: qk.for('applicants', applicantId),
     queryFn: () => getApplicantById(applicantId),
   });
-};
 
-export const applicantsLastUpdatedTimeOption = () => {
-  const queryKey = ['applicants', 'lastUpdatedTime'];
-
-  return queryOptions({
-    queryKey,
+export const applicantsLastUpdatedTimeOption = () =>
+  queryOptions({
+    queryKey: qk.for('applicants', 'lastUpdatedTime'),
     queryFn: () => getApplicantsLastUpdatedTime(),
   });
-};

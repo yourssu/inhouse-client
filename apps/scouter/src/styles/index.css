@@ -3,30 +3,10 @@
 @import 'tailwindcss';
 @import '@yourssu-inhouse/interior/index.css';
 @import '@yourssu-inhouse/exterior/index.css';
+@import './runtime.css';
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
-@import './typography.css';
-@import './transition.css';
-@import './shadow.css';
-@import './utility.css';
-@import './tiptap.css';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-scrollbar) transparent;
-}
-
-a:focus-visible,
-button:focus-visible,
-*[data-focus-visible='true']:focus-visible {
-  outline: 1px solid var(--color-greyOpacity500);
-  outline-offset: 0;
-  box-shadow: var(--shadow-button-focus);
-  transition:
-    outline 0.1s ease,
-    box-shadow 0.1s ease;
-}
 
 ul {
   margin: 0;
