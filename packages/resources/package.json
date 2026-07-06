@@ -1,0 +1,25 @@
+{
+  "name": "@yourssu-inhouse/resources",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check:type": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.0",
+    "@yourssu-inhouse/eslint-config": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "^3.8.3",
+    "typescript": "catalog:"
+  }
+}

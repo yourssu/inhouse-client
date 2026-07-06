@@ -1,4 +1,5 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
 import type { MailTemplatesResponse } from '@/apis/mails/schema';
 
@@ -9,10 +10,10 @@ import {
   type GetMailTemplatesParams,
 } from '@/apis/mails';
 
-export const mailTemplatesInfiniteOption = (params: Omit<GetMailTemplatesParams, 'page'> = {}) => {
-  const queryKey = ['mails', 'templates', params];
+const qk = pluginQueryKey('scouter');
 
-  return infiniteQueryOptions({
+export const mailTemplatesInfiniteOption = (params: Omit<GetMailTemplatesParams, 'page'> = {}) =>
+  infiniteQueryOptions({
     getNextPageParam: (lastPage: MailTemplatesResponse) => {
       if (lastPage.page < lastPage.totalPages - 1) {
         return lastPage.page + 1;
@@ -20,30 +21,24 @@ export const mailTemplatesInfiniteOption = (params: Omit<GetMailTemplatesParams,
       return undefined;
     },
     initialPageParam: 0,
-    queryKey,
+    queryKey: qk.for('mails', 'templates', params),
     queryFn: ({ pageParam }) => getMailTemplates({ ...params, page: pageParam }),
   });
-};
 
-export const mailTemplatesOption = (params: GetMailTemplatesParams = {}) => {
-  const queryKey = ['mails', 'templates', params];
-
-  return queryOptions({
-    queryKey,
+export const mailTemplatesOption = (params: GetMailTemplatesParams = {}) =>
+  queryOptions({
+    queryKey: qk.for('mails', 'templates', params),
     queryFn: () => getMailTemplates(params),
   });
-};
 
-export const mailTemplateDetailOption = (templateId: number) => {
-  return queryOptions({
-    queryKey: ['mails', 'templates', templateId],
+export const mailTemplateDetailOption = (templateId: number) =>
+  queryOptions({
+    queryKey: qk.for('mails', 'templates', templateId),
     queryFn: () => getMailTemplateDetail(templateId),
   });
-};
 
-export const mailReservationsOption = () => {
-  return queryOptions({
-    queryKey: ['mails', 'reservations'],
+export const mailReservationsOption = () =>
+  queryOptions({
+    queryKey: qk.for('mails', 'reservations'),
     queryFn: () => getMailReservations(),
   });
-};

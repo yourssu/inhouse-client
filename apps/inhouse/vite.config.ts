@@ -1,44 +1,30 @@
-import { federation } from '@module-federation/vite';
 import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import { mfaVitePlugin } from '@yourssu-inhouse/mfa-vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+import { mfaConfig } from '../../mfa.config';
+
+const remote = mfaConfig.remotes.find((entry) => entry.id === 'inhouse');
+
+if (!remote) {
+  throw new Error('[inhouse] mfa.config 에 inhouse remote 가 없어요');
+}
+
 /*
   inhouse 는 Module Federation remote("inhouse")예요.
-  shell(host)가 `loadRemote('inhouse', './routeTree')` 로 /members/* 서브트리를 가져와 graft 하고,
-  dev 에선 `loadRemote('inhouse', './mocks/handlers')` 로 MSW 핸들러를 가져와 shell 프로세스에서 mock 해요.
-  standalone 부트(main.tsx/index.html)는 dev preview·빌드 entry용으로 남겨요.
+  shell(host)가 런타임에 `loadRemote('inhouse/plugin')` 로 Plugin manifest 를 가져와 자기 _auth
+  아래에 graft 하고 init/mocks lifecycle 을 중앙 실행해요. federation(name/filename/exposes/
+  shared/dev.remoteHmr) 은 mfaVitePlugin.remote 가 mfa.config 의 inhouse entry 로부터 자동
+  생성해요. preview 부트(main.tsx)는 dev preview·빌드 entry 용으로 남겨요.
 */
-const shared = {
-  react: { singleton: true, requiredVersion: '^19.2.6' },
-  'react-dom': { singleton: true, requiredVersion: '^19.2.6' },
-  '@tanstack/react-router': { singleton: true, requiredVersion: '^1.170.11' },
-  '@tanstack/react-query': { singleton: true, requiredVersion: '^5.101.0' },
-  '@yourssu-inhouse/interior': { singleton: true },
-  '@yourssu-inhouse/exterior': { singleton: true },
-  zod: { singleton: true },
-  'es-toolkit': { singleton: true },
-} as const;
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    federation({
-      name: 'inhouse',
-      filename: 'remoteEntry.js',
-      exposes: {
-        './routeTree': './src/routeTree.gen.ts',
-        './mocks/handlers': './src/mocks/handlers.ts',
-      },
-      shared,
-      // host(shell) 가 remoteHmr 을 켰을 때 대응하는 remote 측 설정.
-      // remote 가 /@react-refresh proxy(React native)와 __mf_hmr metadata(full-reload)
-      // 를 서빙하도록 해요. host·remote 양쪽 모두 켜야 cross-federation HMR 이 동작해요.
-      dev: { remoteHmr: true },
-    }),
+    mfaVitePlugin.remote({ id: 'inhouse', remote }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
@@ -49,7 +35,7 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   server: {
-    port: 5175,
     cors: true,
+    port: 5175,
   },
 });

@@ -40,6 +40,7 @@
     "@yourssu-inhouse/interior-vars": "workspace:*",
     "@yourssu-inhouse/inhouse-react": "workspace:*",
     "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@yourssu-inhouse/resources": "workspace:*",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "es-hangul": "^2.3.8",

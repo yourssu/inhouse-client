@@ -20,6 +20,9 @@ const getInteriorLineHeights = () => Object.fromEntries(objectEntries(vars.typog
 
 const getInteriorShadows = () => Object.fromEntries(objectEntries(vars.shadow));
 
+const getInteriorTransitionTimingFunctions = () =>
+  Object.fromEntries(objectEntries(vars.transition.timingFunction));
+
 const getInteriorRadius = () => Object.fromEntries(objectEntries(vars.radius));
 
 const getInteriorUniformHeights = () => Object.fromEntries(objectEntries(vars.uniformHeight));
@@ -33,6 +36,7 @@ export default plugin(() => {}, {
       fontSize: getInteriorFontSizes(),
       lineHeight: getInteriorLineHeights(),
       shadow: getInteriorShadows(),
+      transitionTimingFunction: getInteriorTransitionTimingFunctions(),
       borderRadius: getInteriorRadius(),
       height: getInteriorUniformHeights(),
       zIndex: getInteriorZIndex(),

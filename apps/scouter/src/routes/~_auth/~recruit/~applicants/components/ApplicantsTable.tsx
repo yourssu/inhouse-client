@@ -4,6 +4,7 @@ import { Checkbox } from '@yourssu-inhouse/interior';
 import { Pagination } from '@yourssu-inhouse/interior';
 import { Result } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
 
@@ -116,7 +117,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
       {paginatedApplicants.length === 0 && (
         <Result
           description="상태를 변경하거나 필터를 제거해보세요."
-          figure={<Lottie className="size-10" delay={0.2} src="/lotties/empty.json" />}
+          figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
           title="검색된 지원자가 없어요"
         />
       )}

@@ -47,7 +47,7 @@ export const createAuthApiClient = (options: CreateAuthApiClientOptions): AuthAp
     API 토큰이 필요없는 상황에서 사용해요.
   */
   const nativeApi = ky.create({
-    prefixUrl: apiBaseURL,
+    prefix: apiBaseURL,
     retry: {
       methods: ['get', 'post', 'put', 'delete'],
       statusCodes: [400, 401, 403],
@@ -58,7 +58,7 @@ export const createAuthApiClient = (options: CreateAuthApiClientOptions): AuthAp
   const api = nativeApi.extend({
     hooks: {
       beforeRequest: [
-        (request) => {
+        ({ request }) => {
           const authTokens = getTokens();
           if (authTokens) {
             request.headers.set('Authorization', `Bearer ${authTokens.accessToken}`);

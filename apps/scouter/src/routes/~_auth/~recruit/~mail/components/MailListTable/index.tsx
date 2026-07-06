@@ -4,6 +4,7 @@ import { Menu } from '@yourssu-inhouse/interior';
 import { Pagination } from '@yourssu-inhouse/interior';
 import { Result } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { useMemo } from 'react';
 import { MdMoreHoriz } from 'react-icons/md';
@@ -100,7 +101,7 @@ export const MailListTable = () => {
       {paginatedMails.length === 0 && (
         <Result
           description="아직 발송된 메일이 없어요."
-          figure={<Lottie className="size-10" delay={0.2} src="/lotties/empty.json" />}
+          figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
           title="메일 내역이 없어요"
         />
       )}

@@ -1,9 +1,7 @@
-import type { MouseEvent, PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 
 import { Link, type LinkComponentProps } from '@tanstack/react-router';
 import clsx from 'clsx';
-
-import { useTabSectionContext } from '../PageLayout/context';
 
 export interface SidebarLinkButtonProps extends LinkComponentProps {
   label: string;
@@ -15,17 +13,10 @@ export const SidebarLinkButton = ({
   onClick,
   ...props
 }: PropsWithChildren<SidebarLinkButtonProps>) => {
-  const { isCollapsed, setIsCollapsed } = useTabSectionContext();
-
-  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (isCollapsed) {
-      setIsCollapsed(false);
-    }
-    onClick?.(e);
-  };
-
+  // 접기 상태는 접기 버튼으로만 토글해요. 링크 클릭(멤버↔리쿠르팅 이동 등)으로
+  // 자동 펼침하지 않아 접어둔 상태가 서비스 이동에도 유지돼요.
   return (
-    <Link className="group w-full rounded-lg pt-1" onClick={handleClick} {...props}>
+    <Link className="group w-full rounded-lg pt-1" onClick={onClick} {...props}>
       {({ isActive }) => {
         return (
           <div

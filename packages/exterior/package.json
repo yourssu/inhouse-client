@@ -11,6 +11,10 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
     },
+    "./layout": {
+      "types": "./dist/layout/index.d.mts",
+      "import": "./dist/layout/index.mjs"
+    },
     "./index.css": "./dist/index.css"
   },
   "scripts": {
@@ -41,6 +45,7 @@
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
     "motion": "^12.40.0",
+    "msw": "^2.14.6",
     "overlay-kit": "^1.9.0",
     "prettier": "^3.8.3",
     "react": "catalog:",
@@ -52,6 +57,7 @@
     "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-router": "^1.170.11",
     "motion": "^12.40.0",
+    "msw": "^2.14.6",
     "overlay-kit": "^1.9.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

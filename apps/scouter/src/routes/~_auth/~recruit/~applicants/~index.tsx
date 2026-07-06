@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior';
+import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { ChipTab } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';

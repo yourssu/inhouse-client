@@ -5,9 +5,3 @@ export type ToastItem = {
   text: string;
   type: ToastType;
 };
-
-export const ToastLottieAssetMap = {
-  default: undefined,
-  error: '/lotties/error.lottie.json',
-  success: '/lotties/success.lottie.json',
-} as const satisfies Record<ToastType, string | undefined>;

@@ -6,15 +6,18 @@
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
 
 /*
-  shell(host)는 Module Federation 으로 inhouse·scouter remote 의 routeTree 를
-  런타임에 loadRemote 로 가져와요. remote 모듈은 shell 빌드 모듈 그래프에 없으므로
-  Tailwind v4 가 shell 소스만 스캔 → remote 컴포넌트가 쓰는 utility 클래스
-  (rounded-xl, grow 등) 가 생성되지 않아 DOM 에 class 는 있어도 CSS 규칙이 없어요.
-  그래서 각 remote 앱의 소스 디렉터리를 @source 로 명시 스캔해요.
-  경로는 이 CSS 파일(apps/shell/src/styles/) 기준 3단계 상위 = apps/ .
+  shell 이 host Tailwind 빌드 하나로 inhouse·scouter remote 의 utility 까지 모두 생성해요.
+  remote(inhouse·scouter)는 Module Federation 으로 런타임에만 loadRemote 로 로드돼 shell 빌드
+  모듈 그래프에 없고, shell 자기 소스 + exterior/interior 패키지만 기본 스캔돼요. 그래서 remote
+  소스에서만 쓰는 utility(grow, rounded-xl, grid-cols-2, ...)가 누락되므로, apps 하위 모든 src
+  디렉터리를 @source glob 으로 명시 스캔해 단일 Tailwind 출력에 포함시켜요.
+
+  - glob 은 반드시 디렉터리 재귀를 뜻하는 `**` 슬래시로 끝나야 해요. `src` 디렉터리를 파일 glob
+    없이 쓰면 매치가 0건이에요.
+  - 새 remote 가 늘어도 이 줄을 고치지 않아도 돼요 — glob 이 apps 아래 모든 src 를 커버해요.
+  - exterior/interior 패키지 소스는 각 패키지 index.css 가 자체 @source 로 선언해요.
 */
-@source '../../../inhouse/src';
-@source '../../../scouter/src';
+@source '../../../*/src/**';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 

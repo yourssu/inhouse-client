@@ -1,13 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
+import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
 import { getParts } from '@/apis/parts';
 
-export const partsOption = () => {
-  const queryKey = ['parts'];
+const qk = pluginQueryKey('scouter');
 
-  return queryOptions({
-    queryKey,
+export const partsOption = () =>
+  queryOptions({
+    queryKey: qk.for('parts'),
     queryFn: () => getParts(),
     staleTime: Infinity,
   });
-};
