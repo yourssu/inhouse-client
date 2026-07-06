@@ -5,11 +5,7 @@ import {
   createExteriorApp,
   type CreateExteriorAppOptions,
 } from '@yourssu-inhouse/exterior';
-import {
-  findRouteById,
-  runPluginInits,
-  setupPluginMocks,
-} from '@yourssu-inhouse/mfa-core';
+import { findRouteById, runPluginInits, setupPluginMocks } from '@yourssu-inhouse/mfa-core';
 
 import { RemoteUnavailable } from './components/RemoteUnavailable';
 import { composePlugins, type RemotePluginSpec } from './composePlugins';
@@ -20,7 +16,7 @@ type SharedShellOptions = Pick<
   'appProvidersProps' | 'queryClientConfig' | 'rootElement' | 'rootElementId' | 'routerOptions'
 >;
 
-export interface BootstrapShellOptions extends SharedShellOptions {
+interface BootstrapShellOptions extends SharedShellOptions {
   /** shell 자기 routeTree 의 graft anchor id. 기본 '/_auth'. */
   authEntryId?: string;
   routeTree: AppRouteTree;
@@ -28,7 +24,7 @@ export interface BootstrapShellOptions extends SharedShellOptions {
   specs: readonly RemotePluginSpec[];
 }
 
-export interface BootstrapShellResult {
+interface BootstrapShellResult {
   app: ReturnType<typeof createExteriorApp<AppRouteTree>>;
   /** 로드에 실패한 plugin 이름들(unavailable UI 참고용). */
   failures: readonly string[];

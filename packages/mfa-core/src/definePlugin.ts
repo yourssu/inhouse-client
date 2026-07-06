@@ -2,7 +2,7 @@ import type { RemotePlugin } from './types';
 
 import { validatePlugin } from './validation';
 
-export interface DefineRemotePluginOptions {
+interface DefineRemotePluginOptions {
   capabilities?: RemotePlugin['capabilities'];
   lifecycle?: RemotePlugin['lifecycle'];
   name: string;

@@ -13,14 +13,14 @@ import type { RequestHandler } from 'msw';
 */
 export type ExteriorAppMode = 'preview' | 'shell';
 
-export interface PluginRuntimeContext {
+interface PluginRuntimeContext {
   /** plugin 이 어디서 실행 중인지. */
   mode: ExteriorAppMode;
   /** plugin 식별자. query key namespace·로그에 써요. */
   name: string;
 }
 
-export interface RemotePluginRoutes {
+interface RemotePluginRoutes {
   /*
     plugin 의 기능 라우트가 사는 base path(예: '/recruit', '/members'). graft 충돌 검사가
     서로 다른 plugin 의 basePath 가 겹치지 않는지 확인해요.
@@ -38,7 +38,7 @@ export interface RemotePluginRoutes {
   routeTree: AnyRoute;
 }
 
-export interface RemotePluginLifecycle {
+interface RemotePluginLifecycle {
   /*
     auth/analytics/queryClient 같은 side effect. shell·preview 모두 mount 시 실행해요.
   */
@@ -49,7 +49,7 @@ export interface RemotePluginLifecycle {
   mocks?: (ctx: PluginRuntimeContext) => Promise<RequestHandler[]>;
 }
 
-export interface RemotePluginCapabilities {
+interface RemotePluginCapabilities {
   /*
     이 remote 가 dev preview harness 를 갖는지. 기본 true. standalone "독립 앱" 이 아니라
     remote 개발 미리보기임을 명시해요.

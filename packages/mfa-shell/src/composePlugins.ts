@@ -21,7 +21,7 @@ export interface RemotePluginSpec {
   name: string;
 }
 
-export interface ComposedPluginsResult {
+interface ComposedPluginsResult {
   /** 로드에 실패한 plugin 이름들. shell 이 unavailable UI 로 노출해요. */
   failures: readonly string[];
   /** 성공적으로 graft 된 plugin 들. lifecycle 을 태울 대상이에요. */

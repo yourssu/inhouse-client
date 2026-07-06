@@ -14,10 +14,12 @@
   타입을 직접 참조하지 않아요. 런타임 버전 검사(react 동적 import 필요) 는 mfa-shell 이
   app context(DOM+react types) 에서 수행해요.
 */
-export interface SharedDepPolicy {
+interface SharedDepPolicy {
   requiredVersion?: string;
   singleton: true;
 }
+
+type FederationSharedConfig = Record<string, SharedDepPolicy>;
 
 export const SHARED_DEPS = {
   react: { requiredVersion: '^19.2.6', singleton: true },
@@ -38,8 +40,6 @@ export const SHARED_DEPS = {
   zod: { singleton: true },
   'es-toolkit': { singleton: true },
 } as const satisfies Record<string, SharedDepPolicy>;
-
-export type FederationSharedConfig = Record<string, SharedDepPolicy>;
 
 /*
   federation({ shared }) 에 전달할 shared config 를 생성해요. mfa-vite 가 shell·remote

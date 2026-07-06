@@ -15,7 +15,7 @@ type SharedPreviewOptions = Pick<
   'appProvidersProps' | 'queryClientConfig' | 'rootElement' | 'rootElementId'
 >;
 
-export interface CreateRemotePreviewAppOptions extends SharedPreviewOptions {
+interface CreateRemotePreviewAppOptions extends SharedPreviewOptions {
   /*
     preview 는 shell 크롬/인증 없이 띄우지만, "인증이 되는 독립 앱" 인 척하는 착시를 없애기 위해
     실제 AuthProvider 를 dev authConfig 로 mount 해요. 인증 context 가 진짜로 동작하고,

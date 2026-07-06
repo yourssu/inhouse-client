@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 
 import type { AuthTokenType } from '../apis/schema';
 
-export const CookieName = {
+const CookieName = {
   AccessToken: 'accessToken',
   RefreshToken: 'refreshToken',
   TokenType: 'tokenType',

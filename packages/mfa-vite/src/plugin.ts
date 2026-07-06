@@ -13,7 +13,7 @@ import {
   remoteEntryDevUrl,
 } from './config';
 
-export interface ShellPluginOptions {
+interface ShellPluginOptions {
   config: MfaConfig;
   /** loadEnv 로 읽은 env(빈 값이면 dev 기본 URL 폴백). */
   env?: Record<string, string | undefined>;
@@ -31,11 +31,7 @@ const SHELL_FEDERATION_NAME = 'shell';
   remotes 의 entry URL 은 prod env(VITE_<ID>_URL) 를 우선하고, dev 기본(localhost:<port>/
   remoteEntry.js) 로 폴백해요. type:'module' 은 ESM remoteEntry 로드에 필수예요.
 */
-export const shell = ({
-  config,
-  env = {},
-  federationOptions,
-}: ShellPluginOptions): PluginOption => {
+const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): PluginOption => {
   const remotes: ModuleFederationOptions['remotes'] = Object.fromEntries(
     config.remotes.map((remote) => [
       remote.id,
@@ -57,7 +53,7 @@ export const shell = ({
   });
 };
 
-export interface RemotePluginOptions {
+interface RemotePluginOptions {
   federationOptions?: Partial<ModuleFederationOptions>;
   /** 이 remote 의 id(MfaConfig remotes 중 하나). */
   id: string;
@@ -71,7 +67,7 @@ export interface RemotePluginOptions {
   설정에서 적지 않아도 돼요. 각 remote vite.config 가 federation({name, filename, exposes,
   shared, dev}) 를 복붙하던 걸 대체해요.
 */
-export const remote = ({ remote, federationOptions }: RemotePluginOptions): PluginOption => {
+const remote = ({ remote, federationOptions }: RemotePluginOptions): PluginOption => {
   const exposes: ModuleFederationOptions['exposes'] = {
     [PLUGIN_EXPOSE_KEY]: remote.plugin?.path ?? DEFAULT_PLUGIN_PATH,
   };
