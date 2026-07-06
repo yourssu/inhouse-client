@@ -1,4 +1,13 @@
-export { envKeyForRemote, type MfaConfig, type MfaRemoteEntry, remoteEntryDevUrl } from './config';
+export {
+  DEFAULT_PLUGIN_PATH,
+  envKeyForRemote,
+  type MfaConfig,
+  type MfaRemoteEntry,
+  PLUGIN_EXPOSE_KEY,
+  type PluginSpec,
+  REMOTE_ENTRY_FILENAME,
+  remoteEntryDevUrl,
+} from './config';
 export { defineRemotePlugin } from './definePlugin';
 export type { DefineRemotePluginOptions } from './definePlugin';
 export { runPluginInits, setupPluginMocks } from './lifecycle';

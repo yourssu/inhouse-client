@@ -4,8 +4,12 @@
   → vite → @rolldown → @types/node 타입 체인이 app 프로그램으로 유입되지 않아요.
 */
 export {
+  DEFAULT_PLUGIN_PATH,
   envKeyForRemote,
   type MfaConfig,
   type MfaRemoteEntry,
+  PLUGIN_EXPOSE_KEY,
+  type PluginSpec,
+  REMOTE_ENTRY_FILENAME,
   remoteEntryDevUrl,
 } from '@yourssu-inhouse/mfa-core';

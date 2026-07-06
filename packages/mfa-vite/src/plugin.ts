@@ -3,7 +3,15 @@ import type { PluginOption } from 'vite';
 import { federation, type ModuleFederationOptions } from '@module-federation/vite';
 import { buildFederationShared } from '@yourssu-inhouse/mfa-core';
 
-import { envKeyForRemote, type MfaConfig, type MfaRemoteEntry, remoteEntryDevUrl } from './config';
+import {
+  DEFAULT_PLUGIN_PATH,
+  envKeyForRemote,
+  type MfaConfig,
+  type MfaRemoteEntry,
+  PLUGIN_EXPOSE_KEY,
+  REMOTE_ENTRY_FILENAME,
+  remoteEntryDevUrl,
+} from './config';
 
 export interface ShellPluginOptions {
   config: MfaConfig;
@@ -21,7 +29,7 @@ const SHELL_FEDERATION_NAME = 'shell';
   shared, dev}) 를 복붙하던 걸 대체해요.
 
   remotes 의 entry URL 은 prod env(VITE_<ID>_URL) 를 우선하고, dev 기본(localhost:<port>/
-  <entryPath>) 로 폴백해요. type:'module' 은 ESM remoteEntry 로드에 필수예요.
+  remoteEntry.js) 로 폴백해요. type:'module' 은 ESM remoteEntry 로드에 필수예요.
 */
 export const shell = ({
   config,
@@ -58,18 +66,19 @@ export interface RemotePluginOptions {
 }
 
 /*
-  remote 용 Vite 플러그인. remote id·entryPath·expose·sourcePath·shared 를 MfaRemoteEntry
-  하나로부터 자동 생성해요. 각 remote vite.config 가 federation({name, filename, exposes,
+  remote 용 Vite 플러그인. remote id·plugin.path·shared 를 MfaRemoteEntry 하나로부터 자동
+  생성해요. expose 키(`./plugin`)·remoteEntry 파일명(`remoteEntry.js`)은 고정 계약 상수라
+  설정에서 적지 않아도 돼요. 각 remote vite.config 가 federation({name, filename, exposes,
   shared, dev}) 를 복붙하던 걸 대체해요.
 */
 export const remote = ({ remote, federationOptions }: RemotePluginOptions): PluginOption => {
   const exposes: ModuleFederationOptions['exposes'] = {
-    [remote.expose]: remote.sourcePath,
+    [PLUGIN_EXPOSE_KEY]: remote.plugin?.path ?? DEFAULT_PLUGIN_PATH,
   };
 
   return federation({
     name: remote.id,
-    filename: remote.entryPath,
+    filename: REMOTE_ENTRY_FILENAME,
     exposes,
     shared: buildFederationShared(),
     // host 가 remoteHmr 을 켰을 때 대응하는 remote 측 설정. 양쪽 모두 켜야 cross-federation HMR.

@@ -1,19 +1,22 @@
 import type { AnyRoute } from '@tanstack/react-router';
 
 import { loadRemote } from '@module-federation/runtime';
-import { type RemotePlugin, RouteRegistry } from '@yourssu-inhouse/mfa-core';
+import {
+  type MfaRemoteEntry,
+  PLUGIN_EXPOSE_KEY,
+  type RemotePlugin,
+  RouteRegistry,
+} from '@yourssu-inhouse/mfa-core';
 
 import { graftPlugin } from './graft';
 
 /*
-  shell 이 런타임에 조립할 remote Plugin 목록이에요. shell 이 아는 건 (MF remote 이름, expose
-  모듈 경로)뿐이고, 각 plugin 의 내부 구조는 몰라요. mfa.config 의 remotes 로부터
+  shell 이 런타임에 조립할 remote Plugin 목록이에요. shell 이 아는 건 MF remote 이름뿐이고,
+  expose 키(`./plugin`)는 고정 계약이라 설정에 드러나지 않아요. mfa.config 의 remotes 로부터
   buildRemoteSpecs() 로 생성해요. graft/init/mocks 로직은 이 레지스트리 위로 generic 하게
   동작해 더 이상 건드리지 않아도 돼요.
 */
 export interface RemotePluginSpec {
-  /** plugin 이 export 된 expose 모듈 경로. */
-  module: string;
   /** Module Federation remote 이름(mfa.config remote id 와 일치). */
   name: string;
 }
@@ -60,7 +63,8 @@ export const composePlugins = async (
 
   for (const spec of specs) {
     // loadRemote 는 `remoteName/<expose>` 형식에서 expose 앞의 `./` 를 허용하지 않아요.
-    const expose = spec.module.replace(/^\.?\//, '');
+    // expose 키(`./plugin`)는 고정 계약이라 상수에서 파생해요.
+    const expose = PLUGIN_EXPOSE_KEY.replace(/^\.?\//, '');
     try {
       const mod = await loadRemoteWithRetry<{ plugin: RemotePlugin }>(`${spec.name}/${expose}`);
       if (!mod?.plugin) {
@@ -83,7 +87,5 @@ export const composePlugins = async (
   mfa.config 의 remotes 를 shell runtime 레지스트리 spec 으로 변환해요.
   remote 추가 시 plugins.config 한 줄도 직접 쓰지 않고 mfa.config 에서 파생해요.
 */
-export const buildRemoteSpecs = (
-  remotes: readonly { expose: string; id: string }[],
-): readonly RemotePluginSpec[] =>
-  remotes.map((remote) => ({ module: remote.expose, name: remote.id }));
+export const buildRemoteSpecs = (remotes: readonly MfaRemoteEntry[]): readonly RemotePluginSpec[] =>
+  remotes.map((remote) => ({ name: remote.id }));
