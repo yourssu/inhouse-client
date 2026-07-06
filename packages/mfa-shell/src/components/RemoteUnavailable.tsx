@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
   per-plugin 격리로 failures 에 담은 plugin 들에 대해 shell 이 렌더해요. 한 remote 가 죽어도
   나머지 shell 은 동작한다는 걸 사용자에게 알려요.
 */
-export interface RemoteUnavailableProps {
+interface RemoteUnavailableProps {
   /** 사용 가능한(성공적으로 로드된) plugin 이름들. */
   availablePlugins?: readonly string[];
   /** 로드에 실패한 plugin 이름들. */

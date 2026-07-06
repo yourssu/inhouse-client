@@ -1,6 +1,6 @@
 import { QueryClient, type QueryClientConfig } from '@tanstack/react-query';
 
-export interface CreateQueryClientOptions {
+interface CreateQueryClientOptions {
   queryClientConfig?: QueryClientConfig;
 }
 

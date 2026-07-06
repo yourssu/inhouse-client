@@ -3,12 +3,12 @@ import { type ReactNode, useCallback, useState } from 'react';
 import { useAuth } from '../contexts/AuthProvider';
 import { useGoogleOAuthPopup } from '../hooks/useGoogleOAuthPopup';
 
-export interface LoginRenderProps {
+interface LoginRenderProps {
   isLoading: boolean;
   login: () => Promise<void>;
 }
 
-export interface LoginProps {
+interface LoginProps {
   /**
    * headless 렌더 프로퍼티예요. 실제 UI(버튼·로고·카피)는 사용하는 쪽에서
    * `isLoading`/`login` 을 받아 렌더해요. 인증 로직은 패키지가 책임져요.

@@ -1,13 +1,3 @@
 export { bootstrapShell } from './bootstrap';
-export type { BootstrapShellOptions, BootstrapShellResult } from './bootstrap';
-export { PluginErrorBoundary } from './components/PluginErrorBoundary';
-export type { PluginErrorBoundaryProps } from './components/PluginErrorBoundary';
-export { PreviewAuthNotice, PreviewBanner } from './components/PreviewBanner';
-export { RemoteUnavailable } from './components/RemoteUnavailable';
-export type { RemoteUnavailableProps } from './components/RemoteUnavailable';
-export { buildRemoteSpecs, composePlugins } from './composePlugins';
-export type { ComposedPluginsResult, RemotePluginSpec } from './composePlugins';
-export { graftPlugin, isPluginGrafted, resetGraftState } from './graft';
+export { buildRemoteSpecs, type RemotePluginSpec } from './composePlugins';
 export { createRemotePreviewApp } from './preview';
-export type { CreateRemotePreviewAppOptions } from './preview';
-export { assertSharedVersions } from './sharedCheck';

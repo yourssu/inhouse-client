@@ -6,9 +6,9 @@ import { type AuthTokenType } from '../apis/schema';
 import { type AuthConfig } from '../config';
 import { getAuthTokens, removeAuthTokens, setAuthTokens } from '../storage/tokens';
 
-export type AuthStatus = 'authenticated' | 'unauthenticated';
+type AuthStatus = 'authenticated' | 'unauthenticated';
 
-export interface AuthContextValue {
+interface AuthContextValue {
   api: AuthApiClient['api'];
   config: AuthConfig;
   login: (code: string) => Promise<AuthTokenType>;

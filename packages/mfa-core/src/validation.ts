@@ -3,6 +3,21 @@ import type { AnyRoute } from '@tanstack/react-router';
 import type { RemotePlugin } from './types';
 
 /*
+  라우트 서브트리의 모든 route id 를 수집해요. graft 충돌 검사가 이미 graft 된 id 집합과
+  비교해 중복을 잡아요.
+*/
+const collectRouteIds = (route: AnyRoute, acc: Set<string> = new Set()): Set<string> => {
+  const id = (route.options as any)?.id;
+  if (typeof id === 'string') {
+    acc.add(id);
+  }
+  for (const child of (route.children as AnyRoute[] | undefined) ?? []) {
+    collectRouteIds(child, acc);
+  }
+  return acc;
+};
+
+/*
   routeTree 의 최상위 children 에서 주어진 id(기본 '/_auth') 의 라우트를 찾아요.
   gen routeTree 의 top-level children 안에 entry route 가 있어요. shell(host) 가 자기
   _auth anchor 를 찾을 때도 써요. remote 마다 findAuthRoute + as AnyRoute + as any 를
@@ -23,21 +38,6 @@ export const findPluginEntryRoute = (plugin: Pick<RemotePlugin, 'name' | 'routes
     );
   }
   return entry;
-};
-
-/*
-  라우트 서브트리의 모든 route id 를 수집해요. graft 충돌 검사가 이미 graft 된 id 집합과
-  비교해 중복을 잡아요.
-*/
-export const collectRouteIds = (route: AnyRoute, acc: Set<string> = new Set()): Set<string> => {
-  const id = (route.options as any)?.id;
-  if (typeof id === 'string') {
-    acc.add(id);
-  }
-  for (const child of (route.children as AnyRoute[] | undefined) ?? []) {
-    collectRouteIds(child, acc);
-  }
-  return acc;
 };
 
 /*
