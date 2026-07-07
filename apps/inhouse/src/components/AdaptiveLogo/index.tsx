@@ -7,13 +7,13 @@ interface AdaptiveLogoProps {
 }
 
 const logoByTheme = {
-  dark: images.scouterLogoDark,
-  light: images.scouterLogoLight,
+  dark: images.inhouseLogoDark,
+  light: images.inhouseLogoLight,
 } as const;
 
 export const AdaptiveLogo = ({ className }: AdaptiveLogoProps) => {
   const { theme } = useTheme();
   return (
-    <img alt="유어슈 스카우터 로고" className={cn('w-fit', className)} src={logoByTheme[theme]} />
+    <img alt="유어슈 인하우스 로고" className={cn('w-fit', className)} src={logoByTheme[theme]} />
   );
 };

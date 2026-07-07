@@ -4,6 +4,7 @@ import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons
 
 import { partsOption } from '@/apis/parts/query';
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
+import { AdaptiveLogo } from '@/components/AdaptiveLogo';
 
 const RouteComponent = () => {
   return (
@@ -31,6 +32,7 @@ const RouteComponent = () => {
             icon: <FcFeedback />,
           },
         ]}
+        logo={<AdaptiveLogo className="h-5" />}
       />
       <Outlet />
     </>

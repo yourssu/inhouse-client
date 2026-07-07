@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 
 import { type LinkProps } from '@tanstack/react-router';
-import { useTheme } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
 import { useStorageState } from 'react-simplikit';
 
@@ -16,10 +15,10 @@ export interface TabItem {
 
 export interface TabSectionProps {
   items: TabItem[];
+  logo: React.ReactNode;
 }
 
-export const TabSection = ({ items }: TabSectionProps) => {
-  const { theme } = useTheme();
+export const TabSection = ({ items, logo }: TabSectionProps) => {
   const [isCollapsed] = useStorageState<boolean>(TAB_SECTION_COLLAPSED_STORAGE_KEY, {
     defaultValue: false,
   });
@@ -35,9 +34,7 @@ export const TabSection = ({ items }: TabSectionProps) => {
       transition={{ duration: 0.25, ease: 'easeInOut' }}
     >
       <div className="flex h-full w-64 flex-col">
-        <div className="mb-7 px-4">
-          <img alt="유어슈 인하우스 로고" className="h-5" src={`/logo-${theme}.png`} />
-        </div>
+        <div className="mb-7 px-4">{logo}</div>
 
         <div className="mb-7 px-4">
           <div className="bg-greyOpacity50 text-13 text-neutralSubtle flex items-center rounded-lg font-medium">
