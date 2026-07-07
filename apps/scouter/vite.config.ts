@@ -37,5 +37,13 @@ export default defineConfig({
   server: {
     cors: true,
     port: 5174,
+    fs: {
+      // TanStack Router 파일 기반 라우팅은 `~` 를 escape prefix 로 써요
+      // (예: `~signin/~index.lazy.tsx`). Vite 8 는 Windows 에서 `~` 가 포함된
+      // 경로를 NTFS 8.3 short-name 경로 순회 방어를 위해 fs.allow 확인 전에
+      // 무조건 403 으로 차단해요 → Windows 팀원은 lazy route 로딩이 전부 실패.
+      // dev server 에서만 strict 검사를 꺼서 우회해요. (build 에는 영향 없음)
+      strict: false,
+    },
   },
 });
