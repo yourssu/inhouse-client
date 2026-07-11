@@ -1,0 +1,18 @@
+name: Auto Assign
+
+# .github/auto_assign.yml를 자동으로 읽어요.
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  add-reviews:
+    name: Auto-assign reviewers & assignee
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kentaro-m/auto-assign-action@v2.0.2
