@@ -1,0 +1,79 @@
+name: Auto Assign
+
+# 자체完결 워크플로우 — 외부 액션/앱 의존 없이 GitHub REST API 직접 호출.
+# 동작:
+# - PR 작성자를 제외한 나머지 리뷰어 풀을 reviewer 로 할당 (Pull Requests API)
+# - PR 작성자를 assignee 로 할당 (Issues API)
+# - PR 제목/브랜치에 WIP 단어가 있으면 스킵 (대소문자 무관)
+# - native draft PR 은 스킵
+# 트리거:
+# - opened / reopened / ready_for_review: 신규/재오픈/ready 전환 시 할당
+# - edited: 제목 변경 시만 재실행 (WIP 제거 등 감지)
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, edited]
+
+permissions:
+  pull-requests: write   # reviewer 할당
+  issues: write           # assignee 할당
+  contents: read
+
+jobs:
+  auto-assign:
+    name: Auto-assign reviewers & assignee
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Assign reviewers (exclude author) & assignee (author)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          REPO: ${{ github.repository }}
+          TITLE_FROM: ${{ github.event.changes.title.from }}
+        run: |
+          set -euo pipefail
+
+          # edited 이벤트는 제목이 바뀐 경우에만 재실행 (WIP 제거 등 감지용)
+          if [ "${{ github.event.action }}" = "edited" ] && [ -z "${TITLE_FROM:-}" ]; then
+            echo "edited 이벤트지만 제목 변경 아님 → 스킵"
+            exit 0
+          fi
+
+          # WIP 키워드(제목/브랜치, 대소문자 무관, 단어 경계) → 스킵
+          haystack="${PR_TITLE} ${PR_HEAD_REF}"
+          if echo "${haystack}" | grep -qiE '\bwip\b'; then
+            echo "WIP 감지 → 스킵 (제목: \"${PR_TITLE}\", 브랜치: \"${PR_HEAD_REF}\")"
+            exit 0
+          fi
+
+          # reviewer 풀 — PR 작성자 제외
+          reviewers=("fecapark" "jm8468" "owl1753")
+          assign=()
+          for r in "${reviewers[@]}"; do
+            if [ "$r" != "${PR_AUTHOR}" ]; then
+              assign+=("$r")
+            fi
+          done
+
+          # reviewers 할당 (Pull Requests API: requested_reviewers)
+          if [ ${#assign[@]} -gt 0 ]; then
+            rbody=$(jq -n --argjson r "$(printf '%s\n' "${assign[@]}" | jq -R . | jq -s .)" '{reviewers: $r}')
+            echo "PR #${PR_NUMBER} by @${PR_AUTHOR} → reviewers: ${assign[*]}"
+            echo "${rbody}" | gh api --method POST \
+              -H "Accept: application/vnd.github+json" \
+              "/repos/${REPO}/pulls/${PR_NUMBER}/requested_reviewers" \
+              --input - >/dev/null
+          else
+            echo "할당할 reviewer 없음"
+          fi
+
+          # assignee = PR 작성자 (Issues API: assignees)
+          echo "PR #${PR_NUMBER} → assignee: @${PR_AUTHOR}"
+          abody=$(jq -n --arg a "${PR_AUTHOR}" '{assignees: [$a]}')
+          echo "${abody}" | gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${REPO}/issues/${PR_NUMBER}/assignees" \
+            --input - >/dev/null
