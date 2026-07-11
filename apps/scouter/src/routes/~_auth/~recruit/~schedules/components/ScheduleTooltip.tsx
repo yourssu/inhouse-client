@@ -41,7 +41,7 @@ export const ScheduleTooltip = ({
 
   const openAlertDialog = useAlertDialog();
   const duration = differenceInMinutes(endTime, startTime);
-  const hasScheduleLocation = !!(locationType && scheduleId);
+  const hasScheduleLocation = locationType != null && scheduleId != null;
 
   const handleLocation = async (scheduleId: number) => {
     await openAlertDialog({
@@ -95,7 +95,9 @@ export const ScheduleTooltip = ({
                     <div className="flex items-center gap-2">
                       <MdLocationOn className="text-neutralDisabled size-6" />
                       <span>
-                        {locationDetail ? `${locationType} (${locationDetail})` : locationType}
+                        {locationDetail == null
+                          ? locationType
+                          : `${locationType} (${locationDetail})`}
                       </span>
                     </div>
                     <InlineButton
