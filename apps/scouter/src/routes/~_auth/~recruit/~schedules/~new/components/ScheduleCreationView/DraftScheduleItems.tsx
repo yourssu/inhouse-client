@@ -78,37 +78,38 @@ const DraftScheduleItem = ({
   assert(!!applicant, `지원자를 찾을 수 없어요: ${schedule.applicantId}`);
 
   return (
-    <ScheduleTooltip
-      actionTextContent={isOther ? '클릭으로 지원자 탭 이동' : '클릭으로 일정 제거'}
-      applicant={applicant}
-      endTime={schedule.endTime}
-      startTime={schedule.startTime}
-    >
-      <div
-        className={clsx(
-          'absolute right-0.5 left-0.5 rounded border-2 px-1 py-0.5 select-none',
-          isOther
-            ? 'bg-violet500 border-violet500 w-[60%] opacity-50'
-            : 'bg-violet500 border-violet500',
-          !isDragging &&
-            'hover:bg-violet600 hover:border-violet600 ease-ease cursor-pointer transition-colors duration-200',
-          isDragging && 'pointer-events-none',
-        )}
-        onClick={() => {
-          if (isOther) {
-            onSwitchApplicant();
-          } else {
-            onRemove();
-          }
-        }}
-        onMouseDown={(e) => e.stopPropagation()}
-        style={{
-          top: `${top}px`,
-          height: `${height}px`,
-        }}
-      >
-        <span className="text-sm font-semibold text-white">{schedule.applicantName}</span>
-      </div>
+    <ScheduleTooltip>
+      <ScheduleTooltip.Trigger>
+        <div
+          className={clsx(
+            'absolute right-0.5 left-0.5 rounded border-2 px-1 py-0.5 select-none',
+            isOther
+              ? 'bg-violet500 border-violet500 w-[60%] opacity-50'
+              : 'bg-violet500 border-violet500',
+            !isDragging &&
+              'hover:bg-violet600 hover:border-violet600 ease-ease cursor-pointer transition-colors duration-200',
+            isDragging && 'pointer-events-none',
+          )}
+          onClick={() => {
+            if (isOther) {
+              onSwitchApplicant();
+            } else {
+              onRemove();
+            }
+          }}
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{
+            top: `${top}px`,
+            height: `${height}px`,
+          }}
+        >
+          <span className="text-sm font-semibold text-white">{schedule.applicantName}</span>
+        </div>
+      </ScheduleTooltip.Trigger>
+      <ScheduleTooltip.Content applicant={applicant}>
+        <ScheduleTooltip.Time endTime={schedule.endTime} startTime={schedule.startTime} />
+        <ScheduleTooltip.Action text={isOther ? '클릭으로 지원자 탭 이동' : '클릭으로 일정 제거'} />
+      </ScheduleTooltip.Content>
     </ScheduleTooltip>
   );
 };
