@@ -5,6 +5,7 @@ import { BiSolidCalendarCheck } from 'react-icons/bi';
 import { MdLocationOn } from 'react-icons/md';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
+import type { InterviewScheduleType } from '@/apis/schedule/schema';
 
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { LocationDialogContent } from '@/routes/~_auth/~recruit/~schedules/components/LocationDialogContent';
@@ -12,28 +13,32 @@ import { partNameKo } from '@/types/parts';
 import { formatTemplates } from '@/utils/date';
 import { formatSemester } from '@/utils/semester';
 
-interface ScheduleTooltipProps {
+type ScheduleTooltipProps = {
   actionTextContent?: string;
   applicant: ApplicantType;
   contentProps?: Tooltip.TooltipContentProps;
-  endTime: DateArg<Date>;
-  locationDetail?: null | string;
-  locationType?: string;
-  scheduleId?: number;
-  startTime: DateArg<Date>;
-}
+} & (
+  | { endTime: DateArg<Date>; schedule?: undefined; startTime: DateArg<Date> } // draft 일정: 시간만 있음
+  | { endTime?: undefined; schedule: InterviewScheduleType; startTime?: undefined } // 저장된 일정: 장소 정보 포함
+);
 
 export const ScheduleTooltip = ({
   applicant,
   children,
   actionTextContent,
-  startTime,
-  endTime,
   contentProps,
-  locationDetail,
-  locationType,
-  scheduleId,
+  ...scheduleSource
 }: React.PropsWithChildren<ScheduleTooltipProps>) => {
+  const startTime = scheduleSource.schedule
+    ? scheduleSource.schedule.startTime
+    : scheduleSource.startTime;
+  const endTime = scheduleSource.schedule
+    ? scheduleSource.schedule.endTime
+    : scheduleSource.endTime;
+  const locationType = scheduleSource.schedule?.locationType;
+  const locationDetail = scheduleSource.schedule?.locationDetail;
+  const scheduleId = scheduleSource.schedule?.id;
+
   const openAlertDialog = useAlertDialog();
   const duration = differenceInMinutes(endTime, startTime);
   const hasScheduleLocation = !!(locationType && scheduleId);

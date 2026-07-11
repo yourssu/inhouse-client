@@ -25,11 +25,7 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
     <ScheduleTooltip
       applicant={applicant}
       contentProps={{ side: 'left', sideOffset: 10 }}
-      endTime={schedule.endTime}
-      locationDetail={schedule.locationDetail}
-      locationType={schedule.locationType}
-      scheduleId={schedule.id}
-      startTime={schedule.startTime}
+      schedule={schedule}
     >
       <div
         className="border-lightBackground h-[calc(100%-2px)] w-full cursor-pointer overflow-hidden rounded-lg border-2 px-2.5 pt-1.5 pb-0.5 hover:brightness-90"
