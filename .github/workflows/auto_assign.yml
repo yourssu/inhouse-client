@@ -1,9 +1,6 @@
 name: Auto Assign
 
-# config 는 .github/auto_assign.yml (기본 경로) 를 자동으로 읽음.
-# - reviewer: 작성자 제외한 나머지 풀 할당
-# - assignee: PR 작성자(author) 할당 → issues: write 필요
-# - skipKeywords(wip) / runOnDraft(false) → 스킵
+# .github/auto_assign.yml를 자동으로 읽어요.
 on:
   pull_request:
     types: [opened, ready_for_review]
