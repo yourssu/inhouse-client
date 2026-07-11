@@ -1,18 +1,27 @@
+# Set to true to add reviewers to pull requests
 addReviewers: true
-addAssignees: false
 
-# 자동 리뷰어 풀 (작성자는 자동 제외됨)
+# Set to true to add assignees to pull requests
+addAssignees: author
+
+# A list of reviewers to be added to pull requests (GitHub user name)
 reviewers:
   - fecapark
   - jm8468
   - owl1753
 
-# 작성자 제외 후 남은 전원 할당
+# A number of reviewers added to the pull request
+# Set 0 to add all the reviewers (default: 0)
 numberOfReviewers: 0
 
-# PR 제목에 이 키워드가 있으면 스킵 (대소문자 무관)
+# A number of assignees to add to the pull request
+# Set to 0 to add all of the assignees.
+# Uses numberOfReviewers if unset.
+numberOfAssignees: 1
+
+# A list of keywords to be skipped the process that add reviewers if pull requests include it
 skipKeywords:
   - wip
+  - WIP
 
-# draft PR 에선 실행하지 않음
 runOnDraft: false
