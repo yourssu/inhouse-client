@@ -26,6 +26,9 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
       applicant={applicant}
       contentProps={{ side: 'left', sideOffset: 10 }}
       endTime={schedule.endTime}
+      locationDetail={schedule.locationDetail}
+      locationType={schedule.locationType}
+      scheduleId={schedule.id}
       startTime={schedule.startTime}
     >
       <div

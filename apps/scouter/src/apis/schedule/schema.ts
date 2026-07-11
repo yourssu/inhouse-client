@@ -8,6 +8,8 @@ export const InterviewScheduleSchema = z.object({
   part: PartNameSchema,
   startTime: z.iso.datetime(),
   endTime: z.iso.datetime(),
+  locationType: z.string(),
+  locationDetail: z.string().nullable(),
 });
 
 export type InterviewScheduleType = z.infer<typeof InterviewScheduleSchema>;

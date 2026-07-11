@@ -18,6 +18,9 @@ export const MonthlyScheduleItem = ({ applicant, schedule }: MonthlyScheduleItem
       applicant={applicant}
       contentProps={{ side: 'left', sideOffset: 10 }}
       endTime={schedule.endTime}
+      locationDetail={schedule.locationDetail}
+      locationType={schedule.locationType}
+      scheduleId={schedule.id}
       startTime={schedule.startTime}
     >
       <div className="hover:bg-greyOpacity100 text-neutralMuted flex cursor-pointer items-center gap-1.5 rounded p-0.5 text-xs font-medium">
