@@ -1,10 +1,5 @@
 name: Auto Assign
 
-# PR 이 열리거나 draft → ready 로 전환될 때 실행.
-# config 는 .github/auto_assign.yml (기본 경로) 를 그대로 읽음.
-# - reviewers 에서 PR 작성자 자동 제외
-# - 제목에 skipKeywords(wip) 포함 시 스킵
-# - runOnDraft: false → native draft PR 스킵
 on:
   pull_request:
     types: [opened, ready_for_review]
