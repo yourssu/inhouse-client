@@ -1,6 +1,7 @@
 import { Dialog, Select, TextField } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 
+const defaultLocationType = "동방"
 const locationTypeOptions = ['동방', '강의실', '비대면', '기타'] as const;
 
 interface LocationDialogContentProps {
@@ -29,7 +30,7 @@ export const LocationDialogContent = ({
           label="장소"
           onValueChange={(value) => {
             setLocationType(value);
-            if (value === '동방') {
+            if (value === defaultLocationType) {
               setLocationDetail('');
             }
           }}
