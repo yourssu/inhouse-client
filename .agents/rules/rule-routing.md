@@ -10,11 +10,13 @@ globs: src/routes/**/*.{ts,tsx}
 
 프로젝트 내 페이지(Route)를 구성할 때는 `@tanstack/react-router`의 파일 기반 방식인 `~` 접두사 패턴을 따릅니다. 페이지 진입점부터 컴포넌트 하위 분리 방식, 라우팅 변경 원칙 등을 준수해야 합니다.
 
+> 📌 **모노레포/MF 맥락**: 라우팅은 **앱 단위**로 존재합니다. 각 앱(`apps/<app>/src/routes/`)이 자체 `routeTree.gen.ts`를 생성하며, remote 앱의 라우트 트리는 `plugin.ts`의 `defineRemotePlugin({ routes: { basePath, entry: '/_auth', routeTree } })`로 노출됩니다. shell(host)은 `composePlugins`가 각 remote의 `_auth` 진입 라우트 하위를 shell의 `/_auth` 앵커 아래로 graft(접붙여) 통합합니다. 즉, remote의 `~_auth.tsx`는 pathless 통과 라우트이고 **실제 인증 가드·레이아웃 크롬은 shell의 `~_auth.tsx`가 소유**합니다. 새 앱/페이지 추가 시에는 해당 앱의 `src/routes/`에만 파일을 만듭니다.
+
 ## 1. 파일 이름 규칙 기반 라우팅
 
-- 파일이나 폴더에 `~`를 붙이면 실제 URL 라우팅 패스로 인식됩니다. 예: `src/routes/~_auth/~recruit/~schedules/~new/~index.tsx`
-- 레이아웃(디자인 통일, Auth 처리 등) 라우트의 경우 `~_폴더명.tsx` (URL 변경 X) 처럼 사용할 수 있습니다. (`_auth.tsx`)
-- TanStack Router의 설정(`tsr.config.json` 등)을 통해 자동으로 생성되는 파일인 `src/routeTree.gen.ts`는 **절대로 수동으로 수정하지 마세요**.
+- 파일이나 폴더에 `~`를 붙이면 실제 URL 라우팅 패스로 인식됩니다. 예: `apps/scouter/src/routes/~_auth/~recruit/~schedules/~new/~index.tsx`
+- 레이아웃(디자인 통일, Auth 처리 등) 라우트의 경우 `~_폴더명.tsx` (URL 변경 X) 처럼 사용할 수 있습니다. (`~_auth.tsx`)
+- TanStack Router의 설정(`tsr.config.json` 등)을 통해 자동으로 생성되는 파일인 `src/routeTree.gen.ts`는 **절대로 수동으로 수정하지 마세요**. (각 앱별로 `apps/<app>/src/routeTree.gen.ts`에 생성됩니다)
 
 ## 2. URL 파라미터 및 쿼리 파라미터 (Search Params)
 

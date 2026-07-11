@@ -8,11 +8,13 @@ description: 컴포넌트 내부의 로직(상태 업데이트, 렌더링 최적
 `rule-component-structure` 규칙에 이어 컴포넌트 내부의 상태 관리, 렌더링 최적화, 확장 등 공통적으로 준수해야 하는 로직 작성 패턴입니다.
 또한, React 공식 패턴에 따라 **`useEffect`를 최대한 지양해야 합니다.** 복잡도를 낮추고 렌더링 최적화를 달성하려면 반드시 `rule-no-useeffect.md` 규칙을 함께 참고하세요!
 
+> 📌 **훅 출처**: `useSetStateSelector`, `useDelayedValue` 등 범용 훅은 `@yourssu-inhouse/inhouse-react/hooks`에서 import합니다. `useSearchState`, `useToastedMutation` 등은 각 앱의 `@/hooks/`에, `useLoading`/`SwitchCase`는 `react-simplikit`에서 직접 import합니다.
+
 ## 1. 상태 업데이트 로직 그룹화 패턴 (`useSetStateSelector`)
 
 복잡한 객체 상태(Context, Search Params 등)의 특정 필드만 업데이트해야 할 때, 인라인으로 일일이 업데이트 로직을 작성하지 않고 `setters`라는 객체로 묶어서 관리합니다.
 
-- 객체 형식의 상태를 다룰 때는 렌더링 부에 인라인 함수(`(v) => setState({...})`)를 남발하기보단, 컴포넌트 상단에 `setters` 객체를 만들고 `useSetStateSelector` 커스텀 훅을 활용하여 각 필드의 setter를 선언적으로 모아서 정의하도록 구성합니다.
+- 객체 형식의 상태를 다룰 때는 렌더링 부에 인라인 함수(`(v) => setState({...})`)를 남발하기보단, 컴포넌트 상단에 `setters` 객체를 만들고 `useSetStateSelector`(`@yourssu-inhouse/inhouse-react/hooks`) 커스텀 훅을 활용하여 각 필드의 setter를 선언적으로 모아서 정의하도록 구성합니다.
 
 ```tsx
 // 단일 변경만 필요한 경우

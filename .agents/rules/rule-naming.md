@@ -14,9 +14,10 @@ globs: src/**/*.{ts,tsx}
 
 - **컴포넌트 폴더 (`PascalCase`)**: UI 컴포넌트나 라우트 내 `components/` 폴더 하위의 개별 컴포넌트 폴더명은 `PascalCase`로 작성합니다.
   - 예시: `src/components/AdaptiveLogo/`, `src/routes/.../components/TemplateEditorDialog/`, `src/routes/~_auth/~recruit/~mail/components/VariableList/`
+  - 단, **공용 UI 프리미티브**(Button, Dialog, Table, Badge 등)는 앱 `src/components`가 아닌 `@yourssu-inhouse/interior` 패키지에 속합니다. 앱의 `components/`는 도메인 특화 합성 컴포넌트만 둡니다.
 - **라우터 폴더 (특수 패턴)**: TanStack Router에 의해 렌더링을 관장하는 라우트 폴더명은 `~` 접두사와 함께 영문 소문자(`kebab-case` 권장)를 사용합니다.
   - 예시: `src/routes/~_auth/`, `src/routes/~signin/`, `src/routes/~recruit/`
-- **일반 모듈/기능 폴더 (`camelCase` 또는 `kebab-case`)**: 라우터나 컴포넌트가 아닌 일반적인 범용 디렉토리(`hooks`, `utils`, `apis`)나 하위 카테고리는 소문자 기반으로 작성합니다. 단, 전역 UI 컴포넌트를 담는 폴더는 `_ui` 와 같이 언더바 형식을 취할 수 있습니다.
+- **일반 모듈/기능 폴더 (`camelCase` 또는 `kebab-case`)**: 라우터나 컴포넌트가 아닌 일반적인 범용 디렉토리(`hooks`, `utils`, `apis`)나 하위 카테고리는 소문자 기반으로 작성합니다. (공용 UI 프리미티브는 앱 `src/components`가 아닌 `@yourssu-inhouse/interior` 패키지에 속합니다.)
 
 ## 2. 파일명 규칙
 
@@ -24,7 +25,7 @@ globs: src/**/*.{ts,tsx}
 
 - **컴포넌트 파일 (`PascalCase`)**: React 컴포넌트를 반환하는 파일(`.tsx`)은 내부 컴포넌트명과 동일하게 `PascalCase`로 작성합니다.
   - 단, TanStack 라우터 파일(`~__root.tsx`, `~_auth.tsx`, `~index.tsx` 등)은 폴더명과 마찬가지로 라우팅 네이밍을 따릅니다.
-  - 예시: `src/components/_ui/Button.tsx`, `src/components/Paper.tsx`, `src/routes/.../components/VariableList/index.tsx`
+  - 예시: `src/components/Paper.tsx`, `src/components/AdaptiveLogo/index.tsx`, `src/routes/.../components/VariableList/index.tsx`
 - **일반 로직 파일 (`camelCase`)**: 유틸리티, 훅, 컨텍스트, 타입, API 통신 등 순수 TS 로직을 담은 파일(`.ts`, `.tsx`)은 `camelCase`로 작성합니다.
   - 예시: `src/utils/date.ts`, `src/hooks/useDelayedValue.ts`, `src/apis/error.ts`, `src/routes/.../context.ts`
 
@@ -75,7 +76,8 @@ globs: src/**/*.{ts,tsx}
 
 **모든 `import` 경로는 반드시 절대 경로(Absolute Path)를 사용합니다.**
 
-- **절대 경로 사용**: `tsconfig.json`에 정의된 `@/` Alias(/src)를 사용하여 프로젝트 내부의 모든 모듈을 참조합니다.
+- **앱 내부 모듈**: 각 앱의 `tsconfig`에 정의된 `@/` alias(해당 앱의 `src/`)를 사용합니다. `@/`는 **현재 작업 중인 앱의 `src/`**를 가리키며, 다른 앱이나 패키지 내부를 가리키는 데 쓰지 않습니다.
+- **공용 패키지**: `packages/*`의 워크스페이스 패키지는 패키지명(`@yourssu-inhouse/...`)과 서브패스로 import합니다. (예: `@yourssu-inhouse/interior`, `@yourssu-inhouse/interior-tailwind/utils`, `@yourssu-inhouse/inhouse-utils/date`, `@yourssu-inhouse/auth`)
 - **상대 경로 금지**: `../` 또는 `./` 와 같은 상대 경로의 사용을 금지합니다. 같은 폴더 내의 아주 밀접한 관계를 가진 컴포넌트나 스타일 파일이더라도 `@/` 기반의 절대 경로로 통일해야 합니다.
 - **이유**: 프로젝트 구조가 깊어지더라도 임포트 경로의 가독성을 유지하고, 파일 이동 시 리팩토링 비용을 최소화하기 위함입니다.
 
@@ -83,10 +85,14 @@ globs: src/**/*.{ts,tsx}
 
   ```typescript
   // Bad: 상대 경로 사용
-  import { Button } from '../../components/_ui/Button';
+  import { Button } from '../../components/Paper';
   import { useAuth } from '../hooks/useAuth';
+  import { cn } from '../../utils/tw';
 
-  // Good: @/ Alias를 이용한 절대 경로 사용
-  import { Button } from '@/components/_ui/Button';
+  // Good: @/ Alias(앱 내부)와 워크스페이스 패키지명(공용)을 구분해 사용
+  import { Paper } from '@/components/Paper';
   import { useAuth } from '@/hooks/useAuth';
+  import { Button, Dialog } from '@yourssu-inhouse/interior';
+  import { cn, tv } from '@yourssu-inhouse/interior-tailwind/utils';
+  import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
   ```

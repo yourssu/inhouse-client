@@ -1,7 +1,7 @@
 ---
 trigger: model_decision
 description: 다이얼로그, 토스트 등 오버레이 요소를 띄울 때 읽어야 합니다.
-globs: src/components/**/*.{ts,tsx}, src/utils/overlay.ts
+globs: apps/*/src/components/**/*.{ts,tsx}, packages/interior/src/components/Dialog/**
 ---
 
 # Overlays & Dialogs (다이얼로그 팝업/모달 띄우기)
@@ -10,9 +10,11 @@ globs: src/components/**/*.{ts,tsx}, src/utils/overlay.ts
 
 `overlay-kit` 의 자세한 사용법이 필요하다면 Content7 mcp를 사용해서 읽으세요.
 
+> 📌 **import 출처**: `Dialog`/`TabDialog` 컴포넌트와 `useToast` 훅은 `@yourssu-inhouse/interior`에서, `overlay`는 `overlay-kit`에서, `useLoading`은 `react-simplikit`에서 import합니다. `useAlertDialog`/`useTabDialog`/`useToastedMutation`은 각 앱의 `@/hooks/`에 둡니다.
+
 ## 1. 기본 오버레이 열기 (`useAlertDialog`, `useTabDialog`)
 
-기본적인 형태의 다이얼로그는 프로젝트에 미리 구현된 훅(`useAlertDialog`, `useTabDialog`)을 통해 엽니다.
+기본적인 형태의 다이얼로그는 각 앱에 미리 구현된 훅(`@/hooks/useAlertDialog`, `@/hooks/useTabDialog`)을 통해 엽니다.
 
 ```tsx
 const openAlertDialog = useAlertDialog();
@@ -39,9 +41,9 @@ const handleQuit = async () => {
 해당 다이얼로그 컴포넌트를 `export`하고, 호출하는 측(부모 컴포넌트)에서 `overlay.openAsync` 내부의 렌더 함수로 다이얼로그를 전달하는 패턴을 권장합니다.
 
 ```tsx
-// src/components/SendMailDialog/index.tsx
+// apps/<app>/src/components/SendMailDialog/index.tsx
 import { useState } from 'react';
-import { Dialog } from '@/components/_ui/Dialog';
+import { Dialog } from '@yourssu-inhouse/interior';
 
 export type SendMailConfig =
   | {
@@ -97,7 +99,7 @@ export const SendMailDialog = ({
 ```tsx
 // 사용처 (부모 컴포넌트)
 import { overlay } from 'overlay-kit';
-import { SendMailDialog, type SendMailConfig } from '@/components/SendMailDialog';
+import { SendMailDialog, type SendMailConfig } from '@/components/SendMailDialog'; // 앱 전용 컴포넌트
 
 export const MailPage = () => {
   const handleClickSend = async () => {
@@ -128,10 +130,10 @@ export const MailPage = () => {
 ### 💡 TemplateEditorDialog 예시 (`useLoading` + `useToastedMutation`)
 
 ```tsx
-// src/components/TemplateEditorDialog/index.tsx
+// apps/<app>/src/components/TemplateEditorDialog/index.tsx
 import { useLoading } from 'react-simplikit';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { Dialog } from '@/components/_ui/Dialog';
+import { Dialog } from '@yourssu-inhouse/interior';
 
 export const TemplateEditorDialog = ({ isOpen, closeAsTrue }: Props) => {
   const [loading, startLoading] = useLoading();
@@ -171,7 +173,7 @@ export const TemplateEditorDialog = ({ isOpen, closeAsTrue }: Props) => {
 단순 메시지 알림 시에는 `useToast` 훅이 반환하는 객체의 상태 메서드(`toast.default`, `toast.success`, `toast.error`)를 상황에 맞게 사용합니다. 단, API 호출(Mutation)과 결합할 때는 가급적 위의 `useToastedMutation`을 우선적으로 고려하세요.
 
 ```tsx
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@yourssu-inhouse/interior';
 
 const toast = useToast();
 

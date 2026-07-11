@@ -12,7 +12,7 @@ globs: src/**/context.{ts,tsx}
 
 - 언제나 `useState`와 `useReducer`, `url`(query param)을 최우선으로 고려합니다.
 - `useCallback`과 콜백 prop으로 전달할 수 있다면, Context로 확장하지 않습니다.
-- URL Query Parameter로 제어가 가능한 상태(현재 선택된 탭, 검색어, 필터 등)는 반드시 `useSearchState` (공통 훅 폴더 참고)로 제어해야 합니다.
+- URL Query Parameter로 제어가 가능한 상태(현재 선택된 탭, 검색어, 필터 등)는 반드시 각 앱의 `useSearchState`(`@/hooks/useSearchState`)로 제어해야 합니다.
 
 ## 2. 전역/공용 상태 - Context API 패턴 (Provider & Hook)
 

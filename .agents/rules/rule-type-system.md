@@ -57,8 +57,9 @@ export type User = z.infer<typeof userSchema>;
 
 ## 3. 유틸리티 타입의 활용
 
-- 필요하다면 `@/types/misc` 경로(`src/types/misc.ts`)에 선언된 커스텀 유틸리티 타입들(`Prettify`, `Merge`, `ValueOf` 등)을 적극 활용할 것을 권장합니다.
-- 코드를 작성할 때 재사용 가능한 범위의 타입들을 발견하게 된다면 `misc.ts` 등에 공통화하여 넣어두세요.
+- 범용 유틸리티 타입(`Prettify`, `Merge`, `ValueOf`, `Mutable`, `Diff` 등)은 `@yourssu-inhouse/inhouse-utils/type`에서 import해 적극 활용하세요. (서브패스: `@yourssu-inhouse/inhouse-utils/type`)
+- 해당 앱에서만 쓰이는 UI/display 전용 타입(한국어/영문 매핑, 라우트 타입 등)은 앱의 `@/types/`에 둡니다.
+- 코드를 작성하다 여러 앱에서 재사용 가능한 유틸리티 타입을 발견하면 `inhouse-utils/type`(또는 `./misc`)로 공통화하여 넣어두세요.
 
 ## 4. 상수 선언 시 `as const` 패턴 적극 활용
 
@@ -98,6 +99,8 @@ const onPartFilterChange = (v: PartNameKoType) => {
 };
 ```
 
+> 위 예시의 `@/types/parts`처럼 도메인 매핑 상수/타입은 각 앱의 `@/types/`에 둡니다. (여러 앱에서 공유해야 하는 매핑은 `packages/*`로 분리)
+
 ## 6. 엄격한 타입 시스템 유지 (강제 원칙)
 
 타입 시스템을 강력하게 유지하세요.
@@ -130,7 +133,7 @@ startTransition(() => {
 반복되는 컴포넌트나 강력한 타입 추론이 필요한 파라미터에서는 제네릭 매개변수를 적극 활용하여 사용하는 쪽의 개발 경험(DX)을 높여주세요.
 
 ```tsx
-// src/components/_ui/Tab/index.tsx
+// packages/interior/src/components/Tab/index.tsx
 // 제네릭 <TTab>을 통해 탭 아이템들의 타입을 외부에서 동적으로 추론할 수 있게 디자인합니다.
 interface TabProps<TTab extends string> {
   children: (p: { tab: TTab }) => React.ReactNode;

@@ -8,7 +8,9 @@ globs: *
 
 당신은 Yourssu Inhouse Client 프로젝트의 코드를 작성하고 리뷰하는 전문 AI 에이전트입니다.
 이 문서는 **항상 켜져있는 핵심 오케스트레이션 가이드**입니다.
-작업을 시작하기 전에 **반드시 사용자의 요청(Prompt)과 현재 수정하려는 코드(Context)의 상황을 분석**하고, 아래에 정의된 상황(Situation) 중 일치하는 것이 있다면 해당 규칙 문서(`.agent/rules/*.md`)를 추가로 읽고 지침을 적용하세요.
+작업을 시작하기 전에 **반드시 사용자의 요청(Prompt)과 현재 수정하려는 코드(Context)의 상황을 분석**하고, 아래에 정의된 상황(Situation) 중 일치하는 것이 있다면 해당 규칙 문서(`.agents/rules/*.md`)를 추가로 읽고 지침을 적용하세요.
+
+> 📌 **프로젝트 구조 참고**: 이 레포는 pnpm + turbo 기반 모노레포(`apps/` + `packages/`)이며 Module Federation으로 shell(host)과 remote 앱들이 연결됩니다. 각 앱(`apps/inhouse`, `apps/scouter`, `apps/shell`)은 자체 `src/`와 `@/` alias를 가지고, 공용 코드는 `packages/*`의 워크스페이스 패키지(`@yourssu-inhouse/...`)로 분리됩니다. 상세 구조는 `rule-folder-structure.md`를 참고하세요.
 
 ## 🔀 상황별 룰 (Model Decision Trigger)
 
@@ -91,4 +93,4 @@ globs: *
 
 ---
 
-> **⚠️ 지시사항**: 모델은 주어진 작업을 수행할 때, 여러 개의 상황이 겹친다면 해당하는 **모든 Rule 파일의 원칙을 합산하여 준수**해야 합니다. (예: "새로운 API를 붙인 새로운 페이지 만들기" -> `rule-routing.md` + `rule-api-data-fetching.md` + `rule-core-conventions.md` 참조)
+> **⚠️ 지시사항**: 모델은 주어진 작업을 수행할 때, 여러 개의 상황이 겹친다면 해당하는 **모든 Rule 파일의 원칙을 합산하여 준수**해야 합니다. (예: "새로운 API를 붙인 새로운 페이지 만들기" -> `rule-folder-structure.md` + `rule-routing.md` + `rule-api-data-fetching.md` 참조)

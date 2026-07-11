@@ -1,12 +1,12 @@
 ---
 trigger: model_decision
 description: 날짜를 포맷팅하거나, 날짜 관련 유틸리티를 사용하거나, 날짜 데이터를 다룰 때 읽어야 합니다.
-globs: src/utils/date.ts, src/types/**/*.ts, src/components/**/*.tsx
+globs: packages/inhouse-utils/src/date.ts, apps/*/src/utils/date.ts, apps/*/src/types/**/*.ts, apps/*/src/components/**/*.tsx
 ---
 
 # Date Handling (날짜 처리)
 
-이 문서는 프로젝트에서 날짜(Date) 데이터를 다루고, 포맷팅하며 처리하는 공통적인 규칙을 정의합니다. `src/utils/date.ts` 를 기준으로 작성되었습니다.
+이 문서는 프로젝트에서 날짜(Date) 데이터를 다루고, 포맷팅하며 처리하는 공통적인 규칙을 정의합니다. 공용 포매터는 `@yourssu-inhouse/inhouse-utils/date` 를 기준으로 하며, 앱 한정 포맷이 필요하면 각 앱의 `@/utils/date.ts` 로 확장합니다.
 
 ## 1. 날짜 라이브러리 (date-fns)
 
@@ -31,8 +31,10 @@ globs: src/utils/date.ts, src/types/**/*.ts, src/components/**/*.tsx
 
 ## 3. 포맷팅 템플릿 사용 (formatTemplates)
 
-- 날짜를 화면에 표시할 때는 `src/utils/date.ts` 파일의 **`formatTemplates`** 객체를 활용합니다. 내부적으로 `date-fns`의 포맷팅 로직과 한국어 로케일(`ko`)이 세팅되어 있습니다.
-- 만약 화면 렌더링에 필요한 날짜 포맷이 있다면, 기존 형태를 참고하여 `formatTemplates`에 직접 추가한 뒤 사용할 수 있습니다.
+- 날짜를 화면에 표시할 때는 **`formatTemplates`** 객체를 활용합니다. 내부적으로 `date-fns`의 포맷팅 로직과 한국어 로케일(`ko`)이 세팅되어 있습니다.
+  - **공용 포맷**은 `@yourssu-inhouse/inhouse-utils/date`의 `formatTemplates`를 사용합니다.
+  - **앱 한정 포맷**(예: 스카우터 전용 캘린더/면접 표시)이 필요하면 해당 앱의 `@/utils/date.ts`에 별도 `formatTemplates`를 두어 확장할 수 있습니다.
+- 만약 화면 렌더링에 필요한 날짜 포맷이 있다면, 기존 형태를 참고하여 해당 `formatTemplates`에 직접 추가한 뒤 사용할 수 있습니다.
 - **사용 계층 의존성 주의점**: `formatTemplates`는 **반드시 UI 뷰 레벨(View Layer)에서만 사용**해야 합니다.
   - 데이터 통신(Network Layer) 과정이나, 데이터를 재조립/가공하는 계층(React 비즈니스 로직 레벨)에서는 포맷팅 함수를 사용하지 말고 원본 ISO String 또는 `Date` 객체 형태를 유지해야 합니다.
   - 화면에 그리기 직전인 뷰 컴포넌트 레이어에서만 포맷팅을 수행하세요.
