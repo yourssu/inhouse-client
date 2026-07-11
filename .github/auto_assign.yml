@@ -1,5 +1,5 @@
 addReviewers: true
-addAssignees: false
+addAssignees: author
 
 # 자동 리뷰어 풀 (작성자는 자동 제외됨)
 reviewers:
