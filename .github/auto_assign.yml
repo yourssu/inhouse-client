@@ -1,12 +1,3 @@
-# Auto Assign 설정 — https://github.com/kentaro-m/auto-assign
-#
-# 동작 요약
-# - PR 오픈/재오픈/ready 전환 시 reviewers 를 리뷰어로 자동 할당.
-# - PR 작성자는 reviewers 목록에서 자동 제외됨 (액션 내장 동작: filterUser = PR author).
-#   예) fecapark 가 PR 을 올리면 → jm8468, owl1753 이 리뷰어로 할당.
-# - PR 제목에 skipKeywords 키워드가 포함되면 할당을 스킵 (Draft 취급).
-# - runOnDraft 기본값 false → GitHub native draft PR 은 자동 스킵.
-
 addReviewers: true
 addAssignees: false
 
@@ -16,12 +7,12 @@ reviewers:
   - jm8468
   - owl1753
 
-# 0 = 작성자 제외 후 남은 전원 할당
+# 작성자 제외 후 남은 전원 할당
 numberOfReviewers: 0
 
 # PR 제목에 이 키워드가 있으면 스킵 (대소문자 무관)
 skipKeywords:
   - wip
 
-# native draft PR 에선 실행하지 않음
+# draft PR 에선 실행하지 않음
 runOnDraft: false
