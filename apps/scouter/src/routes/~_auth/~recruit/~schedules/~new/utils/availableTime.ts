@@ -11,10 +11,6 @@ export interface ContiguousRange {
   start: number;
 }
 
-/**
- * ISO datetime 배열을 AvailableTimeRange 배열로 파싱합니다.
- * 각 시간대는 30분 슬롯으로 간주됩니다.
- */
 export const parseAvailableTimes = (isoTimes: string[]): AvailableTimeRange[] => {
   return isoTimes.map((time) => {
     const date = parseISO(time);
@@ -27,10 +23,6 @@ export const parseAvailableTimes = (isoTimes: string[]): AvailableTimeRange[] =>
   });
 };
 
-/**
- * O(1) 시간 가용성 확인을 위한 lookup Set을 생성합니다.
- * key: "YYYY-MM-DD|HH:MM" 형태
- */
 export const buildAvailabilityLookup = (ranges: AvailableTimeRange[]): Set<string> => {
   const lookup = new Set<string>();
   for (const range of ranges) {
@@ -41,9 +33,6 @@ export const buildAvailabilityLookup = (ranges: AvailableTimeRange[]): Set<strin
   return lookup;
 };
 
-/**
- * lookup Set을 사용하여 O(1)로 시간 가용성을 확인합니다.
- */
 export const checkTimeAvailable = (
   lookup: Set<string>,
   date: Date,
@@ -55,9 +44,6 @@ export const checkTimeAvailable = (
   return lookup.has(`${dateKey}|${checkMinutes}`);
 };
 
-/**
- * 드래그 시작 가능 여부를 확인합니다 (끝시간 포함).
- */
 export const checkCanStartDrag = (
   ranges: AvailableTimeRange[],
   date: Date,
@@ -69,13 +55,6 @@ export const checkCanStartDrag = (
   );
 };
 
-/**
- * 연속된 희망 시간대 범위를 미리 계산합니다.
- * 날짜별로 병합된 범위를 Map으로 반환합니다.
- *
- * 이전: getContiguousAvailableRange()에서 매번 filter + sort + 병합 → O(n log n) per call
- * 이후: 한 번 계산 후 Map lookup → O(1) per call (범위 수가 적으므로 선형 탐색도 사실상 O(1))
- */
 export const buildContiguousRanges = (
   ranges: AvailableTimeRange[],
 ): Map<string, ContiguousRange[]> => {
@@ -114,9 +93,6 @@ export const buildContiguousRanges = (
   return result;
 };
 
-/**
- * 특정 날짜/분을 포함하는 연속 범위를 찾습니다.
- */
 export const findContiguousRange = (
   contiguousRanges: Map<string, ContiguousRange[]>,
   date: Date,

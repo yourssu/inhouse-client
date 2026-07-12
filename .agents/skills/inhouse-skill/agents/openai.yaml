@@ -1,0 +1,4 @@
+interface:
+  display_name: "인하우스 프로젝트 규칙"
+  short_description: "인하우스 클라이언트 구현 규칙과 작업별 참조 가이드"
+  default_prompt: "$inhouse-skill을 사용해 이 저장소의 프로젝트 규칙에 맞게 작업해 주세요."

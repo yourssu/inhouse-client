@@ -1,8 +1,8 @@
+import type { EmptyObjectType } from '@yourssu-inhouse/inhouse-utils/type';
+
 import { TabDialog } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import React, { type Dispatch, type SetStateAction, startTransition, useState } from 'react';
-
-import type { EmptyObjectType } from '@/types/misc';
 
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 

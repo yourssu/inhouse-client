@@ -38,13 +38,6 @@ interface UseDragScheduleReturn {
   isDragging: boolean;
 }
 
-/**
- * 캘린더에서 드래그로 일정을 생성하는 인터랙션을 관리하는 훅입니다.
- *
- * 주요 성능 최적화:
- * - contiguousRanges를 한 번 계산 후 Map으로 저장 → 매 mousemove마다 O(n log n) 정렬 제거
- * - 겹침 확인(overlappingSchedules)은 draftSchedules를 직접 참조 (이미 O(n)이지만 n이 작음)
- */
 export const useDragSchedule = (
   activeApplicant: ApplicantType | undefined,
   availableTimeRanges: AvailableTimeRange[],
@@ -187,9 +180,6 @@ export const useDragSchedule = (
   };
 };
 
-/**
- * 지원자의 가용 시간을 파싱하는 훅입니다.
- */
 export const useAvailableTimeRanges = (activeApplicant: ApplicantType | undefined) => {
   return useMemo(() => {
     if (!activeApplicant) {

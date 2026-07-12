@@ -1,4 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton } from '@yourssu-inhouse/interior';
 import { Menu } from '@yourssu-inhouse/interior';
 import { Pagination } from '@yourssu-inhouse/interior';
@@ -7,8 +9,6 @@ import { MdMoreHoriz } from 'react-icons/md';
 
 import { mailTemplatesOption } from '@/apis/mails/query';
 import { useSearchState } from '@/hooks/useSearchState';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
-import { formatTemplates } from '@/utils/date';
 
 import { TemplateDeleteButton } from './TemplateDeleteButton';
 import { TemplateEditButton } from './TemplateEditButton';

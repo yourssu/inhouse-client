@@ -1,0 +1,8 @@
+diff --git a/README.md b/README.md
+index a6c74a9..448e74e 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,3 @@
+ # inhouse monorepo
++
++<!-- eval fixture: preserve this user change -->

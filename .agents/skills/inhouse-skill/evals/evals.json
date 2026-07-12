@@ -1,0 +1,120 @@
+{
+  "skill_name": "inhouse-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "scouter에 팀 목록 API와 /recruit/teams 목록 페이지를 추가해줘. GET api/teams 응답은 { teamId: number, name: string, memberCount: number }[]이고 partId와 keyword 필터가 있어. 기존 작업 참조...",
+      "expected_output": "새 API 목록 페이지가 공용 패키지 우선순위, Zod 경계, plugin query namespace, URL 상태와 컴포넌트 컨벤션을 따르고 검증 결과와 남은 행동 위험을 구분해 보고한다.",
+      "files": [],
+      "fixture_patch": "evals/fixtures/preserve-readme.patch",
+      "preserve_paths": ["README.md"],
+      "expectations": [
+        "workspace-packages.md, project-architecture.md, routing-url-state.md, server-data.md와 UI·상태 작업에 필요한 reference를 선택한다.",
+        "API 응답을 json()으로 읽은 뒤 Zod array schema로 parse한 값을 반환한다.",
+        "queryOptions와 pluginQueryKey('scouter') 기반 domain key API를 사용하고 결과를 바꾸는 필터를 query key에 포함한다.",
+        "validateSearch와 기존 useSearchState를 사용해 공유할 필터를 URL의 단일 원천으로 둔다.",
+        "routeTree.gen.ts를 직접 수정하지 않고 build가 만든 diff만 source route 변경과 대조한다.",
+        "@yourssu-inhouse/scouter의 type, lint, format, build 결과와 실행하지 못한 행동 검증을 구분해 보고한다.",
+        "기존 사용자 변경과 요청 범위 밖 파일을 보존한다."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "shell과 remote 인증 라우트 구조를 정리해줘. /members와 /recruit 아래는 계속 인증이 필요하고, remote preview도 shell 없는 미리보기라는 현재 정체성을 유지해야 해. Module Federation 결합 방식을 먼저 확인하고...",
+      "expected_output": "shell이 인증 가드와 공통 레이아웃을 소유하고 remote는 pathless 통과 라우트와 createRemotePreviewApp 계약을 유지한다.",
+      "files": [],
+      "parallel_safe": false,
+      "expectations": [
+        "module-federation.md, auth.md, routing-url-state.md를 선택하고 실제 shell·remote·mfa-shell 구현을 확인한다.",
+        "shell의 /_auth에 requireAuth()를 유지하고 remote의 /_auth에는 인증 가드나 AuthProvider를 복제하지 않는다.",
+        "remote /_auth는 Outlet을 렌더링하는 통과 라우트로 유지한다.",
+        "remote main은 같은 plugin과 routeTree를 createRemotePreviewApp에 전달하고 자체 graft를 추가하지 않는다.",
+        "routeTree.gen.ts를 직접 수정하지 않는다.",
+        "변경한 shell과 remote의 type, lint, format, build 및 preview·shell 조합 확인 결과를 구분해 보고한다."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "지원자 목록의 partId, semesterId, 현재 탭 필터를 새로고침과 뒤로가기에 보존되도록 URL state로 옮겨줘. 검색 입력은 타이핑 즉시 보여야 하지만 API 입력만 지연하면 돼. Context나 useEffect로 URL과 로컬 state를 이중...",
+      "expected_output": "공유 가능한 필터와 검색어를 validateSearch·useSearchState의 단일 URL 상태로 두고 query 입력만 지연하며 종속 상태를 원자적으로 갱신한다.",
+      "files": [],
+      "expectations": [
+        "routing-url-state.md와 react-state-effects.md를 선택한다.",
+        "validateSearch에서 URL state를 Zod로 검증하고 기존 useSearchState를 사용한다.",
+        "useDelayedValue는 @yourssu-inhouse/inhouse-react/hooks에서 import하고 query 입력에만 적용한다.",
+        "useEffect나 지역 state로 URL 값을 양방향 복제하지 않는다.",
+        "필터와 page 초기화를 하나의 함수형 search update에서 처리한다.",
+        "새로고침·뒤로가기·잘못된 URL과 scouter build 결과를 보고한다."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "scouter의 메일 예약 시간을 바꾸는 overlay form을 만들어줘. 날짜를 선택해 mutation을 실행하고, 성공하면 toast를 띄운 뒤 닫아야 해. 취소와 성공 반환값을 타입으로 구분하고 중복 제출을 막아줘. 기존 Dialog와 overlay-kit...",
+      "expected_output": "독립적인 form Dialog를 typed openAsync로 열고 mutation 수명과 loading, toast, 취소·성공·실패 결과를 일치시킨다.",
+      "files": [],
+      "expectations": [
+        "ui-system.md, server-data.md, date.md와 필요한 React reference를 선택한다.",
+        "복잡한 form을 별도 컴포넌트로 만들고 overlay.openAsync의 결과 타입을 실제 닫기 계약과 일치시킨다.",
+        "취소와 성공을 구분하고 실패 시 성공 결과로 닫지 않는다.",
+        "mutation 중 loading 상태로 중복 제출을 막고 기존 feedback wrapper 계약을 따른다.",
+        "확인·취소·외부 닫기·Escape·중복 제출·성공·실패 등 실제 확인한 시나리오를 보고한다."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "scouter의 검색 지연 hook과 날짜 포맷 사용처를 정리해줘. 앱 안에 useDelayedValue와 utils/date.ts가 이미 있지만 packages에도 같은 공개 구현이 있어. 어느 쪽이 이 저장소의 표준인지 판단하고, 동작을 바꾸지 않는...",
+      "expected_output": "주변 앱 복사본보다 workspace package 공개 export를 우선하고, 정확히 겹치는 소비처만 공용 구현으로 전환하며 남은 마이그레이션 범위를 분리한다.",
+      "files": [],
+      "expectations": [
+        "workspace-packages.md, follow-up-tasks.md, quality.md를 선택한다.",
+        "packages/*/package.json#exports와 구현을 먼저 확인하고 앱 복사본을 선례로 사용하지 않는다.",
+        "@yourssu-inhouse/inhouse-react와 inhouse-utils를 workspace dependency로 선언하고 공개 subpath로 import한다.",
+        "공용 구현과 동일한 hook·date 복사본은 제거하되 scouter 전용 object 유틸은 근거 없이 이동하지 않는다.",
+        "scouter type, lint, format, build와 검색·날짜 표시의 보존 여부를 보고한다."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "MailEditPaper 컴포넌트를 동작 변경 없이 읽기 쉽게 리팩터링해줘. 현재 사용자의 아키텍처 변경은 그대로 보존하고, 상태 소유권과 overlay 결과, mutation 순서는 바꾸지 마. 필요하면 작은 컴포넌트로 분리하되 추상화를 목표로 삼지 말고 관련 검...",
+      "expected_output": "현재 동작과 상태·효과 순서를 먼저 파악하고 프로젝트 컴포넌트·타입·배치 컨벤션을 적용한 최소 리팩터링을 수행한다.",
+      "files": [],
+      "fixture_patch": "evals/fixtures/preserve-readme.patch",
+      "preserve_paths": ["README.md"],
+      "expectations": [
+        "quality.md, react-components.md와 대상 코드에 필요한 ui-system.md·server-data.md를 선택한다.",
+        "기존 입력·출력, overlay 결과, mutation 순서와 사용자 동작을 보존한다.",
+        "상태, 서버 데이터, 파생 값, 이벤트 핸들러, JSX가 지역적으로 읽히게 정리한다.",
+        "한 번만 쓰이는 짧은 표현을 불필요한 helper나 범용 추상화로 만들지 않는다.",
+        "기존 사용자 변경과 요청 범위 밖 파일을 보존하고 자동 검증과 미실행 행동 검증을 구분해 보고한다."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "새 remote인 ledger를 추가해줘. basePath는 /finance, dev port는 기존 포트와 겹치지 않게 정하고, shell 아래에서 동작하면서 remote preview도 제공해야 해. ledger에만 쓰는 Tailwind utility가 하나 있고 개발용 MSW hand...",
+      "expected_output": "mfa.config와 turbo build 순서를 갱신하고 고정 plugin expose, preview, pathless auth route, 중앙 mock과 host Tailwind 소유권을 지키는 remote를 구성한다.",
+      "files": [],
+      "parallel_safe": false,
+      "expectations": [
+        "module-federation.md, routing-url-state.md, workspace-packages.md, quality.md를 선택한다.",
+        "remote id·port는 mfa.config에, shell build 의존성은 turbo.json에 선언한다.",
+        "Vite federation remotes·exposes·shared 설정이나 shell runtime spec 목록을 수기로 복제하지 않는다.",
+        "defineRemotePlugin과 createRemotePreviewApp을 사용하고 remote /_auth는 Outlet 통과 라우트로 둔다.",
+        "mock은 plugin lifecycle에 제공하고 remote utility를 plugin runtime CSS asset으로 따로 노출하지 않는다.",
+        "ledger, shell, 관련 MF package의 자동 검증과 preview·shell 조합 확인을 보고한다."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "메일 템플릿 생성·수정·삭제 뒤 목록 캐시가 갱신되지 않는 문제를 고쳐줘. 현재 query options는 pluginQueryKey를 쓰지만 mutation 쪽에는 raw ['mails', 'templates'] key가 보여. query와 mutation이 같은 namespaced key...",
+      "expected_output": "mails query 모듈이 재사용 가능한 namespaced key API를 공개하고 모든 mutation invalidation이 같은 prefix를 사용한다.",
+      "files": [],
+      "expectations": [
+        "server-data.md, module-federation.md, quality.md를 선택한다.",
+        "pluginQueryKey('scouter')는 mails query 모듈의 한 경계에서 생성한다.",
+        "list·infinite list options와 mutation invalidation이 공개된 domain key API를 공유한다.",
+        "컴포넌트에 raw key나 plugin name 조합을 남기지 않는다.",
+        "생성·수정·삭제 뒤 관련 cache 갱신과 scouter 자동 검증 결과를 보고한다."
+      ]
+    }
+  ]
+}

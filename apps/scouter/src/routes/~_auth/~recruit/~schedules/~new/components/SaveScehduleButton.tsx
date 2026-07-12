@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Button } from '@yourssu-inhouse/interior';
 import { Dialog } from '@yourssu-inhouse/interior';
 import { useToast } from '@yourssu-inhouse/interior';
@@ -17,7 +18,6 @@ import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduleApplicants } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
 import { partNameKo } from '@/types/parts';
-import { formatTemplates } from '@/utils/date';
 import { handleError } from '@/utils/error';
 
 const SaveDialogContent = ({

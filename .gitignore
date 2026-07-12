@@ -4,8 +4,6 @@ node_modules
 # Turbo
 .turbo
 
-references
-
 # Build Outputs
 build
 dist

@@ -1,7 +1,7 @@
 import { isToday } from 'date-fns';
 
-import * as styles from '../../DatePicker.css';
-import { useDateStatus } from '../../hooks/useDateStatus';
+import * as styles from '@/components/DatePicker/DatePicker.css';
+import { useDateStatus } from '@/components/DatePicker/hooks/useDateStatus';
 
 interface DateGridCellProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   date: Date;

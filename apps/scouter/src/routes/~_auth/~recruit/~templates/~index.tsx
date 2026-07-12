@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { Button } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
@@ -11,7 +12,6 @@ import { z } from 'zod/v4';
 
 import { TemplateEditorDialog } from '@/components/TemplateEditorDialog';
 import { useSearchState } from '@/hooks/useSearchState';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { TemplatesTable } from '@/routes/~_auth/~recruit/~templates/components/TemplatesTable';
 
 const RouteComponent = () => {

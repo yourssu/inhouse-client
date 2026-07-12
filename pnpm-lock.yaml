@@ -285,6 +285,12 @@ importers:
       '@yourssu-inhouse/exterior':
         specifier: workspace:*
         version: link:../../packages/exterior
+      '@yourssu-inhouse/inhouse-react':
+        specifier: workspace:*
+        version: link:../../packages/inhouse-react
+      '@yourssu-inhouse/inhouse-utils':
+        specifier: workspace:*
+        version: link:../../packages/inhouse-utils
       '@yourssu-inhouse/interior':
         specifier: workspace:*
         version: link:../../packages/interior

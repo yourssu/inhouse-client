@@ -1,6 +1,5 @@
 import type { RouteById, RouteIds } from '@tanstack/react-router';
-
-import type { ExcludeEmptyObject, Prettify } from '@/types/misc';
+import type { ExcludeEmptyObject, Prettify } from '@yourssu-inhouse/inhouse-utils/type';
 
 import { type FileRouteTypes, routeTree } from '@/routeTree.gen';
 

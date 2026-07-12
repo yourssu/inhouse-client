@@ -1,6 +1,6 @@
-import { z } from 'zod/v4';
+import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
 
-import type { Merge } from '@/types/misc';
+import { z } from 'zod/v4';
 
 import { DivisionNameSchema } from '@/apis/divisions/schema';
 import { PartNameSchema } from '@/apis/parts/schema';

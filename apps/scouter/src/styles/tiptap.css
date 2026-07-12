@@ -22,7 +22,6 @@
   opacity: 1;
 }
 
-/* Corner handles */
 [data-resize-handle='top-left'],
 [data-resize-handle='top-right'],
 [data-resize-handle='bottom-left'],

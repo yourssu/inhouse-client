@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "codex-cli",
+  "command": "codex",
+  "version_args": ["--version"],
+  "base_args": ["exec", "--ephemeral", "--ignore-user-config", "--json", "--color", "never"],
+  "safe_args": ["--sandbox", "workspace-write"],
+  "unsafe_args": ["--dangerously-bypass-approvals-and-sandbox"],
+  "model_args": ["--model", "{model}"],
+  "trailing_args": ["-c", "{sandbox}", "-o", "{report_path}", "-"],
+  "environment": {},
+  "prompt_mode": "stdin",
+  "report_mode": "file",
+  "transcript_format": "codex-jsonl"
+}

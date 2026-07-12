@@ -15,11 +15,6 @@ interface UseScheduleApplicantsReturn {
   selectedPart: PartType | undefined;
 }
 
-/**
- * 일정 생성에 필요한 지원자/파트 데이터를 제공하는 훅입니다.
- * ScheduleCreationView와 SaveScheduleButton에서 공유되어 데이터 중복 페칭을 방지합니다.
- * (React Query의 캐싱으로 실제 네트워크 요청은 중복되지 않지만, 필터링 로직의 중복도 제거됩니다.)
- */
 export const useScheduleApplicants = (): UseScheduleApplicantsReturn => {
   const { selectedPartId, selectedSemesterId } = useScheduleCreationContext();
 
@@ -42,13 +37,6 @@ export const useScheduleApplicants = (): UseScheduleApplicantsReturn => {
   return { parts, allApplicants, applicants, selectedPart };
 };
 
-/**
- * draftSchedules에서 특정 지원자의 일정 존재 여부를 O(1)로 확인할 수 있는
- * Set을 제공하는 훅입니다.
- *
- * 이전: hasSchedule()에서 매 렌더링마다 O(n) 선형 탐색
- * 이후: Set.has()로 O(1) 확인
- */
 export const useScheduledApplicantIds = (): Set<number> => {
   const { draftSchedules } = useScheduleCreationContext();
 

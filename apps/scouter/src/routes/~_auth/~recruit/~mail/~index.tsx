@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { Button } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
@@ -10,7 +11,6 @@ import { z } from 'zod/v4';
 import { mailReservationStatus } from '@/apis/mails/schema';
 import { Paper } from '@/components/Paper';
 import { useSearchState } from '@/hooks/useSearchState';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { MailListTable } from '@/routes/~_auth/~recruit/~mail/components/MailListTable';
 import { MailStatusGrid } from '@/routes/~_auth/~recruit/~mail/components/MailStatusGrid';
 
