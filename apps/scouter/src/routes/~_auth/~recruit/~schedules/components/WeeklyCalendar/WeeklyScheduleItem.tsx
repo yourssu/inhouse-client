@@ -23,7 +23,7 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
   const color = partColorMap[schedule.part];
   const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
 
-  const handleLocationEdit = useLocationEditDialog(schedule.id);
+  const openLocationEditDialog = useLocationEditDialog(schedule.id);
 
   const [isCompact, setIsCompact] = useState(false);
   const ref = useResizeObserver((entry) => {
@@ -64,7 +64,7 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
         <ScheduleTooltip.Item
           icon={MdLocationOn}
           right={
-            <InlineButton className="text-violet500" onClick={handleLocationEdit}>
+            <InlineButton className="text-violet500" onClick={openLocationEditDialog}>
               수정
             </InlineButton>
           }
