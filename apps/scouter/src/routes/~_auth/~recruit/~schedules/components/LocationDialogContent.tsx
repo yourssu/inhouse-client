@@ -42,8 +42,8 @@ export const LocationDialogContent = ({
   const isClubRoomConflict = (target: InterviewScheduleType) => {
     const isTimingConflict = (a: InterviewScheduleType, b: InterviewScheduleType) =>
       areIntervalsOverlapping(
-        { start: new Date(a.startTime), end: new Date(a.endTime) },
-        { start: new Date(b.startTime), end: new Date(b.endTime) },
+        { start: a.startTime, end: a.endTime },
+        { start: b.startTime, end: b.endTime },
       );
 
     return schedules.some(
