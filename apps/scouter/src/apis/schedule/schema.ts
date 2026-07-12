@@ -23,3 +23,11 @@ export const CreateScheduleRequestSchema = z.object({
 });
 
 export type CreateScheduleRequestType = z.infer<typeof CreateScheduleRequestSchema>;
+
+
+export const InterviewLocationSchema = z.object({
+  locationType: z.string(),
+  locationDetail: z.string().nullable(),
+});
+
+export type InterviewLocationType = z.infer<typeof InterviewLocationSchema>;

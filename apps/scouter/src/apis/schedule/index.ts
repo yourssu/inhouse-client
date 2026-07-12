@@ -2,6 +2,7 @@ import { api } from '@/apis/api';
 import {
   CreateScheduleRequestSchema,
   type CreateScheduleRequestType,
+  InterviewLocationSchema,
   InterviewScheduleSchema,
 } from '@/apis/schedule/schema';
 
@@ -33,4 +34,17 @@ export const putInterviewSchedulesByPart = async (
 
 export const deleteInterviewSchedulesByPart = async (partId: number) => {
   await api.delete(`recruiter/schedule/part/${partId}`);
+};
+
+export const patchInterviewLocation = async ({
+  scheduleId,
+  locationType,
+  locationDetail = null,
+}: {
+  locationDetail?: null | string;
+  locationType: string;
+  scheduleId: number;
+}) => {
+  const validated = InterviewLocationSchema.parse({ locationType, locationDetail });
+  await api.patch(`recruiter/schedule/${scheduleId}/location`, { json: validated });
 };
