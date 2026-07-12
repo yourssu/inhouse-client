@@ -7,9 +7,8 @@ import { MdLocationOn } from 'react-icons/md';
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
 
-import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useResizeObserver } from '@/hooks/useResizeObserver';
-import { LocationDialogContent } from '@/routes/~_auth/~recruit/~schedules/components/LocationDialogContent';
+import { useLocationEditDialog } from '@/routes/~_auth/~recruit/~schedules/components/hooks/useLocationEditDialog';
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { partColorMap, partNameKo } from '@/types/parts';
 import { formatTemplates } from '@/utils/date';
@@ -23,20 +22,7 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
   const color = partColorMap[schedule.part];
   const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
 
-  const openAlertDialog = useAlertDialog();
-  const handleLocationEdit = async () => {
-    await openAlertDialog({
-      title: '면접 장소 변경하기',
-      content: ({ closeAsTrue, closeAsFalse }) => (
-        <LocationDialogContent
-          closeAsFalse={closeAsFalse}
-          closeAsTrue={closeAsTrue}
-          scheduleId={schedule.id}
-        />
-      ),
-      customized: true,
-    });
-  };
+  const handleLocationEdit = useLocationEditDialog(schedule.id);
 
   const [isCompact, setIsCompact] = useState(false);
   const ref = useResizeObserver((entry) => {
@@ -74,7 +60,10 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
           {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
           {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
         </ScheduleTooltip.Item>
-        <ScheduleTooltip.Item icon={MdLocationOn} right={{ label: '수정', onClick: handleLocationEdit }}>
+        <ScheduleTooltip.Item
+          icon={MdLocationOn}
+          right={{ label: '수정', onClick: handleLocationEdit }}
+        >
           {schedule.locationDetail == null
             ? schedule.locationType
             : `${schedule.locationType} (${schedule.locationDetail})`}
