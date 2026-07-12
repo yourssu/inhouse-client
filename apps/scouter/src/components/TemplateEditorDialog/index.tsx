@@ -1,4 +1,5 @@
 import { type Editor } from '@tiptap/react';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { Dialog } from '@yourssu-inhouse/interior';
 import { josa } from 'es-hangul';
 import { useState } from 'react';
@@ -18,7 +19,6 @@ import {
 } from '@/components/TemplateEditorDialog/utils/variable';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface TemplateEditorDialogProps {

@@ -4,13 +4,14 @@ import { setDate } from 'date-fns';
 import { assert } from 'es-toolkit';
 import { useCallback, useState } from 'react';
 
-import type { DatePickerProps } from '../types';
+import type { DatePickerProps } from '@/components/DatePicker/types';
 
-import { Button } from '../../Button';
-import { Popover } from '../../Popover';
-import { CalendarContext } from '../context';
-import * as styles from '../DatePicker.css';
-import { maximumDate, minimumDate } from '../utils';
+import { Button } from '@/components/Button';
+import { CalendarContext } from '@/components/DatePicker/context';
+import * as styles from '@/components/DatePicker/DatePicker.css';
+import { maximumDate, minimumDate } from '@/components/DatePicker/utils';
+import { Popover } from '@/components/Popover';
+
 import { CalendarPanel } from './CalendarPanel';
 
 export const DatePicker = ({

@@ -13,9 +13,6 @@ interface DragPreviewProps {
   isDragging: boolean;
 }
 
-/**
- * 드래그 중 미리보기 영역을 렌더링하는 컴포넌트입니다.
- */
 export const DragPreview = ({ date, isDragging, dragStart, dragCurrent }: DragPreviewProps) => {
   if (!isDragging || !dragStart || !dragCurrent || !isSameDay(dragStart.date, date)) {
     return null;

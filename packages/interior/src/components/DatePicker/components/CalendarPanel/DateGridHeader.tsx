@@ -1,5 +1,5 @@
-import * as styles from '../../DatePicker.css';
-import { weekDaysKo } from '../../utils';
+import * as styles from '@/components/DatePicker/DatePicker.css';
+import { weekDaysKo } from '@/components/DatePicker/utils';
 
 export const DateGridHeader = () => {
   return (

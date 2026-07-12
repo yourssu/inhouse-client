@@ -18,10 +18,6 @@ interface AvailableTimeSlotsProps {
   isDragging: boolean;
 }
 
-/**
- * 지원자의 희망 시간대를 시각적으로 표시하는 컴포넌트입니다.
- * O(1) lookup을 사용하여 각 30분 슬롯의 가용성을 확인합니다.
- */
 export const AvailableTimeSlots = ({
   date,
   availableTimeRanges,

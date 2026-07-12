@@ -32,18 +32,6 @@ interface BootstrapShellResult {
   plugins: readonly RemotePlugin[];
 }
 
-/*
-  shell 을 runtime orchestrator 로 부트스트랩해요. Module Federation 으로 remote Plugin 들을
-  로드하고 Plugin 계약으로만 composition(graft) 을 수행해요. remote 내부 route 구조를 직접
-  탐색하지 않아요.
-
-  1. shell 자기 entry route(anchor)를 찾아요.
-  2. assertSharedVersions 로 shared dependency 버전 정책을 런타임에 검사해요.
-  3. composePlugins 가 각 plugin 의 entry children 을 shell entry 아래로 graft 해요(per-plugin
-     격리, route id/basePath 충돌 검사).
-  4. createExteriorApp 의 beforeRender 에서 init · mocks lifecycle 을 태워요.
-  5. failures 가 있으면 unavailable UI 를 children slot 에 렌더해요.
-*/
 export const bootstrapShell = async (
   options: BootstrapShellOptions,
 ): Promise<BootstrapShellResult> => {

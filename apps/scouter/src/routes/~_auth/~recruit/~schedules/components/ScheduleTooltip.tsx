@@ -1,11 +1,11 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { type DateArg, differenceInMinutes } from 'date-fns';
 import { BiSolidCalendarCheck } from 'react-icons/bi';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 
 import { partNameKo } from '@/types/parts';
-import { formatTemplates } from '@/utils/date';
 import { formatSemester } from '@/utils/semester';
 
 interface ScheduleTooltipProps {

@@ -4,11 +4,6 @@ import { FcConferenceCall } from 'react-icons/fc';
 
 import { AdaptiveLogo } from '@/components/AdaptiveLogo';
 
-/*
-  mm 의 /members 서브트리 진입 라우트예요.
-  기존엔 _auth 레벨에 있던 TabSection(멤버 관리)이 graft 후 사라지므로 여기로 옮겼어요.
-  사이드바 접기 상태는 Sidebar·TabSection 이 localStorage(useStorageState)로 직접 공유해요.
-*/
 export const Route = createFileRoute('/_auth/members')({
   component: () => (
     <>

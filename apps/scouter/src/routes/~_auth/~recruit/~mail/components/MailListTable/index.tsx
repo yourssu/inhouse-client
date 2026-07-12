@@ -1,4 +1,6 @@
 import { Lottie } from '@toss/lottie';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton } from '@yourssu-inhouse/interior';
 import { Menu } from '@yourssu-inhouse/interior';
 import { Pagination } from '@yourssu-inhouse/interior';
@@ -13,12 +15,10 @@ import type { MailStatusNameType } from '@/types/mails';
 
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { MailReceiversText } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailReceiversText';
 import { MailStatusBadge } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailStatusBadge';
 import { useGroupedMailReservations } from '@/routes/~_auth/~recruit/~mail/hooks/useGroupedMailReservations';
 import { mailStatusNameMap, mailStatusNames } from '@/types/mails';
-import { formatTemplates } from '@/utils/date';
 
 export const MailListTable = () => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/' });

@@ -1,14 +1,14 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
+import { objectEntries } from '@yourssu-inhouse/inhouse-utils/object';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { startTransition } from 'react';
 
 import { partsOption } from '@/apis/parts/query';
 import { useSearchState } from '@/hooks/useSearchState';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { divisionColorMap } from '@/types/divisions';
 import { partColorMap, partNameKo } from '@/types/parts';
-import { objectEntries } from '@/utils/object';
 
 export const PartLegend = () => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/schedules/' });

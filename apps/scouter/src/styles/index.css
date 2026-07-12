@@ -3,8 +3,8 @@
 @import 'tailwindcss';
 @import '@yourssu-inhouse/interior/index.css';
 @import '@yourssu-inhouse/exterior/index.css';
-@import './runtime.css';
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
+@import './runtime.css';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 

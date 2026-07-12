@@ -10,7 +10,7 @@
 - [x] `types/misc.ts`, `utils/misc.ts`, `utils/object.ts`의 공용 export 소비처를 공용 import로 전환하고, 사용되지 않는 앱 전용 함수를 함께 제거한다.
 - [x] scouter type·lint·format·build와 공용 날짜·객체 유틸의 runtime 계약을 검증한다.
 - [x] applicants·mail-templates·schedules route의 search schema를 실행해 기본값, 잘못된 enum 복구와 검색어·페이지·필터 보존 계약을 검증한다.
-- [ ] scouter remote preview와 shell에서 주요 날짜 표시와 검색 URL 상태의 실제 렌더링·상호작용을 확인한다.
+- [x] scouter remote preview와 shell에서 주요 날짜 표시와 검색 URL 상태의 실제 렌더링·상호작용을 확인한다.
 
 ## interior import alias 정리
 

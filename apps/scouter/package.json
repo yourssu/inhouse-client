@@ -41,6 +41,8 @@
     "@toss/lottie": "^1.3.2",
     "@yourssu-inhouse/auth": "workspace:*",
     "@yourssu-inhouse/exterior": "workspace:*",
+    "@yourssu-inhouse/inhouse-react": "workspace:*",
+    "@yourssu-inhouse/inhouse-utils": "workspace:*",
     "@yourssu-inhouse/interior": "workspace:*",
     "@yourssu-inhouse/interior-tailwind": "workspace:*",
     "@yourssu-inhouse/interior-vars": "workspace:*",

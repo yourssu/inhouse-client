@@ -1,9 +1,10 @@
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
+
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
 
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { partColorMap, partNameKo } from '@/types/parts';
-import { formatTemplates } from '@/utils/date';
 
 interface MonthlyScheduleItemProps {
   applicant: ApplicantType;

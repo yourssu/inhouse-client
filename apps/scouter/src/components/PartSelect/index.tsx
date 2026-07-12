@@ -1,8 +1,8 @@
+import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
+
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Select, type SelectProps } from '@yourssu-inhouse/interior';
 import { assert } from 'es-toolkit';
-
-import type { Merge } from '@/types/misc';
 
 import { partsOption } from '@/apis/parts/query';
 import { type PartNameType, type PartType as PartTypeOrigin } from '@/apis/parts/schema';
