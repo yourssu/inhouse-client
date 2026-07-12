@@ -5,6 +5,8 @@ import { MdLocationOn } from 'react-icons/md';
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
 
+import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { LocationDialogContent } from '@/routes/~_auth/~recruit/~schedules/components/LocationDialogContent';
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { partColorMap, partNameKo } from '@/types/parts';
 import { formatTemplates } from '@/utils/date';
@@ -17,6 +19,21 @@ interface MonthlyScheduleItemProps {
 export const MonthlyScheduleItem = ({ applicant, schedule }: MonthlyScheduleItemProps) => {
   const color = partColorMap[schedule.part];
   const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
+
+  const openAlertDialog = useAlertDialog();
+  const handleLocationEdit = async () => {
+    await openAlertDialog({
+      title: '면접 장소 변경하기',
+      content: ({ closeAsTrue, closeAsFalse }) => (
+        <LocationDialogContent
+          closeAsFalse={closeAsFalse}
+          closeAsTrue={closeAsTrue}
+          scheduleId={schedule.id}
+        />
+      ),
+      customized: true,
+    });
+  };
 
   return (
     <ScheduleTooltip>
@@ -43,10 +60,7 @@ export const MonthlyScheduleItem = ({ applicant, schedule }: MonthlyScheduleItem
           {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
           {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
         </ScheduleTooltip.Item>
-        <ScheduleTooltip.Item
-          icon={MdLocationOn}
-          right={{ label: '수정', scheduleId: schedule.id }}
-        >
+        <ScheduleTooltip.Item icon={MdLocationOn} right={{ label: '수정', onClick: handleLocationEdit }}>
           {schedule.locationDetail == null
             ? schedule.locationType
             : `${schedule.locationType} (${schedule.locationDetail})`}

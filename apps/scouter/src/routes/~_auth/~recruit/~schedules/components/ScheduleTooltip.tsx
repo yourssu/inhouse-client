@@ -3,8 +3,6 @@ import { InlineButton } from '@yourssu-inhouse/interior';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 
-import { useAlertDialog } from '@/hooks/useAlertDialog';
-import { LocationDialogContent } from '@/routes/~_auth/~recruit/~schedules/components/LocationDialogContent';
 import { partNameKo } from '@/types/parts';
 import { formatTemplates } from '@/utils/date';
 import { formatSemester } from '@/utils/semester';
@@ -65,27 +63,11 @@ type ScheduleTooltipItemProps = React.PropsWithChildren<{
   icon: React.ComponentType<{ className?: string }>;
   right?: {
     label: string;
-    scheduleId: number;
+    onClick: () => void;
   };
 }>;
 
 const ScheduleTooltipItem = ({ icon: Icon, right, children }: ScheduleTooltipItemProps) => {
-  const openAlertDialog = useAlertDialog();
-
-  const handleLocationEdit = async (scheduleId: number) => {
-    await openAlertDialog({
-      title: '면접 장소 변경하기',
-      content: ({ closeAsTrue, closeAsFalse }) => (
-        <LocationDialogContent
-          closeAsFalse={closeAsFalse}
-          closeAsTrue={closeAsTrue}
-          scheduleId={scheduleId}
-        />
-      ),
-      customized: true,
-    });
-  };
-
   const content = (
     <div className="flex items-center gap-2">
       <Icon className="text-neutralDisabled size-6" />
@@ -100,7 +82,7 @@ const ScheduleTooltipItem = ({ icon: Icon, right, children }: ScheduleTooltipIte
   return (
     <div className="flex items-center justify-between gap-2">
       {content}
-      <InlineButton className="text-violet500" onClick={() => handleLocationEdit(right.scheduleId)}>
+      <InlineButton className="text-violet500" onClick={right.onClick}>
         {right.label}
       </InlineButton>
     </div>
