@@ -1,5 +1,4 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { InlineButton } from '@yourssu-inhouse/interior';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 
@@ -61,10 +60,7 @@ const ScheduleTooltipContent = ({
 
 type ScheduleTooltipItemProps = React.PropsWithChildren<{
   icon: React.ComponentType<{ className?: string }>;
-  right?: {
-    label: string;
-    onClick: () => void;
-  };
+  right?: React.ReactNode;
 }>;
 
 const ScheduleTooltipItem = ({ icon: Icon, right, children }: ScheduleTooltipItemProps) => {
@@ -82,9 +78,7 @@ const ScheduleTooltipItem = ({ icon: Icon, right, children }: ScheduleTooltipIte
   return (
     <div className="flex items-center justify-between gap-2">
       {content}
-      <InlineButton className="text-violet500" onClick={right.onClick}>
-        {right.label}
-      </InlineButton>
+      {right}
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { InlineButton } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { differenceInMinutes } from 'date-fns';
 import { useState } from 'react';
@@ -62,7 +63,11 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
         </ScheduleTooltip.Item>
         <ScheduleTooltip.Item
           icon={MdLocationOn}
-          right={{ label: '수정', onClick: handleLocationEdit }}
+          right={
+            <InlineButton className="text-violet500" onClick={handleLocationEdit}>
+              수정
+            </InlineButton>
+          }
         >
           {schedule.locationDetail == null
             ? schedule.locationType
