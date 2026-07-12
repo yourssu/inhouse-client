@@ -1,3 +1,7 @@
+import { differenceInMinutes } from 'date-fns';
+import { BiSolidCalendarCheck } from 'react-icons/bi';
+import { MdLocationOn } from 'react-icons/md';
+
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
 
@@ -12,6 +16,7 @@ interface MonthlyScheduleItemProps {
 
 export const MonthlyScheduleItem = ({ applicant, schedule }: MonthlyScheduleItemProps) => {
   const color = partColorMap[schedule.part];
+  const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
 
   return (
     <ScheduleTooltip>
@@ -34,12 +39,18 @@ export const MonthlyScheduleItem = ({ applicant, schedule }: MonthlyScheduleItem
         applicant={applicant}
         contentProps={{ side: 'left', sideOffset: 10 }}
       >
-        <ScheduleTooltip.Time endTime={schedule.endTime} startTime={schedule.startTime} />
-        <ScheduleTooltip.Location
-          locationDetail={schedule.locationDetail}
-          locationType={schedule.locationType}
-          scheduleId={schedule.id}
-        />
+        <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
+          {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
+          {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
+        </ScheduleTooltip.Item>
+        <ScheduleTooltip.Item
+          icon={MdLocationOn}
+          right={{ label: '수정', scheduleId: schedule.id }}
+        >
+          {schedule.locationDetail == null
+            ? schedule.locationType
+            : `${schedule.locationType} (${schedule.locationDetail})`}
+        </ScheduleTooltip.Item>
       </ScheduleTooltip.Content>
     </ScheduleTooltip>
   );

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { differenceInMinutes, isSameDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { assert } from 'es-toolkit';
+import { BiSolidCalendarCheck } from 'react-icons/bi';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { DraftScheduleType } from '@/types/schedule';
@@ -12,6 +13,7 @@ import {
 } from '@/routes/~_auth/~recruit/~schedules/~new/utils/dragPosition';
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { startHour } from '@/routes/~_auth/~recruit/~schedules/components/WeeklyCalendarLayout/type';
+import { formatTemplates } from '@/utils/date';
 
 interface DraftScheduleItemsProps {
   applicants: ApplicantType[];
@@ -70,9 +72,9 @@ const DraftScheduleItem = ({
     schedule.startTime,
     setMinutes(setHours(startOfDay(schedule.startTime), startHour), 0),
   );
-  const durationMinutes = differenceInMinutes(schedule.endTime, schedule.startTime);
+  const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
   const top = minutesToPixelTop(startMinutes + startHour * 60);
-  const height = minutesToPixelHeight(durationMinutes);
+  const height = minutesToPixelHeight(duration);
   const applicant = applicants.find((a) => a.applicantId === schedule.applicantId);
 
   assert(!!applicant, `지원자를 찾을 수 없어요: ${schedule.applicantId}`);
@@ -106,9 +108,15 @@ const DraftScheduleItem = ({
           <span className="text-sm font-semibold text-white">{schedule.applicantName}</span>
         </div>
       </ScheduleTooltip.Trigger>
-      <ScheduleTooltip.Content applicant={applicant}>
-        <ScheduleTooltip.Time endTime={schedule.endTime} startTime={schedule.startTime} />
-        <ScheduleTooltip.Action text={isOther ? '클릭으로 지원자 탭 이동' : '클릭으로 일정 제거'} />
+      <ScheduleTooltip.Content
+        applicant={applicant}
+        left={isOther ? '클릭으로 지원자 탭 이동' : '클릭으로 일정 제거'}
+      >
+        <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
+          {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
+          {formatTemplates['23:00'](schedule.endTime)} (
+          {duration}분)
+        </ScheduleTooltip.Item>
       </ScheduleTooltip.Content>
     </ScheduleTooltip>
   );

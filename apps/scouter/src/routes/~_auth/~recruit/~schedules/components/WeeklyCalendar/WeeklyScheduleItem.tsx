@@ -1,5 +1,8 @@
 import clsx from 'clsx';
+import { differenceInMinutes } from 'date-fns';
 import { useState } from 'react';
+import { BiSolidCalendarCheck } from 'react-icons/bi';
+import { MdLocationOn } from 'react-icons/md';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
@@ -7,6 +10,7 @@ import type { InterviewScheduleType } from '@/apis/schedule/schema';
 import { useResizeObserver } from '@/hooks/useResizeObserver';
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { partColorMap, partNameKo } from '@/types/parts';
+import { formatTemplates } from '@/utils/date';
 
 interface WeeklyScheduleItemProps {
   applicant: ApplicantType;
@@ -15,6 +19,7 @@ interface WeeklyScheduleItemProps {
 
 export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemProps) => {
   const color = partColorMap[schedule.part];
+  const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
 
   const [isCompact, setIsCompact] = useState(false);
   const ref = useResizeObserver((entry) => {
@@ -48,12 +53,18 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
         applicant={applicant}
         contentProps={{ side: 'left', sideOffset: 10 }}
       >
-        <ScheduleTooltip.Time endTime={schedule.endTime} startTime={schedule.startTime} />
-        <ScheduleTooltip.Location
-          locationDetail={schedule.locationDetail}
-          locationType={schedule.locationType}
-          scheduleId={schedule.id}
-        />
+        <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
+          {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
+          {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
+        </ScheduleTooltip.Item>
+        <ScheduleTooltip.Item
+          icon={MdLocationOn}
+          right={{ label: '수정', scheduleId: schedule.id }}
+        >
+          {schedule.locationDetail == null
+            ? schedule.locationType
+            : `${schedule.locationType} (${schedule.locationDetail})`}
+        </ScheduleTooltip.Item>
       </ScheduleTooltip.Content>
     </ScheduleTooltip>
   );

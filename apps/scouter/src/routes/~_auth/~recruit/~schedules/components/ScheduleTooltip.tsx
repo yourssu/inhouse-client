@@ -1,8 +1,5 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { InlineButton } from '@yourssu-inhouse/interior';
-import { type DateArg, differenceInMinutes } from 'date-fns';
-import { BiSolidCalendarCheck } from 'react-icons/bi';
-import { MdLocationOn } from 'react-icons/md';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 
@@ -25,12 +22,14 @@ const ScheduleTooltipTrigger = ({ children }: React.PropsWithChildren) => (
 type ScheduleTooltipContentProps = React.PropsWithChildren<{
   applicant: ApplicantType;
   contentProps?: Tooltip.TooltipContentProps;
+  left?: string;
 }>;
 
 const ScheduleTooltipContent = ({
   applicant,
   children,
   contentProps,
+  left,
 }: ScheduleTooltipContentProps) => (
   <Tooltip.Portal>
     <Tooltip.Content
@@ -53,45 +52,27 @@ const ScheduleTooltipContent = ({
             </span>
           </div>
         </div>
-        <div className="flex flex-col gap-2">{children}</div>
+        <div className="flex flex-col gap-2">
+          {children}
+          {left != null && <span className="text-violet600 text-13 mt-2.5">{left}</span>}
+        </div>
       </div>
     </Tooltip.Content>
   </Tooltip.Portal>
 );
 
-type ScheduleTooltipTimeProps = {
-  endTime: DateArg<Date>;
-  startTime: DateArg<Date>;
-};
+type ScheduleTooltipItemProps = React.PropsWithChildren<{
+  icon: React.ComponentType<{ className?: string }>;
+  right?: {
+    label: string;
+    scheduleId: number;
+  };
+}>;
 
-const ScheduleTooltipTime = ({ startTime, endTime }: ScheduleTooltipTimeProps) => {
-  const duration = differenceInMinutes(endTime, startTime);
-
-  return (
-    <div className="flex items-center gap-2">
-      <BiSolidCalendarCheck className="text-neutralDisabled size-6" />
-      <span>
-        {formatTemplates['1월 1일 (월) 23:00'](startTime)} ~ {formatTemplates['23:00'](endTime)} (
-        {duration}분)
-      </span>
-    </div>
-  );
-};
-
-type ScheduleTooltipLocationProps = {
-  locationDetail: null | string;
-  locationType: string;
-  scheduleId: number;
-};
-
-const ScheduleTooltipLocation = ({
-  locationType,
-  locationDetail,
-  scheduleId,
-}: ScheduleTooltipLocationProps) => {
+const ScheduleTooltipItem = ({ icon: Icon, right, children }: ScheduleTooltipItemProps) => {
   const openAlertDialog = useAlertDialog();
 
-  const handleLocation = async () => {
+  const handleLocationEdit = async (scheduleId: number) => {
     await openAlertDialog({
       title: '면접 장소 변경하기',
       content: ({ closeAsTrue, closeAsFalse }) => (
@@ -105,30 +86,27 @@ const ScheduleTooltipLocation = ({
     });
   };
 
+  const content = (
+    <div className="flex items-center gap-2">
+      <Icon className="text-neutralDisabled size-6" />
+      <span>{children}</span>
+    </div>
+  );
+
+  if (right == null) {
+    return content;
+  }
+
   return (
     <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-2">
-        <MdLocationOn className="text-neutralDisabled size-6" />
-        <span>{locationDetail == null ? locationType : `${locationType} (${locationDetail})`}</span>
-      </div>
-      <InlineButton className="text-violet500" onClick={handleLocation}>
-        수정
+      {content}
+      <InlineButton className="text-violet500" onClick={() => handleLocationEdit(right.scheduleId)}>
+        {right.label}
       </InlineButton>
     </div>
   );
 };
 
-type ScheduleTooltipActionProps = {
-  text: string;
-};
-
-const ScheduleTooltipAction = ({ text }: ScheduleTooltipActionProps) => (
-  <span className="text-violet600 text-13 mt-2.5">{text}</span>
-);
-
-// .Content 안에는 .Time은 항상 넣고, 저장된 일정이면 .Location, 드래프트 일정이면 .Action을 함께 써요.
 ScheduleTooltip.Trigger = ScheduleTooltipTrigger;
 ScheduleTooltip.Content = ScheduleTooltipContent;
-ScheduleTooltip.Time = ScheduleTooltipTime;
-ScheduleTooltip.Location = ScheduleTooltipLocation;
-ScheduleTooltip.Action = ScheduleTooltipAction;
+ScheduleTooltip.Item = ScheduleTooltipItem;
