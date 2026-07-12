@@ -1,8 +1,8 @@
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { SegmentedControl } from '@yourssu-inhouse/interior';
 import { startTransition } from 'react';
 
 import { useSearchState } from '@/hooks/useSearchState';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import {
   MonthlyIndicator,
   WeeklyIndicator,

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 
-import { HoverTooltip, type HoverTooltipContentProps } from '../HoverTooltip';
+import { HoverTooltip, type HoverTooltipContentProps } from '@/components/HoverTooltip';
+
 import * as styles from './IconButton.css';
 
 export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

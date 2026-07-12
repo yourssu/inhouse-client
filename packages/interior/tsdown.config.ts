@@ -1,9 +1,11 @@
 import { vanillaExtractPlugin } from '@vanilla-extract/rollup-plugin';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'tsdown';
 
 const OUTPUT_CSS_FILE_NAME = 'index.css';
+const TSCONFIG_APP = fileURLToPath(new URL('./tsconfig.app.json', import.meta.url));
 
 const bundleCSSPlugin = (layer: string, cssFileName: string) => ({
   name: 'bundle-css',
@@ -40,6 +42,9 @@ export default defineConfig({
       extract: {
         name: OUTPUT_CSS_FILE_NAME,
         sourcemap: true,
+      },
+      esbuildOptions: {
+        tsconfig: TSCONFIG_APP,
       },
     }),
     bundleCSSPlugin('interior', OUTPUT_CSS_FILE_NAME),

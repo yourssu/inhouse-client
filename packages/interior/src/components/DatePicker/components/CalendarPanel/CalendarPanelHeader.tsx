@@ -4,8 +4,9 @@ import { range } from 'es-toolkit';
 import { useMemo } from 'react';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
-import { IconButton } from '../../../IconButton';
-import * as styles from '../../DatePicker.css';
+import * as styles from '@/components/DatePicker/DatePicker.css';
+import { IconButton } from '@/components/IconButton';
+
 import { DateSelect } from './DateSelect';
 
 interface CalendarPanelHeaderProps {

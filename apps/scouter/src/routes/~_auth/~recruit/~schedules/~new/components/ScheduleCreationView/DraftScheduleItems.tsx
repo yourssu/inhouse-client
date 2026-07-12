@@ -21,9 +21,6 @@ interface DraftScheduleItemsProps {
   isDragging: boolean;
 }
 
-/**
- * 특정 날짜의 드래프트 일정들을 렌더링하는 컴포넌트입니다.
- */
 export const DraftScheduleItems = ({ date, applicants, isDragging }: DraftScheduleItemsProps) => {
   const { draftSchedules, activeApplicantId, setActiveApplicant, removeDraftSchedule } =
     useScheduleCreationContext();

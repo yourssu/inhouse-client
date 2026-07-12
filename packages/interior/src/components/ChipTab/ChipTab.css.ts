@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { vars } from '@yourssu-inhouse/interior-vars';
 
-import { typography } from '../../styles/typography.css.ts';
+import { typography } from '@/styles/typography.css.ts';
 
 export const container = style({
   display: 'flex',

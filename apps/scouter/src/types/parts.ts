@@ -1,7 +1,8 @@
+import type { ValueOf } from '@yourssu-inhouse/inhouse-utils/type';
+
 import { vars } from '@yourssu-inhouse/interior-vars';
 
 import type { PartNameType } from '@/apis/parts/schema';
-import type { ValueOf } from '@/types/misc';
 
 export const partNameKo = {
   'Head lead': '리드',

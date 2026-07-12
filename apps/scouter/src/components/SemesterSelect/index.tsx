@@ -1,9 +1,10 @@
+import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
+
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { Select, type SelectProps } from '@yourssu-inhouse/interior';
 import { assert } from 'es-toolkit';
 
 import type { SemesterType } from '@/apis/semesters/schema';
-import type { Merge } from '@/types/misc';
 
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
 

@@ -1,6 +1,6 @@
-import type { MailReservationStatusType, VariableTypeName } from '@/apis/mails/schema';
+import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
 
-import { objectValues } from '@/utils/object';
+import type { MailReservationStatusType, VariableTypeName } from '@/apis/mails/schema';
 
 export const mailStatusNameMap = {
   SCHEDULED: '예약됨',

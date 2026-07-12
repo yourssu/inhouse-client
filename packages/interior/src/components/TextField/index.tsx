@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 
-import { Fieldset } from '../Fieldset';
+import { Fieldset } from '@/components/Fieldset';
+
 import * as styles from './TextField.css';
 
 export type TextFieldProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & {

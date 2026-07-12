@@ -1,0 +1,4 @@
+interface:
+  display_name: '저장소 스킬 벤치마크'
+  short_description: 'Git baseline과 현재 스킬을 격리된 단회 eval로 비교'
+  default_prompt: '$repo-skill-benchmark를 사용해 대상 스킬을 old-vs-new 방식으로 평가해 주세요.'

@@ -1,6 +1,6 @@
-import { isNil, omitBy } from 'es-toolkit';
+import type { Prettify } from '@yourssu-inhouse/inhouse-utils/type';
 
-import type { Prettify } from '@/types/misc';
+import { isNil, omitBy } from 'es-toolkit';
 
 import { api } from '@/apis/api';
 import {

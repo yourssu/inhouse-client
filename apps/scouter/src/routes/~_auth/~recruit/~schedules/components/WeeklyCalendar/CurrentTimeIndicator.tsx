@@ -1,3 +1,4 @@
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { differenceInMinutes, getSeconds, setHours, setMinutes, startOfDay } from 'date-fns';
 import { clamp } from 'es-toolkit';
 import { useEffect, useRef, useState } from 'react';
@@ -7,7 +8,6 @@ import {
   hourHeight,
   startHour,
 } from '@/routes/~_auth/~recruit/~schedules/components/WeeklyCalendarLayout/type';
-import { formatTemplates } from '@/utils/date';
 
 export const CurrentTimeIndicator = () => {
   const [now, setNow] = useState(new Date());

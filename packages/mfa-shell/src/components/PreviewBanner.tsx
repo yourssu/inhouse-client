@@ -1,10 +1,5 @@
 import { type ReactNode } from 'react';
 
-/*
-  remote dev preview harness 가 "독립 앱" 이 아니라 shell 없이 띄운 remote 미리보기임을
-  명시하는 배너예요. standalone 이라는 이름이 주던 "인증까지 되는 독립 제품" 착시를 없애요.
-  preview 는 shell 크롬/인증 없이 remote 서브트리만 보여주는 개발 도구예요.
-*/
 export const PreviewBanner = (): ReactNode => (
   <div
     role="status"
@@ -22,10 +17,6 @@ export const PreviewBanner = (): ReactNode => (
   </div>
 );
 
-/*
-  preview 에서 인증 가드가 /signin 으로 리다이렉트했지만 remote 에는 signin route 가 없을 때
-  보여주는 안내예요. "독립 앱인 척" 하지 않고 preview 한계를 솔직히 알려요.
-*/
 export const PreviewAuthNotice = (): ReactNode => (
   <div
     role="alert"

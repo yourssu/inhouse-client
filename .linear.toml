@@ -1,0 +1,8 @@
+# Linear CLI defaults for this repo.
+# API key is NOT stored here — it lives in the system keyring via `linear auth login`.
+# Safe to commit (no secrets).
+team_id = "SCO"
+workspace = "urssuscouter"
+issue_sort = "priority"
+vcs = "git"
+download_images = false

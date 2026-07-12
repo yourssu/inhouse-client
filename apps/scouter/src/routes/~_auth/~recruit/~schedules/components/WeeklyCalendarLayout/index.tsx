@@ -1,3 +1,4 @@
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import clsx from 'clsx';
 import { isSameDay, isToday } from 'date-fns';
 import { type ReactNode } from 'react';
@@ -12,7 +13,6 @@ import {
   startHour,
 } from '@/routes/~_auth/~recruit/~schedules/components/WeeklyCalendarLayout/type';
 import { generateWeeklyCalendarDates } from '@/routes/~_auth/~recruit/~schedules/utils/calendar';
-import { formatTemplates } from '@/utils/date';
 
 const WeeklyCalendarHeader = ({ top = 96 }: { top?: number }) => {
   const { displayDates } = useWeeklyCalendarLayoutContext();

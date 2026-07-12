@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { ChipTab } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
@@ -14,7 +15,6 @@ import { Paper } from '@/components/Paper';
 import { SemesterSelect } from '@/components/SemesterSelect';
 import { useMultiSelectActions } from '@/hooks/useMultiSelectActions';
 import { useSearchState } from '@/hooks/useSearchState';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { ApplicantSelectionBar } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantSelectionBar';
 import { ApplicantsTable } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantsTable';
 import { ApplicantSelectionContext } from '@/routes/~_auth/~recruit/~applicants/context';

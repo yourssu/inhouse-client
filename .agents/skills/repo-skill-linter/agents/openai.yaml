@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Repository Skill Linter'
+  short_description: '저장소 스킬의 구조와 스크립트를 빠르게 정적 검사'
+  default_prompt: 'Use $repo-skill-linter to lint a repository skill after editing it.'

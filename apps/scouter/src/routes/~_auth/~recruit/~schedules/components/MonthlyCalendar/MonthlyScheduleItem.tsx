@@ -1,3 +1,4 @@
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { differenceInMinutes } from 'date-fns';
 import { BiSolidCalendarCheck } from 'react-icons/bi';
@@ -9,7 +10,6 @@ import type { InterviewScheduleType } from '@/apis/schedule/schema';
 import { useLocationEditDialog } from '@/routes/~_auth/~recruit/~schedules/components/hooks/useLocationEditDialog';
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { partColorMap, partNameKo } from '@/types/parts';
-import { formatTemplates } from '@/utils/date';
 
 interface MonthlyScheduleItemProps {
   applicant: ApplicantType;

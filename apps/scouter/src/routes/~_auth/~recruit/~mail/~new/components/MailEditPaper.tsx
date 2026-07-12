@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { type Editor } from '@tiptap/react';
+import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { Button } from '@yourssu-inhouse/interior';
 import { Tab } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
@@ -18,7 +19,6 @@ import {
   type TemplateFormData,
   transformDetailToFormData,
 } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
-import { useSetStateSelector } from '@/hooks/useSetStateSelector';
 import { LoadTemplateDialog } from '@/routes/~_auth/~recruit/~mail/~new/components/LoadTemplateDialog';
 import { VariableList } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList';
 
