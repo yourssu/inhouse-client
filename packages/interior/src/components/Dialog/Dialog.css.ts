@@ -7,6 +7,7 @@ import { typography } from '../../styles/typography.css.ts';
 export const overlay = style({
   position: 'fixed',
   inset: 0,
+  zIndex: vars.zIndex.modal,
 });
 
 export const content = style({
@@ -16,6 +17,7 @@ export const content = style({
   transform: 'translate(-50%, -50%)',
   maxHeight: 'calc(100vh - 40px)',
   outline: 'none',
+  zIndex: vars.zIndex.modal,
 });
 
 export const dialogWrapper = style({
