@@ -8,7 +8,8 @@ export const zIndex = createGlobalThemeContract(varsSource.zIndex, interiorContr
 createGlobalTheme(':root', zIndex, {
   content: '1',
   sticky: '100',
-  dropdown: '200',
-  popover: '300',
-  notification: '400',
+  modal: '200',
+  dropdown: '300',
+  popover: '400',
+  notification: '500',
 });
