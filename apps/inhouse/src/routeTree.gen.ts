@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/~__root'
 import { Route as AuthRouteImport } from './routes/~_auth'
 import { Route as AuthMembersRouteRouteImport } from './routes/~_auth/~members/~route'
-import { Route as TestIndexRouteImport } from './routes/~test/~index'
 import { Route as AuthMembersListIndexRouteImport } from './routes/~_auth/~members/~list/~index'
 
 const AuthRoute = AuthRouteImport.update({
@@ -23,11 +22,6 @@ const AuthMembersRouteRoute = AuthMembersRouteRouteImport.update({
   path: '/members',
   getParentRoute: () => AuthRoute,
 } as any)
-const TestIndexRoute = TestIndexRouteImport.update({
-  id: '/test/',
-  path: '/test/',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/~test/~index.lazy').then((d) => d.Route))
 const AuthMembersListIndexRoute = AuthMembersListIndexRouteImport.update({
   id: '/list/',
   path: '/list/',
@@ -36,39 +30,30 @@ const AuthMembersListIndexRoute = AuthMembersListIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthRouteWithChildren
-  '/test/': typeof TestIndexRoute
   '/members': typeof AuthMembersRouteRouteWithChildren
   '/members/list/': typeof AuthMembersListIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthRouteWithChildren
-  '/test': typeof TestIndexRoute
   '/members': typeof AuthMembersRouteRouteWithChildren
   '/members/list': typeof AuthMembersListIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
-  '/test/': typeof TestIndexRoute
   '/_auth/members': typeof AuthMembersRouteRouteWithChildren
   '/_auth/members/list/': typeof AuthMembersListIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test/' | '/members' | '/members/list/'
+  fullPaths: '/' | '/members' | '/members/list/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/test' | '/members' | '/members/list'
-  id:
-    | '__root__'
-    | '/_auth'
-    | '/test/'
-    | '/_auth/members'
-    | '/_auth/members/list/'
+  to: '/' | '/members' | '/members/list'
+  id: '__root__' | '/_auth' | '/_auth/members' | '/_auth/members/list/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
-  TestIndexRoute: typeof TestIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -86,13 +71,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/members'
       preLoaderRoute: typeof AuthMembersRouteRouteImport
       parentRoute: typeof AuthRoute
-    }
-    '/test/': {
-      id: '/test/'
-      path: '/test'
-      fullPath: '/test/'
-      preLoaderRoute: typeof TestIndexRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_auth/members/list/': {
       id: '/_auth/members/list/'
@@ -127,7 +105,6 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
-  TestIndexRoute: TestIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
