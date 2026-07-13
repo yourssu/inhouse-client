@@ -1,9 +1,10 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { AiFillClockCircle } from 'react-icons/ai';
 import { IoMdAlert } from 'react-icons/io';
 import { MdSend } from 'react-icons/md';
 
+import { mailReservationGroupsOption } from '@/apis/mails/query';
 import { MailStatusPaper } from '@/routes/~_auth/~recruit/~mail/components/MailStatusGrid/MailStatusPaper';
-import { useGroupedMailReservations } from '@/routes/~_auth/~recruit/~mail/hooks/useGroupedMailReservations';
 
 const Skeleton = () => {
   return (
@@ -16,11 +17,13 @@ const Skeleton = () => {
 };
 
 export const MailStatusGrid = () => {
-  const reservations = useGroupedMailReservations();
+  const {
+    data: { groups: reservationGroups },
+  } = useSuspenseQuery(mailReservationGroupsOption());
 
-  const scheduledCount = reservations.filter((item) => item.status === 'SCHEDULED').length;
-  const sentCount = reservations.filter((item) => item.status === 'SENT').length;
-  const failCount = reservations.filter((item) => item.status === 'PENDING_SEND').length;
+  const scheduledCount = reservationGroups.filter((item) => item.status === 'SCHEDULED').length;
+  const sentCount = reservationGroups.filter((item) => item.status === 'SENT').length;
+  const failCount = reservationGroups.filter((item) => item.status === 'PENDING_SEND').length;
 
   return (
     <div className="grid grid-cols-3 gap-3">

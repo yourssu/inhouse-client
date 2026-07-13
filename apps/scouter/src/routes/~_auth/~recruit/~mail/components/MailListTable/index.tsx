@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
@@ -13,11 +14,11 @@ import { MdMoreHoriz } from 'react-icons/md';
 
 import type { MailStatusNameType } from '@/types/mails';
 
+import { mailReservationGroupsOption } from '@/apis/mails/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
 import { MailReceiversText } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailReceiversText';
 import { MailStatusBadge } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailStatusBadge';
-import { useGroupedMailReservations } from '@/routes/~_auth/~recruit/~mail/hooks/useGroupedMailReservations';
 import { mailStatusNameMap, mailStatusNames } from '@/types/mails';
 
 export const MailListTable = () => {
@@ -27,14 +28,16 @@ export const MailListTable = () => {
     status: useSetStateSelector(setSearch, 'status'),
   };
 
-  const groupedReservations = useGroupedMailReservations();
+  const {
+    data: { groups: reservationGroups },
+  } = useSuspenseQuery(mailReservationGroupsOption());
 
   const filtered = useMemo(() => {
     if (!search.status) {
-      return groupedReservations;
+      return reservationGroups;
     }
-    return groupedReservations.filter((item) => item.status === search.status);
-  }, [groupedReservations, search.status]);
+    return reservationGroups.filter((item) => item.status === search.status);
+  }, [reservationGroups, search.status]);
 
   const {
     items: paginatedMails,
@@ -69,14 +72,16 @@ export const MailListTable = () => {
         <Table.Body>
           {paginatedMails.map((item, idx) => {
             return (
-              <Table.Row key={`${item.mailId}-${idx}`}>
-                <Table.Cell className="min-w-60">{item.mailSubject || '(제목 없음)'}</Table.Cell>
+              <Table.Row key={`${item.groupId}-${idx}`}>
+                <Table.Cell className="min-w-60">
+                  {item.mails.length !== 0 ? item.mails[0].mailSubject : '(제목 없음)'}
+                </Table.Cell>
                 <Table.Cell>
                   <MailStatusBadge status={item.status} />
                 </Table.Cell>
-                <Table.Cell>{item.senderNickname}</Table.Cell>
+                <Table.Cell>{item.reserverName}</Table.Cell>
                 <Table.Cell>
-                  <MailReceiversText receivers={item.receivers} />
+                  <MailReceiversText receivers={item.mails.map((mail) => mail.receiverEmail)} />
                 </Table.Cell>
                 <Table.Cell>
                   {formatTemplates['(2026년)? 1월 1일, 오후 11:00'](item.reservationTime)}

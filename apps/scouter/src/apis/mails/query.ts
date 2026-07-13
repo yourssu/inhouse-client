@@ -4,6 +4,7 @@ import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 import type { MailTemplatesResponse } from '@/apis/mails/schema';
 
 import {
+  getMailReservationGroups,
   getMailReservations,
   getMailTemplateDetail,
   getMailTemplates,
@@ -41,4 +42,10 @@ export const mailReservationsOption = () =>
   queryOptions({
     queryKey: qk.for('mails', 'reservations'),
     queryFn: () => getMailReservations(),
+  });
+
+export const mailReservationGroupsOption = () =>
+  queryOptions({
+    queryKey: qk.for('mails', 'reservations', 'groups'),
+    queryFn: () => getMailReservationGroups(),
   });
