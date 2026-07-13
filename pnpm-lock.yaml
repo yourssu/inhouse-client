@@ -207,18 +207,12 @@ importers:
 
   apps/interior-blueprint:
     dependencies:
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.101.0(react@19.2.7)
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.15(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@toss/lottie':
         specifier: ^1.3.2
         version: 1.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@yourssu-inhouse/exterior':
-        specifier: workspace:*
-        version: link:../../packages/exterior
       '@yourssu-inhouse/inhouse-utils':
         specifier: workspace:*
         version: link:../../packages/inhouse-utils

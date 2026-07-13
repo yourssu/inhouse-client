@@ -1,8 +1,6 @@
-import type { RouteContext } from '@yourssu-inhouse/exterior';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
-
-export const Route = createRootRouteWithContext<RouteContext>()({
+export const Route = createRootRoute({
   component: () => <Outlet />,
   errorComponent: ({ error, info }) => (
     <div className="flex h-full w-full items-center justify-center">
