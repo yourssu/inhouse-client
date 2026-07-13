@@ -40,7 +40,7 @@ export const useSearchState = <
       search: (prev) =>
         serialize(
           typeof nextInit === 'function' ? nextInit(deserialize(prev as Search<TFrom>)) : nextInit,
-        ),
+        ) as typeof prev,
     });
   };
 
