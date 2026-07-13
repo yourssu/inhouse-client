@@ -3,7 +3,7 @@ import { Lottie } from '@toss/lottie';
 import { useDelayedValue, useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
-import { Checkbox } from '@yourssu-inhouse/interior';
+import { Button, Checkbox } from '@yourssu-inhouse/interior';
 import { Pagination } from '@yourssu-inhouse/interior';
 import { Result } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
@@ -90,6 +90,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
           <Table.Th>현재 학기</Table.Th>
           <Table.Th infoContent="연도 기준 나이예요.">나이</Table.Th>
           <Table.Th>지원일</Table.Th>
+          <Table.Th />
         </Table.Head>
         <Table.Body>
           {paginatedApplicants.map((applicant) => (
@@ -109,6 +110,11 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
               <Table.Cell>{formatSemester(applicant.semester)}</Table.Cell>
               <Table.Cell>{applicant.age}세</Table.Cell>
               <Table.Cell>{formatTemplates['2026-01-01'](applicant.applicationDate)}</Table.Cell>
+              <Table.Cell>
+                <Button size="sm" variant="subPrimary">
+                  서류 평가
+                </Button>
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
