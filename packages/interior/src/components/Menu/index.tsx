@@ -1,8 +1,9 @@
-import type { PopoverContentProps } from '@radix-ui/react-popover';
-
+import * as RadixPopover from '@radix-ui/react-popover';
 import clsx from 'clsx';
 
 import { Popover, type PopoverProps } from '@/components/Popover';
+import { usePopoverBehavior } from '@/components/Popover/hook';
+import { popoverSurface } from '@/styles/recipes/popoverSurface.css.ts';
 
 import * as styles from './Menu.css';
 
@@ -29,18 +30,49 @@ const ButtonItem = ({
   );
 };
 
-const Content = ({ children, className, sideOffset = 2, ...props }: PopoverContentProps) => {
+const Content = ({
+  children,
+  className,
+  sideOffset = 8,
+  ...props
+}: RadixPopover.PopoverContentProps) => {
+  const { onPointerEnter, onPointerLeave } = usePopoverBehavior();
+
+  const onClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation();
+    props.onClick?.(e);
+  };
+
   return (
-    <Popover.Content
-      {...props}
-      className={className}
-      onOpenAutoFocus={(e) => {
-        e.preventDefault();
-      }}
-      sideOffset={sideOffset}
-    >
-      <div className={styles.contentInner}>{children}</div>
-    </Popover.Content>
+    <RadixPopover.Portal>
+      <RadixPopover.Content
+        className={styles.content}
+        {...props}
+        onClick={onClick}
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+        sideOffset={sideOffset}
+      >
+        {sideOffset && (
+          <div
+            style={
+              props.side === 'top' || props.side === 'bottom'
+                ? { height: sideOffset }
+                : { width: sideOffset }
+            }
+          />
+        )}
+        <div className={clsx(popoverSurface({ padding: 'xs' }), styles.contentInner, className)}>
+          {children}
+        </div>
+      </RadixPopover.Content>
+    </RadixPopover.Portal>
   );
 };
 

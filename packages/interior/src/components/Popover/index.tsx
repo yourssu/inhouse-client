@@ -3,6 +3,8 @@ import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 import { type SetStateAction, useContext, useState } from 'react';
 
+import { popoverSurface } from '@/styles/recipes/popoverSurface.css.ts';
+
 import type { PopoverBehaviorType } from './type';
 
 import { PopoverContext } from './context';
@@ -59,7 +61,7 @@ const Content = ({
             }
           />
         )}
-        <div className={clsx(styles.popoverInner, className)}>{children}</div>
+        <div className={clsx(popoverSurface({ padding: 'lg' }), className)}>{children}</div>
       </PrimivtivePopover.Content>
     </PrimivtivePopover.Portal>
   );

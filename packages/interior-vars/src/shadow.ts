@@ -10,6 +10,7 @@ const primary = {
 const semantic = {
   dialog: 'var(--shadow-dialog)',
   buttonFocus: 'var(--shadow-buttonFocus)',
+  popover: 'var(--shadow-popover)',
   select: 'var(--shadow-select)',
   switchThumb: 'var(--shadow-switchThumb)',
   tooltip: 'var(--shadow-tooltip)',

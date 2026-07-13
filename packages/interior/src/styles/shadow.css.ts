@@ -9,6 +9,7 @@ export const shadows = createGlobalThemeContract(varsSource.shadow, interiorCont
 const semanticShadowTokens = {
   dialog: `0 0 0 1px ${shadows.shadowLarge00}, 0 10px 40px 0 ${shadows.shadowLarge01}, 0 20px 50px 0 ${shadows.shadowLarge02}, 2px 70px 80px 0 ${shadows.shadowLarge02}`,
   buttonFocus: `inset 0 0 0 1px ${vars.palette.greyOpacity800}, inset 0 0 0 2px rgba(255, 255, 255, 0.5), 0 0 4px 4px ${vars.palette.greyOpacity200}`,
+  popover: `0 0 0 1px ${shadows.shadowMedium00}, 0 10px 30px 0 ${shadows.shadowMedium01}, 0 20px 40px 0 ${shadows.shadowMedium02}`,
   select: `0 0 0 1px ${shadows.shadowMedium00}, 0 10px 30px 0 ${shadows.shadowMedium01}, 0 20px 40px 0 ${shadows.shadowMedium02}`,
   switchThumb: `0 0 0 1px ${vars.palette.greyOpacity100}, 0 2px 4px 0 rgba(0, 0, 0, 0.18)`,
   tooltip: `0 0 0 1px ${shadows.shadowMedium00}, 0 10px 30px 0 ${shadows.shadowMedium01}, 0 20px 40px 0 ${shadows.shadowMedium02}`,

@@ -53,6 +53,11 @@ export const label = recipe({
   },
 });
 
+export const content = style({
+  zIndex: vars.zIndex.popover,
+  outline: 'none',
+});
+
 export const contentInner = style({
   display: 'flex',
   width: '100%',
