@@ -104,7 +104,6 @@ export const mailReservationStatus = ['SCHEDULED', 'PENDING_SEND', 'SENT'] as co
 
 export const MailReservationItemSchema = z.object({
   reservationId: z.number(),
-  mailId: z.number(),
   reservationTime: z.iso.datetime(),
   status: z.enum(mailReservationStatus),
   senderEmailAddress: z.string(),
@@ -129,6 +128,27 @@ export const MailReservationStatusResponseSchema = z.object({
   items: z.array(MailReservationStatusItemSchema),
 });
 
+export const MailReservationGroupsGroupSchema = z.object({
+  groupId: z.number(),
+  reserverName: z.string(),
+  reserverEmail: z.string(),
+  templateId: z.number(),
+  reservationTime: z.iso.datetime(),
+  status: z.enum(mailReservationStatus),
+  createdAt: z.iso.datetime(),
+  mails: z.array(
+    z.object({
+      reservationId: z.number(),
+      receiverEmail: z.string(),
+      mailSubject: z.string(),
+    }),
+  ),
+});
+
+export const MailReservationGroupsResponseSchema = z.object({
+  groups: z.array(MailReservationGroupsGroupSchema),
+});
+
 export type MailFileUsageType = z.infer<typeof fileUsageSchema>;
 export type BaseMailFileType = z.infer<typeof BaseMailFileSchema>;
 export type SignedMailFileType = z.infer<typeof SignedMailFileSchema>;
@@ -149,3 +169,4 @@ export type MailReservationItem = z.infer<typeof MailReservationItemSchema>;
 export type MailReservationListResponse = z.infer<typeof MailReservationListResponseSchema>;
 export type MailReservationStatusItem = z.infer<typeof MailReservationStatusItemSchema>;
 export type MailReservationStatusResponse = z.infer<typeof MailReservationStatusResponseSchema>;
+export type MailReservationGroupsResponse = z.infer<typeof MailReservationGroupsResponseSchema>;

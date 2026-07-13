@@ -7,6 +7,8 @@ import {
   MailFileConfirmResponseSchema,
   MailFilePresignResponseSchema,
   type MailFileUsageType,
+  type MailReservationGroupsResponse,
+  MailReservationGroupsResponseSchema,
   type MailReservationListResponse,
   MailReservationListResponseSchema,
   type MailReservationStatusResponse,
@@ -119,4 +121,9 @@ export const getMailReservations = async (): Promise<MailReservationListResponse
 export const getMailReservationStatus = async (): Promise<MailReservationStatusResponse> => {
   const res = await api.get('api/mails/reservation/status').json();
   return MailReservationStatusResponseSchema.parse(res);
+};
+
+export const getMailReservationGroups = async (): Promise<MailReservationGroupsResponse> => {
+  const res = await api.get('api/mails/reservation/groups').json();
+  return MailReservationGroupsResponseSchema.parse(res);
 };
