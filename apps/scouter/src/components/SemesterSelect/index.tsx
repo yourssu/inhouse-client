@@ -2,6 +2,7 @@ import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
 
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { Select, type SelectProps } from '@yourssu-inhouse/interior';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { assert } from 'es-toolkit';
 
 import type { SemesterType } from '@/apis/semesters/schema';
@@ -13,7 +14,7 @@ type SemesterSelectProps = Omit<
   'items' | 'placeholder'
 >;
 
-export const SemesterSelect = ({ onValueChange, ...props }: SemesterSelectProps) => {
+export const SemesterSelect = ({ onValueChange, className, ...props }: SemesterSelectProps) => {
   const [{ data: now }, { data: semesters }] = useSuspenseQueries({
     queries: [semestersNowOption(), semestersOption()],
   });
@@ -30,6 +31,7 @@ export const SemesterSelect = ({ onValueChange, ...props }: SemesterSelectProps)
   return (
     <Select
       {...props}
+      className={cn(className, 'w-fit')}
       items={semesterOptions}
       onValueChange={(v) => {
         const semester = semesters.find(({ semester }) => semester === v);
