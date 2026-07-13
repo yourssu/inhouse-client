@@ -9,7 +9,7 @@ export const TAB_CATEGORIES = [
   },
   {
     title: '입력',
-    items: ['TextField', 'SearchField', 'DatePicker', 'Switch'],
+    items: ['TextField', 'MultilineTextField', 'SearchField', 'DatePicker', 'Switch', 'Fieldset'],
   },
   {
     title: '선택',
@@ -17,15 +17,15 @@ export const TAB_CATEGORIES = [
   },
   {
     title: '네비게이션',
-    items: ['ChipTab', 'SegmentedControl', 'Tab', 'TabButton'],
+    items: ['ChipTab', 'SegmentedControl', 'Tab', 'TabButton', 'Pagination'],
   },
   {
     title: '오버레이',
-    items: ['Dialog', 'Toast'],
+    items: ['Dialog', 'Toast', 'Popover', 'Menu', 'HoverTooltip'],
   },
   {
     title: '표시',
-    items: ['Badge', 'Table'],
+    items: ['Badge', 'Table', 'ItemList', 'Result'],
   },
 ] as const;
 
