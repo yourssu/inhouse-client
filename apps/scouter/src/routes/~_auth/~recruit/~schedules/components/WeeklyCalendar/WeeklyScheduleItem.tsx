@@ -1,3 +1,4 @@
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { differenceInMinutes } from 'date-fns';
@@ -12,7 +13,6 @@ import { useResizeObserver } from '@/hooks/useResizeObserver';
 import { useLocationEditDialog } from '@/routes/~_auth/~recruit/~schedules/components/hooks/useLocationEditDialog';
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { partColorMap, partNameKo } from '@/types/parts';
-import { formatTemplates } from '@/utils/date';
 
 interface WeeklyScheduleItemProps {
   applicant: ApplicantType;

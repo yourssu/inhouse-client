@@ -1,3 +1,4 @@
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import clsx from 'clsx';
 import { differenceInMinutes, isSameDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { assert } from 'es-toolkit';
@@ -13,7 +14,6 @@ import {
 } from '@/routes/~_auth/~recruit/~schedules/~new/utils/dragPosition';
 import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/ScheduleTooltip';
 import { startHour } from '@/routes/~_auth/~recruit/~schedules/components/WeeklyCalendarLayout/type';
-import { formatTemplates } from '@/utils/date';
 
 interface DraftScheduleItemsProps {
   applicants: ApplicantType[];
@@ -111,8 +111,7 @@ const DraftScheduleItem = ({
       >
         <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
           {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
-          {formatTemplates['23:00'](schedule.endTime)} (
-          {duration}분)
+          {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
         </ScheduleTooltip.Item>
       </ScheduleTooltip.Content>
     </ScheduleTooltip>
