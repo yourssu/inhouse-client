@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react';
 
+import {
+  createRouter,
+  type RouterConstructorOptions,
+  type RouterHistory,
+} from '@tanstack/react-router';
 import { type AuthConfig, AuthProvider } from '@yourssu-inhouse/auth';
 import {
   type AppRouteTree,
@@ -11,38 +16,45 @@ import { type RemotePlugin, runPluginInits, setupPluginMocks } from '@yourssu-in
 import { PreviewAuthNotice, PreviewBanner } from './components/PreviewBanner';
 
 type SharedPreviewOptions = Pick<
-  CreateExteriorAppOptions<AppRouteTree>,
+  CreateExteriorAppOptions<unknown>,
   'appProvidersProps' | 'queryClientConfig' | 'rootElement' | 'rootElementId'
 >;
 
-interface CreateRemotePreviewAppOptions extends SharedPreviewOptions {
+interface CreateRemotePreviewAppOptions<
+  TRouteTree extends AppRouteTree,
+> extends SharedPreviewOptions {
   /** preview 인증을 실제 동작시키기 위한 dev authConfig. 미가입 시 PreviewAuthNotice 로 안내. */
   authConfig: AuthConfig;
   /** 이 remote 의 plugin manifest. init/mocks lifecycle 만 재사용해요(graft 는 skip). */
   plugin: RemotePlugin;
-  routerOptions?: CreateExteriorAppOptions<AppRouteTree>['routerOptions'];
-  routeTree: AppRouteTree;
+  routerOptions?: Omit<
+    RouterConstructorOptions<TRouteTree, 'never', false, RouterHistory, Record<string, unknown>>,
+    'context' | 'routeTree'
+  >;
+  routeTree: TRouteTree;
 }
 
-export const createRemotePreviewApp = (
-  options: CreateRemotePreviewAppOptions,
-): ReturnType<typeof createExteriorApp<AppRouteTree>> => {
-  const app = createExteriorApp<AppRouteTree>({
+export const createRemotePreviewApp = <TRouteTree extends AppRouteTree>(
+  options: CreateRemotePreviewAppOptions<TRouteTree>,
+) => {
+  const app = createExteriorApp({
     appProvidersProps: options.appProvidersProps,
     beforeRender: async () => {
       await runPluginInits([options.plugin], 'preview');
       await setupPluginMocks([options.plugin], 'preview');
     },
     children: (): ReactNode => <PreviewBanner />,
+    createRouter: (queryClient) =>
+      createRouter({
+        routeTree: options.routeTree,
+        context: { queryClient },
+        defaultErrorComponent: () => <PreviewAuthNotice />,
+        defaultNotFoundComponent: () => <PreviewAuthNotice />,
+        ...options.routerOptions,
+      }),
     queryClientConfig: options.queryClientConfig,
     rootElement: options.rootElement,
     rootElementId: options.rootElementId,
-    routerOptions: {
-      defaultErrorComponent: () => <PreviewAuthNotice />,
-      defaultNotFoundComponent: () => <PreviewAuthNotice />,
-      ...options.routerOptions,
-    },
-    routeTree: options.routeTree,
     wrapRouter: (node) => <AuthProvider config={options.authConfig}>{node}</AuthProvider>,
   });
 

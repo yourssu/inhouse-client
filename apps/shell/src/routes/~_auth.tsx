@@ -1,9 +1,9 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { requireAuth } from '@yourssu-inhouse/auth';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { MdPerson, MdPersonSearch } from 'react-icons/md';
 
 import { ProfileButton } from '@/components/ProfileButton';
+import { requireAuth } from '@/guards/requireAuth';
 
 const AuthLayout = () => {
   return (
