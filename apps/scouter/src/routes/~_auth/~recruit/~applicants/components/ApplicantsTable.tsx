@@ -1,4 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { useDelayedValue, useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
@@ -111,9 +112,14 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
               <Table.Cell>{applicant.age}세</Table.Cell>
               <Table.Cell>{formatTemplates['2026-01-01'](applicant.applicationDate)}</Table.Cell>
               <Table.Cell>
-                <Button size="sm" variant="subPrimary">
-                  서류 평가
-                </Button>
+                <Link
+                  params={{ applicantId: String(applicant.applicantId) }}
+                  to="/recruit/applicants/$applicantId/eval/document"
+                >
+                  <Button size="sm" variant="subPrimary">
+                    서류 평가
+                  </Button>
+                </Link>
               </Table.Cell>
             </Table.Row>
           ))}
