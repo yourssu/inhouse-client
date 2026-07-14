@@ -15,8 +15,10 @@ import { Route as AuthRecruitTemplatesIndexRouteImport } from './routes/~_auth/~
 import { Route as AuthRecruitSchedulesIndexRouteImport } from './routes/~_auth/~recruit/~schedules/~index'
 import { Route as AuthRecruitMailIndexRouteImport } from './routes/~_auth/~recruit/~mail/~index'
 import { Route as AuthRecruitApplicantsIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~index'
+import { Route as AuthRecruitApplicantsApplicantIdEvalRouteRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~route'
 import { Route as AuthRecruitSchedulesNewIndexRouteImport } from './routes/~_auth/~recruit/~schedules/~new/~index'
 import { Route as AuthRecruitMailNewIndexRouteImport } from './routes/~_auth/~recruit/~mail/~new/~index'
+import { Route as AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/~index'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -50,6 +52,12 @@ const AuthRecruitApplicantsIndexRoute =
     path: '/applicants/',
     getParentRoute: () => AuthRecruitRouteRoute,
   } as any)
+const AuthRecruitApplicantsApplicantIdEvalRouteRoute =
+  AuthRecruitApplicantsApplicantIdEvalRouteRouteImport.update({
+    id: '/applicants/$applicantId/eval',
+    path: '/applicants/$applicantId/eval',
+    getParentRoute: () => AuthRecruitRouteRoute,
+  } as any)
 const AuthRecruitSchedulesNewIndexRoute =
   AuthRecruitSchedulesNewIndexRouteImport.update({
     id: '/schedules/new/',
@@ -61,6 +69,12 @@ const AuthRecruitMailNewIndexRoute = AuthRecruitMailNewIndexRouteImport.update({
   path: '/mail/new/',
   getParentRoute: () => AuthRecruitRouteRoute,
 } as any)
+const AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute =
+  AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport.update({
+    id: '/document/',
+    path: '/document/',
+    getParentRoute: () => AuthRecruitApplicantsApplicantIdEvalRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthRouteWithChildren
@@ -71,6 +85,8 @@ export interface FileRoutesByFullPath {
   '/recruit/templates/': typeof AuthRecruitTemplatesIndexRoute
   '/recruit/mail/new/': typeof AuthRecruitMailNewIndexRoute
   '/recruit/schedules/new/': typeof AuthRecruitSchedulesNewIndexRoute
+  '/recruit/applicants/$applicantId/eval': typeof AuthRecruitApplicantsApplicantIdEvalRouteRouteWithChildren
+  '/recruit/applicants/$applicantId/eval/document/': typeof AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthRouteWithChildren
@@ -81,6 +97,8 @@ export interface FileRoutesByTo {
   '/recruit/templates': typeof AuthRecruitTemplatesIndexRoute
   '/recruit/mail/new': typeof AuthRecruitMailNewIndexRoute
   '/recruit/schedules/new': typeof AuthRecruitSchedulesNewIndexRoute
+  '/recruit/applicants/$applicantId/eval': typeof AuthRecruitApplicantsApplicantIdEvalRouteRouteWithChildren
+  '/recruit/applicants/$applicantId/eval/document': typeof AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,6 +110,8 @@ export interface FileRoutesById {
   '/_auth/recruit/templates/': typeof AuthRecruitTemplatesIndexRoute
   '/_auth/recruit/mail/new/': typeof AuthRecruitMailNewIndexRoute
   '/_auth/recruit/schedules/new/': typeof AuthRecruitSchedulesNewIndexRoute
+  '/_auth/recruit/applicants/$applicantId/eval': typeof AuthRecruitApplicantsApplicantIdEvalRouteRouteWithChildren
+  '/_auth/recruit/applicants/$applicantId/eval/document/': typeof AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -104,6 +124,8 @@ export interface FileRouteTypes {
     | '/recruit/templates/'
     | '/recruit/mail/new/'
     | '/recruit/schedules/new/'
+    | '/recruit/applicants/$applicantId/eval'
+    | '/recruit/applicants/$applicantId/eval/document/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -114,6 +136,8 @@ export interface FileRouteTypes {
     | '/recruit/templates'
     | '/recruit/mail/new'
     | '/recruit/schedules/new'
+    | '/recruit/applicants/$applicantId/eval'
+    | '/recruit/applicants/$applicantId/eval/document'
   id:
     | '__root__'
     | '/_auth'
@@ -124,6 +148,8 @@ export interface FileRouteTypes {
     | '/_auth/recruit/templates/'
     | '/_auth/recruit/mail/new/'
     | '/_auth/recruit/schedules/new/'
+    | '/_auth/recruit/applicants/$applicantId/eval'
+    | '/_auth/recruit/applicants/$applicantId/eval/document/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRecruitApplicantsIndexRouteImport
       parentRoute: typeof AuthRecruitRouteRoute
     }
+    '/_auth/recruit/applicants/$applicantId/eval': {
+      id: '/_auth/recruit/applicants/$applicantId/eval'
+      path: '/applicants/$applicantId/eval'
+      fullPath: '/recruit/applicants/$applicantId/eval'
+      preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalRouteRouteImport
+      parentRoute: typeof AuthRecruitRouteRoute
+    }
     '/_auth/recruit/schedules/new/': {
       id: '/_auth/recruit/schedules/new/'
       path: '/schedules/new'
@@ -188,8 +221,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRecruitMailNewIndexRouteImport
       parentRoute: typeof AuthRecruitRouteRoute
     }
+    '/_auth/recruit/applicants/$applicantId/eval/document/': {
+      id: '/_auth/recruit/applicants/$applicantId/eval/document/'
+      path: '/document'
+      fullPath: '/recruit/applicants/$applicantId/eval/document/'
+      preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport
+      parentRoute: typeof AuthRecruitApplicantsApplicantIdEvalRouteRoute
+    }
   }
 }
+
+interface AuthRecruitApplicantsApplicantIdEvalRouteRouteChildren {
+  AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute: typeof AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute
+}
+
+const AuthRecruitApplicantsApplicantIdEvalRouteRouteChildren: AuthRecruitApplicantsApplicantIdEvalRouteRouteChildren =
+  {
+    AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute:
+      AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute,
+  }
+
+const AuthRecruitApplicantsApplicantIdEvalRouteRouteWithChildren =
+  AuthRecruitApplicantsApplicantIdEvalRouteRoute._addFileChildren(
+    AuthRecruitApplicantsApplicantIdEvalRouteRouteChildren,
+  )
 
 interface AuthRecruitRouteRouteChildren {
   AuthRecruitApplicantsIndexRoute: typeof AuthRecruitApplicantsIndexRoute
@@ -198,6 +253,7 @@ interface AuthRecruitRouteRouteChildren {
   AuthRecruitTemplatesIndexRoute: typeof AuthRecruitTemplatesIndexRoute
   AuthRecruitMailNewIndexRoute: typeof AuthRecruitMailNewIndexRoute
   AuthRecruitSchedulesNewIndexRoute: typeof AuthRecruitSchedulesNewIndexRoute
+  AuthRecruitApplicantsApplicantIdEvalRouteRoute: typeof AuthRecruitApplicantsApplicantIdEvalRouteRouteWithChildren
 }
 
 const AuthRecruitRouteRouteChildren: AuthRecruitRouteRouteChildren = {
@@ -207,6 +263,8 @@ const AuthRecruitRouteRouteChildren: AuthRecruitRouteRouteChildren = {
   AuthRecruitTemplatesIndexRoute: AuthRecruitTemplatesIndexRoute,
   AuthRecruitMailNewIndexRoute: AuthRecruitMailNewIndexRoute,
   AuthRecruitSchedulesNewIndexRoute: AuthRecruitSchedulesNewIndexRoute,
+  AuthRecruitApplicantsApplicantIdEvalRouteRoute:
+    AuthRecruitApplicantsApplicantIdEvalRouteRouteWithChildren,
 }
 
 const AuthRecruitRouteRouteWithChildren =
