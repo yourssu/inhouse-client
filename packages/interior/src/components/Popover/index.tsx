@@ -23,7 +23,8 @@ interface ContentProps extends PrimivtivePopover.PopoverContentProps {
 const Content = ({
   children,
   className,
-  sideOffset,
+  side = 'bottom',
+  sideOffset = 8,
   onCloseWithOutside,
   ...props
 }: React.PropsWithChildren<ContentProps>) => {
@@ -50,18 +51,22 @@ const Content = ({
         onPointerDownOutside={onCloseWithOutside}
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
-        sideOffset={sideOffset}
+        side={side}
+        sideOffset={0}
       >
-        {sideOffset && (
-          <div
-            style={
-              props.side === 'top' || props.side === 'bottom'
-                ? { height: sideOffset }
-                : { width: sideOffset }
-            }
-          />
-        )}
-        <div className={clsx(popoverSurface({ padding: 'lg' }), className)}>{children}</div>
+        {side === 'bottom' && <div style={{ height: sideOffset }} />}
+        <div
+          style={
+            side === 'left'
+              ? { paddingRight: sideOffset }
+              : side === 'right'
+                ? { paddingLeft: sideOffset }
+                : {}
+          }
+        >
+          <div className={clsx(popoverSurface({ padding: 'lg' }), className)}>{children}</div>
+        </div>
+        {side === 'top' && <div style={{ height: sideOffset }} />}
       </PrimivtivePopover.Content>
     </PrimivtivePopover.Portal>
   );

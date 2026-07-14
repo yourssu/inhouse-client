@@ -34,6 +34,7 @@ const Content = ({
   children,
   className,
   sideOffset = 8,
+  side = 'bottom',
   ...props
 }: RadixPopover.PopoverContentProps) => {
   const { onPointerEnter, onPointerLeave } = usePopoverBehavior();
@@ -57,20 +58,24 @@ const Content = ({
         }}
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
-        sideOffset={sideOffset}
+        side={side}
+        sideOffset={0}
       >
-        {sideOffset && (
-          <div
-            style={
-              props.side === 'top' || props.side === 'bottom'
-                ? { height: sideOffset }
-                : { width: sideOffset }
-            }
-          />
-        )}
-        <div className={clsx(popoverSurface({ padding: 'xs' }), styles.contentInner, className)}>
-          {children}
+        {side === 'bottom' && <div style={{ height: sideOffset }} />}
+        <div
+          style={
+            side === 'left'
+              ? { paddingRight: sideOffset }
+              : side === 'right'
+                ? { paddingLeft: sideOffset }
+                : {}
+          }
+        >
+          <div className={clsx(popoverSurface({ padding: 'xs' }), styles.contentInner, className)}>
+            {children}
+          </div>
         </div>
+        {side === 'top' && <div style={{ height: sideOffset }} />}
       </RadixPopover.Content>
     </RadixPopover.Portal>
   );
