@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { MdPerson } from 'react-icons/md';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
+import { Paper } from '@/components/Paper';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
@@ -42,6 +43,13 @@ const RouteComponent = () => {
             {formatTemplates['2026-01-01'](applicant.applicationDate)}
           </InfoItem>
         </div>
+      </div>
+
+      <div className="flex flex-[1_1_0] gap-4 pt-7">
+        {/* TODO: 서류평가 구글폼 응답 */}
+        <Paper className="flex-[1_1_0]" />
+        {/* TODO: 평가 폼 */}
+        <Paper className="w-100" />
       </div>
     </PageLayout.Content>
   );
