@@ -23,7 +23,7 @@ const RouteComponent = () => {
           </div>
           <div>
             <div className="text-neutralSubtle text-sm font-medium">서류 평가</div>
-            <div className="text-xl font-semibold">오태민 지원자</div>
+            <div className="text-xl font-semibold">{applicant.name} 지원자</div>
           </div>
         </div>
 
