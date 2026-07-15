@@ -3,6 +3,7 @@ import type { PropsWithChildren, ReactNode } from 'react';
 import clsx from 'clsx';
 
 export interface PageContentProps {
+  className?: string;
   description?: string;
   maxWidth?: 'full' | number;
   right?: ReactNode;
@@ -15,11 +16,16 @@ export const PageContent = ({
   right,
   children,
   maxWidth = 1600,
+  className,
 }: PropsWithChildren<PageContentProps>) => {
   return (
     <div className="flex min-h-screen min-w-0 flex-[1_1_0]">
       <div
-        className={clsx('flex flex-[1_1_0] flex-col px-13 py-9', maxWidth !== 'full' && 'mx-auto')}
+        className={clsx(
+          'flex flex-[1_1_0] flex-col px-13 py-9',
+          maxWidth !== 'full' && 'mx-auto',
+          className,
+        )}
         style={{ maxWidth: maxWidth === 'full' ? undefined : maxWidth }}
       >
         {(!!title || !!description || !!right) && (
