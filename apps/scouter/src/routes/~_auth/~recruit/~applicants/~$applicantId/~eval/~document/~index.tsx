@@ -17,17 +17,22 @@ const RouteComponent = () => {
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           <div className="bg-grey200 flex size-12 items-center justify-center rounded-lg">
             <MdPerson className="size-7" />
           </div>
           <div>
-            <div className="text-neutralSubtle text-sm font-medium">서류 평가</div>
+            <div className="text-sm">
+              <span className="text-violet600 font-medium">서류 평가</span>
+              <span className="text-neutralSubtle mx-1.5">·</span>
+              {/* TODO: GET /parts/{partId}/documents/deadline 생기면 연결하기 */}
+              <span className="text-neutralSubtle">3일 4시간 23분 남음</span>
+            </div>
             <div className="text-xl font-semibold">{applicant.name} 지원자</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           <InfoItem label="지원 파트">{partNameKo[applicant.part]}</InfoItem>
           <InfoItem label="학번">{applicant.studentId}</InfoItem>
           <InfoItem label="학과">{applicant.department}</InfoItem>
