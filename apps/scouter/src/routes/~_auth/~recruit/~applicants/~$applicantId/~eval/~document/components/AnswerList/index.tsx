@@ -20,7 +20,7 @@ const Answer = ({ section, question, answer }: AnswerProps) => {
         </span>
         <span className="text-neutralMuted text-17 font-semibold">{question}</span>
       </div>
-      <p className="text-neutral whitespace-pre-wrap">{answer}</p>
+      <p className="text-neutral whitespace-pre-wrap pl-9">{answer}</p>
     </div>
   );
 };
