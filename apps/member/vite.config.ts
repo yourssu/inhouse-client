@@ -8,16 +8,16 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { mfaConfig } from '../../mfa.config';
 
-const remote = mfaConfig.remotes.find((entry) => entry.id === 'inhouse');
+const remote = mfaConfig.remotes.find((entry) => entry.id === 'member');
 
 if (!remote) {
-  throw new Error('[inhouse] mfa.config 에 inhouse remote 가 없어요');
+  throw new Error('[member] mfa.config 에 member remote 가 없어요');
 }
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    mfaVitePlugin.remote({ id: 'inhouse', remote }),
+    mfaVitePlugin.remote({ id: 'member', remote }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,

@@ -17,3 +17,7 @@
 - [x] `packages/interior`의 `tsconfig.app.json`과 `tsdown` alias 해석을 다시 확인한다.
 - [x] 다른 JIT 패키지와 섞지 않고 interior 내부 상대 import만 독립적으로 정리한다.
 - [x] interior type·lint·format·build와 소비 앱의 타입·스타일 산출물을 검증한다.
+
+## 스킬 문서의 remote 예시 이름 갱신 (`inhouse` → `member`)
+
+- [ ] `references/quality.md`의 검증 명령 예시(`pnpm --filter @yourssu-inhouse/inhouse ...`, `validate-workspace.sh @yourssu-inhouse/inhouse ...`)를 `@yourssu-inhouse/member`로 갱신한다. remote 앱을 `inhouse`에서 `member`로 리네임하면서 앱 패키지명이 바뀌어 예시가 stale해졌다. 스킬 문서 수정이므로 `repo-skill-linter`를 선행하고 변경 후 lint를 실행한다.

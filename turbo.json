@@ -11,7 +11,7 @@
       "dependsOn": [
         "^build",
         "@yourssu-inhouse/scouter#build",
-        "@yourssu-inhouse/inhouse#build"
+        "@yourssu-inhouse/member#build"
       ]
     },
     "fix": {
