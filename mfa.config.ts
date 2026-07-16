@@ -7,7 +7,7 @@ export const mfaConfig: MfaConfig = {
       port: 5174,
     },
     {
-      id: 'inhouse',
+      id: 'member',
       port: 5175,
     },
   ],

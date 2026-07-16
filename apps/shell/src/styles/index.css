@@ -6,8 +6,8 @@
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
 
 /*
-  shell 이 host Tailwind 빌드 하나로 inhouse·scouter remote 의 utility 까지 모두 생성해요.
-  remote(inhouse·scouter)는 Module Federation 으로 런타임에만 loadRemote 로 로드돼 shell 빌드
+  shell 이 host Tailwind 빌드 하나로 member·scouter remote 의 utility 까지 모두 생성해요.
+  remote(member·scouter)는 Module Federation 으로 런타임에만 loadRemote 로 로드돼 shell 빌드
   모듈 그래프에 없고, shell 자기 소스 + exterior/interior 패키지만 기본 스캔돼요. 그래서 remote
   소스에서만 쓰는 utility(grow, rounded-xl, grid-cols-2, ...)가 누락되므로, apps 하위 모든 src
   디렉터리를 @source glob 으로 명시 스캔해 단일 Tailwind 출력에 포함시켜요.

@@ -10,7 +10,7 @@ import {
   getSemesters,
 } from '@/apis/members';
 
-const qk = pluginQueryKey('inhouse');
+const qk = pluginQueryKey('member');
 
 export const membersQueries = {
   parts: () =>
