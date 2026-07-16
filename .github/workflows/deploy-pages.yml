@@ -1,8 +1,9 @@
 name: deploy-pages
 
+# main 머지 → dev 자동 배포. prod 는 workflow_dispatch(env=prod) 로 수동.
 on:
   push:
-    branches: [dev]
+    branches: [main]
   workflow_dispatch:
     inputs:
       env:
@@ -13,7 +14,7 @@ on:
         options: [dev, prod]
 
 concurrency:
-  group: deploy-pages-${{ github.event_name == 'workflow_dispatch' && inputs.env || (github.ref_name == 'main' && 'prod' || 'dev') }}
+  group: deploy-pages-${{ github.event_name == 'workflow_dispatch' && inputs.env || 'dev' }}
   cancel-in-progress: false
 
 jobs:
@@ -23,13 +24,22 @@ jobs:
       matrix: ${{ steps.gen.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - id: resolve-env
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "env=${{ inputs.env }}" >> "$GITHUB_OUTPUT"
+            echo "base=" >> "$GITHUB_OUTPUT"
           else
             echo "env=dev" >> "$GITHUB_OUTPUT"
+            BEFORE="${{ github.event.before }}"
+            if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$BEFORE" ]; then
+              echo "base=" >> "$GITHUB_OUTPUT"
+            else
+              echo "base=$BEFORE" >> "$GITHUB_OUTPUT"
+            fi
           fi
       - uses: actions/setup-node@v4
         with:
@@ -38,11 +48,15 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - id: gen
         run: |
-          matrix=$(pnpm tsx scripts/deploy-targets.ts --env=${{ steps.resolve-env.outputs.env }})
+          ARGS="--env=${{ steps.resolve-env.outputs.env }}"
+          BASE="${{ steps.resolve-env.outputs.base }}"
+          if [ -n "$BASE" ]; then ARGS="$ARGS --base=$BASE"; fi
+          matrix=$(pnpm tsx scripts/deploy-targets.ts $ARGS)
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: targets
+    if: ${{ needs.targets.outputs.matrix != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
