@@ -21,7 +21,7 @@ export const MailReservationGroupDeleteButton = ({
 
   const [loading, startLoading] = useLoading();
 
-  const deleteMailReservationGroupMutation = useToastedMutation({
+  const mutation = useToastedMutation({
     mutationFn: deleteMailReservationGroup,
     successText: '메일을 삭제했어요.',
     onSuccess: () => {
@@ -38,7 +38,7 @@ export const MailReservationGroupDeleteButton = ({
     });
 
     if (isConfirm) {
-      await startLoading(deleteMailReservationGroupMutation.mutateWithToast(reservationGroupId));
+      await startLoading(mutation.mutateWithToast(reservationGroupId));
     }
   };
 
