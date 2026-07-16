@@ -2,7 +2,12 @@ import type { RequestHandler } from 'msw';
 
 import type { ExteriorAppMode, RemotePlugin } from './types';
 
-const isDev = (): boolean => (import.meta as any).env?.DEV ?? false;
+// MSW 는 로컬 dev(import.meta.env.DEV) 또는 배포 dev 처럼 실제 백엔드가 없는 환경에서
+// VITE_USE_MSW=true 로 켠다. production 빌드라도 host 가 이 env 로 모킹을 켤 수 있다.
+const shouldUseMsw = (): boolean => {
+  const env = (import.meta as any).env ?? {};
+  return Boolean(env.DEV) || env.VITE_USE_MSW === 'true';
+};
 
 export const runPluginInits = async (
   plugins: readonly RemotePlugin[],
@@ -15,7 +20,7 @@ export const setupPluginMocks = async (
   plugins: readonly RemotePlugin[],
   mode: ExteriorAppMode,
 ): Promise<void> => {
-  if (!isDev()) {
+  if (!shouldUseMsw()) {
     return;
   }
   const handlers = (
