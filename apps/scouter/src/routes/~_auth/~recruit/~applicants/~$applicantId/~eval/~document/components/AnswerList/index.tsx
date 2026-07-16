@@ -3,24 +3,23 @@ import { Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { Fragment } from 'react';
 
-
 // TODO: API 연동 시 인터페이스 타입을 import 하는 것으로 변경
 interface AnswerProps {
   answer: string;
   question: string;
-  section: number;
+  sectionId: number;
 }
 
-const Answer = ({ section, question, answer }: AnswerProps) => {
+const Answer = ({ sectionId, question, answer }: AnswerProps) => {
   return (
     <div className="rounded-8 flex h-fit w-full flex-col gap-3 p-5">
       <div className="flex items-center gap-2">
-        <span className="bg-violet50 self-start text-violet600 rounded-6 flex size-7 shrink-0 items-center justify-center text-sm font-semibold">
-          {section}
+        <span className="bg-violet50 text-violet600 rounded-6 flex size-7 shrink-0 items-center justify-center self-start text-sm font-semibold">
+          {sectionId}
         </span>
         <span className="text-neutralMuted text-17 font-semibold">{question}</span>
       </div>
-      <p className="text-neutral whitespace-pre-wrap pl-9">{answer}</p>
+      <p className="text-neutral pl-9 whitespace-pre-wrap">{answer}</p>
     </div>
   );
 };
