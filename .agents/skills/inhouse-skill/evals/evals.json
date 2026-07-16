@@ -66,7 +66,7 @@
       "expected_output": "주변 앱 복사본보다 workspace package 공개 export를 우선하고, 정확히 겹치는 소비처만 공용 구현으로 전환하며 남은 마이그레이션 범위를 분리한다.",
       "files": [],
       "expectations": [
-        "workspace-packages.md, follow-up-tasks.md, quality.md를 선택한다.",
+        "workspace-packages.md, quality.md를 선택한다.",
         "packages/*/package.json#exports와 구현을 먼저 확인하고 앱 복사본을 선례로 사용하지 않는다.",
         "@yourssu-inhouse/inhouse-react와 inhouse-utils를 workspace dependency로 선언하고 공개 subpath로 import한다.",
         "공용 구현과 동일한 hook·date 복사본은 제거하되 scouter 전용 object 유틸은 근거 없이 이동하지 않는다.",

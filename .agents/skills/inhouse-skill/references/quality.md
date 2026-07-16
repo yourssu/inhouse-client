@@ -44,16 +44,16 @@
 앱 검증 예시는 다음과 같다. workspace 이름은 대상 앱이나 패키지에 맞게 바꾼다.
 
 ```bash
-pnpm --filter @yourssu-inhouse/inhouse check:type
-pnpm --filter @yourssu-inhouse/inhouse check:lint
-pnpm --filter @yourssu-inhouse/inhouse check:format
+pnpm --filter @yourssu-inhouse/member check:type
+pnpm --filter @yourssu-inhouse/member check:lint
+pnpm --filter @yourssu-inhouse/member check:format
 ```
 
 반복 실행에는 스킬의 검증 스크립트를 사용할 수 있다.
 
 ```bash
 .agents/skills/inhouse-skill/scripts/validate-workspace.sh \
-  @yourssu-inhouse/inhouse --build --test-if-present
+  @yourssu-inhouse/member --build --test-if-present
 ```
 
 - `--build`: 성공 로그를 줄이는 `silent-build.sh`로 대상 workspace build를 실행한다. build script가 없으면 실패로 보고한다.
@@ -81,7 +81,7 @@ pnpm --filter @yourssu-inhouse/inhouse check:format
 
 ```bash
 .agents/skills/inhouse-skill/scripts/silent-build.sh \
-  @yourssu-inhouse/inhouse
+  @yourssu-inhouse/member
 ```
 
 - 성공하면 workspace와 성공 여부만 출력하고, 실패하면 진단에 필요한 전체 빌드 로그와 종료 코드를 전달한다.
