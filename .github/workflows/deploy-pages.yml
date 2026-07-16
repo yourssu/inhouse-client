@@ -23,10 +23,10 @@ jobs:
     outputs:
       matrix: ${{ steps.gen.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - id: resolve-env
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -41,7 +41,7 @@ jobs:
               echo "base=$BEFORE" >> "$GITHUB_OUTPUT"
             fi
           fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
@@ -63,9 +63,9 @@ jobs:
         target: ${{ fromJSON(needs.targets.outputs.matrix) }}
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm

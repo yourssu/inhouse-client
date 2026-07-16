@@ -38,15 +38,24 @@ interface DeployTarget {
   envFile: string;
 }
 
-const shellTarget = (): DeployTarget => ({
-  app: 'shell',
-  isShell: true,
-  project: `inhouse-client${ENV_SUFFIX[env]}`,
-  dist: 'apps/shell/dist',
-  envFile: mfaConfig.remotes
-    .map((r) => `VITE_${r.id.toUpperCase()}_URL=${remoteEntryUrl(r.id)}`)
-    .join('\n'),
-});
+const shellTarget = (): DeployTarget => {
+  const envFileLines = mfaConfig.remotes.map(
+    (r) => `VITE_${r.id.toUpperCase()}_URL=${remoteEntryUrl(r.id)}`,
+  );
+
+  // NOTE: dev 환경에서 MSW 모킹을 사용할 수 있도록 환경 변수를 주입해줘요.
+  if (env === 'dev') {
+    envFileLines.push('VITE_USE_MSW=true');
+  }
+
+  return {
+    app: 'shell',
+    isShell: true,
+    project: `inhouse-client${ENV_SUFFIX[env]}`,
+    dist: 'apps/shell/dist',
+    envFile: envFileLines.join('\n'),
+  };
+};
 
 const remoteTarget = (id: string): DeployTarget => ({
   app: id,
