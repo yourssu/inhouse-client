@@ -1,6 +1,4 @@
-import { Lottie } from '@toss/lottie';
-import { Divider, Result } from '@yourssu-inhouse/interior';
-import { lotties } from '@yourssu-inhouse/resources';
+import { Divider } from '@yourssu-inhouse/interior';
 import { Fragment } from 'react';
 
 // TODO: API 연동 시 인터페이스 타입을 import 하는 것으로 변경
@@ -28,31 +26,16 @@ interface AnswerListProps {
   answers: AnswerProps[];
 }
 
-export const AnswerList = ({ answers }: AnswerListProps) => {
-  // TODO: API 연동 시 length 체크가 아니라 쿼리의 에러 상태(isError 등)로 분기 필요
-  if (answers.length === 0) {
-    return (
-      <div className="flex size-full items-center justify-center">
-        <Result
-          description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
-          figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
-          title="연동된 서류 응답이 없어요"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col">
-      {answers.map((answer, index) => {
-        const isFirst = index === 0;
-        return (
-          <Fragment key={index}>
-            {!isFirst && <Divider />}
-            <Answer {...answer} />
-          </Fragment>
-        );
-      })}
-    </div>
-  );
-};
+export const AnswerList = ({ answers }: AnswerListProps) => (
+  <div className="flex flex-col">
+    {answers.map((answer, index) => {
+      const isFirst = index === 0;
+      return (
+        <Fragment key={index}>
+          {!isFirst && <Divider />}
+          <Answer {...answer} />
+        </Fragment>
+      );
+    })}
+  </div>
+);
