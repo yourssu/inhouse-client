@@ -14,11 +14,14 @@
     "check:type": "turbo run check:type"
   },
   "devDependencies": {
+    "@types/node": "^24.13.0",
     "@yourssu-inhouse/mfa-core": "workspace:*",
     "@yourssu-inhouse/mfa-vite": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "turbo": "^2.9.18",
+    "tsx": "^4.21.0",
     "typescript": "catalog:"
   },
   "packageManager": "pnpm@11.5.2+sha512.71c631e382066efc25625d5cf029075de07b61b37f6e27350fbd84b1bda5864c8c1967adc280776b45c30a715c0359a3be08fef42d5bb09e2b99029979692916"

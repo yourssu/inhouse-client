@@ -1,0 +1,84 @@
+name: deploy-pages
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+    inputs:
+      env:
+        description: deploy target env
+        required: true
+        default: dev
+        type: choice
+        options: [dev, prod]
+
+concurrency:
+  group: deploy-pages-${{ github.event_name == 'workflow_dispatch' && inputs.env || (github.ref_name == 'main' && 'prod' || 'dev') }}
+  cancel-in-progress: false
+
+jobs:
+  targets:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.gen.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - id: resolve-env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "env=${{ inputs.env }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "env=dev" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: gen
+        run: |
+          matrix=$(pnpm tsx scripts/deploy-targets.ts --env=${{ steps.resolve-env.outputs.env }})
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: targets
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.targets.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: write shell remote URLs to .env.production.local
+        if: ${{ matrix.target.isShell }}
+        env:
+          ENV_FILE: ${{ matrix.target.envFile }}
+        run: printf '%s\n' "$ENV_FILE" > apps/shell/.env.production.local
+
+      - name: build
+        run: pnpm exec turbo build --filter=@yourssu-inhouse/${{ matrix.target.app }}
+
+      - name: strip standalone preview (remotes only)
+        if: ${{ !matrix.target.isShell }}
+        run: |
+          rm -f apps/${{ matrix.target.app }}/dist/index.html
+          rm -f apps/${{ matrix.target.app }}/dist/mockServiceWorker.js
+
+      - name: deploy to Cloudflare Pages
+        run: |
+          pnpm dlx wrangler@latest pages deploy apps/${{ matrix.target.app }}/dist \
+            --project-name=${{ matrix.target.project }} \
+            --branch=main \
+            --commit-dirty=true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

@@ -35,18 +35,27 @@ importers:
 
   .:
     devDependencies:
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
       '@yourssu-inhouse/mfa-core':
         specifier: workspace:*
         version: link:packages/mfa-core
       '@yourssu-inhouse/mfa-vite':
         specifier: workspace:*
         version: link:packages/mfa-vite
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:packages/typescript-config
       prettier:
         specifier: ^3.8.3
         version: 3.8.4
       prettier-plugin-tailwindcss:
         specifier: ^0.8.0
         version: 0.8.0(prettier@3.8.4)
+      tsx:
+        specifier: ^4.21.0
+        version: 4.22.4
       turbo:
         specifier: ^2.9.18
         version: 2.9.18

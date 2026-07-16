@@ -1,0 +1,4 @@
+{
+  "extends": "@yourssu-inhouse/typescript-config/node",
+  "include": ["scripts/**/*.ts"]
+}
