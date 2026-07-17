@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Dialog, Select, TextField, useToast } from '@yourssu-inhouse/interior';
+import { differenceInMinutes } from 'date-fns';
 import { useState } from 'react';
+import { BiSolidCalendarCheck } from 'react-icons/bi';
+import { MdPerson } from 'react-icons/md';
 
 import type { PartNameType } from '@/apis/parts/schema';
 import type { LocationType } from '@/apis/schedule/schema';
@@ -10,6 +14,7 @@ import { locationTypeNames } from '@/apis/schedule/schema';
 import { findLocationConflict } from '@/routes/~_auth/~recruit/~schedules/utils/locationConflict';
 
 interface LocationInputDialogContentProps {
+  applicantName: string;
   closeAsFalse: () => void;
   closeAsTrue: () => void;
   endTime: Date;
@@ -24,6 +29,7 @@ export const LocationInputDialogContent = ({
   onSubmit,
   endTime,
   startTime,
+  applicantName,
   selectedPartName,
 }: LocationInputDialogContentProps) => {
   const toast = useToast();
@@ -67,8 +73,21 @@ export const LocationInputDialogContent = ({
 
   return (
     <>
-      <Dialog.Content className="w-[350px]">
-        <div className="flex flex-col gap-4 pb-1.5">
+      <Dialog.Content className="w-[350px] gap-4">
+        <div className="bg-grey50 flex flex-col gap-2 rounded-xl px-4 pt-3 pb-3.5 text-sm">
+          <div className="flex items-center gap-2">
+            <MdPerson className="text-neutralDisabled size-6" />
+            <span>{applicantName}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <BiSolidCalendarCheck className="text-neutralDisabled size-6" />
+            <span>
+              {formatTemplates['1월 1일 (월) 23:00'](startTime)} ~{' '}
+              {formatTemplates['23:00'](endTime)} ({differenceInMinutes(endTime, startTime)}분)
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
           <Select
             items={locationTypeNames}
             label="장소"

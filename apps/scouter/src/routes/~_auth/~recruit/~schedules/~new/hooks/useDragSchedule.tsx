@@ -133,18 +133,19 @@ export const useDragSchedule = (
       title: '면접 장소 선택',
       content: ({ closeAsTrue, closeAsFalse }) => (
         <LocationInputDialogContent
+          applicantName={activeApplicant.name}
           closeAsFalse={closeAsFalse}
           closeAsTrue={closeAsTrue}
           endTime={endTime}
-          onSubmit={(location) => {
+          onSubmit={({ locationDetail, locationType }) => {
             addDraftSchedule({
               applicantId: activeApplicant.applicantId,
               applicantName: activeApplicant.name,
               partId: selectedPartId,
               startTime,
               endTime,
-              locationType: location.locationType,
-              locationDetail: location.locationDetail,
+              locationType,
+              locationDetail,
             });
           }}
           selectedPartName={selectedPartName}
