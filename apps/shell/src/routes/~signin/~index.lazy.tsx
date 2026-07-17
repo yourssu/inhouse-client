@@ -31,7 +31,7 @@ const Signin = () => {
               <span className="text-neutralMuted font-medium break-keep">
                 원활한 서비스 이용을 위해 모든 액세스 항목을 선택해주세요.
               </span>
-              <Button disabled={isLoading} onClick={login} size="lg" variant="secondary">
+              <Button loading={isLoading} onClick={login} size="lg" variant="secondary">
                 <div className="flex items-center justify-center gap-2">
                   <FcGoogle className="text-xl" />
                   <div>로그인</div>
