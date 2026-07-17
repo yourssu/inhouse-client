@@ -1,16 +1,10 @@
-import {
-  addMinutes,
-  areIntervalsOverlapping,
-  isSameDay,
-  setHours,
-  setMinutes,
-  startOfDay,
-} from 'date-fns';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { addMinutes, isSameDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
-import type { DraftScheduleType } from '@/types/schedule';
 
+import { partsOption } from '@/apis/parts/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { LocationInputDialogContent } from '@/routes/~_auth/~recruit/~schedules/~new/components/LocationInputDialogContent';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
@@ -44,10 +38,15 @@ export const useDragSchedule = (
   activeApplicant: ApplicantType | undefined,
   availableTimeRanges: AvailableTimeRange[],
 ): UseDragScheduleReturn => {
-  const { selectedPartId, draftSchedules, activeApplicantId, addDraftSchedule } =
-    useScheduleCreationContext();
+  const { selectedPartId, addDraftSchedule } = useScheduleCreationContext();
 
   const openAlertDialog = useAlertDialog();
+
+  const { data: parts } = useSuspenseQuery(partsOption());
+  const selectedPartName = useMemo(
+    () => parts.find((part) => part.partId === selectedPartId)?.partName,
+    [parts, selectedPartId],
+  );
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<DragPosition | null>(null);
@@ -57,24 +56,6 @@ export const useDragSchedule = (
   const contiguousRanges = useMemo(
     () => buildContiguousRanges(availableTimeRanges),
     [availableTimeRanges],
-  );
-
-  const getOverlappingSchedules = useCallback(
-    (date: Date, startMinutes: number, endMinutes: number): DraftScheduleType[] => {
-      const startTime = addMinutes(setMinutes(setHours(startOfDay(date), 0), 0), startMinutes);
-      const endTime = addMinutes(setMinutes(setHours(startOfDay(date), 0), 0), endMinutes);
-
-      return draftSchedules.filter(
-        (schedule) =>
-          schedule.applicantId !== activeApplicantId &&
-          isSameDay(schedule.startTime, date) &&
-          areIntervalsOverlapping(
-            { start: startTime, end: endTime },
-            { start: schedule.startTime, end: schedule.endTime },
-          ),
-      );
-    },
-    [draftSchedules, activeApplicantId],
   );
 
   const handleMouseDown = useCallback(
@@ -118,7 +99,14 @@ export const useDragSchedule = (
   );
 
   const handleMouseUp = useCallback(async () => {
-    if (!isDragging || !dragStart || !dragCurrent || !activeApplicant || !selectedPartId) {
+    if (
+      !isDragging ||
+      !dragStart ||
+      !dragCurrent ||
+      !activeApplicant ||
+      !selectedPartId ||
+      !selectedPartName
+    ) {
       setIsDragging(false);
       setDragStart(null);
       setDragCurrent(null);
@@ -141,17 +129,13 @@ export const useDragSchedule = (
     const startTime = addMinutes(setMinutes(setHours(startOfDay(dragDate), 0), 0), startMinutes);
     const endTime = addMinutes(setMinutes(setHours(startOfDay(dragDate), 0), 0), endMinutes);
 
-    const overlaps = getOverlappingSchedules(dragDate, startMinutes, endMinutes);
-    if (overlaps.length > 0) {
-      return;
-    }
-
     const confirmed = await openAlertDialog({
       title: '면접 장소 선택',
       content: ({ closeAsTrue, closeAsFalse }) => (
         <LocationInputDialogContent
           closeAsFalse={closeAsFalse}
           closeAsTrue={closeAsTrue}
+          endTime={endTime}
           onSubmit={(location) => {
             addDraftSchedule({
               applicantId: activeApplicant.applicantId,
@@ -163,6 +147,8 @@ export const useDragSchedule = (
               locationDetail: location.locationDetail,
             });
           }}
+          selectedPartName={selectedPartName}
+          startTime={startTime}
         />
       ),
       customized: true,
@@ -177,7 +163,7 @@ export const useDragSchedule = (
     dragCurrent,
     activeApplicant,
     selectedPartId,
-    getOverlappingSchedules,
+    selectedPartName,
     addDraftSchedule,
     openAlertDialog,
   ]);

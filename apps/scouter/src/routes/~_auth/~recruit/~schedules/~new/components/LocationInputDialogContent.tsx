@@ -1,25 +1,39 @@
-import { Dialog, Select, TextField } from '@yourssu-inhouse/interior';
+import { useQuery } from '@tanstack/react-query';
+import { Dialog, Select, TextField, useToast } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
-import { useLoading } from 'react-simplikit';
 
+import type { PartNameType } from '@/apis/parts/schema';
 import type { LocationType } from '@/apis/schedule/schema';
 
+import { interviewSchedulesOption } from '@/apis/schedule/query';
 import { locationTypeNames } from '@/apis/schedule/schema';
+import { findLocationConflict } from '@/routes/~_auth/~recruit/~schedules/utils/locationConflict';
 
 interface LocationInputDialogContentProps {
   closeAsFalse: () => void;
   closeAsTrue: () => void;
+  endTime: Date;
   onSubmit: (location: { locationDetail: null | string; locationType: LocationType }) => void;
+  selectedPartName: PartNameType;
+  startTime: Date;
 }
 
 export const LocationInputDialogContent = ({
   closeAsFalse,
   closeAsTrue,
   onSubmit,
+  endTime,
+  startTime,
+  selectedPartName,
 }: LocationInputDialogContentProps) => {
+  const toast = useToast();
   const [locationType, setLocationType] = useState<'' | LocationType>('');
   const [locationDetail, setLocationDetail] = useState('');
-  const [isLoading, startLoading] = useLoading();
+
+  const { data: schedules = [] } = useQuery({
+    ...interviewSchedulesOption(),
+    staleTime: 1000 * 60 * 5,
+  });
 
   const showLocationDetail =
     locationType === '비대면' || locationType === '강의실' || locationType === '기타';
@@ -28,21 +42,26 @@ export const LocationInputDialogContent = ({
   const isLocationDetailValid = !showLocationDetail || locationDetail.trim() !== '';
   const isFormValid = isLocationTypeValid && isLocationDetailValid;
 
-  // TODO: 현재 확인 버튼은 로컬 draft 추가(동기)만 수행해요. 이후 같은 시간·같은 장소 중복 검사와
-  // API 연동이 추가되면 loading이 실제 비동기 수명과 일치하게 돼요.
   const handleSubmit = async () => {
     if (!isFormValid) {
       return;
     }
 
-    await startLoading(
-      (async () => {
-        onSubmit({
-          locationType,
-          locationDetail: showLocationDetail ? locationDetail.trim() : null,
-        });
-      })(),
-    );
+    const schedule = {
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      locationType,
+      locationDetail: showLocationDetail ? locationDetail.trim() : null,
+    };
+
+    const otherPartSchedules = schedules.filter(({ part }) => part !== selectedPartName);
+    const conflict = findLocationConflict(otherPartSchedules, schedule);
+    if (conflict) {
+      toast.error('이미 같은 시간에 같은 장소를 선택한 일정이 있어요');
+      return;
+    }
+
+    onSubmit(schedule);
     closeAsTrue();
   };
 
@@ -76,15 +95,10 @@ export const LocationInputDialogContent = ({
       </Dialog.Content>
 
       <Dialog.ButtonGroup>
-        <Dialog.Button disabled={isLoading} onClick={closeAsFalse} variant="secondary">
+        <Dialog.Button onClick={closeAsFalse} variant="secondary">
           취소
         </Dialog.Button>
-        <Dialog.Button
-          disabled={!isFormValid}
-          loading={isLoading}
-          onClick={handleSubmit}
-          variant="primary"
-        >
+        <Dialog.Button disabled={!isFormValid} onClick={handleSubmit} variant="primary">
           확인
         </Dialog.Button>
       </Dialog.ButtonGroup>
