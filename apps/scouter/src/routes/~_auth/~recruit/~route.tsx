@@ -41,8 +41,9 @@ const RouteComponent = () => {
 
 export const Route = createFileRoute('/_auth/recruit')({
   component: RouteComponent,
-  // graft 후 shell 라우터의 context.queryClient 로 recruit 자식 페이지들이 쓰는 옵션을 프리패치해요.
-  // meOption 은 mail/new 에서 on-demand 로 가져와요.
+  head: () => ({
+    meta: [{ title: '유어슈 인하우스 | 스카우터' }],
+  }),
   loader: async ({ context }) => {
     await Promise.all([
       context.queryClient.ensureQueryData(partsOption()),
