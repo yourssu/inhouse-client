@@ -19,12 +19,13 @@ export const InterviewScheduleSchema = z.object({
 
 export type InterviewScheduleType = z.infer<typeof InterviewScheduleSchema>;
 
-// 일정 생성 요청 스키마
 export const CreateScheduleRequestSchema = z.object({
   applicantId: z.number(),
   partId: z.number(),
   startTime: z.iso.datetime(),
   endTime: z.iso.datetime(),
+  locationType: LocationTypeSchema,
+  locationDetail: z.string().nullable(),
 });
 
 export type CreateScheduleRequestType = z.infer<typeof CreateScheduleRequestSchema>;
