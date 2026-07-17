@@ -3,15 +3,13 @@ import { Dialog, Select, TextField, useToast } from '@yourssu-inhouse/interior';
 import { areIntervalsOverlapping } from 'date-fns';
 import { useState } from 'react';
 
-import type { InterviewScheduleType } from '@/apis/schedule/schema';
+import type { LocationType } from '@/apis/schedule/schema';
 
 import { patchInterviewLocation } from '@/apis/schedule';
 import { interviewSchedulesOption, interviewSchedulesQueryKey } from '@/apis/schedule/query';
+import { type InterviewScheduleType, locationTypeNames } from '@/apis/schedule/schema';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-
-const defaultLocation = '동방';
-const locationTypeOptions = ['동방', '강의실', '비대면', '기타'] as const;
 
 interface LocationDialogContentProps {
   closeAsFalse: () => void;
@@ -24,7 +22,7 @@ export const LocationDialogContent = ({
   closeAsTrue,
   scheduleId,
 }: LocationDialogContentProps) => {
-  const [locationType, setLocationType] = useState('');
+  const [locationType, setLocationType] = useState<'' | LocationType>('');
   const [locationDetail, setLocationDetail] = useState('');
   const toast = useToast();
 
@@ -49,13 +47,17 @@ export const LocationDialogContent = ({
     return schedules.some(
       (schedule) =>
         schedule.id !== scheduleId &&
-        schedule.locationType === defaultLocation &&
+        schedule.locationType === defaultLocationType &&
         isTimingConflict(schedule, target),
     );
   };
 
   const handleSend = async () => {
-    if (locationType === defaultLocation) {
+    if (locationType === '') {
+      return;
+    }
+
+    if (locationType === defaultLocationType) {
       const target = schedules.find((schedule) => schedule.id === scheduleId);
       if (target === undefined) {
         toast.error('일정 정보를 아직 불러오지 못했어요. 잠시 후 다시 시도해 주세요');
@@ -82,21 +84,21 @@ export const LocationDialogContent = ({
     <>
       <Dialog.Content className="w-[350px]">
         <Select
-          items={locationTypeOptions}
+          items={locationTypeNames}
           label="장소"
           onValueChange={(value) => {
             setLocationType(value);
-            if (value === defaultLocation) {
+            if (value === defaultLocationType) {
               setLocationDetail('');
             }
           }}
           placeholder="장소를 선택하세요"
           size="lg"
-          value={locationType}
+          value={locationType || undefined}
           variant="outline"
         />
         <TextField
-          disabled={locationType === defaultLocation}
+          disabled={locationType === defaultLocationType}
           label="세부 장소"
           onChange={(e) => setLocationDetail(e.target.value)}
           placeholder="세부 장소를 입력하세요"
@@ -111,7 +113,7 @@ export const LocationDialogContent = ({
           취소
         </Dialog.Button>
         <Dialog.Button
-          disabled={!locationType.trim()}
+          disabled={locationType === ''}
           loading={isPending}
           onClick={handleSend}
           variant="primary"
@@ -122,3 +124,5 @@ export const LocationDialogContent = ({
     </>
   );
 };
+
+const defaultLocationType = '동방' satisfies LocationType;

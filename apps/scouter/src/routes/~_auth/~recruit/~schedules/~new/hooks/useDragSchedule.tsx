@@ -6,12 +6,13 @@ import {
   setMinutes,
   startOfDay,
 } from 'date-fns';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { DraftScheduleType } from '@/types/schedule';
 
 import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { LocationInputDialogContent } from '@/routes/~_auth/~recruit/~schedules/~new/components/LocationInputDialogContent';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import {
   type AvailableTimeRange,
@@ -47,11 +48,6 @@ export const useDragSchedule = (
     useScheduleCreationContext();
 
   const openAlertDialog = useAlertDialog();
-  // openAlertDialog는 렌더링마다 새 참조를 반환하므로 ref에 담아 handleMouseUp 의존성을 안정하게 유지한다.
-  const openAlertDialogRef = useRef(openAlertDialog);
-  useEffect(() => {
-    openAlertDialogRef.current = openAlertDialog;
-  }, [openAlertDialog]);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<DragPosition | null>(null);
@@ -150,24 +146,31 @@ export const useDragSchedule = (
       return;
     }
 
-    const confirmed = await openAlertDialogRef.current({
-      title: '면접 장소 입력',
-      content: null,
-      secondaryButtonText: '취소',
-      primaryButtonText: '확인',
+    const confirmed = await openAlertDialog({
+      title: '면접 장소 선택',
+      content: ({ closeAsTrue, closeAsFalse }) => (
+        <LocationInputDialogContent
+          closeAsFalse={closeAsFalse}
+          closeAsTrue={closeAsTrue}
+          onSubmit={(location) => {
+            addDraftSchedule({
+              applicantId: activeApplicant.applicantId,
+              applicantName: activeApplicant.name,
+              partId: selectedPartId,
+              startTime,
+              endTime,
+              locationType: location.locationType,
+              locationDetail: location.locationDetail,
+            });
+          }}
+        />
+      ),
+      customized: true,
     });
 
     if (!confirmed) {
       return;
     }
-
-    addDraftSchedule({
-      applicantId: activeApplicant.applicantId,
-      applicantName: activeApplicant.name,
-      partId: selectedPartId,
-      startTime,
-      endTime,
-    });
   }, [
     isDragging,
     dragStart,
@@ -176,6 +179,7 @@ export const useDragSchedule = (
     selectedPartId,
     getOverlappingSchedules,
     addDraftSchedule,
+    openAlertDialog,
   ]);
 
   // 글로벌 mouseup 이벤트 처리
