@@ -6,11 +6,12 @@ import {
   setMinutes,
   startOfDay,
 } from 'date-fns';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { DraftScheduleType } from '@/types/schedule';
 
+import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import {
   type AvailableTimeRange,
@@ -44,6 +45,13 @@ export const useDragSchedule = (
 ): UseDragScheduleReturn => {
   const { selectedPartId, draftSchedules, activeApplicantId, addDraftSchedule } =
     useScheduleCreationContext();
+
+  const openAlertDialog = useAlertDialog();
+  // openAlertDialog는 렌더링마다 새 참조를 반환하므로 ref에 담아 handleMouseUp 의존성을 안정하게 유지한다.
+  const openAlertDialogRef = useRef(openAlertDialog);
+  useEffect(() => {
+    openAlertDialogRef.current = openAlertDialog;
+  }, [openAlertDialog]);
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<DragPosition | null>(null);
@@ -113,7 +121,7 @@ export const useDragSchedule = (
     [isDragging, dragStart, contiguousRanges],
   );
 
-  const handleMouseUp = useCallback(() => {
+  const handleMouseUp = useCallback(async () => {
     if (!isDragging || !dragStart || !dragCurrent || !activeApplicant || !selectedPartId) {
       setIsDragging(false);
       setDragStart(null);
@@ -123,32 +131,43 @@ export const useDragSchedule = (
 
     const startMinutes = Math.min(dragStart.minutes, dragCurrent.minutes);
     const endMinutes = Math.max(dragStart.minutes, dragCurrent.minutes);
+    const dragDate = dragStart.date;
 
-    if (endMinutes - startMinutes >= 30) {
-      const startTime = addMinutes(
-        setMinutes(setHours(startOfDay(dragStart.date), 0), 0),
-        startMinutes,
-      );
-      const endTime = addMinutes(
-        setMinutes(setHours(startOfDay(dragStart.date), 0), 0),
-        endMinutes,
-      );
-
-      const overlaps = getOverlappingSchedules(dragStart.date, startMinutes, endMinutes);
-      if (overlaps.length === 0) {
-        addDraftSchedule({
-          applicantId: activeApplicant.applicantId,
-          applicantName: activeApplicant.name,
-          partId: selectedPartId,
-          startTime,
-          endTime,
-        });
-      }
-    }
-
+    // 드래그 상태를 먼저 초기화해 미리보기를 즉시 제거한다.
     setIsDragging(false);
     setDragStart(null);
     setDragCurrent(null);
+
+    if (endMinutes - startMinutes < 30) {
+      return;
+    }
+
+    const startTime = addMinutes(setMinutes(setHours(startOfDay(dragDate), 0), 0), startMinutes);
+    const endTime = addMinutes(setMinutes(setHours(startOfDay(dragDate), 0), 0), endMinutes);
+
+    const overlaps = getOverlappingSchedules(dragDate, startMinutes, endMinutes);
+    if (overlaps.length > 0) {
+      return;
+    }
+
+    const confirmed = await openAlertDialogRef.current({
+      title: '면접 장소 입력',
+      content: null,
+      secondaryButtonText: '취소',
+      primaryButtonText: '확인',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    addDraftSchedule({
+      applicantId: activeApplicant.applicantId,
+      applicantName: activeApplicant.name,
+      partId: selectedPartId,
+      startTime,
+      endTime,
+    });
   }, [
     isDragging,
     dragStart,
