@@ -6,6 +6,16 @@
 @plugin '@yourssu-inhouse/interior-tailwind/plugin';
 
 /*
+  mfaVitePlugin.shell 이 각 remote 의 plugin.ts cssEntry 를 스크랩해 만든 gen 파일이에요.
+  각 remote 가 자기 보조 CSS aggregator(예: scouter 의 runtime.css = utility.css + tiptap.css)를
+  cssEntry 로 선언하면, shell 빌드가 이 파일에 @import 줄을 자동으로 채워 단일 Tailwind 빌드에
+  병합해요. @source glob 은 클래스 이름 후보만 스캔해서 커스텀 @utility 정의 본체까지는 닿지
+  않으므로 이 @import 주입이 필요해요. cssEntry 가 없는 remote(member 등)는 건너뛰어요.
+  자동 생성 파일이라 직접 수정하지 마세요(mfa-remotes.gen.css, routeTree.gen.ts 와 동일 취급).
+*/
+@import './mfa-remotes.gen.css';
+
+/*
   shell 이 host Tailwind 빌드 하나로 member·scouter remote 의 utility 까지 모두 생성해요.
   remote(member·scouter)는 Module Federation 으로 런타임에만 loadRemote 로 로드돼 shell 빌드
   모듈 그래프에 없고, shell 자기 소스 + exterior/interior 패키지만 기본 스캔돼요. 그래서 remote

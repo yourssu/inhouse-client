@@ -8,11 +8,7 @@
     bottom: -30px;
     left: 0;
     height: 30px;
-    background: radial-gradient(
-      ellipse 70% 30px at center top,
-      var(--color-greyOpacity50),
-      transparent
-    );
+    background: radial-gradient(ellipse 70% 30px at center top, var(--greyOpacity50), transparent);
   }
 
   [data-theme='dark'] &::after {
