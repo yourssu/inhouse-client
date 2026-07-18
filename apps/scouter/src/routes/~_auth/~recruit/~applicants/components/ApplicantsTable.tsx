@@ -12,7 +12,7 @@ import { lotties } from '@yourssu-inhouse/resources';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
 
-import type { ApplicantStateType } from '@/apis/applicants/schema';
+import type { ApplicantTabNameType } from '@/routes/~_auth/~recruit/~applicants/type';
 
 import { applicantsOption } from '@/apis/applicants/query';
 import { partsOption } from '@/apis/parts/query';
@@ -25,7 +25,7 @@ import { formatSemester } from '@/utils/semester';
 interface ApplicantsTableProps {
   searchKeyword: string;
   semesterId?: number;
-  state: ApplicantStateType;
+  state: ApplicantTabNameType;
 }
 
 export const ApplicantsTable = ({ searchKeyword, semesterId, state }: ApplicantsTableProps) => {

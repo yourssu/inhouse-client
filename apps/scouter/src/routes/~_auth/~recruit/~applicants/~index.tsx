@@ -2,14 +2,15 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
+import { objectKeys } from '@yourssu-inhouse/inhouse-utils/object';
 import { ChipTab } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { SearchField } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
+import { invert } from 'es-toolkit';
 import { Suspense, useState } from 'react';
 import { z } from 'zod/v4';
 
-import { ApplicantStateSchema } from '@/apis/applicants/schema';
 import { semestersOption } from '@/apis/semesters/query';
 import { Paper } from '@/components/Paper';
 import { SemesterSelect } from '@/components/SemesterSelect';
@@ -18,6 +19,7 @@ import { useSearchState } from '@/hooks/useSearchState';
 import { ApplicantSelectionBar } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantSelectionBar';
 import { ApplicantsTable } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantsTable';
 import { ApplicantSelectionContext } from '@/routes/~_auth/~recruit/~applicants/context';
+import { applicantTabNameKo } from '@/routes/~_auth/~recruit/~applicants/type';
 
 const RouteComponent = () => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/applicants/' });
@@ -41,10 +43,10 @@ const RouteComponent = () => {
         <ChipTab
           onTabChange={(t) => {
             setters.page(undefined);
-            setters.t(t);
+            setters.t(applicantTabNameEn[t]);
           }}
-          tab={search.t}
-          tabs={ApplicantStateSchema.options}
+          tab={applicantTabNameKo[search.t]}
+          tabs={applicantTabNames.map((v) => applicantTabNameKo[v])}
         >
           {({ tab }) => (
             <div className="flex flex-[1_1_0] gap-4 pt-3.5">
@@ -88,7 +90,7 @@ const RouteComponent = () => {
                   <ApplicantsTable
                     searchKeyword={keyword}
                     semesterId={search.semesterId}
-                    state={tab}
+                    state={applicantTabNameEn[tab]}
                   />
                 </Suspense>
               </Paper>
@@ -101,10 +103,14 @@ const RouteComponent = () => {
   );
 };
 
+const applicantTabNames = objectKeys(applicantTabNameKo);
+
+const applicantTabNameEn = invert(applicantTabNameKo);
+
 export const Route = createFileRoute('/_auth/recruit/applicants/')({
   component: RouteComponent,
   validateSearch: z.object({
-    t: ApplicantStateSchema.default('심사 진행 중').catch('심사 진행 중'), // 탭
+    t: z.enum(applicantTabNames).default('UNDER_REVIEW').catch('UNDER_REVIEW'), // 탭
     page: z.number().optional(),
     search: z.string().optional(),
     partId: z.number().optional(),
