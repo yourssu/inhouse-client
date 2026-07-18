@@ -7,7 +7,7 @@ import { BiSolidCalendarCheck } from 'react-icons/bi';
 import { MdPerson } from 'react-icons/md';
 
 import type { PartNameType } from '@/apis/parts/schema';
-import type { LocationType } from '@/apis/schedule/schema';
+import type { InterviewLocationType, LocationType } from '@/apis/schedule/schema';
 
 import { interviewSchedulesOption } from '@/apis/schedule/query';
 import { locationTypeNames } from '@/apis/schedule/schema';
@@ -18,7 +18,7 @@ interface LocationInputDialogContentProps {
   closeAsFalse: () => void;
   closeAsTrue: () => void;
   endTime: Date;
-  onSubmit: (location: { locationDetail: null | string; locationType: LocationType }) => void;
+  onSubmit: (location: InterviewLocationType) => void;
   selectedPartName: PartNameType;
   startTime: Date;
 }
