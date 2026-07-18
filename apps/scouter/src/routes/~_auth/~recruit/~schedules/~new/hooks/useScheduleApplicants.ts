@@ -22,7 +22,7 @@ export const useScheduleApplicants = (): UseScheduleApplicantsReturn => {
   const { data: allApplicants } = useSuspenseQuery(
     applicantsOption({
       semesterId: selectedSemesterId ?? undefined,
-      state: '심사 진행 중',
+      state: 'UNDER_REVIEW',
     }),
   );
 
