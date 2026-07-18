@@ -20,7 +20,7 @@ export const MonthlyScheduleItem = ({ applicant, schedule }: MonthlyScheduleItem
   const color = partColorMap[schedule.part];
   const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
 
-  const openLocationEditDialog = useLocationEditDialog(schedule.id);
+  const openLocationEditDialog = useLocationEditDialog(schedule);
 
   return (
     <ScheduleTooltip>

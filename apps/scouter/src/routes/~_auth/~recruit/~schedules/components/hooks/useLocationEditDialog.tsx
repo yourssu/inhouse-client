@@ -1,7 +1,9 @@
+import type { InterviewScheduleType } from '@/apis/schedule/schema';
+
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { LocationDialogContent } from '@/routes/~_auth/~recruit/~schedules/components/LocationDialogContent';
 
-export const useLocationEditDialog = (scheduleId: number) => {
+export const useLocationEditDialog = (schedule: InterviewScheduleType) => {
   const openAlertDialog = useAlertDialog();
 
   return async () => {
@@ -11,7 +13,7 @@ export const useLocationEditDialog = (scheduleId: number) => {
         <LocationDialogContent
           closeAsFalse={closeAsFalse}
           closeAsTrue={closeAsTrue}
-          scheduleId={scheduleId}
+          schedule={schedule}
         />
       ),
       customized: true,
