@@ -12,9 +12,12 @@ export const findLocationConflict = (schedules: BaseScheduleType[], target: Base
     if (a.locationType !== b.locationType) {
       return false;
     }
-    const aDetail = a.locationDetail?.trim() || null;
-    const bDetail = b.locationDetail?.trim() || null;
-    return aDetail === bDetail;
+    if (a.locationType === '강의실') {
+      const aDetail = a.locationDetail?.trim() || null;
+      const bDetail = b.locationDetail?.trim() || null;
+      return aDetail === bDetail;
+    }
+    return true;
   };
 
   return schedules.find(
