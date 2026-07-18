@@ -1,13 +1,17 @@
 import type { RouteContext } from '@yourssu-inhouse/exterior';
 
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router';
 import { AuthProvider } from '@yourssu-inhouse/auth';
 
 import { authConfig } from '@/config';
 
 export const Route = createRootRouteWithContext<RouteContext>()({
+  head: () => ({
+    meta: [{ title: '유어슈 인하우스' }],
+  }),
   component: () => (
     <AuthProvider config={authConfig}>
+      <HeadContent />
       <Outlet />
     </AuthProvider>
   ),

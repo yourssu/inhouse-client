@@ -8,19 +8,16 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/~__root'
 import { Route as AuthRouteImport } from './routes/~_auth'
+import { Route as SigninIndexRouteImport } from './routes/~signin/~index'
 import { Route as AuthIndexRouteImport } from './routes/~_auth/~index'
-
-const SigninIndexLazyRouteImport = createFileRoute('/signin/')()
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SigninIndexLazyRoute = SigninIndexLazyRouteImport.update({
+const SigninIndexRoute = SigninIndexRouteImport.update({
   id: '/signin/',
   path: '/signin/',
   getParentRoute: () => rootRouteImport,
@@ -35,17 +32,17 @@ const AuthIndexRoute = AuthIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
-  '/signin/': typeof SigninIndexLazyRoute
+  '/signin/': typeof SigninIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthIndexRoute
-  '/signin': typeof SigninIndexLazyRoute
+  '/signin': typeof SigninIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_auth/': typeof AuthIndexRoute
-  '/signin/': typeof SigninIndexLazyRoute
+  '/signin/': typeof SigninIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -57,7 +54,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
-  SigninIndexLazyRoute: typeof SigninIndexLazyRoute
+  SigninIndexRoute: typeof SigninIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -73,7 +70,7 @@ declare module '@tanstack/react-router' {
       id: '/signin/'
       path: '/signin'
       fullPath: '/signin/'
-      preLoaderRoute: typeof SigninIndexLazyRouteImport
+      preLoaderRoute: typeof SigninIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/': {
@@ -98,7 +95,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
-  SigninIndexLazyRoute: SigninIndexLazyRoute,
+  SigninIndexRoute: SigninIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

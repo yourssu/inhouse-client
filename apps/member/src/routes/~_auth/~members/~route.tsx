@@ -20,6 +20,9 @@ export const Route = createFileRoute('/_auth/members')({
       <Outlet />
     </>
   ),
+  head: () => ({
+    meta: [{ title: '유어슈 인하우스 | 멤버' }],
+  }),
   beforeLoad: ({ location }) => {
     const href = trimPathRight(location.href);
     if (href === '/members') {
