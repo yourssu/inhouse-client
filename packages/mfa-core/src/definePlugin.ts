@@ -4,6 +4,7 @@ import { validatePlugin } from './validation';
 
 interface DefineRemotePluginOptions {
   capabilities?: RemotePlugin['capabilities'];
+  cssEntry?: RemotePlugin['cssEntry'];
   lifecycle?: RemotePlugin['lifecycle'];
   name: string;
   routes: RemotePlugin['routes'];
@@ -12,6 +13,7 @@ interface DefineRemotePluginOptions {
 export const defineRemotePlugin = (options: DefineRemotePluginOptions): RemotePlugin => {
   const plugin: RemotePlugin = {
     capabilities: options.capabilities,
+    cssEntry: options.cssEntry,
     lifecycle: options.lifecycle,
     name: options.name,
     routes: options.routes,
