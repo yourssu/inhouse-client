@@ -4,12 +4,14 @@ import { DivisionNameSchema } from '@/apis/divisions/schema';
 import { PartNameSchema } from '@/apis/parts/schema';
 
 export const applicantStates = [
-  '심사 진행 중',
-  '서류 불합',
-  '면접 불합',
-  '인큐베이팅 불합',
-  '최종 합격',
-];
+  'UNDER_REVIEW',
+  'DOCUMENT_ACCEPTED',
+  'DOCUMENT_REJECTED',
+  'INTERVIEW_ACCEPTED',
+  'INTERVIEW_REJECTED',
+  'INCUBATING_REJECTED',
+  'FINAL_ACCEPTED',
+] as const;
 
 export const ApplicantStateSchema = z.enum(applicantStates);
 
