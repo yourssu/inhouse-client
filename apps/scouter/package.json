@@ -89,6 +89,7 @@
     "concurrently": "^9.2.1",
     "eslint": "catalog:",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "msw": "^2.14.6",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tsx": "^4.21.0",
@@ -96,5 +97,10 @@
     "vite": "^8.0.12",
     "vite-tsconfig-paths": "^6.1.1",
     "zx": "^8.8.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
