@@ -8,7 +8,7 @@ import { lotties } from '@yourssu-inhouse/resources';
 import { Suspense } from 'react';
 import { MdPerson } from 'react-icons/md';
 
-import { applicantByIdOption } from '@/apis/applicants/query';
+import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { Paper } from '@/components/Paper';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
@@ -19,7 +19,8 @@ const RouteComponent = () => {
   const { applicantId } = Route.useParams();
 
   const { data: applicant } = useSuspenseQuery(applicantByIdOption(Number(applicantId)));
-  const isError = true; // TODO: 구글 응답폼 API 연동 시 수정
+  const { data: answers } = useSuspenseQuery(applicantDocumentAnswersOption(Number(applicantId)));
+
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
       <div className="flex items-center justify-between">
@@ -52,8 +53,7 @@ const RouteComponent = () => {
 
       <div className="flex flex-[1_1_0] gap-4 pt-7">
         <Paper className="flex-[1_1_0]">
-          {/* TODO: API 연동 시 length 체크가 아니라 쿼리의 에러 상태(isError 등)로 분기 필요 */}
-          {isError ? (
+          {!answers ? (
             <div className="flex size-full items-center justify-center">
               <Result
                 description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
@@ -62,7 +62,7 @@ const RouteComponent = () => {
               />
             </div>
           ) : (
-            <AnswerList answers={[]} />
+            <AnswerList answers={answers.sections} />
           )}
         </Paper>
         {/* TODO: 평가 폼 */}
