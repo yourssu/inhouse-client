@@ -6,9 +6,10 @@ import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
 
-import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
+import { applicantByIdOption } from '@/apis/applicants/query';
 import { Paper } from '@/components/Paper';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
@@ -19,7 +20,6 @@ const RouteComponent = () => {
   const { applicantId } = Route.useParams();
 
   const { data: applicant } = useSuspenseQuery(applicantByIdOption(Number(applicantId)));
-  const { data: answers } = useSuspenseQuery(applicantDocumentAnswersOption(Number(applicantId)));
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -53,18 +53,21 @@ const RouteComponent = () => {
 
       <div className="flex flex-[1_1_0] gap-4 pt-7">
         <Paper className="flex-[1_1_0]">
-          {!answers ? (
-            <div className="flex size-full items-center justify-center">
-              <Result
-                description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
-                figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
-                title="연동된 서류 응답이 없어요"
-              />
-            </div>
-          ) : (
-            <AnswerList answers={answers.sections} />
-          )}
+          <ErrorBoundary
+            fallback={
+              <div className="flex size-full items-center justify-center">
+                <Result
+                  description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
+                  figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
+                  title="연동된 서류 응답이 없어요"
+                />
+              </div>
+            }
+          >
+            <AnswerList applicantId={Number(applicantId)} />
+          </ErrorBoundary>
         </Paper>
+
         {/* TODO: 평가 폼 */}
         <Paper className="w-100" />
       </div>

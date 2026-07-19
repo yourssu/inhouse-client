@@ -1,7 +1,10 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
 import { Fragment } from 'react';
 
 import type { ApplicantAnswerSectionType } from '@/apis/applicants/schema';
+
+import { applicantDocumentAnswersOption } from '@/apis/applicants/query';
 
 const Answer = ({ sectionId, question, answer }: ApplicantAnswerSectionType) => {
   return (
@@ -18,19 +21,23 @@ const Answer = ({ sectionId, question, answer }: ApplicantAnswerSectionType) => 
 };
 
 interface AnswerListProps {
-  answers: ApplicantAnswerSectionType[];
+  applicantId: number;
 }
 
-export const AnswerList = ({ answers }: AnswerListProps) => (
-  <div className="flex flex-col">
-    {answers.map((answer, index) => {
-      const isFirst = index === 0;
-      return (
-        <Fragment key={index}>
-          {!isFirst && <Divider />}
-          <Answer {...answer} />
-        </Fragment>
-      );
-    })}
-  </div>
-);
+export const AnswerList = ({ applicantId }: AnswerListProps) => {
+  const { data: answers } = useSuspenseQuery(applicantDocumentAnswersOption(applicantId));
+
+  return (
+    <div className="flex flex-col">
+      {answers.sections.map((section, index) => {
+        const isFirst = index === 0;
+        return (
+          <Fragment key={index}>
+            {!isFirst && <Divider />}
+            <Answer {...section} />
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+};
