@@ -3,11 +3,16 @@ import {
   CreateScheduleRequestSchema,
   type CreateScheduleRequestType,
   InterviewLocationSchema,
+  type InterviewLocationType,
   InterviewScheduleSchema,
 } from '@/apis/schedule/schema';
 
 export type GetSchedulesParams = {
   partId?: number;
+};
+
+type PatchInterviewLocationParams = InterviewLocationType & {
+  scheduleId: number;
 };
 
 export const getInterviewSchedules = async (params: GetSchedulesParams = {}) => {
@@ -40,11 +45,7 @@ export const patchInterviewLocation = async ({
   scheduleId,
   locationType,
   locationDetail = null,
-}: {
-  locationDetail?: null | string;
-  locationType: string;
-  scheduleId: number;
-}) => {
+}: PatchInterviewLocationParams) => {
   const validated = InterviewLocationSchema.parse({ locationType, locationDetail });
   await api.patch(`recruiter/schedule/${scheduleId}/location`, { json: validated });
 };

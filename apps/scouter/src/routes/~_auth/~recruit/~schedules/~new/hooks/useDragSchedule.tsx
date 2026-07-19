@@ -1,16 +1,12 @@
-import {
-  addMinutes,
-  areIntervalsOverlapping,
-  isSameDay,
-  setHours,
-  setMinutes,
-  startOfDay,
-} from 'date-fns';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { addMinutes, isSameDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
-import type { DraftScheduleType } from '@/types/schedule';
 
+import { partsOption } from '@/apis/parts/query';
+import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { LocationInputDialogContent } from '@/routes/~_auth/~recruit/~schedules/~new/components/LocationInputDialogContent';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import {
   type AvailableTimeRange,
@@ -42,8 +38,15 @@ export const useDragSchedule = (
   activeApplicant: ApplicantType | undefined,
   availableTimeRanges: AvailableTimeRange[],
 ): UseDragScheduleReturn => {
-  const { selectedPartId, draftSchedules, activeApplicantId, addDraftSchedule } =
-    useScheduleCreationContext();
+  const { selectedPartId, addDraftSchedule } = useScheduleCreationContext();
+
+  const openAlertDialog = useAlertDialog();
+
+  const { data: parts } = useSuspenseQuery(partsOption());
+  const selectedPartName = useMemo(
+    () => parts.find((part) => part.partId === selectedPartId)?.partName,
+    [parts, selectedPartId],
+  );
 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<DragPosition | null>(null);
@@ -53,24 +56,6 @@ export const useDragSchedule = (
   const contiguousRanges = useMemo(
     () => buildContiguousRanges(availableTimeRanges),
     [availableTimeRanges],
-  );
-
-  const getOverlappingSchedules = useCallback(
-    (date: Date, startMinutes: number, endMinutes: number): DraftScheduleType[] => {
-      const startTime = addMinutes(setMinutes(setHours(startOfDay(date), 0), 0), startMinutes);
-      const endTime = addMinutes(setMinutes(setHours(startOfDay(date), 0), 0), endMinutes);
-
-      return draftSchedules.filter(
-        (schedule) =>
-          schedule.applicantId !== activeApplicantId &&
-          isSameDay(schedule.startTime, date) &&
-          areIntervalsOverlapping(
-            { start: startTime, end: endTime },
-            { start: schedule.startTime, end: schedule.endTime },
-          ),
-      );
-    },
-    [draftSchedules, activeApplicantId],
   );
 
   const handleMouseDown = useCallback(
@@ -113,8 +98,15 @@ export const useDragSchedule = (
     [isDragging, dragStart, contiguousRanges],
   );
 
-  const handleMouseUp = useCallback(() => {
-    if (!isDragging || !dragStart || !dragCurrent || !activeApplicant || !selectedPartId) {
+  const handleMouseUp = useCallback(async () => {
+    if (
+      !isDragging ||
+      !dragStart ||
+      !dragCurrent ||
+      !activeApplicant ||
+      !selectedPartId ||
+      !selectedPartName
+    ) {
       setIsDragging(false);
       setDragStart(null);
       setDragCurrent(null);
@@ -123,40 +115,58 @@ export const useDragSchedule = (
 
     const startMinutes = Math.min(dragStart.minutes, dragCurrent.minutes);
     const endMinutes = Math.max(dragStart.minutes, dragCurrent.minutes);
+    const dragDate = dragStart.date;
 
-    if (endMinutes - startMinutes >= 30) {
-      const startTime = addMinutes(
-        setMinutes(setHours(startOfDay(dragStart.date), 0), 0),
-        startMinutes,
-      );
-      const endTime = addMinutes(
-        setMinutes(setHours(startOfDay(dragStart.date), 0), 0),
-        endMinutes,
-      );
-
-      const overlaps = getOverlappingSchedules(dragStart.date, startMinutes, endMinutes);
-      if (overlaps.length === 0) {
-        addDraftSchedule({
-          applicantId: activeApplicant.applicantId,
-          applicantName: activeApplicant.name,
-          partId: selectedPartId,
-          startTime,
-          endTime,
-        });
-      }
-    }
-
+    // 드래그 상태를 먼저 초기화해 미리보기를 즉시 제거한다.
     setIsDragging(false);
     setDragStart(null);
     setDragCurrent(null);
+
+    if (endMinutes - startMinutes < 30) {
+      return;
+    }
+
+    const startTime = addMinutes(setMinutes(setHours(startOfDay(dragDate), 0), 0), startMinutes);
+    const endTime = addMinutes(setMinutes(setHours(startOfDay(dragDate), 0), 0), endMinutes);
+
+    const confirmed = await openAlertDialog({
+      title: '면접 장소 선택',
+      content: ({ closeAsTrue, closeAsFalse }) => (
+        <LocationInputDialogContent
+          applicantName={activeApplicant.name}
+          closeAsFalse={closeAsFalse}
+          closeAsTrue={closeAsTrue}
+          endTime={endTime}
+          onSubmit={({ locationDetail, locationType }) => {
+            addDraftSchedule({
+              applicantId: activeApplicant.applicantId,
+              applicantName: activeApplicant.name,
+              partId: selectedPartId,
+              startTime,
+              endTime,
+              locationType,
+              locationDetail,
+            });
+          }}
+          selectedPartName={selectedPartName}
+          startTime={startTime}
+        />
+      ),
+      customized: true,
+    });
+
+    if (!confirmed) {
+      return;
+    }
   }, [
     isDragging,
     dragStart,
     dragCurrent,
     activeApplicant,
     selectedPartId,
-    getOverlappingSchedules,
+    selectedPartName,
     addDraftSchedule,
+    openAlertDialog,
   ]);
 
   // 글로벌 mouseup 이벤트 처리

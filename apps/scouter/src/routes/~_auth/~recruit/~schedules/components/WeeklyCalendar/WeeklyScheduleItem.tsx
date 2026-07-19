@@ -23,7 +23,7 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
   const color = partColorMap[schedule.part];
   const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
 
-  const openLocationEditDialog = useLocationEditDialog(schedule.id);
+  const openLocationEditDialog = useLocationEditDialog(schedule);
 
   const [isCompact, setIsCompact] = useState(false);
   const ref = useResizeObserver((entry) => {

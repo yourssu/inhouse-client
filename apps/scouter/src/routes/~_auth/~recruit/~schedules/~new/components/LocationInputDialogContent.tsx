@@ -2,73 +2,73 @@ import { useQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Dialog, Select, TextField, useToast } from '@yourssu-inhouse/interior';
 import { differenceInMinutes } from 'date-fns';
-import { josa } from 'es-hangul';
-import { assert } from 'es-toolkit';
 import { useState } from 'react';
 import { BiSolidCalendarCheck } from 'react-icons/bi';
 import { MdPerson } from 'react-icons/md';
 
-import type { InterviewScheduleType, LocationType } from '@/apis/schedule/schema';
+import type { PartNameType } from '@/apis/parts/schema';
+import type { InterviewLocationType, LocationType } from '@/apis/schedule/schema';
 
-import { patchInterviewLocation } from '@/apis/schedule';
-import { interviewSchedulesOption, interviewSchedulesQueryKey } from '@/apis/schedule/query';
+import { interviewSchedulesOption } from '@/apis/schedule/query';
 import { locationTypeNames } from '@/apis/schedule/schema';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { findLocationConflict } from '@/routes/~_auth/~recruit/~schedules/utils/locationConflict';
 
-interface LocationDialogContentProps {
+interface LocationInputDialogContentProps {
+  applicantName: string;
   closeAsFalse: () => void;
   closeAsTrue: () => void;
-  schedule: InterviewScheduleType;
+  endTime: Date;
+  onSubmit: (location: InterviewLocationType) => void;
+  selectedPartName: PartNameType;
+  startTime: Date;
 }
 
-export const LocationDialogContent = ({
+export const LocationInputDialogContent = ({
   closeAsFalse,
   closeAsTrue,
-  schedule,
-}: LocationDialogContentProps) => {
-  const [locationType, setLocationType] = useState<LocationType>(schedule.locationType);
-  const [locationDetail, setLocationDetail] = useState(schedule.locationDetail ?? '');
+  onSubmit,
+  endTime,
+  startTime,
+  applicantName,
+  selectedPartName,
+}: LocationInputDialogContentProps) => {
   const toast = useToast();
+  const [locationType, setLocationType] = useState<'' | LocationType>('');
+  const [locationDetail, setLocationDetail] = useState('');
 
-  const { data: schedules = [], isLoading: isSchedulesLoading } = useQuery({
+  const { data: schedules = [] } = useQuery({
     ...interviewSchedulesOption(),
     staleTime: 1000 * 60 * 5,
-  });
-  const { invalidate: invalidateSchedules } = useQueryInvalidation(interviewSchedulesQueryKey);
-  const { mutateWithToast, isPending } = useToastedMutation({
-    mutationFn: patchInterviewLocation,
-    successText: '장소를 변경했어요',
-    onSettled: () => invalidateSchedules(),
   });
 
   const showLocationDetail =
     locationType === '비대면' || locationType === '강의실' || locationType === '기타';
 
-  const handleSend = async () => {
-    if (isSchedulesLoading) {
-      toast.error('일정 정보를 아직 불러오지 못했어요. 잠시 후 다시 시도해 주세요');
+  const isLocationTypeValid = locationType !== '';
+  const isLocationDetailValid = !showLocationDetail || locationDetail.trim() !== '';
+  const isFormValid = isLocationTypeValid && isLocationDetailValid;
+
+  const handleSubmit = async () => {
+    if (!isFormValid) {
       return;
     }
 
-    const target = schedules.find(({ id }) => id === schedule.id);
-    assert(target != null, `일정을 찾을 수 없어요: id(${schedule.id})`);
-
-    if (findLocationConflict(schedules, target)) {
-      toast.error(`이미 같은 시간에 ${josa(locationType, '을/를')} 사용하는 일정이 있어요`);
-      return;
-    }
-
-    const trimmedDetail = locationDetail.trim();
-    const { success } = await mutateWithToast({
-      scheduleId: schedule.id,
+    const schedule = {
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
       locationType,
-      locationDetail: trimmedDetail === '' ? null : trimmedDetail,
-    });
-    if (success) {
-      closeAsTrue();
+      locationDetail: showLocationDetail ? locationDetail.trim() : null,
+    };
+
+    const otherPartSchedules = schedules.filter(({ part }) => part !== selectedPartName);
+    const conflict = findLocationConflict(otherPartSchedules, schedule);
+    if (conflict) {
+      toast.error('이미 같은 시간에 같은 장소를 선택한 일정이 있어요');
+      return;
     }
+
+    onSubmit(schedule);
+    closeAsTrue();
   };
 
   return (
@@ -77,14 +77,13 @@ export const LocationDialogContent = ({
         <div className="bg-grey50 flex flex-col gap-2 rounded-xl px-4 pt-3 pb-3.5 text-sm">
           <div className="flex items-center gap-2">
             <MdPerson className="text-neutralDisabled size-6" />
-            <span>{schedule.name}</span>
+            <span>{applicantName}</span>
           </div>
           <div className="flex items-center gap-2">
             <BiSolidCalendarCheck className="text-neutralDisabled size-6" />
             <span>
-              {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
-              {formatTemplates['23:00'](schedule.endTime)} (
-              {differenceInMinutes(schedule.endTime, schedule.startTime)}분)
+              {formatTemplates['1월 1일 (월) 23:00'](startTime)} ~{' '}
+              {formatTemplates['23:00'](endTime)} ({differenceInMinutes(endTime, startTime)}분)
             </span>
           </div>
         </div>
@@ -115,10 +114,10 @@ export const LocationDialogContent = ({
       </Dialog.Content>
 
       <Dialog.ButtonGroup>
-        <Dialog.Button disabled={isPending} onClick={closeAsFalse} variant="secondary">
+        <Dialog.Button onClick={closeAsFalse} variant="secondary">
           취소
         </Dialog.Button>
-        <Dialog.Button loading={isPending} onClick={handleSend} variant="primary">
+        <Dialog.Button disabled={!isFormValid} onClick={handleSubmit} variant="primary">
           확인
         </Dialog.Button>
       </Dialog.ButtonGroup>

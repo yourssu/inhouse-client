@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { differenceInMinutes, isSameDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { assert } from 'es-toolkit';
 import { BiSolidCalendarCheck } from 'react-icons/bi';
+import { MdLocationOn } from 'react-icons/md';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { DraftScheduleType } from '@/types/schedule';
@@ -112,6 +113,11 @@ const DraftScheduleItem = ({
         <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
           {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
           {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
+        </ScheduleTooltip.Item>
+        <ScheduleTooltip.Item icon={MdLocationOn}>
+          {schedule.locationDetail == null
+            ? schedule.locationType
+            : `${schedule.locationType} (${schedule.locationDetail})`}
         </ScheduleTooltip.Item>
       </ScheduleTooltip.Content>
     </ScheduleTooltip>
