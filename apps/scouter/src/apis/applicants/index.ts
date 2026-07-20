@@ -2,6 +2,7 @@ import { isNil, omitBy } from 'es-toolkit';
 
 import { api } from '@/apis/api';
 import {
+  ApplicantDocumentAnswersSchema,
   ApplicantSchema,
   type ApplicantStateType,
   ApplicantSyncResponseSchema,
@@ -39,6 +40,11 @@ export const getApplicantById = async (applicantId: number) => {
 export const getApplicantsLastUpdatedTime = async () => {
   const response = await api.get('applicants/lastUpdatedTime').json();
   return LastApplicantSyncTimeSchema.parse(response);
+};
+
+export const getApplicantDocumentAnswers = async (applicantId: number) => {
+  const response = await api.get(`applicants/${applicantId}/answers`).json();
+  return ApplicantDocumentAnswersSchema.parse(response);
 };
 
 export const postApplicant = async (data: CreateApplicantRequestType) => {

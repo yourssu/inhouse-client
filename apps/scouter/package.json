@@ -60,6 +60,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-dropzone": "^15.0.0",
+    "react-error-boundary": "^6.1.2",
     "react-icons": "^5.5.0",
     "react-simplikit": "^0.0.46",
     "react-spinners": "^0.17.0",
@@ -88,6 +89,7 @@
     "concurrently": "^9.2.1",
     "eslint": "catalog:",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "msw": "^2.14.6",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tsx": "^4.21.0",
@@ -95,5 +97,10 @@
     "vite": "^8.0.12",
     "vite-tsconfig-paths": "^6.1.1",
     "zx": "^8.8.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

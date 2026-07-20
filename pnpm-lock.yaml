@@ -448,6 +448,9 @@ importers:
       react-dropzone:
         specifier: ^15.0.0
         version: 15.0.0(react@19.2.7)
+      react-error-boundary:
+        specifier: ^6.1.2
+        version: 6.1.2(react@19.2.7)
       react-icons:
         specifier: ^5.5.0
         version: 5.6.0(react@19.2.7)
@@ -527,6 +530,9 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.5.2
         version: 0.5.2(eslint@10.4.1(jiti@2.7.0))
+      msw:
+        specifier: ^2.14.6
+        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
       prettier:
         specifier: ^3.8.3
         version: 3.8.4
@@ -4372,6 +4378,11 @@ packages:
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
 
+  react-error-boundary@6.1.2:
+    resolution: {integrity: sha512-3DpCr5HVdZ0caUjYE/kIHBEJN0mNP3ZCgf16c48uJ5TbWjorKVp+YG8W3XqlJ7vJAVNw6wNIImyPXmFydwmyng==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+
   react-icons@5.6.0:
     resolution: {integrity: sha512-RH93p5ki6LfOiIt0UtDyNg/cee+HLVR6cHHtW3wALfo+eOHTp8RnU2kRkI6E+H19zMIs03DyxUG/GfZMOGvmiA==}
     peerDependencies:
@@ -8086,6 +8097,10 @@ snapshots:
       attr-accept: 2.2.5
       file-selector: 2.1.2
       prop-types: 15.8.1
+      react: 19.2.7
+
+  react-error-boundary@6.1.2(react@19.2.7):
+    dependencies:
       react: 19.2.7
 
   react-icons@5.6.0(react@19.2.7):

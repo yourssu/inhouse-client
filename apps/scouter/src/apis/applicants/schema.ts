@@ -55,6 +55,20 @@ export const ApplicantSyncResponseSchema = z.object({
   failures: z.array(z.string()),
 });
 
+export const ApplicantDocumentAnswerSectionSchema = z.object({
+  sectionId: z.number(),
+  question: z.string(),
+  answer: z.string(),
+});
+
+export const ApplicantDocumentAnswersSchema = z.object({
+  applicantId: z.number(),
+  name: z.string(),
+  part: PartNameSchema,
+  submittedAt: z.iso.datetime(),
+  sections: z.array(ApplicantDocumentAnswerSectionSchema),
+});
+
 export const UpdateApplicantRequestSchema = CreateApplicantRequestSchema.partial();
 
 export type ApplicantType = z.infer<typeof ApplicantSchema>;
@@ -63,3 +77,5 @@ export type LastApplicantSyncTimeType = z.infer<typeof LastApplicantSyncTimeSche
 export type CreateApplicantRequestType = z.infer<typeof CreateApplicantRequestSchema>;
 export type UpdateApplicantRequestType = z.infer<typeof UpdateApplicantRequestSchema>;
 export type ApplicantSyncResponseType = z.infer<typeof ApplicantSyncResponseSchema>;
+export type ApplicantAnswerSectionType = z.infer<typeof ApplicantDocumentAnswerSectionSchema>;
+export type ApplicantDocumentAnswersType = z.infer<typeof ApplicantDocumentAnswersSchema>;
