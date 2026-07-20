@@ -52,24 +52,23 @@ const RouteComponent = () => {
       </div>
 
       <div className="flex flex-[1_1_0] gap-4 pt-7">
-        <Paper className="flex-[1_1_0]">
-          <ErrorBoundary
-            fallback={
-              <div className="flex size-full items-center justify-center">
-                <Result
-                  description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
-                  figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
-                  title="연동된 서류 응답이 없어요"
-                />
-              </div>
-            }
-          >
+        <ErrorBoundary
+          fallback={
+            <Paper className="flex size-full items-center justify-center">
+              <Result
+                description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
+                figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
+                title="연동된 서류 응답이 없어요"
+              />
+            </Paper>
+          }
+        >
+          <Paper className="flex-[1_1_0]">
             <AnswerList applicantId={Number(applicantId)} />
-          </ErrorBoundary>
-        </Paper>
-
-        {/* TODO: 평가 폼 */}
-        <Paper className="w-100" />
+          </Paper>
+          {/* TODO: 평가 폼 */}
+          <Paper className="w-100" />
+        </ErrorBoundary>
       </div>
     </PageLayout.Content>
   );
