@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { Button, Divider, Fieldset, MultilineTextField, Select } from '@yourssu-inhouse/interior';
 import { invert } from 'es-toolkit';
@@ -7,7 +7,10 @@ import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { useLoading } from 'react-simplikit';
 
 import { putApplicantDocumentEvaluations } from '@/apis/applicants';
-import { getApplicantDocumentsEvaluationsOption } from '@/apis/applicants/query';
+import {
+  applicantDocumentAnswersOption,
+  getApplicantDocumentsEvaluationsOption,
+} from '@/apis/applicants/query';
 import {
   documentKoreanResults,
   UpdateApplicantDocumentEvaluationFormSchema,
@@ -25,9 +28,12 @@ export const EvalForm = () => {
   const { applicantId } = useParams({
     from: '/_auth/recruit/applicants/$applicantId/eval/document/',
   });
-  const { data: evaluations } = useSuspenseQuery(
-    getApplicantDocumentsEvaluationsOption(Number(applicantId)),
-  );
+  const [{ data: evaluations }, { data: answers }] = useSuspenseQueries({
+    queries: [
+      getApplicantDocumentsEvaluationsOption(Number(applicantId)),
+      applicantDocumentAnswersOption(Number(applicantId)),
+    ],
+  });
 
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(UpdateApplicantDocumentEvaluationFormSchema),
@@ -61,12 +67,51 @@ export const EvalForm = () => {
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4 p-6">
-          <h3 className="font-semibold">질문별 서류평가</h3>
+          <div className="flex flex-col gap-1.5">
+            <h3 className="font-semibold">질문별 서류평가</h3>
+
+            <div className="flex flex-col gap-4">
+              {answers.sections.map((section, idx) => (
+                <div className="flex flex-col" key={section.sectionId}>
+                  <span className="text-15">{`${idx + 1}. ${section.question}`}</span>
+
+                  <Fieldset label="배점">
+                    <Controller
+                      control={control}
+                      name={`items.${idx}.score`}
+                      render={({ field }) => (
+                        <div>
+                          <input
+                            className="h-lg border-grey200 border-2 outline-none"
+                            {...field}
+                            type="text"
+                          />{' '}
+                          / 20
+                        </div>
+                      )}
+                    />
+                  </Fieldset>
+
+                  <Fieldset label="코멘트">
+                    <Controller
+                      control={control}
+                      name={`items.${idx}.memo`}
+                      render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
+                    />
+                  </Fieldset>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <div>
             <h3 className="font-semibold">총평 및 평가결과</h3>
             <Fieldset label="총평">
-              <MultilineTextField withHeightAutoResize />
+              <Controller
+                control={control}
+                name="overallComment"
+                render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
+              />
             </Fieldset>
 
             <Fieldset label="평가결과">
