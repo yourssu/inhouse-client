@@ -55,6 +55,53 @@ export const ApplicantSyncResponseSchema = z.object({
   failures: z.array(z.string()),
 });
 
+const documentResults = ['PENDING', 'DOCUMENT_PASS', 'DOCUMENT_FAIL'] as const;
+export const documentKoreanResults = ['보류', '서류 합격', '서류 불합격'] as const;
+
+const DocumentResultSchema = z.enum(documentResults);
+const DocumentKoreanResultSchema = z.enum(documentKoreanResults);
+
+export const ApplicantDocumentEvaluationsResponseSchema = z.object({
+  totalScore: z.number(),
+  items: z.array(
+    z.object({
+      sectionId: z.number(),
+      question: z.string(),
+      maxScore: z.number(),
+      score: z.number(),
+      memo: z.string(),
+    }),
+  ),
+  overallComment: z.string(),
+  result: DocumentResultSchema,
+  submittedAt: z.iso.datetime().nullable(),
+});
+
+export const UpdateApplicantDocumentEvaluationRequestSchema = z.object({
+  items: z.array(
+    z.object({
+      sectionId: z.number(),
+      score: z.number(),
+      memo: z.string(),
+    }),
+  ),
+  overallComment: z.string(),
+  result: DocumentResultSchema,
+  submit: z.boolean(),
+});
+
+export const UpdateApplicantDocumentEvaluationFormSchema = z.object({
+  items: z.array(
+    z.object({
+      sectionId: z.number(),
+      score: z.number(),
+      memo: z.string(),
+    }),
+  ),
+  overallComment: z.string(),
+  result: DocumentKoreanResultSchema,
+});
+
 export const ApplicantDocumentAnswerSectionSchema = z.object({
   sectionId: z.number(),
   question: z.string(),
@@ -79,3 +126,12 @@ export type UpdateApplicantRequestType = z.infer<typeof UpdateApplicantRequestSc
 export type ApplicantSyncResponseType = z.infer<typeof ApplicantSyncResponseSchema>;
 export type ApplicantAnswerSectionType = z.infer<typeof ApplicantDocumentAnswerSectionSchema>;
 export type ApplicantDocumentAnswersType = z.infer<typeof ApplicantDocumentAnswersSchema>;
+export type ApplicantDocumentEvaluationsResponseType = z.infer<
+  typeof ApplicantDocumentEvaluationsResponseSchema
+>;
+export type UpdateApplicantDocumentEvaluationRequestType = z.infer<
+  typeof UpdateApplicantDocumentEvaluationRequestSchema
+>;
+export type UpdateApplicantDocumentEvaluationFormType = z.infer<
+  typeof UpdateApplicantDocumentEvaluationFormSchema
+>;

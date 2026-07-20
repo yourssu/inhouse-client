@@ -11,6 +11,7 @@ import { MdPerson } from 'react-icons/md';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { Paper } from '@/components/Paper';
+import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
@@ -66,8 +67,9 @@ const RouteComponent = () => {
           <Paper className="flex-[1_1_0]">
             <AnswerList applicantId={Number(applicantId)} />
           </Paper>
-          {/* TODO: 평가 폼 */}
-          <Paper className="w-100" />
+          <Paper className="w-100 p-0">
+            <EvalForm />
+          </Paper>
         </ErrorBoundary>
       </div>
     </PageLayout.Content>
