@@ -8,6 +8,7 @@ export const root = style({
   border: 'none',
   padding: 0,
   margin: 0,
+  position: 'relative',
 });
 
 export const label = style({
