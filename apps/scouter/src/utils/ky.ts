@@ -2,9 +2,33 @@ import { HTTPError } from 'ky';
 
 export const isKyHTTPError = (e: any): e is HTTPError => e instanceof HTTPError;
 
+const isErrorResponseBody = (value: unknown): value is { detail?: string; message?: string } => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  return (
+    (!('detail' in value) || typeof value.detail === 'string') &&
+    (!('message' in value) || typeof value.message === 'string')
+  );
+};
+
+const getHTTPErrorDataMessage = (data: unknown) => {
+  if (typeof data === 'string') {
+    return data;
+  }
+  if (isErrorResponseBody(data)) {
+    return data.detail ?? data.message;
+  }
+  return undefined;
+};
+
 export const getKyHTTPErrorMessage = async (e: HTTPError) => {
+  const dataMessage = getHTTPErrorDataMessage(e.data);
+  if (dataMessage) {
+    return dataMessage;
+  }
   const type = e.response.headers.get('content-type') || '';
-  if (!e.response.body) {
+  if (!e.response.body || e.response.bodyUsed) {
     return e.message;
   }
   if (type.includes('json')) {

@@ -41,7 +41,6 @@ export const QuestionSetting = ({ onClose }: QuestionSettingProps) => {
   const mutation = useToastedMutation({
     mutationFn: putPartDocumentsRubrics,
     successText: '문항 설정을 완료했어요.',
-    errorText: '문항 설정에 실패했어요.',
   });
 
   const toast = useToast();
@@ -52,9 +51,13 @@ export const QuestionSetting = ({ onClose }: QuestionSettingProps) => {
       return;
     }
 
-    await startLoading(mutation.mutateWithToast({ partId: part.partId, data: data.rubrics }));
+    const { success } = await startLoading(
+      mutation.mutateWithToast({ partId: part.partId, data: data.rubrics }),
+    );
 
-    onClose();
+    if (success) {
+      onClose();
+    }
   };
 
   const [loading, startLoading] = useLoading();
