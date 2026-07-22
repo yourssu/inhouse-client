@@ -4,6 +4,7 @@ import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 import {
   getApplicantById,
   getApplicantDocumentAnswers,
+  getApplicantDocumentsEvaluations,
   getApplicants,
   getApplicantsLastUpdatedTime,
   type GetApplicantsParams,
@@ -33,4 +34,10 @@ export const applicantDocumentAnswersOption = (applicantId: number) =>
   queryOptions({
     queryKey: qk.for('applicants', applicantId, 'answer'),
     queryFn: () => getApplicantDocumentAnswers(applicantId),
+  });
+
+export const getApplicantDocumentsEvaluationsOption = (applicantId: number) =>
+  queryOptions({
+    queryKey: qk.for('applicants', applicantId, 'documents', 'evaluations'),
+    queryFn: () => getApplicantDocumentsEvaluations(applicantId),
   });
