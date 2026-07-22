@@ -94,7 +94,7 @@ export const UpdateApplicantDocumentEvaluationFormSchema = z.object({
   items: z.array(
     z.object({
       sectionId: z.number(),
-      score: z.number(),
+      score: z.string().min(1).regex(/^\d+$/).transform(Number),
       memo: z.string(),
     }),
   ),

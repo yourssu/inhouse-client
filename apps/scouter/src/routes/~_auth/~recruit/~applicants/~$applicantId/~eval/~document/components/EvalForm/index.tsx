@@ -8,7 +8,7 @@ import { useLoading } from 'react-simplikit';
 
 import { putApplicantDocumentEvaluations } from '@/apis/applicants';
 import {
-  applicantDocumentAnswersOption,
+  applicantByIdOption,
   getApplicantDocumentsEvaluationsOption,
 } from '@/apis/applicants/query';
 import {
@@ -16,6 +16,7 @@ import {
   UpdateApplicantDocumentEvaluationFormSchema,
   type UpdateApplicantDocumentEvaluationFormType,
 } from '@/apis/applicants/schema';
+import { getPartDocumentsRubricsOption, partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 const documentResultMapping = {
@@ -28,17 +29,27 @@ export const EvalForm = () => {
   const { applicantId } = useParams({
     from: '/_auth/recruit/applicants/$applicantId/eval/document/',
   });
-  const [{ data: evaluations }, { data: answers }] = useSuspenseQueries({
+
+  const [{ data: applicant }, { data: parts }] = useSuspenseQueries({
+    queries: [applicantByIdOption(Number(applicantId)), partsOption()],
+  });
+
+  const part = parts.find((part) => part.partName === applicant.part) ?? parts[0];
+
+  const [{ data: evaluations }, { data: rubrics }] = useSuspenseQueries({
     queries: [
       getApplicantDocumentsEvaluationsOption(Number(applicantId)),
-      applicantDocumentAnswersOption(Number(applicantId)),
+      getPartDocumentsRubricsOption(part.partId),
     ],
   });
 
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(UpdateApplicantDocumentEvaluationFormSchema),
     defaultValues: {
-      items: evaluations.items,
+      items:
+        evaluations.items.length === 0
+          ? rubrics.map(({ sectionId }) => ({ sectionId, score: '0', memo: '' }))
+          : evaluations.items.map((item) => ({ ...item, score: item.score.toString() })),
       overallComment: evaluations.overallComment,
       result: documentResultMapping[evaluations.result],
     },
@@ -71,9 +82,9 @@ export const EvalForm = () => {
             <h3 className="font-semibold">질문별 서류평가</h3>
 
             <div className="flex flex-col gap-4">
-              {answers.sections.map((section, idx) => (
-                <div className="flex flex-col" key={section.sectionId}>
-                  <span className="text-15">{`${idx + 1}. ${section.question}`}</span>
+              {rubrics.map((rubric, idx) => (
+                <div className="flex flex-col" key={rubric.sectionId}>
+                  <span className="text-15">{`${idx + 1}. ${rubric.question}`}</span>
 
                   <Fieldset label="배점">
                     <Controller
@@ -82,11 +93,20 @@ export const EvalForm = () => {
                       render={({ field }) => (
                         <div>
                           <input
-                            className="h-lg border-grey200 border-2 outline-none"
+                            className="h-lg rounded-8 border-grey200 focus:border-violet500 hover:not-focus:not-disabled:border-violetOpacity200 border px-3 outline-none"
                             {...field}
+                            onChange={(event) => {
+                              const value = event.target.value;
+
+                              if (!/^\d*$/.test(value)) {
+                                return;
+                              }
+
+                              field.onChange(value);
+                            }}
                             type="text"
-                          />{' '}
-                          / 20
+                          />
+                          {` / ${rubric.maxScore}`}
                         </div>
                       )}
                     />

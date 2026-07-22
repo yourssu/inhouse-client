@@ -19,5 +19,15 @@ export const PartSchema = z.object({
   partName: PartNameSchema,
 });
 
+export const PartDocumentsRubricsSchema = z.array(
+  z.object({
+    sectionId: z.number(),
+    question: z.string(),
+    maxScore: z.number(),
+    criterionDetail: z.string(),
+  }),
+);
+
 export type PartType = z.infer<typeof PartSchema>;
 export type PartNameType = z.infer<typeof PartNameSchema>;
+export type PartDocumentRubricsType = z.infer<typeof PartDocumentsRubricsSchema>;
