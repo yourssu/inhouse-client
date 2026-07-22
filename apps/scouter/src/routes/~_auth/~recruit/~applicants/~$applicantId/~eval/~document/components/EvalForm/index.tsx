@@ -77,7 +77,7 @@ export const EvalForm = () => {
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4 p-6">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <h3 className="font-semibold">질문별 서류평가</h3>
 
@@ -159,9 +159,9 @@ export const EvalForm = () => {
         </div>
       </form>
 
-      <Divider />
+      <Divider className="my-6" />
 
-      <div className="flex flex-col p-6">
+      <div className="flex flex-col">
         <Button size="lg">최종 서류 평가 제출하기</Button>
       </div>
     </div>
