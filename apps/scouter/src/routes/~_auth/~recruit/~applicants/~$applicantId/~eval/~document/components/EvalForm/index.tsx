@@ -20,6 +20,7 @@ import {
 import { getPartDocumentsRubricsOption, partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
+import { OtherOverallEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherOverallEvaluationsCollapsible';
 
 const documentResultMapping = {
   PENDING: '보류',
@@ -162,6 +163,11 @@ export const EvalForm = () => {
               />
             </Fieldset>
           </div>
+
+          <OtherOverallEvaluationsCollapsible
+            isEvaluationDone={evaluations.items.length !== 0}
+            othersEvaluations={othersEvaluations}
+          />
 
           <Button loading={loading} size="lg" type="submit">
             내 평가 제출하기

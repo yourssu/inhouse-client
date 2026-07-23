@@ -52,7 +52,7 @@ export const OtherEvaluationsCollapsible = ({
 
                 return (
                   <div className="flex flex-col gap-2" key={evaluatorId}>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <span className="font-semibold">{evaluatorName}</span>
                       {`${item.score} / ${rubric.maxScore}`}
                     </div>
