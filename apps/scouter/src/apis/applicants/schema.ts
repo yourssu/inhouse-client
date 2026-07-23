@@ -118,6 +118,23 @@ export const ApplicantDocumentAnswersSchema = z.object({
 
 export const UpdateApplicantRequestSchema = CreateApplicantRequestSchema.partial();
 
+export const ApplicantDocumentOthersEvaluationsSchema = z.array(
+  z.object({
+    evaluatorId: z.number(),
+    evaluatorName: z.string(),
+    totalScore: z.number(),
+    result: DocumentResultSchema,
+    overallComment: z.string(),
+    items: z.array(
+      z.object({
+        sectionId: z.number(),
+        score: z.number(),
+        memo: z.string(),
+      }),
+    ),
+  }),
+);
+
 export type ApplicantType = z.infer<typeof ApplicantSchema>;
 export type ApplicantStateType = z.infer<typeof ApplicantStateSchema>;
 export type LastApplicantSyncTimeType = z.infer<typeof LastApplicantSyncTimeSchema>;
@@ -128,6 +145,9 @@ export type ApplicantAnswerSectionType = z.infer<typeof ApplicantDocumentAnswerS
 export type ApplicantDocumentAnswersType = z.infer<typeof ApplicantDocumentAnswersSchema>;
 export type ApplicantDocumentEvaluationsResponseType = z.infer<
   typeof ApplicantDocumentEvaluationsResponseSchema
+>;
+export type ApplicantDocumentOthersEvaluationsType = z.infer<
+  typeof ApplicantDocumentOthersEvaluationsSchema
 >;
 export type UpdateApplicantDocumentEvaluationRequestType = z.infer<
   typeof UpdateApplicantDocumentEvaluationRequestSchema
