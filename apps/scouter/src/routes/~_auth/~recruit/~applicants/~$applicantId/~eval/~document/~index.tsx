@@ -3,15 +3,17 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { Result } from '@yourssu-inhouse/interior';
+import { Button, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
+import { SwitchCase } from 'react-simplikit';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
+import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
@@ -21,6 +23,8 @@ const RouteComponent = () => {
   const { applicantId } = Route.useParams();
 
   const { data: applicant } = useSuspenseQuery(applicantByIdOption(Number(applicantId)));
+
+  const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -67,8 +71,25 @@ const RouteComponent = () => {
           <Paper className="flex-[1_1_0]">
             <AnswerList applicantId={Number(applicantId)} />
           </Paper>
-          <Paper className="w-100 p-0">
-            <EvalForm />
+          <Paper className="relative w-100">
+            <SwitchCase
+              caseBy={{
+                '평가 폼': () => (
+                  <>
+                    <EvalForm />
+                    <Button
+                      className="absolute top-4 right-4"
+                      onClick={() => setSidebarView('문항 설정')}
+                      size="sm"
+                    >
+                      문항 설정
+                    </Button>
+                  </>
+                ),
+                '문항 설정': () => <QuestionSetting onClose={() => setSidebarView('평가 폼')} />,
+              }}
+              value={sidebarView}
+            />
           </Paper>
         </ErrorBoundary>
       </div>
