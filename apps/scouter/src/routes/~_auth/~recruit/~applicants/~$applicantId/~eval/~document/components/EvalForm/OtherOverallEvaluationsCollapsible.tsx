@@ -35,7 +35,7 @@ export const OtherOverallEvaluationsCollapsible = ({
       open={open}
     >
       <Collapsible.Trigger className="flex cursor-pointer items-center justify-between px-3 py-2">
-        다른 평가자 보기 {open ? <MdOutlineExpandLess /> : <MdOutlineExpandMore />}\
+        다른 평가자 보기 {open ? <MdOutlineExpandLess /> : <MdOutlineExpandMore />}
       </Collapsible.Trigger>
 
       <Collapsible.Content>
