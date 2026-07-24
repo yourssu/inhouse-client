@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react';
+import type { FocusEvent, KeyboardEvent } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
@@ -18,6 +18,7 @@ import {
 import { commentsQueryKey } from '@/apis/eval/comments/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { AddComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/Comments/AddComment';
 
 import type { CommentThread } from '../../utils/groupThreadsBySection';
 
@@ -204,15 +205,34 @@ export const Comment = ({
 };
 
 interface CommentsProps {
+  activeCommentsId: null | number;
   applicantId: number;
-  onClick: () => void;
+  onClickComments: (commentId: null | number) => void;
   selectedSectionId: null | number;
   thread: CommentThread;
 }
 
-export const Comments = ({ applicantId, selectedSectionId, thread, onClick }: CommentsProps) => {
+export const Comments = ({
+  applicantId,
+  selectedSectionId,
+  thread,
+  activeCommentsId,
+  onClickComments,
+}: CommentsProps) => {
   const sectionId = thread[0].sectionId;
   const isSelectedSection = sectionId === selectedSectionId;
+
+  const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
+    if (activeCommentsId === thread[0].commentId) {
+      // 회신 AddComment가 열려있을 때는 그쪽의 onBlur(draft 보존 포함)가 닫힘을 책임진다.
+      return;
+    }
+    const nextFocusTarget = e.relatedTarget;
+    if (nextFocusTarget?.closest('[data-comments]')) {
+      return;
+    }
+    onClickComments(null);
+  };
 
   return (
     <div
@@ -221,11 +241,22 @@ export const Comments = ({ applicantId, selectedSectionId, thread, onClick }: Co
         isSelectedSection ? 'border-violet300' : 'border-grey200',
       )}
       data-comments
-      onClick={onClick}
+      onBlur={handleBlur}
+      onClick={() => onClickComments(thread[0].commentId)}
+      tabIndex={0}
     >
       {thread.map((comment) => (
         <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
       ))}
+      {activeCommentsId === thread[0].commentId && (
+        <AddComment
+          applicantId={applicantId}
+          onBlur={() => onClickComments(null)}
+          parentCommentId={thread[0].commentId}
+          placeholder="회신..."
+          sectionId={sectionId}
+        />
+      )}
     </div>
   );
 };

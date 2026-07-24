@@ -15,6 +15,7 @@ import { applicantDocumentCommentsOption } from '@/apis/eval/comments/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
+import { AddComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/Comments/AddComment';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
@@ -36,6 +37,11 @@ const RouteComponent = () => {
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
+  const [activeCommentsId, setActiveCommentsId] = useState<null | number>(null);
+  const [addCommentSectionId, setAddCommentSectionId] = useState<null | number>(null);
+  const handleClickComments = (commentId: null | number) => {
+    setActiveCommentsId(commentId);
+  };
   const threadsBySection = groupThreadsBySection(comments);
   const threadsBySectionId = new Map(
     threadsBySection.map(({ sectionId, threads }) => [sectionId, threads]),
@@ -43,6 +49,11 @@ const RouteComponent = () => {
 
   const handleSelectSection = (sectionId: number) => {
     setSelectedSectionId((prev) => (prev === sectionId ? null : sectionId));
+  };
+
+  const handleAddComment = (sectionId: number) => {
+    setSelectedSectionId(sectionId);
+    setAddCommentSectionId(sectionId);
   };
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -127,7 +138,7 @@ const RouteComponent = () => {
                     key={section.sectionId}
                     {...section}
                     isSelected={section.sectionId === selectedSectionId}
-                    onAddComment={() => handleSelectSection(section.sectionId)}
+                    onAddComment={() => handleAddComment(section.sectionId)}
                     onClick={() => handleSelectSection(section.sectionId)}
                   />
                 );
@@ -140,6 +151,7 @@ const RouteComponent = () => {
               >
                 {answers.sections.map((section) => {
                   const threads = threadsBySectionId.get(section.sectionId) ?? [];
+                  const isAddCommentSection = addCommentSectionId === section.sectionId;
 
                   return (
                     <div
@@ -147,11 +159,21 @@ const RouteComponent = () => {
                       key={section.sectionId}
                       ref={registerSectionRef(section.sectionId)}
                     >
+                      {isAddCommentSection && (
+                        <AddComment
+                          applicantId={Number(applicantId)}
+                          onBlur={() => setAddCommentSectionId(null)}
+                          parentCommentId={null}
+                          placeholder="코멘트 추가"
+                          sectionId={section.sectionId}
+                        />
+                      )}
                       {threads.map((thread) => (
                         <Comments
+                          activeCommentsId={activeCommentsId}
                           applicantId={Number(applicantId)}
                           key={thread[0].commentId}
-                          onClick={() => handleSelectSection(section.sectionId)}
+                          onClickComments={handleClickComments}
                           selectedSectionId={selectedSectionId}
                           thread={thread}
                         />

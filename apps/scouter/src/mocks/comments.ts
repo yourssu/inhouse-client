@@ -102,6 +102,48 @@ export const handlers = [
     return HttpResponse.json(mockApplicantDocumentComments);
   }),
 
+  http.post(
+    `${config.apiBaseURL}/applicants/:applicantId/documents/comments`,
+    async ({ params, request }) => {
+      const body = (await request.json()) as {
+        content: string;
+        parentCommentId?: null | number;
+        sectionId: number;
+      };
+
+      if (body.parentCommentId != null) {
+        const parent = mockApplicantDocumentComments.find(
+          (comment) => comment.commentId === body.parentCommentId,
+        );
+        if (parent?.parentCommentId != null) {
+          return HttpResponse.json({ message: '답글에는 답글을 달 수 없어요.' }, { status: 400 });
+        }
+      }
+
+      const commentId = Math.max(0, ...mockApplicantDocumentComments.map((c) => c.commentId)) + 1;
+
+      mockApplicantDocumentComments = [
+        ...mockApplicantDocumentComments,
+        {
+          commentId,
+          sectionId: body.sectionId,
+          content: body.content,
+          parentCommentId: body.parentCommentId ?? null,
+          author: { memberId: 1, nickname: '나', part: 'Frontend' },
+          createdAt: new Date().toISOString(),
+          isEdited: false,
+        },
+      ];
+
+      return new HttpResponse(null, {
+        status: 201,
+        headers: {
+          Location: `/applicants/${params.applicantId}/documents/comments/${commentId}`,
+        },
+      });
+    },
+  ),
+
   http.patch(
     `${config.apiBaseURL}/applicants/:applicantId/documents/comments/:commentId`,
     async ({ params, request }) => {
