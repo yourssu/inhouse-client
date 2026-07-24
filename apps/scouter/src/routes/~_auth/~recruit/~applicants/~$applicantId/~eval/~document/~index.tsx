@@ -149,6 +149,7 @@ const RouteComponent = () => {
                     >
                       {threads.map((thread) => (
                         <Comments
+                          applicantId={Number(applicantId)}
                           key={thread[0].commentId}
                           onClick={() => handleSelectSection(section.sectionId)}
                           selectedSectionId={selectedSectionId}

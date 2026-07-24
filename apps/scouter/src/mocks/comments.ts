@@ -4,7 +4,7 @@ import type { CommentType } from '@/apis/eval/comments/schema';
 
 import { config } from '@/config';
 
-const mockApplicantDocumentComments: CommentType[] = [
+let mockApplicantDocumentComments: CommentType[] = [
   {
     commentId: 1,
     sectionId: 1,
@@ -101,4 +101,15 @@ export const handlers = [
   http.get(`${config.apiBaseURL}/applicants/:applicantId/documents/comments`, () => {
     return HttpResponse.json(mockApplicantDocumentComments);
   }),
+
+  http.delete(
+    `${config.apiBaseURL}/applicants/:applicantId/documents/comments/:commentId`,
+    ({ params }) => {
+      const commentId = Number(params.commentId);
+      mockApplicantDocumentComments = mockApplicantDocumentComments.filter(
+        (comment) => comment.commentId !== commentId,
+      );
+      return new HttpResponse(null, { status: 200 });
+    },
+  ),
 ];
