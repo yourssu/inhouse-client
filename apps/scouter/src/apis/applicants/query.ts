@@ -5,6 +5,7 @@ import {
   getApplicantById,
   getApplicantDocumentAnswers,
   getApplicantDocumentsEvaluations,
+  getApplicantDocumentsOthersEvaluations,
   getApplicants,
   getApplicantsLastUpdatedTime,
   type GetApplicantsParams,
@@ -40,4 +41,10 @@ export const getApplicantDocumentsEvaluationsOption = (applicantId: number) =>
   queryOptions({
     queryKey: qk.for('applicants', applicantId, 'documents', 'evaluations'),
     queryFn: () => getApplicantDocumentsEvaluations(applicantId),
+  });
+
+export const getApplicantDocumentsOthersEvaluationsOption = (applicantId: number) =>
+  queryOptions({
+    queryKey: qk.for('applicants', applicantId, 'documents', 'evaluations', 'others'),
+    queryFn: () => getApplicantDocumentsOthersEvaluations(applicantId),
   });

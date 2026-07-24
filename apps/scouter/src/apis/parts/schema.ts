@@ -19,14 +19,13 @@ export const PartSchema = z.object({
   partName: PartNameSchema,
 });
 
-export const PartDocumentsRubricsSchema = z.array(
-  z.object({
-    sectionId: z.number(),
-    question: z.string(),
-    maxScore: z.number(),
-    criterionDetail: z.string(),
-  }),
-);
+export const PartDocumentRubricSchema = z.object({
+  sectionId: z.number(),
+  question: z.string(),
+  maxScore: z.number(),
+  criterionDetail: z.string(),
+});
+export const PartDocumentsRubricsSchema = z.array(PartDocumentRubricSchema);
 
 export const UpdatePartDocumentsRubricsFormSchema = z.object({
   rubrics: z.array(
@@ -55,3 +54,4 @@ export type UpdatePartDocumentsRubricsFormType = z.infer<
 export type UpdatePartDocumentRubricsRequestType = z.infer<
   typeof UpdatePartDocumentsRubricsRequestSchema
 >;
+export type PartDocumentRubricType = z.infer<typeof PartDocumentRubricSchema>;
