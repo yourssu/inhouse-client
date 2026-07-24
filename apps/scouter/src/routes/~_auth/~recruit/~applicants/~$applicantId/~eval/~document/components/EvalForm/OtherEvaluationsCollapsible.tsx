@@ -31,39 +31,37 @@ export const OtherEvaluationsCollapsible = ({
   };
 
   return (
-    <Collapsible.Root asChild onOpenChange={onOpenChange} open={open}>
-      <div className="border-grey200 rounded-8 flex flex-col border">
-        <Collapsible.Trigger asChild>
-          <button className="flex cursor-pointer items-center justify-between px-3 py-2">
-            다른 평가자 보기 {open ? <MdOutlineExpandLess /> : <MdOutlineExpandMore />}
-          </button>
-        </Collapsible.Trigger>
+    <Collapsible.Root
+      className="border-grey200 rounded-8 flex flex-col border"
+      onOpenChange={onOpenChange}
+      open={open}
+    >
+      <Collapsible.Trigger className="flex cursor-pointer items-center justify-between px-3 py-2">
+        다른 평가자 보기 {open ? <MdOutlineExpandLess /> : <MdOutlineExpandMore />}
+      </Collapsible.Trigger>
 
-        <Collapsible.Content asChild>
-          <div>
-            <Divider />
-            <div className="flex flex-col gap-4 px-3 py-2">
-              {othersEvaluations.map(({ evaluatorId, evaluatorName, items }) => {
-                const item = items.find(({ sectionId }) => sectionId === rubric.sectionId);
+      <Collapsible.Content>
+        <Divider />
+        <div className="flex flex-col gap-4 px-3 py-2">
+          {othersEvaluations.map(({ evaluatorId, evaluatorName, items }) => {
+            const item = items.find(({ sectionId }) => sectionId === rubric.sectionId);
 
-                if (!item) {
-                  return;
-                }
+            if (!item) {
+              return;
+            }
 
-                return (
-                  <div className="flex flex-col gap-2" key={evaluatorId}>
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold">{evaluatorName}</span>
-                      {`${item.score} / ${rubric.maxScore}`}
-                    </div>
-                    <div>{item.memo}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </Collapsible.Content>
-      </div>
+            return (
+              <div className="flex flex-col gap-2" key={evaluatorId}>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">{evaluatorName}</span>
+                  {`${item.score} / ${rubric.maxScore}`}
+                </div>
+                <div>{item.memo}</div>
+              </div>
+            );
+          })}
+        </div>
+      </Collapsible.Content>
     </Collapsible.Root>
   );
 };
