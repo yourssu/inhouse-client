@@ -18,5 +18,10 @@ export const CommentSchema = z.object({
   sectionId: z.number(),
 });
 
+export const UpdateCommentRequestSchema = z.object({
+  content: z.string(),
+});
+
 export type CommentAuthorType = z.infer<typeof CommentAuthorSchema>;
 export type CommentType = z.infer<typeof CommentSchema>;
+export type UpdateCommentRequestType = z.infer<typeof UpdateCommentRequestSchema>;

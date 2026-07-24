@@ -102,6 +102,25 @@ export const handlers = [
     return HttpResponse.json(mockApplicantDocumentComments);
   }),
 
+  http.patch(
+    `${config.apiBaseURL}/applicants/:applicantId/documents/comments/:commentId`,
+    async ({ params, request }) => {
+      const body = (await request.json()) as { content: string };
+      const commentId = Number(params.commentId);
+
+      mockApplicantDocumentComments = mockApplicantDocumentComments.map((comment) =>
+        comment.commentId === commentId
+          ? { ...comment, content: body.content, isEdited: true }
+          : comment,
+      );
+
+      const updated = mockApplicantDocumentComments.find(
+        (comment) => comment.commentId === commentId,
+      );
+      return HttpResponse.json(updated);
+    },
+  ),
+
   http.delete(
     `${config.apiBaseURL}/applicants/:applicantId/documents/comments/:commentId`,
     ({ params }) => {
