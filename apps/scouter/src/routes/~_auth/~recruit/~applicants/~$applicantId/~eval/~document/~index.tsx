@@ -10,9 +10,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
 
-import type { CommentType } from '@/apis/eval/comments/schema';
-
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
+import { applicantDocumentCommentsOption } from '@/apis/eval/comments/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
@@ -26,14 +25,13 @@ import { Answer } from './components/Answer';
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
 
-  const [{ data: applicant }, { data: answers }] = useSuspenseQueries({
+  const [{ data: applicant }, { data: answers }, { data: comments }] = useSuspenseQueries({
     queries: [
       applicantByIdOption(Number(applicantId)),
       applicantDocumentAnswersOption(Number(applicantId)),
+      applicantDocumentCommentsOption(Number(applicantId)),
     ],
   });
-  // TODO(SCO-140): 실제 코멘트 목록 조회로 교체
-  const comments: CommentType[] = [];
 
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
