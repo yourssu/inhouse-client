@@ -1,6 +1,10 @@
 import { http, HttpResponse } from 'msw';
 
-import type { ApplicantDocumentAnswersType, ApplicantType } from '@/apis/applicants/schema';
+import type {
+  ApplicantDocumentAnswersType,
+  ApplicantDocumentOthersEvaluationsType,
+  ApplicantType,
+} from '@/apis/applicants/schema';
 
 import { config } from '@/config';
 
@@ -53,6 +57,48 @@ const mockDocumentAnswers: ApplicantDocumentAnswersType = {
   ],
 };
 
+const mockDocumentOthersEvaluations: ApplicantDocumentOthersEvaluationsType = [
+  {
+    evaluatorId: 101,
+    evaluatorName: '박영희',
+    totalScore: 36,
+    result: 'DOCUMENT_PASS',
+    overallComment:
+      '답변 전반에서 협업 경험과 학습 태도가 구체적으로 드러납니다. 실제 서비스 개발에 대한 이해도도 충분해 보여 서류 합격 의견입니다.',
+    items: [
+      {
+        sectionId: 6,
+        score: 9,
+        memo: '지원 동기와 기대하는 경험이 명확하고 조직 활동과 잘 연결되어 있습니다.',
+      },
+      {
+        sectionId: 7,
+        score: 8,
+        memo: '강점 설명은 좋지만 문제 해결 사례가 조금 더 구체적이면 좋겠습니다.',
+      },
+    ],
+  },
+  {
+    evaluatorId: 102,
+    evaluatorName: '이민준',
+    totalScore: 31,
+    result: 'PENDING',
+    overallComment:
+      '전반적인 방향성은 좋지만 기술적 경험의 깊이를 판단하기에는 일부 답변이 다소 추상적입니다. 다른 평가 의견과 함께 보류로 판단합니다.',
+    items: [
+      {
+        sectionId: 6,
+        score: 8,
+        memo: '지원 이유는 납득되지만 본인이 기여할 수 있는 지점이 더 보이면 좋겠습니다.',
+      },
+      {
+        sectionId: 7,
+        score: 7,
+        memo: '탐구 태도는 좋으나 구체적인 프로젝트 맥락이 부족합니다.',
+      },
+    ],
+  },
+];
 export const handlers = [
   http.get(`${config.apiBaseURL}/applicants/:applicantId`, () => {
     return HttpResponse.json(mockApplicant);
@@ -60,5 +106,9 @@ export const handlers = [
 
   http.get(`${config.apiBaseURL}/applicants/:applicantId/answers`, () => {
     return HttpResponse.json(mockDocumentAnswers);
+  }),
+
+  http.get(`${config.apiBaseURL}/applicants/:applicantId/documents/evaluations/others`, () => {
+    return HttpResponse.json(mockDocumentOthersEvaluations);
   }),
 ];

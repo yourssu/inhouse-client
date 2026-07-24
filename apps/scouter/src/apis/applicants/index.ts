@@ -4,6 +4,7 @@ import { api } from '@/apis/api';
 import {
   ApplicantDocumentAnswersSchema,
   ApplicantDocumentEvaluationsResponseSchema,
+  ApplicantDocumentOthersEvaluationsSchema,
   ApplicantSchema,
   type ApplicantStateType,
   ApplicantSyncResponseSchema,
@@ -87,4 +88,10 @@ export const putApplicantDocumentEvaluations = async ({
   data,
 }: PutApplicantDocumentEvaluationsParams) => {
   await api.put(`/applicants/${applicantId}/documents/evaluations`, { json: data });
+};
+
+export const getApplicantDocumentsOthersEvaluations = async (applicantId: number) => {
+  const res = await api.get(`applicants/${applicantId}/documents/evaluations/others`).json();
+
+  return ApplicantDocumentOthersEvaluationsSchema.parse(res);
 };

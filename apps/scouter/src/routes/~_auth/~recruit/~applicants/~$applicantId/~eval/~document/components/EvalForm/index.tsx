@@ -10,6 +10,7 @@ import { putApplicantDocumentEvaluations } from '@/apis/applicants';
 import {
   applicantByIdOption,
   getApplicantDocumentsEvaluationsOption,
+  getApplicantDocumentsOthersEvaluationsOption,
 } from '@/apis/applicants/query';
 import {
   documentKoreanResults,
@@ -18,6 +19,8 @@ import {
 } from '@/apis/applicants/schema';
 import { getPartDocumentsRubricsOption, partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
+import { OtherOverallEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherOverallEvaluationsCollapsible';
 
 const documentResultMapping = {
   PENDING: '보류',
@@ -36,12 +39,14 @@ export const EvalForm = () => {
 
   const part = parts.find((part) => part.partName === applicant.part) ?? parts[0];
 
-  const [{ data: evaluations }, { data: rubrics }] = useSuspenseQueries({
-    queries: [
-      getApplicantDocumentsEvaluationsOption(Number(applicantId)),
-      getPartDocumentsRubricsOption(part.partId),
-    ],
-  });
+  const [{ data: evaluations }, { data: rubrics }, { data: othersEvaluations }] =
+    useSuspenseQueries({
+      queries: [
+        getApplicantDocumentsEvaluationsOption(Number(applicantId)),
+        getPartDocumentsRubricsOption(part.partId),
+        getApplicantDocumentsOthersEvaluationsOption(Number(applicantId)),
+      ],
+    });
 
   const { handleSubmit, control } = useForm({
     resolver: zodResolver(UpdateApplicantDocumentEvaluationFormSchema),
@@ -119,6 +124,12 @@ export const EvalForm = () => {
                       render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
                     />
                   </Fieldset>
+
+                  <OtherEvaluationsCollapsible
+                    isEvaluationDone={evaluations.items.length !== 0}
+                    othersEvaluations={othersEvaluations}
+                    rubric={rubric}
+                  />
                 </div>
               ))}
             </div>
@@ -152,6 +163,11 @@ export const EvalForm = () => {
               />
             </Fieldset>
           </div>
+
+          <OtherOverallEvaluationsCollapsible
+            isEvaluationDone={evaluations.items.length !== 0}
+            othersEvaluations={othersEvaluations}
+          />
 
           <Button loading={loading} size="lg" type="submit">
             내 평가 제출하기
