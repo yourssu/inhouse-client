@@ -26,7 +26,7 @@ const RouteComponent = () => {
 
   const { data: applicant } = useSuspenseQuery(applicantByIdOption(Number(applicantId)));
 
-  const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
+  const [sidebarView, setSidebarView] = useState<'문항 설정' | '서류 평가'>('서류 평가');
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -76,7 +76,7 @@ const RouteComponent = () => {
           <Paper className="relative w-100">
             <SwitchCase
               caseBy={{
-                '평가 폼': () => (
+                '서류 평가': () => (
                   <div className="w-full">
                     <EvalForm />
                     <Divider className="my-6" />
