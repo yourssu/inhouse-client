@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { Dialog, Select } from '@yourssu-inhouse/interior';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { useLoading } from 'react-simplikit';
 import z from 'zod/v4';
 
 import { patchApplicant } from '@/apis/applicants';
+import { applicantByIdOption } from '@/apis/applicants/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
@@ -30,9 +32,13 @@ interface FinalEvalDialogProps {
 export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogProps) => {
   const openAlertDialog = useAlertDialog();
 
+  const queryClient = useQueryClient();
+
   const mutation = useToastedMutation({
     mutationFn: patchApplicant,
     successText: '최종 서류 평가를 제출했어요.',
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: applicantByIdOption(applicantId).queryKey }),
   });
 
   const { handleSubmit, control } = useForm({
