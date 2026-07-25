@@ -3,8 +3,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { Button, Result } from '@yourssu-inhouse/interior';
+import { Button, Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
+import { overlay } from 'overlay-kit';
 import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
@@ -13,6 +14,7 @@ import { SwitchCase } from 'react-simplikit';
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
+import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
@@ -75,8 +77,28 @@ const RouteComponent = () => {
             <SwitchCase
               caseBy={{
                 '평가 폼': () => (
-                  <>
+                  <div className="w-full">
                     <EvalForm />
+                    <Divider className="my-6" />
+                    <div className="flex flex-col">
+                      <Button
+                        onClick={() => {
+                          overlay.open(({ isOpen, close }) => {
+                            return (
+                              <FinalEvalDialog
+                                applicantId={Number(applicantId)}
+                                close={close}
+                                isOpen={isOpen}
+                              />
+                            );
+                          });
+                        }}
+                        size="lg"
+                      >
+                        최종 서류 평가 제출하기
+                      </Button>
+                    </div>
+
                     <Button
                       className="absolute top-4 right-4"
                       onClick={() => setSidebarView('문항 설정')}
@@ -84,7 +106,7 @@ const RouteComponent = () => {
                     >
                       문항 설정
                     </Button>
-                  </>
+                  </div>
                 ),
                 '문항 설정': () => <QuestionSetting onClose={() => setSidebarView('평가 폼')} />,
               }}
