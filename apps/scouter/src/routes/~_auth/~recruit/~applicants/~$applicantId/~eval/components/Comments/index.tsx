@@ -1,9 +1,16 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { HiOutlineTrash } from 'react-icons/hi2';
 import { IoIosMore } from 'react-icons/io';
 
 import type { CommentType } from '@/apis/eval/comments/schema';
+
+import { deleteApplicantDocumentComment } from '@/apis/eval/comments';
+import { commentsQueryKey } from '@/apis/eval/comments/query';
+import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 import type { CommentThread } from '../../utils/groupThreadsBySection';
 
@@ -11,9 +18,41 @@ interface CommentProps extends CommentType {
   applicantId: number;
 }
 
-export const Comment = ({ content, author, createdAt, isEdited }: CommentProps) => {
+export const Comment = ({
+  content,
+  author,
+  createdAt,
+  commentId,
+  applicantId,
+  isEdited,
+}: CommentProps) => {
   const { nickname, part } = author;
   const leftTime = formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt));
+  const openAlertDialog = useAlertDialog();
+  const queryClient = useQueryClient();
+
+  const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
+    useToastedMutation({
+      mutationFn: deleteApplicantDocumentComment,
+      successText: '코멘트를 삭제했어요.',
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+      },
+    });
+
+  const handleDelete = async () => {
+    const isConfirm = await openAlertDialog({
+      title: '코멘트를 삭제할까요?',
+      content: '삭제한 코멘트는 복구할 수 없어요.',
+      closeButton: true,
+      primaryButtonText: '확인',
+      secondaryButtonText: '취소',
+    });
+
+    if (isConfirm) {
+      deleteCommentWithToast({ applicantId, commentId });
+    }
+  };
 
   return (
     <div className="group min-w-60 gap-2">
@@ -36,7 +75,14 @@ export const Comment = ({ content, author, createdAt, isEdited }: CommentProps) 
             <Menu.Content align="end">
               {/* TODO(SCO-142): 편집하기 메뉴 항목 */}
 
-              {/* TODO(SCO-141): 삭제하기 메뉴 항목 */}
+              <Menu.ButtonItem
+                className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
+                disabled={isDeletePending}
+                icon={<HiOutlineTrash className="text-red600 size-4" />}
+                onClick={handleDelete}
+              >
+                삭제하기
+              </Menu.ButtonItem>
             </Menu.Content>
           </Menu>
         </div>
