@@ -11,5 +11,5 @@ export const commentsQueryKey = (applicantId: number) =>
 export const applicantDocumentCommentsOption = (applicantId: number) =>
   queryOptions({
     queryKey: commentsQueryKey(applicantId),
-    queryFn: () => getApplicantDocumentComments(),
+    queryFn: () => getApplicantDocumentComments(applicantId),
   });

@@ -1,7 +1,10 @@
-import { mockComments } from '@/apis/eval/comments/mockComments';
+import { api } from '@/apis/api';
+import { CommentSchema } from '@/apis/eval/comments/schema';
 
-// TODO(SCO-140): applicantId를 받아 실제 조회 API를 호출하도록 교체한다.
-export const getApplicantDocumentComments = async () => mockComments;
+export const getApplicantDocumentComments = async (applicantId: number) => {
+  const response = await api.get(`applicants/${applicantId}/documents/comments`).json();
+  return CommentSchema.array().parse(response);
+};
 
 // TODO(SCO-141): 코멘트 삭제 API
 
