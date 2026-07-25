@@ -81,6 +81,7 @@ const RouteComponent = () => {
                     <EvalForm />
                     <Divider className="my-6" />
                     <div className="flex flex-col">
+                      {/* TODO: 지원자 조회 정상화 이후 버튼 위에 해당 지원자의 서류 평가 점수 평균과 최종 합불 여부를 출력해야 함 */}
                       <Button
                         onClick={() => {
                           overlay.open(({ isOpen, close }) => {

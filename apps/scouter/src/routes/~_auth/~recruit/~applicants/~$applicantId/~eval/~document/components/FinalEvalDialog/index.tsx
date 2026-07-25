@@ -42,6 +42,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
   const [loading, startLoading] = useLoading();
 
   const onSubmit: SubmitHandler<z.infer<typeof finalEvalFormSchema>> = async ({ finalState }) => {
+    // TODO: 멤버 조회 스키마 정상화 이후에 모든 멤버가 각자 서류 평가를 제출했는지 확인하는 로직이 들어가야 함
     const closeWithTrue = await openAlertDialog({
       title: '정말 최종 서류 평가를 제출할까요?',
       content: '최종 서류 평가는 나중에 다시 수정할 수 있어요.',
