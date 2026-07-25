@@ -36,10 +36,7 @@ const RouteComponent = () => {
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
-  const threadsBySection = groupThreadsBySection(comments);
-  const threadsBySectionId = new Map(
-    threadsBySection.map(({ sectionId, threads }) => [sectionId, threads]),
-  );
+  const threadsBySectionId = groupThreadsBySection(comments);
 
   const handleSelectSection = (sectionId: number) => {
     setSelectedSectionId((prev) => (prev === sectionId ? null : sectionId));

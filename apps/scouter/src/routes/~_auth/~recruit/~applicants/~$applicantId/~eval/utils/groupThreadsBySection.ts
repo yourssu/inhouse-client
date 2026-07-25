@@ -2,12 +2,7 @@ import { compareAsc } from 'date-fns';
 
 import type { CommentType } from '@/apis/eval/comments/schema';
 
-export type CommentThread = CommentType[];
-
-export interface CommentSectionThreads {
-  sectionId: number;
-  threads: CommentThread[];
-}
+export type CommentThreadType = CommentType[];
 
 /**
  * parentCommentId는 자신이 속한 스레드의 루트 댓글을 가리킨다(depth는 항상 1).
@@ -19,23 +14,20 @@ const isThreadStart = (comment: CommentType, commentById: Map<number, CommentTyp
 
 /**
  * @example
- * // 반환값 형태
- * [
- *   {
- *     sectionId: 1,
- *     threads: [
- *       [
- *         { commentId: 1, sectionId: 1, parentCommentId: null, content: '...', ... },
- *         { commentId: 2, sectionId: 1, parentCommentId: 1, content: '...', ... },
- *         { commentId: 3, sectionId: 1, parentCommentId: 1, content: '...', ... },
- *       ],
+ * // 반환값 형태 (Map<sectionId, threads>)
+ * Map {
+ *   1 => [
+ *     [
+ *       { commentId: 1, sectionId: 1, parentCommentId: null, content: '...', ... },
+ *       { commentId: 2, sectionId: 1, parentCommentId: 1, content: '...', ... },
+ *       { commentId: 3, sectionId: 1, parentCommentId: 1, content: '...', ... },
  *     ],
- *   },
- * ]
+ *   ],
+ * }
  */
 export const groupThreadsBySection = (
   comments: readonly CommentType[],
-): CommentSectionThreads[] => {
+): Map<number, CommentThreadType[]> => {
   const commentById = new Map(comments.map((comment) => [comment.commentId, comment]));
 
   const repliesByParentId = new Map<number, CommentType[]>();
@@ -47,7 +39,7 @@ export const groupThreadsBySection = (
     }
   }
 
-  const threadsBySection = new Map<number, CommentThread[]>();
+  const threadsBySection = new Map<number, CommentThreadType[]>();
   for (const comment of comments) {
     if (!isThreadStart(comment, commentById)) {
       continue;
@@ -55,8 +47,8 @@ export const groupThreadsBySection = (
 
     const replies = (repliesByParentId.get(comment.commentId) ?? [])
       .slice()
-      .sort((a, b) => compareAsc(new Date(a.createdAt), new Date(b.createdAt)));
-    const thread: CommentThread = [comment, ...replies];
+      .sort((a, b) => compareAsc(a.createdAt, b.createdAt));
+    const thread = [comment, ...replies];
 
     const sectionThreads = threadsBySection.get(comment.sectionId) ?? [];
     sectionThreads.push(thread);
@@ -64,11 +56,8 @@ export const groupThreadsBySection = (
   }
 
   for (const sectionThreads of threadsBySection.values()) {
-    sectionThreads.sort((a, b) => compareAsc(new Date(a[0].createdAt), new Date(b[0].createdAt)));
+    sectionThreads.sort((a, b) => compareAsc(a[0].createdAt, b[0].createdAt));
   }
 
-  return Array.from(threadsBySection.entries()).map(([sectionId, sectionThreads]) => ({
-    sectionId,
-    threads: sectionThreads,
-  }));
+  return threadsBySection;
 };
