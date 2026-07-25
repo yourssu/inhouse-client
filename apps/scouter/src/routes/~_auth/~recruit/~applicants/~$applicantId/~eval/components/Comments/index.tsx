@@ -60,7 +60,7 @@ export const Comments = ({ applicantId, selectedSectionId, thread, onClick }: Co
   return (
     <div
       className={cn(
-        'rounded-8 hover:bg-grey50 relative z-10 flex flex-col gap-3 border p-4 transition-transform hover:-translate-x-1',
+        'rounded-8 hover:bg-grey50 relative left-0 z-10 flex flex-col gap-3 border p-4 transition-[left] hover:-left-1',
         isSelectedSection ? 'border-violet300' : 'border-grey200',
       )}
       data-comments
