@@ -41,6 +41,7 @@ export const Comment = ({
       mutationFn: patchApplicantDocumentComment,
       successText: '코멘트를 수정했어요.',
       onSuccess: () => {
+        setIsEditing(false);
         queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
       },
     });
@@ -74,14 +75,11 @@ export const Comment = ({
       return;
     }
 
-    const { success } = await updateCommentWithToast({
+    await updateCommentWithToast({
       applicantId,
       commentId,
       data: { content: trimmedContent },
     });
-    if (success) {
-      setIsEditing(false);
-    }
   };
 
   const handleEditKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
