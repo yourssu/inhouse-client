@@ -5,7 +5,7 @@ import { IoIosMore } from 'react-icons/io';
 
 import type { CommentType } from '@/apis/eval/comments/schema';
 
-import type { CommentThread } from '../../utils/groupThreadsBySection';
+import type { CommentThreadType } from '../../utils/groupThreadsBySection';
 
 interface CommentProps extends CommentType {
   applicantId: number;
@@ -50,7 +50,7 @@ interface CommentsProps {
   applicantId: number;
   onClick: () => void;
   selectedSectionId: null | number;
-  thread: CommentThread;
+  thread: CommentThreadType;
 }
 
 export const Comments = ({ applicantId, selectedSectionId, thread, onClick }: CommentsProps) => {
