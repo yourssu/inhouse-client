@@ -29,7 +29,7 @@ export const AnswerList = ({ applicantId }: AnswerListProps) => {
 
   return (
     <div className="flex flex-col">
-      {answers.sections.map((section, index) => {
+      {answers.map((section, index) => {
         const isFirst = index === 0;
         return (
           <Fragment key={index}>

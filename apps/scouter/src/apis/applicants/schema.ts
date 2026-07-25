@@ -108,13 +108,7 @@ export const ApplicantDocumentAnswerSectionSchema = z.object({
   answer: z.string(),
 });
 
-export const ApplicantDocumentAnswersSchema = z.object({
-  applicantId: z.number(),
-  name: z.string(),
-  part: PartNameSchema,
-  submittedAt: z.iso.datetime(),
-  sections: z.array(ApplicantDocumentAnswerSectionSchema),
-});
+export const ApplicantDocumentAnswersSchema = z.array(ApplicantDocumentAnswerSectionSchema);
 
 export const UpdateApplicantRequestSchema = CreateApplicantRequestSchema.partial();
 
