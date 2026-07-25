@@ -119,7 +119,7 @@ export const Comment = ({
                 icon={<MdEdit className="size-4" />}
                 onClick={handleEdit}
               >
-                편집하기
+                수정하기
               </Menu.ButtonItem>
 
               {/* TODO(SCO-141): 삭제하기 메뉴 항목 */}
