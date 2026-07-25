@@ -108,7 +108,7 @@ const RouteComponent = () => {
                     </Button>
                   </div>
                 ),
-                '문항 설정': () => <QuestionSetting onClose={() => setSidebarView('평가 폼')} />,
+                '문항 설정': () => <QuestionSetting onClose={() => setSidebarView('서류 평가')} />,
               }}
               value={sidebarView}
             />
