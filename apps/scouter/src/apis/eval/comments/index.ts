@@ -1,5 +1,5 @@
 import { api } from '@/apis/api';
-import { CommentSchema } from '@/apis/eval/comments/schema';
+import { CommentSchema, type CreateCommentRequestType } from '@/apis/eval/comments/schema';
 
 export const getApplicantDocumentComments = async (applicantId: number) => {
   const response = await api.get(`applicants/${applicantId}/documents/comments`).json();
@@ -10,4 +10,11 @@ export const getApplicantDocumentComments = async (applicantId: number) => {
 
 // TODO(SCO-142): 코멘트 수정 API
 
-// TODO(SCO-143): 코멘트 생성 API
+export type CreateCommentParams = {
+  applicantId: number;
+  data: CreateCommentRequestType;
+};
+
+export const postApplicantDocumentComment = async ({ applicantId, data }: CreateCommentParams) => {
+  await api.post(`applicants/${applicantId}/documents/comments`, { json: data });
+};

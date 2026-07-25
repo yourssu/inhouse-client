@@ -19,6 +19,7 @@ import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
 import { Comments } from '../components/Comments';
+import { AddComment } from '../components/Comments/AddComment';
 import { groupThreadsBySection } from '../utils/groupThreadsBySection';
 import { Answer } from './components/Answer';
 
@@ -36,6 +37,8 @@ const RouteComponent = () => {
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
+  const [activeCommentsId, setActiveCommentsId] = useState<null | number>(null);
+  const [addCommentSectionId, setAddCommentSectionId] = useState<null | number>(null);
   const threadsBySection = groupThreadsBySection(comments);
   const threadsBySectionId = new Map(
     threadsBySection.map(({ sectionId, threads }) => [sectionId, threads]),
@@ -43,6 +46,11 @@ const RouteComponent = () => {
 
   const handleSelectSection = (sectionId: number) => {
     setSelectedSectionId((prev) => (prev === sectionId ? null : sectionId));
+  };
+
+  const handleAddComment = (sectionId: number) => {
+    setSelectedSectionId(sectionId);
+    setAddCommentSectionId(sectionId);
   };
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -127,7 +135,7 @@ const RouteComponent = () => {
                     documentAnswer={answer}
                     isSelected={answer.sectionId === selectedSectionId}
                     key={answer.sectionId}
-                    onAddComment={() => handleSelectSection(answer.sectionId)}
+                    onAddComment={() => handleAddComment(answer.sectionId)}
                     onClick={() => handleSelectSection(answer.sectionId)}
                   />
                 );
@@ -140,6 +148,7 @@ const RouteComponent = () => {
               >
                 {answers.map((answer) => {
                   const threads = threadsBySectionId.get(answer.sectionId) ?? [];
+                  const isAddCommentSection = addCommentSectionId === answer.sectionId;
 
                   return (
                     <div
@@ -147,11 +156,21 @@ const RouteComponent = () => {
                       key={answer.sectionId}
                       ref={registerSectionRef(answer.sectionId)}
                     >
+                      {isAddCommentSection && (
+                        <AddComment
+                          applicantId={Number(applicantId)}
+                          onBlur={() => setAddCommentSectionId(null)}
+                          parentCommentId={null}
+                          placeholder="코멘트 추가"
+                          sectionId={answer.sectionId}
+                        />
+                      )}
                       {threads.map((thread) => (
                         <Comments
+                          activeCommentsId={activeCommentsId}
                           applicantId={Number(applicantId)}
                           key={thread[0].commentId}
-                          onClick={() => handleSelectSection(answer.sectionId)}
+                          onClickComments={setActiveCommentsId}
                           selectedSectionId={selectedSectionId}
                           thread={thread}
                         />
