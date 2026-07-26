@@ -103,27 +103,28 @@ export const Comment = ({
             {isEdited ? `${leftTime} (편집됨)` : `${leftTime}`}
           </span>
         </div>
-        <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-          <Menu>
-            <Menu.Trigger>
-              <IconButton className="rounded-4" size="xxs" variant="inline">
-                <IoIosMore className="size-4" />
-              </IconButton>
-            </Menu.Trigger>
-            <Menu.Content align="end">
-              <Menu.ButtonItem
-                className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
-                disabled={isEditing}
-                icon={<MdEdit className="size-4" />}
-                onClick={handleEdit}
-              >
-                수정하기
-              </Menu.ButtonItem>
+        {!isEditing && (
+          <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <Menu>
+              <Menu.Trigger>
+                <IconButton className="rounded-4" size="xxs" variant="inline">
+                  <IoIosMore className="size-4" />
+                </IconButton>
+              </Menu.Trigger>
+              <Menu.Content align="end">
+                <Menu.ButtonItem
+                  className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
+                  icon={<MdEdit className="size-4" />}
+                  onClick={handleEdit}
+                >
+                  수정하기
+                </Menu.ButtonItem>
 
-              {/* TODO(SCO-141): 삭제하기 메뉴 항목 */}
-            </Menu.Content>
-          </Menu>
-        </div>
+                {/* TODO(SCO-141): 삭제하기 메뉴 항목 */}
+              </Menu.Content>
+            </Menu>
+          </div>
+        )}
       </div>
       {isEditing ? (
         <div className="flex flex-col gap-0.5">
