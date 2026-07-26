@@ -143,16 +143,20 @@ export const Comment = ({
           <div className="flex self-end">
             <IconButton
               className="rounded-full"
-              onClick={handleCancelEdit}
-              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.preventDefault();
+                handleCancelEdit();
+              }}
               size="xxs"
             >
               <MdCancel className="text-grey600 size-4.5" />
             </IconButton>
             <IconButton
               className="rounded-full"
-              onClick={handleSubmitEdit}
-              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmitEdit();
+              }}
               size="xxs"
             >
               <IoIosCheckmarkCircle className="text-violet600 size-4.5" />
