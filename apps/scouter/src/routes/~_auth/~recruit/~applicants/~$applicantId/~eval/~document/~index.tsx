@@ -38,7 +38,7 @@ const RouteComponent = () => {
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   
-  const [addCommentSectionId, setAddCommentSectionId] = useState<null | number>(null);
+  const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
   const threadsBySection = groupThreadsBySection(comments);
   const threadsBySectionId = new Map(
     threadsBySection.map(({ sectionId, threads }) => [sectionId, threads]),
@@ -50,7 +50,7 @@ const RouteComponent = () => {
 
   const handleAddComment = (sectionId: number) => {
     setSelectedSectionId(sectionId);
-    setAddCommentSectionId(sectionId);
+    setOpenCommentSectionId(sectionId);
   };
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -146,23 +146,23 @@ const RouteComponent = () => {
                 className="sticky top-3 -mx-4 flex max-h-[calc(100vh-1.5rem)] flex-col gap-5 overflow-y-auto px-4"
                 ref={scrollContainerRef}
               >
-                {answers.map((answer) => {
-                  const threads = threadsBySectionId.get(answer.sectionId) ?? [];
-                  const isAddCommentSection = addCommentSectionId === answer.sectionId;
+                {answers.map(({sectionId}) => {
+                  const threads = threadsBySectionId.get(sectionId) ?? [];
+                  const canAddComment = openCommentSectionId === sectionId;
 
                   return (
                     <div
                       className="flex flex-col gap-5"
-                      key={answer.sectionId}
-                      ref={registerSectionRef(answer.sectionId)}
+                      key={sectionId}
+                      ref={registerSectionRef(sectionId)}
                     >
-                      {isAddCommentSection && (
+                      {canAddComment && (
                         <CommentField
                           applicantId={Number(applicantId)}
-                          onClose={() => setAddCommentSectionId(null)}
+                          onClose={() => setOpenCommentSectionId(null)}
                           parentCommentId={null}
                           placeholder="댓글 추가"
-                          sectionId={answer.sectionId}
+                          sectionId={sectionId}
                         />
                       )}
                       {threads.map((thread) => (
