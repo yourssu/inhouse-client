@@ -14,7 +14,7 @@ import { patchApplicantDocumentComment } from '@/apis/eval/comments';
 import { commentsQueryKey } from '@/apis/eval/comments/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
-import type { CommentThread } from '../../utils/groupThreadsBySection';
+import type { CommentThreadType } from '../../utils/groupThreadsBySection';
 
 interface CommentProps extends CommentType {
   applicantId: number;
@@ -143,20 +143,16 @@ export const Comment = ({
           <div className="flex self-end">
             <IconButton
               className="rounded-full"
-              onClick={(e) => {
-                e.preventDefault();
-                handleCancelEdit();
-              }}
+              onClick={handleCancelEdit}
+              onMouseDown={(e) => e.preventDefault()}
               size="xxs"
             >
               <MdCancel className="text-grey600 size-4.5" />
             </IconButton>
             <IconButton
               className="rounded-full"
-              onClick={(e) => {
-                e.preventDefault();
-                handleSubmitEdit();
-              }}
+              onClick={handleSubmitEdit}
+              onMouseDown={(e) => e.preventDefault()}
               size="xxs"
             >
               <IoIosCheckmarkCircle className="text-violet600 size-4.5" />
@@ -176,7 +172,7 @@ interface CommentsProps {
   applicantId: number;
   onClick: () => void;
   selectedSectionId: null | number;
-  thread: CommentThread;
+  thread: CommentThreadType;
 }
 
 export const Comments = ({ applicantId, selectedSectionId, thread, onClick }: CommentsProps) => {
@@ -186,7 +182,7 @@ export const Comments = ({ applicantId, selectedSectionId, thread, onClick }: Co
   return (
     <div
       className={cn(
-        'rounded-8 hover:bg-grey50 relative z-10 flex flex-col gap-3 border p-4 transition-transform hover:-translate-x-1',
+        'rounded-8 hover:bg-grey50 relative left-0 z-10 flex flex-col gap-3 border p-4 transition-[left] hover:-left-1',
         isSelectedSection ? 'border-violet300' : 'border-grey200',
       )}
       data-comments
