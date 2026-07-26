@@ -50,7 +50,7 @@ export const Comment = ({ content, author, createdAt, isEdited }: CommentProps) 
   );
 };
 
-interface CommentsProps {
+interface ThreadProps {
   activeCommentsId: null | number;
   applicantId: number;
   onClickComments: (commentId: null | number) => void;
@@ -58,19 +58,19 @@ interface CommentsProps {
   thread: CommentThread;
 }
 
-export const Comments = ({
+export const Thread = ({
   applicantId,
   selectedSectionId,
   thread,
   activeCommentsId,
   onClickComments,
-}: CommentsProps) => {
+}: ThreadProps) => {
   const sectionId = thread[0].sectionId;
   const isSelectedSection = sectionId === selectedSectionId;
-  const isActiveComments = activeCommentsId === thread[0].commentId;
+  const isActiveThread = activeCommentsId === thread[0].commentId;
 
   const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
-    if (isActiveComments) {
+    if (isActiveThread) {
       // 회신 입력창이 열려 있을 때는 그쪽의 onBlur가 닫힘을 책임진다.
       return;
     }
@@ -94,7 +94,7 @@ export const Comments = ({
       {thread.map((comment) => (
         <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
       ))}
-      {isActiveComments && (
+      {isActiveThread && (
         <CommentField
           applicantId={applicantId}
           onBlur={() => onClickComments(null)}

@@ -18,8 +18,8 @@ import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applican
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
-import { Comments } from '../components/Comments';
-import { CommentField } from '../components/Comments/CommentField';
+import { Thread } from '../components/Thread';
+import { CommentField } from '../components/Thread/CommentField';
 import { groupThreadsBySection } from '../utils/groupThreadsBySection';
 import { Answer } from './components/Answer';
 
@@ -166,7 +166,7 @@ const RouteComponent = () => {
                         />
                       )}
                       {threads.map((thread) => (
-                        <Comments
+                        <Thread
                           activeCommentsId={activeCommentsId}
                           applicantId={Number(applicantId)}
                           key={thread[0].commentId}
