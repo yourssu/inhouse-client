@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { Button, Divider, Fieldset, MultilineTextField, Select } from '@yourssu-inhouse/interior';
+import { Button, Fieldset, MultilineTextField, Select } from '@yourssu-inhouse/interior';
 import { invert } from 'es-toolkit';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { useLoading } from 'react-simplikit';
@@ -80,106 +80,98 @@ export const EvalForm = () => {
     );
 
   return (
-    <div className="w-full">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <h3 className="font-semibold">질문별 서류평가</h3>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <h3 className="font-semibold">질문별 서류평가</h3>
 
-            <div className="flex flex-col gap-4">
-              {rubrics.map((rubric, idx) => (
-                <div className="flex flex-col" key={rubric.sectionId}>
-                  <span className="text-15">{`${idx + 1}. ${rubric.question}`}</span>
+          <div className="flex flex-col gap-4">
+            {rubrics.map((rubric, idx) => (
+              <div className="flex flex-col" key={rubric.sectionId}>
+                <span className="text-15">{`${idx + 1}. ${rubric.question}`}</span>
 
-                  <Fieldset label="배점">
-                    <Controller
-                      control={control}
-                      name={`items.${idx}.score`}
-                      render={({ field }) => (
-                        <div>
-                          <input
-                            className="h-lg rounded-8 border-grey200 focus:border-violet500 hover:not-focus:not-disabled:border-violetOpacity200 border px-3 outline-none"
-                            {...field}
-                            onChange={(event) => {
-                              const value = event.target.value;
+                <Fieldset label="배점">
+                  <Controller
+                    control={control}
+                    name={`items.${idx}.score`}
+                    render={({ field }) => (
+                      <div>
+                        <input
+                          className="h-lg rounded-8 border-grey200 focus:border-violet500 hover:not-focus:not-disabled:border-violetOpacity200 border px-3 outline-none"
+                          {...field}
+                          onChange={(event) => {
+                            const value = event.target.value;
 
-                              if (!/^\d*$/.test(value)) {
-                                return;
-                              }
+                            if (!/^\d*$/.test(value)) {
+                              return;
+                            }
 
-                              field.onChange(value);
-                            }}
-                            type="text"
-                          />
-                          {` / ${rubric.maxScore}`}
-                        </div>
-                      )}
-                    />
-                  </Fieldset>
-
-                  <Fieldset label="코멘트">
-                    <Controller
-                      control={control}
-                      name={`items.${idx}.memo`}
-                      render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
-                    />
-                  </Fieldset>
-
-                  <OtherEvaluationsCollapsible
-                    isEvaluationDone={evaluations.items.length !== 0}
-                    othersEvaluations={othersEvaluations}
-                    rubric={rubric}
+                            field.onChange(value);
+                          }}
+                          type="text"
+                        />
+                        {` / ${rubric.maxScore}`}
+                      </div>
+                    )}
                   />
-                </div>
-              ))}
-            </div>
-          </div>
+                </Fieldset>
 
-          <div>
-            <h3 className="font-semibold">총평 및 평가결과</h3>
-            <Fieldset label="총평">
-              <Controller
-                control={control}
-                name="overallComment"
-                render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
-              />
-            </Fieldset>
-
-            <Fieldset label="평가결과">
-              <Controller
-                control={control}
-                name="result"
-                render={({ field }) => (
-                  <Select
-                    className="w-fit"
-                    items={documentKoreanResults}
-                    onValueChange={field.onChange}
-                    placeholder="평가 결과를 선택하세요"
-                    size="lg"
-                    value={field.value}
-                    variant="dimmed"
+                <Fieldset label="코멘트">
+                  <Controller
+                    control={control}
+                    name={`items.${idx}.memo`}
+                    render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
                   />
-                )}
-              />
-            </Fieldset>
+                </Fieldset>
+
+                <OtherEvaluationsCollapsible
+                  isEvaluationDone={evaluations.items.length !== 0}
+                  othersEvaluations={othersEvaluations}
+                  rubric={rubric}
+                />
+              </div>
+            ))}
           </div>
-
-          <OtherOverallEvaluationsCollapsible
-            isEvaluationDone={evaluations.items.length !== 0}
-            othersEvaluations={othersEvaluations}
-          />
-
-          <Button loading={loading} size="lg" type="submit">
-            내 평가 제출하기
-          </Button>
         </div>
-      </form>
 
-      <Divider className="my-6" />
+        <div>
+          <h3 className="font-semibold">총평 및 평가결과</h3>
+          <Fieldset label="총평">
+            <Controller
+              control={control}
+              name="overallComment"
+              render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
+            />
+          </Fieldset>
 
-      <div className="flex flex-col">
-        <Button size="lg">최종 서류 평가 제출하기</Button>
+          <Fieldset label="평가결과">
+            <Controller
+              control={control}
+              name="result"
+              render={({ field }) => (
+                <Select
+                  className="w-fit"
+                  items={documentKoreanResults}
+                  onValueChange={field.onChange}
+                  placeholder="평가 결과를 선택하세요"
+                  size="lg"
+                  value={field.value}
+                  variant="dimmed"
+                />
+              )}
+            />
+          </Fieldset>
+        </div>
+
+        <OtherOverallEvaluationsCollapsible
+          isEvaluationDone={evaluations.items.length !== 0}
+          othersEvaluations={othersEvaluations}
+        />
+
+        <Button loading={loading} size="lg" type="submit">
+          내 평가 제출하기
+        </Button>
       </div>
-    </div>
+    </form>
   );
 };

@@ -3,8 +3,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { Button, Result } from '@yourssu-inhouse/interior';
+import { Button, Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
+import { overlay } from 'overlay-kit';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
@@ -14,6 +15,7 @@ import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/appl
 import { applicantDocumentCommentsOption } from '@/apis/eval/comments/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
+import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
 import { Thread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/Thread';
 import { partNameKo } from '@/types/parts';
@@ -34,7 +36,7 @@ const RouteComponent = () => {
     ],
   });
 
-  const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
+  const [sidebarView, setSidebarView] = useState<'문항 설정' | '서류 평가'>('서류 평가');
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
 
@@ -178,9 +180,30 @@ const RouteComponent = () => {
           <Paper className="relative w-100">
             <SwitchCase
               caseBy={{
-                '평가 폼': () => (
-                  <>
+                '서류 평가': () => (
+                  <div className="w-full">
                     <EvalForm />
+                    <Divider className="my-6" />
+                    <div className="flex flex-col">
+                      {/* TODO: 지원자 조회 정상화 이후 버튼 위에 해당 지원자의 서류 평가 점수 평균과 최종 합불 여부를 출력해야 함 */}
+                      <Button
+                        onClick={() => {
+                          overlay.open(({ isOpen, close }) => {
+                            return (
+                              <FinalEvalDialog
+                                applicantId={Number(applicantId)}
+                                close={close}
+                                isOpen={isOpen}
+                              />
+                            );
+                          });
+                        }}
+                        size="lg"
+                      >
+                        최종 서류 평가 제출하기
+                      </Button>
+                    </div>
+
                     <Button
                       className="absolute top-4 right-4"
                       onClick={() => setSidebarView('문항 설정')}
@@ -188,9 +211,9 @@ const RouteComponent = () => {
                     >
                       문항 설정
                     </Button>
-                  </>
+                  </div>
                 ),
-                '문항 설정': () => <QuestionSetting onClose={() => setSidebarView('평가 폼')} />,
+                '문항 설정': () => <QuestionSetting onClose={() => setSidebarView('서류 평가')} />,
               }}
               value={sidebarView}
             />
