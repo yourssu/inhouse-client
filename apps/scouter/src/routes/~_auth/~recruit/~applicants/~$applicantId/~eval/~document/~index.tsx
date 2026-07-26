@@ -5,7 +5,7 @@ import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Button, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
@@ -36,10 +36,7 @@ const RouteComponent = () => {
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
-  const threadsBySection = groupThreadsBySection(comments);
-  const threadsBySectionId = new Map(
-    threadsBySection.map(({ sectionId, threads }) => [sectionId, threads]),
-  );
+  const threadsBySectionId = useMemo(() => groupThreadsBySection(comments), [comments]);
 
   const handleSelectSection = (sectionId: number) => {
     setSelectedSectionId((prev) => (prev === sectionId ? null : sectionId));
