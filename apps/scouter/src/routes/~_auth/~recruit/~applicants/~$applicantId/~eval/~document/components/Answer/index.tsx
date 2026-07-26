@@ -7,11 +7,16 @@ import type { ApplicantAnswerSectionType } from '@/apis/applicants/schema';
 interface AnswerProps {
   documentAnswer: ApplicantAnswerSectionType;
   isSelected: boolean;
-  onAddComment: () => void;
   onClick: () => void;
+  onOpenCommentField: () => void;
 }
 
-export const Answer = ({ documentAnswer, isSelected, onClick, onAddComment }: AnswerProps) => {
+export const Answer = ({
+  documentAnswer,
+  isSelected,
+  onClick,
+  onOpenCommentField,
+}: AnswerProps) => {
   const { sectionId, question, answer } = documentAnswer;
   return (
     <div
@@ -34,7 +39,7 @@ export const Answer = ({ documentAnswer, isSelected, onClick, onAddComment }: An
           left={<PiPlus />}
           onClick={(e) => {
             e.stopPropagation();
-            onAddComment();
+            onOpenCommentField();
           }}
           size="xxs"
           variant="subPrimary"

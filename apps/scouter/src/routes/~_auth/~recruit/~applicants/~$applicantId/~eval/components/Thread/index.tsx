@@ -1,16 +1,17 @@
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { IconButton, Menu } from '@yourssu-inhouse/interior';
+import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useState } from 'react';
+import { BsArrowUpCircleFill } from 'react-icons/bs';
 import { IoIosMore } from 'react-icons/io';
 
 import type { CommentType } from '@/apis/eval/comments/schema';
+import type { CommentThread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/utils/groupThreadsBySection';
 
-import type { CommentThread } from '../../utils/groupThreadsBySection';
+import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
+import { useWriteComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/hooks/useWriteComment';
 
-import { CommentField } from './CommentField';
-
-interface CommentProps extends CommentType {
+export interface CommentProps extends CommentType {
   applicantId: number;
 }
 
@@ -60,30 +61,56 @@ export const Thread = ({ applicantId, selectedSectionId, thread }: ThreadProps) 
   const isSelectedSection = sectionId === selectedSectionId;
   const [isReplying, setIsReplying] = useState(false);
 
-  const [threadEl, setThreadEl] = useState<HTMLDivElement | null>(null);
+  const {
+    content,
+    handleAddComment,
+    handleClose,
+    handleKeyDown,
+    isContentEmpty,
+    isWritePending,
+    setContent,
+  } = useWriteComment({
+    applicantId,
+    onClose: () => setIsReplying(false),
+    parentCommentId: currentThreadId,
+    sectionId,
+  });
 
   return (
-    <div
-      className={cn(
-        'rounded-8 hover:bg-grey50 relative z-10 flex flex-col gap-3 border p-4 transition-transform hover:-translate-x-1',
-        isSelectedSection ? 'border-violet300' : 'border-grey200',
-      )}
-      onClick={() => setIsReplying(true)}
-      ref={setThreadEl}
-    >
-      {thread.map((comment) => (
-        <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
-      ))}
-      {isReplying && (
-        <CommentField
-          applicantId={applicantId}
-          extraContainers={[threadEl]}
-          onClose={() => setIsReplying(false)}
-          parentCommentId={currentThreadId}
-          placeholder="댓글 추가"
-          sectionId={sectionId}
-        />
-      )}
-    </div>
+    <DetectOutsideClickArea onClickOutside={handleClose}>
+      <div
+        className={cn(
+          'rounded-8 hover:bg-grey50 relative z-10 flex flex-col gap-3 border p-4 transition-transform hover:-translate-x-1',
+          isSelectedSection ? 'border-violet300' : 'border-grey200',
+        )}
+        onClick={() => setIsReplying(true)}
+      >
+        {thread.map((comment) => (
+          <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
+        ))}
+        {isReplying && (
+          <div className="flex items-end gap-1">
+            <MultilineTextField
+              autoFocus
+              className="min-h-fit overflow-hidden p-1.5"
+              onChange={(e) => setContent(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={'댓글 추가'}
+              rows={1}
+              value={content}
+              withHeightAutoResize={true}
+            />
+            <IconButton
+              className="my-auto"
+              disabled={isWritePending || isContentEmpty}
+              onClick={handleAddComment}
+              size="md"
+            >
+              <BsArrowUpCircleFill className="size-5" />
+            </IconButton>
+          </div>
+        )}
+      </div>
+    </DetectOutsideClickArea>
   );
 };

@@ -15,11 +15,11 @@ import { applicantDocumentCommentsOption } from '@/apis/eval/comments/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
+import { Thread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/Thread';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
-import { Thread } from '../components/Thread';
-import { CommentField } from '../components/Thread/CommentField';
+import { CommentField } from '../components/CommentField';
 import { groupThreadsBySection } from '../utils/groupThreadsBySection';
 import { Answer } from './components/Answer';
 
@@ -37,18 +37,18 @@ const RouteComponent = () => {
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
-  
+
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
   const threadsBySection = groupThreadsBySection(comments);
   const threadsBySectionId = new Map(
     threadsBySection.map(({ sectionId, threads }) => [sectionId, threads]),
   );
 
-  const handleSelectSection = (sectionId: number) => {
+  const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((prev) => (prev === sectionId ? null : sectionId));
   };
 
-  const handleAddComment = (sectionId: number) => {
+  const handleOpenCommentField = (sectionId: number) => {
     setSelectedSectionId(sectionId);
     setOpenCommentSectionId(sectionId);
   };
@@ -135,8 +135,8 @@ const RouteComponent = () => {
                     documentAnswer={answer}
                     isSelected={answer.sectionId === selectedSectionId}
                     key={answer.sectionId}
-                    onAddComment={() => handleAddComment(answer.sectionId)}
-                    onClick={() => handleSelectSection(answer.sectionId)}
+                    onClick={() => handleClickSection(answer.sectionId)}
+                    onOpenCommentField={() => handleOpenCommentField(answer.sectionId)}
                   />
                 );
               })}
@@ -146,7 +146,7 @@ const RouteComponent = () => {
                 className="sticky top-3 -mx-4 flex max-h-[calc(100vh-1.5rem)] flex-col gap-5 overflow-y-auto px-4"
                 ref={scrollContainerRef}
               >
-                {answers.map(({sectionId}) => {
+                {answers.map(({ sectionId }) => {
                   const threads = threadsBySectionId.get(sectionId) ?? [];
                   const canAddComment = openCommentSectionId === sectionId;
 
@@ -161,7 +161,6 @@ const RouteComponent = () => {
                           applicantId={Number(applicantId)}
                           onClose={() => setOpenCommentSectionId(null)}
                           parentCommentId={null}
-                          placeholder="댓글 추가"
                           sectionId={sectionId}
                         />
                       )}

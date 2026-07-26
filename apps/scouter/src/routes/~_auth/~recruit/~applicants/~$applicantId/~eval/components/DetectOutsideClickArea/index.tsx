@@ -4,19 +4,17 @@ import { useState } from 'react';
 import { useOutsideClickEffect } from 'react-simplikit';
 
 interface DetectOutsideClickAreaProps {
-  callback: () => void;
   children: ReactNode;
-  extraContainers?: (HTMLElement | null)[];
+  onClickOutside: () => void;
 }
 
 export const DetectOutsideClickArea = ({
   children,
-  callback,
-  extraContainers = [],
+  onClickOutside,
 }: DetectOutsideClickAreaProps) => {
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
 
-  useOutsideClickEffect([containerEl, ...extraContainers], callback);
+  useOutsideClickEffect([containerEl], onClickOutside);
 
   return <div ref={setContainerEl}>{children}</div>;
 };
