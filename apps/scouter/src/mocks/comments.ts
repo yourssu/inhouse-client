@@ -123,7 +123,10 @@ export const handlers = [
     `${config.apiBaseURL}/applicants/:applicantId/documents/comments/:commentId`,
     ({ params }) => {
       const commentId = Number(params.commentId);
-      comments = comments.filter((comment) => comment.commentId !== commentId);
+      // 루트 댓글을 지우면 답글도 orphan으로 남기지 않고 스레드째 함께 지워요.
+      comments = comments.filter(
+        (comment) => comment.commentId !== commentId && comment.parentCommentId !== commentId,
+      );
       return new HttpResponse(null, { status: 204 });
     },
   ),
