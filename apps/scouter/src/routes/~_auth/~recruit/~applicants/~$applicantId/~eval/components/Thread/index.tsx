@@ -1,8 +1,7 @@
-import type { FocusEvent } from 'react';
-
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { useState } from 'react';
 import { IoIosMore } from 'react-icons/io';
 
 import type { CommentType } from '@/apis/eval/comments/schema';
@@ -69,16 +68,7 @@ export const Thread = ({
   const isSelectedSection = sectionId === selectedSectionId;
   const isActiveThread = activeCommentsId === thread[0].commentId;
 
-  const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
-    if (isActiveThread) {
-      // 회신 입력창이 열려 있을 때는 그쪽의 onBlur가 닫힘을 책임진다.
-      return;
-    }
-    if (e.relatedTarget?.closest('[data-comments]')) {
-      return;
-    }
-    onClickComments(null);
-  };
+  const [threadEl, setThreadEl] = useState<HTMLDivElement | null>(null);
 
   return (
     <div
@@ -86,10 +76,8 @@ export const Thread = ({
         'rounded-8 hover:bg-grey50 relative z-10 flex flex-col gap-3 border p-4 transition-transform hover:-translate-x-1',
         isSelectedSection ? 'border-violet300' : 'border-grey200',
       )}
-      data-comments
-      onBlur={handleBlur}
       onClick={() => onClickComments(thread[0].commentId)}
-      tabIndex={0}
+      ref={setThreadEl}
     >
       {thread.map((comment) => (
         <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
@@ -97,7 +85,8 @@ export const Thread = ({
       {isActiveThread && (
         <CommentField
           applicantId={applicantId}
-          onBlur={() => onClickComments(null)}
+          extraContainers={[threadEl]}
+          onClose={() => onClickComments(null)}
           parentCommentId={thread[0].commentId}
           placeholder="댓글 추가"
           sectionId={sectionId}

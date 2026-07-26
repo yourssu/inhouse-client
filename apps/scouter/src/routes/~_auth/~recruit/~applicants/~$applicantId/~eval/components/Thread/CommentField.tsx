@@ -1,4 +1,4 @@
-import type { FocusEvent, KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
@@ -9,9 +9,12 @@ import { postApplicantDocumentComment } from '@/apis/eval/comments';
 import { commentsQueryKey } from '@/apis/eval/comments/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
+import { DetectOutsideClickArea } from './DetectOutsideClickArea';
+
 interface CommentFieldProps {
   applicantId: number;
-  onBlur?: () => void;
+  extraContainers?: (HTMLElement | null)[];
+  onClose?: () => void;
   parentCommentId: null | number;
   placeholder: string;
   sectionId: number;
@@ -22,7 +25,8 @@ export const CommentField = ({
   applicantId,
   parentCommentId,
   sectionId,
-  onBlur,
+  onClose,
+  extraContainers,
 }: CommentFieldProps) => {
   const queryClient = useQueryClient();
   const [content, setContent] = useState('');
@@ -45,14 +49,11 @@ export const CommentField = ({
     setContent('');
   };
 
-  const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
-    if (!onBlur || !isContentEmpty) {
+  const handleOutsideClick = () => {
+    if (!onClose || !isContentEmpty) {
       return;
     }
-    if (e.currentTarget.contains(e.relatedTarget)) {
-      return;
-    }
-    onBlur();
+    onClose();
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -64,29 +65,32 @@ export const CommentField = ({
     }
     if (e.key === 'Escape') {
       e.currentTarget.blur();
+      handleOutsideClick();
     }
   };
 
   return (
-    <div className="flex items-end gap-1" onBlur={handleBlur} tabIndex={0}>
-      <MultilineTextField
-        autoFocus
-        className="min-h-fit overflow-hidden p-1.5"
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        rows={1}
-        value={content}
-        withHeightAutoResize={true}
-      />
-      <IconButton
-        className="my-auto"
-        disabled={isWritePending || isContentEmpty}
-        onClick={handleAddComment}
-        size="md"
-      >
-        <BsArrowUpCircleFill className="size-5" />
-      </IconButton>
-    </div>
+    <DetectOutsideClickArea callback={handleOutsideClick} extraContainers={extraContainers}>
+      <div className="flex items-end gap-1">
+        <MultilineTextField
+          autoFocus
+          className="min-h-fit overflow-hidden p-1.5"
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          rows={1}
+          value={content}
+          withHeightAutoResize={true}
+        />
+        <IconButton
+          className="my-auto"
+          disabled={isWritePending || isContentEmpty}
+          onClick={handleAddComment}
+          size="md"
+        >
+          <BsArrowUpCircleFill className="size-5" />
+        </IconButton>
+      </div>
+    </DetectOutsideClickArea>
   );
 };

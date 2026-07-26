@@ -159,7 +159,7 @@ const RouteComponent = () => {
                       {isAddCommentSection && (
                         <CommentField
                           applicantId={Number(applicantId)}
-                          onBlur={() => setAddCommentSectionId(null)}
+                          onClose={() => setAddCommentSectionId(null)}
                           parentCommentId={null}
                           placeholder="댓글 추가"
                           sectionId={answer.sectionId}
