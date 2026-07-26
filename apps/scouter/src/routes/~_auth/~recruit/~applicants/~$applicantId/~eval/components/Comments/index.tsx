@@ -5,13 +5,18 @@ import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useEffect, useRef, useState } from 'react';
+import { HiOutlineTrash } from 'react-icons/hi2';
 import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';
 import { MdCancel, MdEdit } from 'react-icons/md';
 
 import type { CommentType } from '@/apis/eval/comments/schema';
 
-import { patchApplicantDocumentComment } from '@/apis/eval/comments';
+import {
+  deleteApplicantDocumentComment,
+  patchApplicantDocumentComment,
+} from '@/apis/eval/comments';
 import { commentsQueryKey } from '@/apis/eval/comments/query';
+import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 import type { CommentThreadType } from '../../utils/groupThreadsBySection';
@@ -92,6 +97,31 @@ export const Comment = ({
     }
   };
 
+  const openAlertDialog = useAlertDialog();
+
+  const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
+    useToastedMutation({
+      mutationFn: deleteApplicantDocumentComment,
+      successText: '코멘트를 삭제했어요.',
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+      },
+    });
+
+  const handleDelete = async () => {
+    const isConfirm = await openAlertDialog({
+      title: '코멘트를 삭제할까요?',
+      content: '삭제한 코멘트는 복구할 수 없어요.',
+      closeButton: true,
+      primaryButtonText: '확인',
+      secondaryButtonText: '취소',
+    });
+
+    if (isConfirm) {
+      deleteCommentWithToast({ applicantId, commentId });
+    }
+  };
+
   return (
     <div className="group min-w-60 gap-2">
       <div className="flex items-center justify-between">
@@ -120,7 +150,14 @@ export const Comment = ({
                   수정하기
                 </Menu.ButtonItem>
 
-                {/* TODO(SCO-141): 삭제하기 메뉴 항목 */}
+                <Menu.ButtonItem
+                  className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={isDeletePending}
+                  icon={<HiOutlineTrash className="text-red600 size-4" />}
+                  onClick={handleDelete}
+                >
+                  삭제하기
+                </Menu.ButtonItem>
               </Menu.Content>
             </Menu>
           </div>
