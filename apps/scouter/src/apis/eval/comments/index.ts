@@ -6,7 +6,17 @@ export const getApplicantDocumentComments = async (applicantId: number) => {
   return CommentSchema.array().parse(response);
 };
 
-// TODO(SCO-141): 코멘트 삭제 API
+export type DeleteCommentParams = {
+  applicantId: number;
+  commentId: number;
+};
+
+export const deleteApplicantDocumentComment = async ({
+  applicantId,
+  commentId,
+}: DeleteCommentParams) => {
+  await api.delete(`applicants/${applicantId}/documents/comments/${commentId}`);
+};
 
 // TODO(SCO-142): 코멘트 수정 API
 
