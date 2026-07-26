@@ -99,7 +99,7 @@ export const Comments = ({
           applicantId={applicantId}
           onBlur={() => onClickComments(null)}
           parentCommentId={thread[0].commentId}
-          placeholder="회신..."
+          placeholder="댓글 추가"
           sectionId={sectionId}
         />
       )}
