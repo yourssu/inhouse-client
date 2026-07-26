@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
@@ -6,27 +6,83 @@ import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Button, Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
 
-import { applicantByIdOption } from '@/apis/applicants/query';
+import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
+import { applicantDocumentCommentsOption } from '@/apis/eval/comments/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
+import { Thread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/Thread';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
-import { AnswerList } from './components/AnswerList';
+import { CommentField } from '../components/CommentField';
+import { groupThreadsBySection } from '../utils/groupThreadsBySection';
+import { Answer } from './components/Answer';
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
 
-  const { data: applicant } = useSuspenseQuery(applicantByIdOption(Number(applicantId)));
+  const [{ data: applicant }, { data: answers }, { data: comments }] = useSuspenseQueries({
+    queries: [
+      applicantByIdOption(Number(applicantId)),
+      applicantDocumentAnswersOption(Number(applicantId)),
+      applicantDocumentCommentsOption(Number(applicantId)),
+    ],
+  });
 
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '서류 평가'>('서류 평가');
+
+  const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
+
+  const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
+  const threadsBySectionId = useMemo(() => groupThreadsBySection(comments), [comments]);
+
+  const handleClickSection = (sectionId: number) => {
+    setSelectedSectionId((prev) => (prev === sectionId ? null : sectionId));
+  };
+
+  const handleOpenCommentField = (sectionId: number) => {
+    setSelectedSectionId(sectionId);
+    setOpenCommentSectionId(sectionId);
+  };
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef(new Map<number, HTMLDivElement>());
+
+  const registerSectionRef = (sectionId: number) => {
+    const ss = (el: HTMLDivElement | null) => {
+      if (el) {
+        sectionRefs.current.set(sectionId, el);
+      } else {
+        sectionRefs.current.delete(sectionId);
+      }
+    };
+
+    return ss;
+  };
+  useEffect(() => {
+    if (selectedSectionId == null) {
+      return;
+    }
+
+    const containerEl = scrollContainerRef.current;
+    const targetEl = sectionRefs.current.get(selectedSectionId);
+    if (!containerEl || !targetEl) {
+      return;
+    }
+
+    const containerRect = containerEl.getBoundingClientRect();
+    const targetRect = targetEl.getBoundingClientRect();
+    const nextScrollTop = containerEl.scrollTop + (targetRect.top - containerRect.top);
+
+    containerEl.scrollTo({ behavior: 'smooth', top: nextScrollTop });
+  }, [selectedSectionId]);
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -71,7 +127,55 @@ const RouteComponent = () => {
           }
         >
           <Paper className="flex-[1_1_0]">
-            <AnswerList applicantId={Number(applicantId)} />
+            <div className="flex flex-col gap-4 px-5">
+              {answers.map((answer) => {
+                return (
+                  <Answer
+                    documentAnswer={answer}
+                    isSelected={answer.sectionId === selectedSectionId}
+                    key={answer.sectionId}
+                    onClick={() => handleClickSection(answer.sectionId)}
+                    onOpenCommentField={() => handleOpenCommentField(answer.sectionId)}
+                  />
+                );
+              })}
+            </div>
+            <div className="relative px-5">
+              <div
+                className="sticky top-3 -mx-4 flex max-h-[calc(100vh-1.5rem)] flex-col gap-5 overflow-y-auto px-4"
+                ref={scrollContainerRef}
+              >
+                {answers.map(({ sectionId }) => {
+                  const threads = threadsBySectionId.get(sectionId) ?? [];
+                  const canAddComment = openCommentSectionId === sectionId;
+
+                  return (
+                    <div
+                      className="flex flex-col gap-5"
+                      key={sectionId}
+                      ref={registerSectionRef(sectionId)}
+                    >
+                      {canAddComment && (
+                        <CommentField
+                          applicantId={Number(applicantId)}
+                          onClose={() => setOpenCommentSectionId(null)}
+                          parentCommentId={null}
+                          sectionId={sectionId}
+                        />
+                      )}
+                      {threads.map((thread) => (
+                        <Thread
+                          applicantId={Number(applicantId)}
+                          key={thread[0].commentId}
+                          selectedSectionId={selectedSectionId}
+                          thread={thread}
+                        />
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </Paper>
           <Paper className="relative w-100">
             <SwitchCase
