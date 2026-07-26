@@ -161,7 +161,7 @@ const RouteComponent = () => {
                           applicantId={Number(applicantId)}
                           onBlur={() => setAddCommentSectionId(null)}
                           parentCommentId={null}
-                          placeholder="코멘트 추가"
+                          placeholder="댓글 추가"
                           sectionId={answer.sectionId}
                         />
                       )}

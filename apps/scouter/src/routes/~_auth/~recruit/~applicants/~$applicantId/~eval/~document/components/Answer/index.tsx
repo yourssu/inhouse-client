@@ -39,7 +39,7 @@ export const Answer = ({ documentAnswer, isSelected, onClick, onAddComment }: An
           size="xxs"
           variant="subPrimary"
         >
-          코멘트
+          댓글
         </Button>
       </div>
 
