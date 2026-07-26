@@ -50,23 +50,15 @@ export const Comment = ({ content, author, createdAt, isEdited }: CommentProps) 
 };
 
 interface ThreadProps {
-  activeCommentsId: null | number;
   applicantId: number;
-  onClickComments: (commentId: null | number) => void;
   selectedSectionId: null | number;
   thread: CommentThread;
 }
 
-export const Thread = ({
-  applicantId,
-  selectedSectionId,
-  thread,
-  activeCommentsId,
-  onClickComments,
-}: ThreadProps) => {
-  const sectionId = thread[0].sectionId;
+export const Thread = ({ applicantId, selectedSectionId, thread }: ThreadProps) => {
+  const { sectionId, commentId: currentThreadId } = thread[0];
   const isSelectedSection = sectionId === selectedSectionId;
-  const isActiveThread = activeCommentsId === thread[0].commentId;
+  const [isReplying, setIsReplying] = useState(false);
 
   const [threadEl, setThreadEl] = useState<HTMLDivElement | null>(null);
 
@@ -76,18 +68,18 @@ export const Thread = ({
         'rounded-8 hover:bg-grey50 relative z-10 flex flex-col gap-3 border p-4 transition-transform hover:-translate-x-1',
         isSelectedSection ? 'border-violet300' : 'border-grey200',
       )}
-      onClick={() => onClickComments(thread[0].commentId)}
+      onClick={() => setIsReplying(true)}
       ref={setThreadEl}
     >
       {thread.map((comment) => (
         <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
       ))}
-      {isActiveThread && (
+      {isReplying && (
         <CommentField
           applicantId={applicantId}
           extraContainers={[threadEl]}
-          onClose={() => onClickComments(null)}
-          parentCommentId={thread[0].commentId}
+          onClose={() => setIsReplying(false)}
+          parentCommentId={currentThreadId}
           placeholder="댓글 추가"
           sectionId={sectionId}
         />

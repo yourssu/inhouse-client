@@ -37,7 +37,7 @@ const RouteComponent = () => {
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '평가 폼'>('평가 폼');
 
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
-  const [activeCommentsId, setActiveCommentsId] = useState<null | number>(null);
+  
   const [addCommentSectionId, setAddCommentSectionId] = useState<null | number>(null);
   const threadsBySection = groupThreadsBySection(comments);
   const threadsBySectionId = new Map(
@@ -167,10 +167,8 @@ const RouteComponent = () => {
                       )}
                       {threads.map((thread) => (
                         <Thread
-                          activeCommentsId={activeCommentsId}
                           applicantId={Number(applicantId)}
                           key={thread[0].commentId}
-                          onClickComments={setActiveCommentsId}
                           selectedSectionId={selectedSectionId}
                           thread={thread}
                         />
