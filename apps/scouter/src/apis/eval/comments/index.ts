@@ -1,5 +1,5 @@
 import { api } from '@/apis/api';
-import { CommentSchema } from '@/apis/eval/comments/schema';
+import { CommentSchema, type UpdateCommentRequestType } from '@/apis/eval/comments/schema';
 
 export const getApplicantDocumentComments = async (applicantId: number) => {
   const response = await api.get(`applicants/${applicantId}/documents/comments`).json();
@@ -18,6 +18,21 @@ export const deleteApplicantDocumentComment = async ({
   await api.delete(`applicants/${applicantId}/documents/comments/${commentId}`);
 };
 
-// TODO(SCO-142): 코멘트 수정 API
+export type UpdateCommentParams = {
+  applicantId: number;
+  commentId: number;
+  data: UpdateCommentRequestType;
+};
+
+export const patchApplicantDocumentComment = async ({
+  applicantId,
+  commentId,
+  data,
+}: UpdateCommentParams) => {
+  const response = await api
+    .patch(`applicants/${applicantId}/documents/comments/${commentId}`, { json: data })
+    .json();
+  return CommentSchema.parse(response);
+};
 
 // TODO(SCO-143): 코멘트 생성 API
