@@ -6,7 +6,7 @@ import { BsArrowUpCircleFill } from 'react-icons/bs';
 import { IoIosMore } from 'react-icons/io';
 
 import type { CommentType } from '@/apis/eval/comments/schema';
-import type { CommentThread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/utils/groupThreadsBySection';
+import type { CommentThreadType } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/utils/groupThreadsBySection';
 
 import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
 import { useWriteComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/hooks/useWriteComment';
@@ -53,7 +53,7 @@ export const Comment = ({ content, author, createdAt, isEdited }: CommentProps) 
 interface ThreadProps {
   applicantId: number;
   selectedSectionId: null | number;
-  thread: CommentThread;
+  thread: CommentThreadType;
 }
 
 export const Thread = ({ applicantId, selectedSectionId, thread }: ThreadProps) => {
