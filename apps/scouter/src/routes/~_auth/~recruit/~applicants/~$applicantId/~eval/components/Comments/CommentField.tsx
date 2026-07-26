@@ -9,7 +9,7 @@ import { postApplicantDocumentComment } from '@/apis/eval/comments';
 import { commentsQueryKey } from '@/apis/eval/comments/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
-interface AddCommentProps {
+interface CommentFieldProps {
   applicantId: number;
   onBlur?: () => void;
   parentCommentId: null | number;
@@ -17,13 +17,13 @@ interface AddCommentProps {
   sectionId: number;
 }
 
-export const AddComment = ({
+export const CommentField = ({
   placeholder,
   applicantId,
   parentCommentId,
   sectionId,
   onBlur,
-}: AddCommentProps) => {
+}: CommentFieldProps) => {
   const queryClient = useQueryClient();
   const [content, setContent] = useState('');
   const isContentEmpty = content === '';

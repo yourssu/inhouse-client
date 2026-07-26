@@ -19,7 +19,7 @@ import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
 import { Comments } from '../components/Comments';
-import { AddComment } from '../components/Comments/AddComment';
+import { CommentField } from '../components/Comments/CommentField';
 import { groupThreadsBySection } from '../utils/groupThreadsBySection';
 import { Answer } from './components/Answer';
 
@@ -157,7 +157,7 @@ const RouteComponent = () => {
                       ref={registerSectionRef(answer.sectionId)}
                     >
                       {isAddCommentSection && (
-                        <AddComment
+                        <CommentField
                           applicantId={Number(applicantId)}
                           onBlur={() => setAddCommentSectionId(null)}
                           parentCommentId={null}

@@ -9,7 +9,7 @@ import type { CommentType } from '@/apis/eval/comments/schema';
 
 import type { CommentThread } from '../../utils/groupThreadsBySection';
 
-import { AddComment } from './AddComment';
+import { CommentField } from './CommentField';
 
 interface CommentProps extends CommentType {
   applicantId: number;
@@ -95,7 +95,7 @@ export const Comments = ({
         <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
       ))}
       {isActiveComments && (
-        <AddComment
+        <CommentField
           applicantId={applicantId}
           onBlur={() => onClickComments(null)}
           parentCommentId={thread[0].commentId}
