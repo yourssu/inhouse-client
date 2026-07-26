@@ -26,7 +26,7 @@ export const AddComment = ({
 }: AddCommentProps) => {
   const queryClient = useQueryClient();
   const [content, setContent] = useState('');
-  const isNoContent = content === '';
+  const isContentEmpty = content === '';
 
   const { isPending: isWritePending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
     mutationFn: postApplicantDocumentComment,
@@ -46,7 +46,7 @@ export const AddComment = ({
   };
 
   const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
-    if (!onBlur || !isNoContent) {
+    if (!onBlur || !isContentEmpty) {
       return;
     }
     if (e.currentTarget.contains(e.relatedTarget)) {
@@ -58,7 +58,7 @@ export const AddComment = ({
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (!isNoContent && !isWritePending) {
+      if (!isContentEmpty && !isWritePending) {
         handleAddComment();
       }
     }
@@ -81,7 +81,7 @@ export const AddComment = ({
       />
       <IconButton
         className="my-auto"
-        disabled={isWritePending || isNoContent}
+        disabled={isWritePending || isContentEmpty}
         onClick={handleAddComment}
         size="md"
       >
