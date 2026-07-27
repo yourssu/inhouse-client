@@ -70,6 +70,7 @@ export const bootstrapShell = async (
       createRouter({
         routeTree: options.routeTree,
         context: { queryClient },
+        defaultPreloadStaleTime: 0,
         ...options.routerOptions,
       }),
     queryClientConfig: options.queryClientConfig,

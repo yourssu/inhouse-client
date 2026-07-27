@@ -50,6 +50,7 @@ export const createRemotePreviewApp = <TRouteTree extends AppRouteTree>(
         context: { queryClient },
         defaultErrorComponent: () => <PreviewAuthNotice />,
         defaultNotFoundComponent: () => <PreviewAuthNotice />,
+        defaultPreloadStaleTime: 0,
         ...options.routerOptions,
       }),
     queryClientConfig: options.queryClientConfig,
