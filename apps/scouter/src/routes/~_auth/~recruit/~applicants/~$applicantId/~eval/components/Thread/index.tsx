@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
@@ -17,6 +17,7 @@ import {
   patchApplicantDocumentComment,
 } from '@/apis/eval/comments';
 import { commentsQueryKey } from '@/apis/eval/comments/query';
+import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
@@ -36,7 +37,9 @@ export const Comment = ({
   applicantId,
   isEdited,
 }: CommentProps) => {
-  const { nickname, part } = author;
+  const { memberId, nickname, part } = author;
+  const { data: myData } = useSuspenseQuery(meOption());
+  const isMyComment = memberId === myData.memberId;
   const leftTime = formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt));
   const queryClient = useQueryClient();
 
@@ -147,6 +150,7 @@ export const Comment = ({
               <Menu.Content align="end">
                 <Menu.ButtonItem
                   className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={!isMyComment}
                   icon={<MdEdit className="size-4" />}
                   onClick={handleEdit}
                 >
@@ -155,7 +159,7 @@ export const Comment = ({
 
                 <Menu.ButtonItem
                   className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={isDeletePending}
+                  disabled={isDeletePending || !isMyComment}
                   icon={<HiOutlineTrash className="text-red600 size-4" />}
                   onClick={handleDelete}
                 >
