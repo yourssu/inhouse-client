@@ -241,6 +241,6 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     </Suspense>
   ),
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(meOption());
+    context.queryClient.ensureQueryData(meOption());
   },
 });
