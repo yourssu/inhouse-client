@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
@@ -17,6 +17,7 @@ import {
   patchApplicantDocumentComment,
 } from '@/apis/eval/comments';
 import { commentsQueryKey } from '@/apis/eval/comments/query';
+import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
@@ -36,7 +37,9 @@ export const Comment = ({
   applicantId,
   isEdited,
 }: CommentProps) => {
-  const { nickname, part } = author;
+  const { memberId, nickname, part } = author;
+  const { data: myData } = useSuspenseQuery(meOption());
+  const isMyComment = memberId === myData.memberId;
   const leftTime = formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt));
   const queryClient = useQueryClient();
 
@@ -136,7 +139,7 @@ export const Comment = ({
             {isEdited ? `${leftTime} (편집됨)` : `${leftTime}`}
           </span>
         </div>
-        {!isEditing && (
+        {isMyComment && !isEditing && (
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Menu>
               <Menu.Trigger>
