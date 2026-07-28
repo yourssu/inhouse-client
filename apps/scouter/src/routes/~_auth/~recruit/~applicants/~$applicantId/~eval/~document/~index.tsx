@@ -13,6 +13,7 @@ import { SwitchCase } from 'react-simplikit';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { applicantDocumentCommentsOption } from '@/apis/eval/comments/query';
+import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
@@ -239,4 +240,7 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
       <RouteComponent />
     </Suspense>
   ),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(meOption());
+  },
 });
