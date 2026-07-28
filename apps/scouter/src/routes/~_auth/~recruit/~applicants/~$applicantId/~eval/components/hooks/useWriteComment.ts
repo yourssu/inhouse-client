@@ -1,8 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { type KeyboardEvent, useState } from 'react';
 
-import { postApplicantDocumentComment } from '@/apis/eval/comments';
-import { commentsQueryKey } from '@/apis/eval/comments/query';
+import { postApplicantDocumentComment } from '@/apis/documents';
+import { commentsQueryKey } from '@/apis/documents/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface UseWriteCommentParams {

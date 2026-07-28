@@ -3,14 +3,11 @@ import { isNil, omitBy } from 'es-toolkit';
 import { api } from '@/apis/api';
 import {
   ApplicantDocumentAnswersSchema,
-  ApplicantDocumentEvaluationsResponseSchema,
-  ApplicantDocumentOthersEvaluationsSchema,
   ApplicantSchema,
   type ApplicantStateType,
   ApplicantSyncResponseSchema,
   type CreateApplicantRequestType,
   LastApplicantSyncTimeSchema,
-  type UpdateApplicantDocumentEvaluationRequestType,
   type UpdateApplicantRequestType,
 } from '@/apis/applicants/schema';
 
@@ -24,11 +21,6 @@ export type GetApplicantsParams = {
 export type PatchApplicantParams = {
   applicantId: number;
   data: UpdateApplicantRequestType;
-};
-
-export type PutApplicantDocumentEvaluationsParams = {
-  applicantId: number;
-  data: UpdateApplicantDocumentEvaluationRequestType;
 };
 
 export const getApplicants = async (params: GetApplicantsParams = {}) => {
@@ -75,23 +67,4 @@ export const patchApplicant = async ({ applicantId, data }: PatchApplicantParams
 
 export const deleteApplicant = async (applicantId: number) => {
   await api.delete(`applicants/${applicantId}`);
-};
-
-export const getApplicantDocumentsEvaluations = async (applicantId: number) => {
-  const res = await api.get(`/applicants/${applicantId}/documents/evaluations`).json();
-
-  return ApplicantDocumentEvaluationsResponseSchema.parse(res);
-};
-
-export const putApplicantDocumentEvaluations = async ({
-  applicantId,
-  data,
-}: PutApplicantDocumentEvaluationsParams) => {
-  await api.put(`/applicants/${applicantId}/documents/evaluations`, { json: data });
-};
-
-export const getApplicantDocumentsOthersEvaluations = async (applicantId: number) => {
-  const res = await api.get(`applicants/${applicantId}/documents/evaluations/others`).json();
-
-  return ApplicantDocumentOthersEvaluationsSchema.parse(res);
 };

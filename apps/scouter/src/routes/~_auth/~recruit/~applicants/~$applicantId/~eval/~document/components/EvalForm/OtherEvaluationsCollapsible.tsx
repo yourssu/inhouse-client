@@ -3,7 +3,7 @@ import { Divider, useToast } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 import { MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
 
-import type { ApplicantDocumentOthersEvaluationsType } from '@/apis/applicants/schema';
+import type { ApplicantDocumentOthersEvaluationsType } from '@/apis/documents/schema';
 import type { PartDocumentRubricType } from '@/apis/parts/schema';
 
 interface OtherEvaluationsCollapsibleProps {

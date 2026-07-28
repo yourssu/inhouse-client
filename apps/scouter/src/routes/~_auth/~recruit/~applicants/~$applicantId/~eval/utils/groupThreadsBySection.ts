@@ -1,6 +1,6 @@
 import { compareAsc } from 'date-fns';
 
-import type { CommentType } from '@/apis/eval/comments/schema';
+import type { CommentType } from '@/apis/documents/schema';
 
 export type CommentThreadType = CommentType[];
 

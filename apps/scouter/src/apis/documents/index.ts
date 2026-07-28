@@ -1,5 +1,37 @@
+import type { UpdateApplicantDocumentEvaluationRequestType } from '@/apis/documents/schema';
+
 import { api } from '@/apis/api';
-import { CommentSchema, type CreateCommentRequestType, type UpdateCommentRequestType } from '@/apis/eval/comments/schema';
+import {
+  ApplicantDocumentEvaluationsResponseSchema,
+  ApplicantDocumentOthersEvaluationsSchema,
+  CommentSchema,
+  type CreateCommentRequestType,
+  type UpdateCommentRequestType,
+} from '@/apis/documents/schema';
+
+export type PutApplicantDocumentEvaluationsParams = {
+  applicantId: number;
+  data: UpdateApplicantDocumentEvaluationRequestType;
+};
+
+export const getApplicantDocumentsEvaluations = async (applicantId: number) => {
+  const res = await api.get(`/applicants/${applicantId}/documents/evaluations`).json();
+
+  return ApplicantDocumentEvaluationsResponseSchema.parse(res);
+};
+
+export const getApplicantDocumentsOthersEvaluations = async (applicantId: number) => {
+  const res = await api.get(`applicants/${applicantId}/documents/evaluations/others`).json();
+
+  return ApplicantDocumentOthersEvaluationsSchema.parse(res);
+};
+
+export const putApplicantDocumentEvaluations = async ({
+  applicantId,
+  data,
+}: PutApplicantDocumentEvaluationsParams) => {
+  await api.put(`/applicants/${applicantId}/documents/evaluations`, { json: data });
+};
 
 export const getApplicantDocumentComments = async (applicantId: number) => {
   const response = await api.get(`applicants/${applicantId}/documents/comments`).json();

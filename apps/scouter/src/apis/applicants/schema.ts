@@ -37,6 +37,14 @@ export const LastApplicantSyncTimeSchema = z.object({
   lastUpdatedTime: z.iso.datetime().optional(),
 });
 
+export const ApplicantDocumentAnswerSectionSchema = z.object({
+  sectionId: z.number(),
+  question: z.string(),
+  answer: z.string(),
+});
+
+export const ApplicantDocumentAnswersSchema = z.array(ApplicantDocumentAnswerSectionSchema);
+
 export const CreateApplicantRequestSchema = z.object({
   partId: z.number(),
   name: z.string(),
@@ -57,97 +65,13 @@ export const ApplicantSyncResponseSchema = z.object({
   failures: z.array(z.string()),
 });
 
-const documentResults = ['PENDING', 'DOCUMENT_PASS', 'DOCUMENT_FAIL'] as const;
-export const documentKoreanResults = ['보류', '서류 합격', '서류 불합격'] as const;
-
-const DocumentResultSchema = z.enum(documentResults);
-const DocumentKoreanResultSchema = z.enum(documentKoreanResults);
-
-export const ApplicantDocumentEvaluationsResponseSchema = z.object({
-  totalScore: z.number(),
-  items: z.array(
-    z.object({
-      sectionId: z.number(),
-      question: z.string(),
-      maxScore: z.number(),
-      score: z.number(),
-      memo: z.string(),
-    }),
-  ),
-  overallComment: z.string(),
-  result: DocumentResultSchema,
-  submittedAt: z.iso.datetime().nullable(),
-});
-
-export const UpdateApplicantDocumentEvaluationRequestSchema = z.object({
-  items: z.array(
-    z.object({
-      sectionId: z.number(),
-      score: z.number(),
-      memo: z.string(),
-    }),
-  ),
-  overallComment: z.string(),
-  result: DocumentResultSchema,
-  submit: z.boolean(),
-});
-
-export const UpdateApplicantDocumentEvaluationFormSchema = z.object({
-  items: z.array(
-    z.object({
-      sectionId: z.number(),
-      score: z.string().min(1).regex(/^\d+$/).transform(Number),
-      memo: z.string(),
-    }),
-  ),
-  overallComment: z.string(),
-  result: DocumentKoreanResultSchema,
-});
-
-export const ApplicantDocumentAnswerSectionSchema = z.object({
-  sectionId: z.number(),
-  question: z.string(),
-  answer: z.string(),
-});
-
-export const ApplicantDocumentAnswersSchema = z.array(ApplicantDocumentAnswerSectionSchema);
-
 export const UpdateApplicantRequestSchema = CreateApplicantRequestSchema.partial();
-
-export const ApplicantDocumentOthersEvaluationsSchema = z.array(
-  z.object({
-    evaluatorId: z.number(),
-    evaluatorName: z.string(),
-    totalScore: z.number(),
-    result: DocumentResultSchema,
-    overallComment: z.string(),
-    items: z.array(
-      z.object({
-        sectionId: z.number(),
-        score: z.number(),
-        memo: z.string(),
-      }),
-    ),
-  }),
-);
 
 export type ApplicantType = z.infer<typeof ApplicantSchema>;
 export type ApplicantStateType = z.infer<typeof ApplicantStateSchema>;
 export type LastApplicantSyncTimeType = z.infer<typeof LastApplicantSyncTimeSchema>;
+export type ApplicantAnswerSectionType = z.infer<typeof ApplicantDocumentAnswerSectionSchema>;
+export type ApplicantDocumentAnswersType = z.infer<typeof ApplicantDocumentAnswersSchema>;
 export type CreateApplicantRequestType = z.infer<typeof CreateApplicantRequestSchema>;
 export type UpdateApplicantRequestType = z.infer<typeof UpdateApplicantRequestSchema>;
 export type ApplicantSyncResponseType = z.infer<typeof ApplicantSyncResponseSchema>;
-export type ApplicantAnswerSectionType = z.infer<typeof ApplicantDocumentAnswerSectionSchema>;
-export type ApplicantDocumentAnswersType = z.infer<typeof ApplicantDocumentAnswersSchema>;
-export type ApplicantDocumentEvaluationsResponseType = z.infer<
-  typeof ApplicantDocumentEvaluationsResponseSchema
->;
-export type ApplicantDocumentOthersEvaluationsType = z.infer<
-  typeof ApplicantDocumentOthersEvaluationsSchema
->;
-export type UpdateApplicantDocumentEvaluationRequestType = z.infer<
-  typeof UpdateApplicantDocumentEvaluationRequestSchema
->;
-export type UpdateApplicantDocumentEvaluationFormType = z.infer<
-  typeof UpdateApplicantDocumentEvaluationFormSchema
->;

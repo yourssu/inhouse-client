@@ -6,17 +6,17 @@ import { invert } from 'es-toolkit';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { useLoading } from 'react-simplikit';
 
-import { putApplicantDocumentEvaluations } from '@/apis/applicants';
+import { applicantByIdOption } from '@/apis/applicants/query';
+import { putApplicantDocumentEvaluations } from '@/apis/documents';
 import {
-  applicantByIdOption,
   getApplicantDocumentsEvaluationsOption,
   getApplicantDocumentsOthersEvaluationsOption,
-} from '@/apis/applicants/query';
+} from '@/apis/documents/query';
 import {
   documentKoreanResults,
   UpdateApplicantDocumentEvaluationFormSchema,
   type UpdateApplicantDocumentEvaluationFormType,
-} from '@/apis/applicants/schema';
+} from '@/apis/documents/schema';
 import { getPartDocumentsRubricsOption, partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
