@@ -56,7 +56,8 @@ description: >-
    모든 섹션을 채운다. HTML 안내 주석은 제거하고 자료가 없는 Figma·Slack
    섹션은 `해당 없음`으로 남긴다.
 4. 제품 PR은 `[SCO-번호] type(scope): 요약`, 이슈 없는 저장소 관리 PR은
-   `type(scope): 요약` 형식으로 제목을 작성한다.
+   `type(scope): 요약` 형식으로 제목을 작성한다. stacked PR은 제목 끝에
+   `(현재 순서/전체 PR 수)`를 붙인다. 예: `[SCO-번호] type(scope): 요약 (1/2)`.
 5. push 뒤 사용 가능한 GitHub 연결 게시 도구를 우선 사용한다. 해당 기능이
    없을 때만 `gh`로 fallback한다.
 6. PR은 기본적으로 Draft로 만들고, 검증이 실패했거나 실행되지 않았다면 Ready로
