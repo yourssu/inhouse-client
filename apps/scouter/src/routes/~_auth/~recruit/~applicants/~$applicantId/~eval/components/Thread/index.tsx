@@ -139,7 +139,7 @@ export const Comment = ({
             {isEdited ? `${leftTime} (편집됨)` : `${leftTime}`}
           </span>
         </div>
-        {!isEditing && (
+        {isMyComment && !isEditing && (
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Menu>
               <Menu.Trigger>
@@ -150,7 +150,6 @@ export const Comment = ({
               <Menu.Content align="end">
                 <Menu.ButtonItem
                   className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={!isMyComment}
                   icon={<MdEdit className="size-4" />}
                   onClick={handleEdit}
                 >
@@ -159,7 +158,7 @@ export const Comment = ({
 
                 <Menu.ButtonItem
                   className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={isDeletePending || !isMyComment}
+                  disabled={isDeletePending}
                   icon={<HiOutlineTrash className="text-red600 size-4" />}
                   onClick={handleDelete}
                 >
