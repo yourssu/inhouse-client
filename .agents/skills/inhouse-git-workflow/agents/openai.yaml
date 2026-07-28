@@ -1,0 +1,4 @@
+interface:
+  display_name: "인하우스 Git/PR 워크플로"
+  short_description: "부분 스테이징부터 Draft PR까지 안전하게 게시"
+  default_prompt: "$inhouse-git-workflow을 사용해 현재 변경만 부분 스테이징하고 커밋·푸시한 뒤 Draft PR을 만들어 주세요."
