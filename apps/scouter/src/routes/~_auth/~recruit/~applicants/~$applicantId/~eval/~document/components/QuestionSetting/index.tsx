@@ -6,12 +6,13 @@ import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-fo
 import { useLoading } from 'react-simplikit';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
-import { putPartDocumentsRubrics } from '@/apis/parts';
-import { getPartDocumentsRubricsOption, partsOption } from '@/apis/parts/query';
+import { putPartDocumentsRubrics } from '@/apis/documents';
+import { getPartDocumentsRubricsOption } from '@/apis/documents/query';
 import {
   UpdatePartDocumentsRubricsFormSchema,
   type UpdatePartDocumentsRubricsFormType,
-} from '@/apis/parts/schema';
+} from '@/apis/documents/schema';
+import { partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface QuestionSettingProps {

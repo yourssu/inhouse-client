@@ -5,6 +5,7 @@ import {
   getApplicantDocumentComments,
   getApplicantDocumentsEvaluations,
   getApplicantDocumentsOthersEvaluations,
+  getPartDocumentsRubrics,
 } from '@/apis/documents';
 
 const qk = pluginQueryKey('scouter');
@@ -28,4 +29,10 @@ export const applicantDocumentCommentsOption = (applicantId: number) =>
   queryOptions({
     queryKey: commentsQueryKey(applicantId),
     queryFn: () => getApplicantDocumentComments(applicantId),
+  });
+
+export const getPartDocumentsRubricsOption = (partId: number) =>
+  queryOptions({
+    queryKey: qk.for('parts', partId, 'documents', 'rubrics'),
+    queryFn: () => getPartDocumentsRubrics(partId),
   });

@@ -11,13 +11,14 @@ import { putApplicantDocumentEvaluations } from '@/apis/documents';
 import {
   getApplicantDocumentsEvaluationsOption,
   getApplicantDocumentsOthersEvaluationsOption,
+  getPartDocumentsRubricsOption,
 } from '@/apis/documents/query';
 import {
   documentKoreanResults,
   UpdateApplicantDocumentEvaluationFormSchema,
   type UpdateApplicantDocumentEvaluationFormType,
 } from '@/apis/documents/schema';
-import { getPartDocumentsRubricsOption, partsOption } from '@/apis/parts/query';
+import { partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
 import { OtherOverallEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherOverallEvaluationsCollapsible';

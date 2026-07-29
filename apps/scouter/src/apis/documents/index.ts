@@ -6,7 +6,9 @@ import {
   ApplicantDocumentOthersEvaluationsSchema,
   CommentSchema,
   type CreateCommentRequestType,
+  PartDocumentsRubricsSchema,
   type UpdateCommentRequestType,
+  type UpdatePartDocumentRubricsRequestType,
 } from '@/apis/documents/schema';
 
 export type PutApplicantDocumentEvaluationsParams = {
@@ -73,4 +75,18 @@ export const patchApplicantDocumentComment = async ({
     .patch(`applicants/${applicantId}/documents/comments/${commentId}`, { json: data })
     .json();
   return CommentSchema.parse(response);
+};
+
+export const getPartDocumentsRubrics = async (partId: number) => {
+  const res = await api.get(`parts/${partId}/documents/rubrics`).json();
+  return PartDocumentsRubricsSchema.parse(res);
+};
+
+type PutPartDocumentRubricsParams = {
+  data: UpdatePartDocumentRubricsRequestType;
+  partId: number;
+};
+
+export const putPartDocumentsRubrics = async ({ partId, data }: PutPartDocumentRubricsParams) => {
+  await api.put(`parts/${partId}/documents/rubrics`, { json: data });
 };
