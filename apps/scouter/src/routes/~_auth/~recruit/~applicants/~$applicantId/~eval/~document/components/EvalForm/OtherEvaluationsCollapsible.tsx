@@ -3,8 +3,10 @@ import { Divider, useToast } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 import { MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
 
-import type { ApplicantDocumentOthersEvaluationsType } from '@/apis/applicants/schema';
-import type { PartDocumentRubricType } from '@/apis/parts/schema';
+import type {
+  ApplicantDocumentOthersEvaluationsType,
+  PartDocumentRubricType,
+} from '@/apis/documents/schema';
 
 interface OtherEvaluationsCollapsibleProps {
   isEvaluationDone: boolean;

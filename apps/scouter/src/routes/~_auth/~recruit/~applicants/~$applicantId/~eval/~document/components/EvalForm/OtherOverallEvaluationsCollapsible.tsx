@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
 
-import type { ApplicantDocumentOthersEvaluationsType } from '@/apis/applicants/schema';
+import type { ApplicantDocumentOthersEvaluationsType } from '@/apis/documents/schema';
 
 interface OtherOverallEvaluationsCollapsibleProps {
   isEvaluationDone: boolean;

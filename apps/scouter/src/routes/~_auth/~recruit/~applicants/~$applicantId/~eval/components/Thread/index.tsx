@@ -10,13 +10,10 @@ import { HiOutlineTrash } from 'react-icons/hi2';
 import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';
 import { MdCancel, MdEdit } from 'react-icons/md';
 
-import type { CommentType } from '@/apis/eval/comments/schema';
+import type { CommentType } from '@/apis/documents/schema';
 
-import {
-  deleteApplicantDocumentComment,
-  patchApplicantDocumentComment,
-} from '@/apis/eval/comments';
-import { commentsQueryKey } from '@/apis/eval/comments/query';
+import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
+import { commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';

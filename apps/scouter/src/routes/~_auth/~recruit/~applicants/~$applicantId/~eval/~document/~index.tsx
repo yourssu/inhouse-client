@@ -12,7 +12,7 @@ import { MdPerson } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
-import { applicantDocumentCommentsOption } from '@/apis/eval/comments/query';
+import { applicantDocumentCommentsOption } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
