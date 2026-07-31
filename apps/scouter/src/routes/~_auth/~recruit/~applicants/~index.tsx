@@ -90,7 +90,7 @@ const RouteComponent = () => {
                   <ApplicantsTable
                     searchKeyword={keyword}
                     semesterId={search.semesterId}
-                    state={applicantTabNameEn[tab]}
+                    tab={applicantTabNameEn[tab]}
                   />
                 </Suspense>
               </Paper>

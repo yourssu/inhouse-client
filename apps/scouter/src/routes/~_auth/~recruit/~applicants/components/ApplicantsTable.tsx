@@ -9,24 +9,26 @@ import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
 import { MdMoreVert } from 'react-icons/md';
 
-import type { ApplicantTabNameType } from '@/routes/~_auth/~recruit/~applicants/type';
-
 import { applicantsOption } from '@/apis/applicants/query';
 import { partsOption } from '@/apis/parts/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
 import { ApplicantActionMenu } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantActionMenu';
 import { useApplicantSelectionContext } from '@/routes/~_auth/~recruit/~applicants/context';
+import {
+  applicantStatesByTab,
+  type ApplicantTabNameType,
+} from '@/routes/~_auth/~recruit/~applicants/type';
 import { partNameKo, type PartNameKoType } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
 interface ApplicantsTableProps {
   searchKeyword: string;
   semesterId?: number;
-  state: ApplicantTabNameType;
+  tab: ApplicantTabNameType;
 }
 
-export const ApplicantsTable = ({ searchKeyword, semesterId, state }: ApplicantsTableProps) => {
+export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTableProps) => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/applicants/' });
   const setters = {
     page: useSetStateSelector(setSearch, 'page'),
@@ -38,7 +40,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
 
   const { data: applicants } = useSuspenseQuery(
     applicantsOption({
-      state,
+      states: applicantStatesByTab[tab],
       partId: search.partId,
       semesterId,
       name: useDelayedValue(searchKeyword) || undefined,
@@ -112,14 +114,17 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
               <Table.Cell>{applicant.age}세</Table.Cell>
               <Table.Cell>{formatTemplates['2026-01-01'](applicant.applicationDate)}</Table.Cell>
               <Table.Cell className="w-12 min-w-12 flex-none">
-                {/* 심사 진행 중 탭에서는 지원자 관리 드롭다운 메뉴 보여주기 */}
-                {state === 'UNDER_REVIEW' ? (
+                {tab === 'UNDER_REVIEW' ? (
                   <ApplicantActionMenu
                     applicantId={applicant.applicantId}
                     applicantName={applicant.name}
                   />
                 ) : (
-                  <IconButton size="sm" variant="inline">
+                  <IconButton
+                    aria-label={`${applicant.name} 지원자 액션`}
+                    size="sm"
+                    variant="inline"
+                  >
                     <MdMoreVert aria-hidden className="size-4.5" />
                   </IconButton>
                 )}

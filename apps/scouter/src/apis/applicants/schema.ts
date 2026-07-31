@@ -17,6 +17,7 @@ export const ApplicantStateSchema = z.enum(applicantStates);
 
 export const ApplicantSchema = z.object({
   applicantId: z.number(),
+  partId: z.number(),
   division: DivisionNameSchema, // 구분
   part: PartNameSchema, // 파트
   name: z.string(), // 이름
@@ -29,8 +30,8 @@ export const ApplicantSchema = z.object({
   semester: z.string(), // 학기
   age: z.string(), // 나이
   availableTimes: z.array(z.iso.datetime()), // 면접 가능 시간
-  documentAverageScore: z.number().nullable(), // 서류 평균 점수
-  interviewAverageScore: z.number().nullable(), // 면접 평균 점수
+  documentAverageScore: z.number().nullish(), // 서류 평균 점수
+  interviewAverageScore: z.number().nullish(), // 면접 평균 점수
 });
 
 export const LastApplicantSyncTimeSchema = z.object({

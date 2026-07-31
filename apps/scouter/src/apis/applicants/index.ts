@@ -1,5 +1,3 @@
-import { isNil, omitBy } from 'es-toolkit';
-
 import { api } from '@/apis/api';
 import {
   ApplicantDocumentAnswersSchema,
@@ -15,7 +13,7 @@ export type GetApplicantsParams = {
   name?: string;
   partId?: number;
   semesterId?: number;
-  state?: ApplicantStateType;
+  states?: readonly ApplicantStateType[];
 };
 
 export type PatchApplicantParams = {
@@ -23,10 +21,32 @@ export type PatchApplicantParams = {
   data: UpdateApplicantRequestType;
 };
 
+const createApplicantsSearchParams = ({
+  name,
+  partId,
+  semesterId,
+  states,
+}: GetApplicantsParams) => {
+  const searchParams = new URLSearchParams();
+
+  if (name !== undefined) {
+    searchParams.set('name', name);
+  }
+  states?.forEach((state) => searchParams.append('states', state));
+  if (semesterId !== undefined) {
+    searchParams.set('semesterId', String(semesterId));
+  }
+  if (partId !== undefined) {
+    searchParams.set('partId', String(partId));
+  }
+
+  return searchParams;
+};
+
 export const getApplicants = async (params: GetApplicantsParams = {}) => {
   const response = await api
     .get('applicants', {
-      searchParams: omitBy(params, isNil),
+      searchParams: createApplicantsSearchParams(params),
     })
     .json();
   return ApplicantSchema.array().parse(response);
