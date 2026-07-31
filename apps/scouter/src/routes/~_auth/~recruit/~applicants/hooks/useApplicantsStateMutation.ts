@@ -1,4 +1,5 @@
 import { patchApplicant } from '@/apis/applicants';
+import { applicantsQueryKeys } from '@/apis/applicants/query';
 import { type ApplicantStateType } from '@/apis/applicants/schema';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -9,7 +10,7 @@ type PatchApplicantsStateParams = {
 };
 
 export const useApplicantsStateMutation = () => {
-  const { invalidate } = useQueryInvalidation(['applicants']);
+  const { invalidate } = useQueryInvalidation(applicantsQueryKeys.all());
 
   const { mutateWithToast, isPending } = useToastedMutation({
     mutationFn: async ({ applicantIds, state }: PatchApplicantsStateParams) => {

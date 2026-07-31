@@ -1,16 +1,13 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { useDelayedValue, useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
-import { Button, Checkbox } from '@yourssu-inhouse/interior';
-import { Pagination } from '@yourssu-inhouse/interior';
-import { Result } from '@yourssu-inhouse/interior';
-import { Table } from '@yourssu-inhouse/interior';
+import { Checkbox, IconButton, Pagination, Result, Table } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
+import { MdMoreVert } from 'react-icons/md';
 
 import type { ApplicantTabNameType } from '@/routes/~_auth/~recruit/~applicants/type';
 
@@ -18,6 +15,7 @@ import { applicantsOption } from '@/apis/applicants/query';
 import { partsOption } from '@/apis/parts/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
+import { ApplicantActionMenu } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantActionMenu';
 import { useApplicantSelectionContext } from '@/routes/~_auth/~recruit/~applicants/context';
 import { partNameKo, type PartNameKoType } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
@@ -91,7 +89,9 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
           <Table.Th>현재 학기</Table.Th>
           <Table.Th infoContent="연도 기준 나이예요.">나이</Table.Th>
           <Table.Th>지원일</Table.Th>
-          <Table.Th />
+          <Table.Th className="w-12 min-w-12 flex-none">
+            <span className="sr-only">지원자 액션</span>
+          </Table.Th>
         </Table.Head>
         <Table.Body>
           {paginatedApplicants.map((applicant) => (
@@ -111,15 +111,18 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, state }: Applicants
               <Table.Cell>{formatSemester(applicant.semester)}</Table.Cell>
               <Table.Cell>{applicant.age}세</Table.Cell>
               <Table.Cell>{formatTemplates['2026-01-01'](applicant.applicationDate)}</Table.Cell>
-              <Table.Cell>
-                <Link
-                  params={{ applicantId: String(applicant.applicantId) }}
-                  to="/recruit/applicants/$applicantId/eval/document"
-                >
-                  <Button size="sm" variant="subPrimary">
-                    서류 평가
-                  </Button>
-                </Link>
+              <Table.Cell className="w-12 min-w-12 flex-none">
+                {/* 심사 진행 중 탭에서는 지원자 관리 드롭다운 메뉴 보여주기 */}
+                {state === 'UNDER_REVIEW' ? (
+                  <ApplicantActionMenu
+                    applicantId={applicant.applicantId}
+                    applicantName={applicant.name}
+                  />
+                ) : (
+                  <IconButton size="sm" variant="inline">
+                    <MdMoreVert aria-hidden className="size-4.5" />
+                  </IconButton>
+                )}
               </Table.Cell>
             </Table.Row>
           ))}
