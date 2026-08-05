@@ -13,9 +13,9 @@ interface ApplicantActionMenuProps {
 }
 
 // 서류 결과가 합격이 아니면 과제 평가 모달 진입 시, 에러 모달로 안내해요.
-const assignmentGateErrorContent: Partial<Record<ApplicantStateType, string>> = {
+const assignmentEvalGateErrorContent: Partial<Record<ApplicantStateType, string>> = {
   DOCUMENT_REJECTED: '서류가 불합격 처리된 지원자는 과제 평가를 진행할 수 없어요.',
-  UNDER_REVIEW: '최종 서류 합격/불합격 결정을 먼저 완료해 주세요.',
+  UNDER_REVIEW: '지원자에 대한 서류 합격/불합격 결정을 먼저 완료해 주세요.',
 };
 
 export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActionMenuProps) => {
@@ -39,7 +39,7 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   };
 
   const handleAssignmentEvaluationClick = async () => {
-    const gateErrorContent = assignmentGateErrorContent[state];
+    const gateErrorContent = assignmentEvalGateErrorContent[state];
     if (gateErrorContent) {
       await openAlertDialog({
         content: gateErrorContent,
