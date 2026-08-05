@@ -2,18 +2,26 @@ import { useNavigate } from '@tanstack/react-router';
 import { IconButton, Menu } from '@yourssu-inhouse/interior';
 import { MdMoreVert } from 'react-icons/md';
 
+import type { ApplicantStateType, ApplicantType } from '@/apis/applicants/schema';
+
+import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { AssignmentEvalDialogContent } from '@/routes/~_auth/~recruit/~applicants/components/AssignmentEvalDialogContent';
+
 interface ApplicantActionMenuProps {
-  applicantId: number;
-  applicantName: string;
-  partId: number;
+  applicant: ApplicantType;
+  hasAssignment: boolean;
 }
 
-export const ApplicantActionMenu = ({
-  applicantId,
-  applicantName,
-  partId,
-}: ApplicantActionMenuProps) => {
+// 서류 결과가 합격이 아니면 과제 평가 모달 진입 시, 에러 모달로 안내해요.
+const assignmentGateErrorContent: Partial<Record<ApplicantStateType, string>> = {
+  DOCUMENT_REJECTED: '서류가 불합격 처리된 지원자는 과제 평가를 진행할 수 없어요.',
+  UNDER_REVIEW: '최종 서류 합격/불합격 결정을 먼저 완료해 주세요.',
+};
+
+export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActionMenuProps) => {
+  const { applicantId, name: applicantName, partId, state } = applicant;
   const navigate = useNavigate();
+  const openAlertDialog = useAlertDialog();
 
   const handleDocumentEvaluationClick = () => {
     navigate({
@@ -27,6 +35,30 @@ export const ApplicantActionMenu = ({
     navigate({
       params: { applicantId: String(applicantId) },
       to: '/recruit/applicants/$applicantId/interview/questionnaire',
+    });
+  };
+
+  const handleAssignmentEvaluationClick = async () => {
+    const gateErrorContent = assignmentGateErrorContent[state];
+    if (gateErrorContent) {
+      await openAlertDialog({
+        content: gateErrorContent,
+        primaryButtonText: '확인',
+        title: `과제 평가 불가`,
+      });
+      return;
+    }
+
+    await openAlertDialog({
+      content: ({ closeAsTrue }) => (
+        <AssignmentEvalDialogContent
+          applicantId={applicantId}
+          applicantName={applicantName}
+          closeAsTrue={closeAsTrue}
+        />
+      ),
+      customized: true,
+      title: `과제 평가`,
     });
   };
 
@@ -46,9 +78,9 @@ export const ApplicantActionMenu = ({
         <Menu.ButtonItem className="disabled:cursor-not-allowed disabled:opacity-40" disabled>
           면접 평가 · 준비 중
         </Menu.ButtonItem>
-        <Menu.ButtonItem className="disabled:cursor-not-allowed disabled:opacity-40" disabled>
-          과제 평가 · 준비 중
-        </Menu.ButtonItem>
+        {hasAssignment && (
+          <Menu.ButtonItem onClick={handleAssignmentEvaluationClick}>과제 평가</Menu.ButtonItem>
+        )}
         <Menu.ButtonItem onClick={handleQuestionnaireClick}>질문지 설계</Menu.ButtonItem>
       </Menu.Content>
     </Menu>

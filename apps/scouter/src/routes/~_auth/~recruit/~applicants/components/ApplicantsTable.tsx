@@ -116,9 +116,10 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
               <Table.Cell className="w-12 min-w-12 flex-none">
                 {tab === 'UNDER_REVIEW' ? (
                   <ApplicantActionMenu
-                    applicantId={applicant.applicantId}
-                    applicantName={applicant.name}
-                    partId={applicant.partId}
+                    applicant={applicant}
+                    hasAssignment={parts.some(
+                      (part) => part.partId === applicant.partId && part.hasAssignment,
+                    )}
                   />
                 ) : (
                   <IconButton
