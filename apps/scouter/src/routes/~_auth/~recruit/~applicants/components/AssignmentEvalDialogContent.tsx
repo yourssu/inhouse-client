@@ -42,10 +42,13 @@ export const AssignmentEvalDialogContent = ({
 
   return (
     <>
-      <Dialog.Content className="flex flex-col">
-        <p>{`${applicantName}의 과제 평가 결과를 선택해요.`}</p>
-        <p>{`지원자가 과제 평가에 합격하면\n지원자에 대한 면접 평가를 진행할 수 있어요.`}</p>
-        <p>지원자의 과제 평가 결과는 평가 후에도 수정 가능해요.</p>
+      <Dialog.Content className="flex flex-col gap-2">
+        <p className="text-neutral font-medium">
+          <span className="text-violet600">{applicantName}</span>님의 과제 평가 결과를 선택해요.
+        </p>
+        <div className="text-neutralSubtle text-xs">
+          <p>지원자의 과제 평가 결과는 평가 후에도 수정 가능해요.</p>
+        </div>
       </Dialog.Content>
       <Dialog.ButtonGroup>
         <Dialog.Button
