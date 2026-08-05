@@ -75,12 +75,12 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
       </Menu.Trigger>
       <Menu.Content align="end" className="w-48">
         <Menu.ButtonItem onClick={handleDocumentEvaluationClick}>서류 평가</Menu.ButtonItem>
-        <Menu.ButtonItem className="disabled:cursor-not-allowed disabled:opacity-40" disabled>
-          면접 평가 · 준비 중
-        </Menu.ButtonItem>
         {hasAssignment && (
           <Menu.ButtonItem onClick={handleAssignmentEvaluationClick}>과제 평가</Menu.ButtonItem>
         )}
+        <Menu.ButtonItem className="disabled:cursor-not-allowed disabled:opacity-40" disabled>
+          면접 평가 · 준비 중
+        </Menu.ButtonItem>
         <Menu.ButtonItem onClick={handleQuestionnaireClick}>질문지 설계</Menu.ButtonItem>
       </Menu.Content>
     </Menu>
