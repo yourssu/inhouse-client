@@ -106,7 +106,7 @@ const RouteComponent = () => {
               <span className="text-violet600 font-medium">서류 평가</span>
               <span className="text-neutralSubtle mx-1.5">·</span>
               <span className="text-neutralSubtle">
-                {formatTemplates['(2026년)? 1월 1일, 23:00'](deadline.deadline)} 마감
+                {formatTemplates['(2026년)? 1월 1일, 오후 11:00'](deadline.deadline)} 마감
               </span>
             </div>
             <div className="text-xl font-semibold">{applicant.name} 지원자</div>
