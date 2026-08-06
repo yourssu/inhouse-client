@@ -40,6 +40,10 @@ export const formatTemplates = {
     const fn = formatKo(isThisYear(v) ? 'MMM do, aaaa h:mm' : 'yyyy년 MMM do, aaaa h:mm');
     return fn(v);
   },
+  '(2026년)? 1월 1일, 23:00': (v: DateArg<Date>) => {
+    const fn = formatKo(isThisYear(v) ? 'MMM do, HH:mm' : 'yyyy년 MMM do, HH:mm');
+    return fn(v);
+  },
   '방금 전 | 1(분/시간/일/주/개월/년) 전': (v: DateArg<Date>) => {
     if (differenceInMinutes(new Date(), v) === 0) {
       return '방금 전';
