@@ -5,6 +5,7 @@ import {
   getApplicantDocumentComments,
   getApplicantDocumentsEvaluations,
   getApplicantDocumentsOthersEvaluations,
+  getPartDocumentsDeadline,
   getPartDocumentsRubrics,
 } from '@/apis/documents';
 
@@ -35,4 +36,10 @@ export const getPartDocumentsRubricsOption = (partId: number) =>
   queryOptions({
     queryKey: qk.for('parts', partId, 'documents', 'rubrics'),
     queryFn: () => getPartDocumentsRubrics(partId),
+  });
+
+export const getPartDocumentsDeadlineOption = (partId: number) =>
+  queryOptions({
+    queryKey: qk.for('parts', partId, 'documents', 'deadline'),
+    queryFn: () => getPartDocumentsDeadline(partId),
   });
