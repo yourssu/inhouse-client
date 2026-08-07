@@ -1,6 +1,6 @@
 import { Dialog } from '@yourssu-inhouse/interior';
 
-import { patchApplicantAssignment } from '@/apis/applicants';
+import { patchApplicant } from '@/apis/applicants';
 import { applicantsQueryKeys } from '@/apis/applicants/query';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -19,8 +19,7 @@ export const AssignmentEvalDialogContent = ({
   const { invalidate } = useQueryInvalidation(applicantsQueryKeys.all());
 
   const { isPending: isFailPending, mutateWithToast: failMutateWithToast } = useToastedMutation({
-    mutationFn: () =>
-      patchApplicantAssignment({ applicantId, data: { assignmentResult: 'FAILED' } }),
+    mutationFn: () => patchApplicant({ applicantId, data: { state: 'ASSIGNMENT_REJECTED' } }),
     onSuccess: () => {
       invalidate();
       closeAsTrue();
@@ -29,8 +28,7 @@ export const AssignmentEvalDialogContent = ({
   });
 
   const { isPending: isPassPending, mutateWithToast: passMutateWithToast } = useToastedMutation({
-    mutationFn: () =>
-      patchApplicantAssignment({ applicantId, data: { assignmentResult: 'PASSED' } }),
+    mutationFn: () => patchApplicant({ applicantId, data: { state: 'ASSIGNMENT_ACCEPTED' } }),
     onSuccess: () => {
       invalidate();
       closeAsTrue();
@@ -46,9 +44,9 @@ export const AssignmentEvalDialogContent = ({
         <p className="text-neutral font-medium">
           <span className="text-violet600">{applicantName}</span>님의 과제 평가 결과를 선택해요.
         </p>
-        <div className="text-neutralSubtle text-xs">
-          <p>지원자의 과제 평가 결과는 평가 후에도 수정 가능해요.</p>
-        </div>
+        <p className="text-neutralSubtle text-xs">
+          지원자의 과제 평가 결과는 면접 평가 전까지 다시 수정 가능해요.
+        </p>
       </Dialog.Content>
       <Dialog.ButtonGroup>
         <Dialog.Button

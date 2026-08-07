@@ -3,11 +3,10 @@ import { Lottie } from '@toss/lottie';
 import { useDelayedValue, useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
-import { Checkbox, IconButton, Pagination, Result, Table } from '@yourssu-inhouse/interior';
+import { Checkbox, Pagination, Result, Table } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
-import { MdMoreVert } from 'react-icons/md';
 
 import { applicantsOption } from '@/apis/applicants/query';
 import { partsOption } from '@/apis/parts/query';
@@ -114,22 +113,12 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
               <Table.Cell>{applicant.age}세</Table.Cell>
               <Table.Cell>{formatTemplates['2026-01-01'](applicant.applicationDate)}</Table.Cell>
               <Table.Cell className="w-12 min-w-12 flex-none">
-                {tab === 'UNDER_REVIEW' ? (
-                  <ApplicantActionMenu
-                    applicant={applicant}
-                    hasAssignment={parts.some(
-                      (part) => part.partId === applicant.partId && part.hasAssignment,
-                    )}
-                  />
-                ) : (
-                  <IconButton
-                    aria-label={`${applicant.name} 지원자 액션`}
-                    size="sm"
-                    variant="inline"
-                  >
-                    <MdMoreVert aria-hidden className="size-4.5" />
-                  </IconButton>
-                )}
+                <ApplicantActionMenu
+                  applicant={applicant}
+                  hasAssignment={parts.some(
+                    (part) => part.partId === applicant.partId && part.hasAssignment,
+                  )}
+                />
               </Table.Cell>
             </Table.Row>
           ))}
