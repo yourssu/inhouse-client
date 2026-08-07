@@ -262,7 +262,18 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
       <RouteComponent />
     </Suspense>
   ),
-  loader: ({ context }) => {
-    context.queryClient.ensureQueryData(meOption());
+  loader: async ({ context, params }) => {
+    const applicantId = Number(params.applicantId);
+
+    const [parts, applicant, , ,] = await Promise.all([
+      context.queryClient.ensureQueryData(partsOption()),
+      context.queryClient.ensureQueryData(applicantByIdOption(applicantId)),
+      context.queryClient.ensureQueryData(applicantDocumentAnswersOption(applicantId)),
+      context.queryClient.ensureQueryData(applicantDocumentCommentsOption(applicantId)),
+      context.queryClient.ensureQueryData(meOption()),
+    ]);
+
+    const part = parts.find((part) => part.partName === applicant.part) ?? parts[0];
+    await context.queryClient.ensureQueryData(getPartDocumentsDeadlineOption(part.partId));
   },
 });
