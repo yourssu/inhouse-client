@@ -9,10 +9,9 @@ export const applicantStates = [
   'DOCUMENT_REJECTED',
   'ASSIGNMENT_ACCEPTED',
   'ASSIGNMENT_REJECTED',
-  'INTERVIEW_ACCEPTED',
+  'FINAL_ACCEPTED',
   'INTERVIEW_REJECTED',
   'INCUBATING_REJECTED',
-  'FINAL_ACCEPTED',
 ] as const;
 
 export const ApplicantStateSchema = z.enum(applicantStates);
