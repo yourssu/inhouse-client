@@ -1,6 +1,6 @@
 import { __root, log, writeFileEnsureDirectorySync } from './utils';
 
-const SCHEMA_URL = 'https://api.dev.scouter.yourssu.com/v3/api-docs';
+const SCHEMA_URL = 'https://scouter-dev-api.yourssu.com/v3/api-docs';
 const TARGET_FILE = `${__root}/schema.json`;
 
 async function fetchSchema() {
