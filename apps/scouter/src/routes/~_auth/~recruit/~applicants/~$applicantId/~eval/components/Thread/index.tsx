@@ -1,9 +1,7 @@
 import type { KeyboardEvent } from 'react';
 
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useEffect, useRef, useState } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 import { HiOutlineTrash } from 'react-icons/hi2';
@@ -19,27 +17,22 @@ import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
 import { useWriteComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/hooks/useWriteComment';
-
-import type { CommentThreadType } from '../../utils/groupThreadsBySection';
+import {
+  CommentBody,
+  CommentItem,
+  CommentThreadFrame,
+  type CommentThreadType,
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 
 export interface CommentProps extends CommentType {
   applicantId: number;
 }
 
-export const Comment = ({
-  content,
-  author,
-  createdAt,
-  commentId,
-  applicantId,
-  isEdited,
-}: CommentProps) => {
-  const { memberId, nickname, part } = author;
+export const Comment = ({ applicantId, ...comment }: CommentProps) => {
+  const { author, commentId, content } = comment;
+  const { memberId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
   const isMyComment = memberId === myData.memberId;
-  const leftTime = createdAt
-    ? formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt))
-    : null;
   const queryClient = useQueryClient();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -128,19 +121,9 @@ export const Comment = ({
   };
 
   return (
-    <div className="group min-w-60 gap-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 whitespace-nowrap">
-          <span className="text-13 font-medium">
-            {nickname} [{part}]
-          </span>
-          {leftTime && (
-            <span className="text-neutralSubtle text-xs">
-              {isEdited ? `${leftTime} (편집됨)` : leftTime}
-            </span>
-          )}
-        </div>
-        {isMyComment && !isEditing && (
+    <CommentItem
+      actions={
+        isMyComment && !isEditing ? (
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Menu>
               <Menu.Trigger>
@@ -168,8 +151,10 @@ export const Comment = ({
               </Menu.Content>
             </Menu>
           </div>
-        )}
-      </div>
+        ) : undefined
+      }
+      comment={comment}
+    >
       {isEditing ? (
         <div className="flex flex-col gap-0.5">
           <MultilineTextField
@@ -204,23 +189,20 @@ export const Comment = ({
           </div>
         </div>
       ) : (
-        <p className="text-13 min-h-fit border-transparent p-0 pl-1 whitespace-pre-wrap">
-          {content}
-        </p>
+        <CommentBody>{content}</CommentBody>
       )}
-    </div>
+    </CommentItem>
   );
 };
 
 interface ThreadProps {
   applicantId: number;
-  selectedSectionId: null | number;
+  isSelected: boolean;
   thread: CommentThreadType;
 }
 
-export const Thread = ({ applicantId, selectedSectionId, thread }: ThreadProps) => {
+export const Thread = ({ applicantId, isSelected, thread }: ThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
-  const isSelectedSection = sectionId === selectedSectionId;
   const [isReplying, setIsReplying] = useState(false);
 
   const {
@@ -240,13 +222,7 @@ export const Thread = ({ applicantId, selectedSectionId, thread }: ThreadProps) 
 
   return (
     <DetectOutsideClickArea onClickOutside={handleClose}>
-      <div
-        className={cn(
-          'rounded-8 hover:bg-grey50 relative left-0 z-10 flex flex-col gap-3 border p-4 transition-[left] hover:-left-1',
-          isSelectedSection ? 'border-violet300' : 'border-grey200',
-        )}
-        onClick={() => setIsReplying(true)}
-      >
+      <CommentThreadFrame isSelected={isSelected} onClick={() => setIsReplying(true)}>
         {thread.map((comment) => (
           <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
         ))}
@@ -272,7 +248,7 @@ export const Thread = ({ applicantId, selectedSectionId, thread }: ThreadProps) 
             </IconButton>
           </div>
         )}
-      </div>
+      </CommentThreadFrame>
     </DetectOutsideClickArea>
   );
 };
