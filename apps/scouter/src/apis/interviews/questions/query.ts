@@ -1,4 +1,4 @@
-import { mutationOptions, type QueryClient, queryOptions } from '@tanstack/react-query';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
 import {
@@ -27,10 +27,11 @@ export const partInterviewQuestionsOption = (partId: number) =>
     queryFn: () => getPartInterviewQuestions(partId),
   });
 
-export const saveAssignedQuestionsMutationOptions = (queryClient: QueryClient) =>
-  mutationOptions({
-    mutationFn: saveAssignedQuestions,
-    onSuccess: (questions, { applicantId }) => {
-      queryClient.setQueryData(interviewQuestionsQueryKeys.applicant(applicantId), questions);
-    },
-  });
+export const saveAssignedQuestionsMutationOptions = mutationOptions({
+  mutationFn: saveAssignedQuestions,
+  // 지원자의 질문지 조회 쿼리를 무효화
+  onSuccess: (_, { applicantId }, _onMutateResult, context) =>
+    context.client.invalidateQueries({
+      queryKey: interviewQuestionsQueryKeys.applicant(applicantId),
+    }),
+});

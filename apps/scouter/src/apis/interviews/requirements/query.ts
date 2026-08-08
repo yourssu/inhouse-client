@@ -1,4 +1,4 @@
-import { mutationOptions, type QueryClient, queryOptions } from '@tanstack/react-query';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
 import type {
@@ -7,9 +7,7 @@ import type {
 } from '@/apis/interviews/requirements/schema';
 
 import {
-  getGlobalInterviewRequirements,
   getInterviewRequirements,
-  updateGlobalInterviewRequirements,
   updateInterviewRequirements,
 } from '@/apis/interviews/requirements';
 
@@ -29,26 +27,11 @@ export const interviewRequirementsOption = (params: InterviewRequirementsParams)
     queryFn: () => getInterviewRequirements(params),
   });
 
-export const updateInterviewRequirementsMutationOptions = (queryClient: QueryClient) =>
-  mutationOptions({
-    mutationFn: updateInterviewRequirements,
-    onSuccess: (_, { partId, semester }) =>
-      queryClient.invalidateQueries({
-        queryKey: interviewRequirementsQueryKeys.part({ partId, semester }),
-      }),
-  });
-
-export const globalInterviewRequirementsOption = (params: GlobalInterviewRequirementsParams) =>
-  queryOptions({
-    queryKey: interviewRequirementsQueryKeys.global(params),
-    queryFn: () => getGlobalInterviewRequirements(params),
-  });
-
-export const updateGlobalInterviewRequirementsMutationOptions = (queryClient: QueryClient) =>
-  mutationOptions({
-    mutationFn: updateGlobalInterviewRequirements,
-    onSuccess: (_, { semester }) =>
-      queryClient.invalidateQueries({
-        queryKey: interviewRequirementsQueryKeys.global({ semester }),
-      }),
-  });
+export const updateInterviewRequirementsMutationOptions = mutationOptions({
+  mutationFn: updateInterviewRequirements,
+  onSuccess: (_, { partId, semester }, _onMutateResult, context) =>
+    // 변경한 파트 요구조건 쿼리 무효화
+    context.client.invalidateQueries({
+      queryKey: interviewRequirementsQueryKeys.part({ partId, semester }),
+    }),
+});
