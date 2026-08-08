@@ -1,3 +1,10 @@
+interface RecruitingSemester {
+  term: number;
+  year: number;
+}
+
+export const formatRecruitingSemester = ({ term, year }: RecruitingSemester) => `${year}-${term}`;
+
 /**
  * N-M 형식의 학기 문자열을 'N학년 M학기'로 변환해요.
  */
