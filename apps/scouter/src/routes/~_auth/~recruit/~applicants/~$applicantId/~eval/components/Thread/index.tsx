@@ -37,7 +37,9 @@ export const Comment = ({
   const { memberId, nickname, part } = author;
   const { data: myData } = useSuspenseQuery(meOption());
   const isMyComment = memberId === myData.memberId;
-  const leftTime = formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt));
+  const leftTime = createdAt
+    ? formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt))
+    : null;
   const queryClient = useQueryClient();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -132,9 +134,11 @@ export const Comment = ({
           <span className="text-13 font-medium">
             {nickname} [{part}]
           </span>
-          <span className="text-neutralSubtle text-xs">
-            {isEdited ? `${leftTime} (편집됨)` : `${leftTime}`}
-          </span>
+          {leftTime && (
+            <span className="text-neutralSubtle text-xs">
+              {isEdited ? `${leftTime} (편집됨)` : leftTime}
+            </span>
+          )}
         </div>
         {isMyComment && !isEditing && (
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">

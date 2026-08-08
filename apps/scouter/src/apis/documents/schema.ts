@@ -1,7 +1,5 @@
 import z from 'zod/v4';
 
-import { PartNameSchema } from '@/apis/parts/schema';
-
 const documentResults = ['PENDING', 'DOCUMENT_PASS', 'DOCUMENT_FAIL'] as const;
 const DocumentResultSchema = z.enum(documentResults);
 export const ApplicantDocumentOthersEvaluationsSchema = z.array(
@@ -34,7 +32,7 @@ export const ApplicantDocumentEvaluationsResponseSchema = z.object({
   ),
   overallComment: z.string(),
   result: DocumentResultSchema,
-  submittedAt: z.iso.datetime().nullable(),
+  submittedAt: z.iso.datetime().nullish(),
 });
 
 export const documentKoreanResults = ['보류', '서류 합격', '서류 불합격'] as const;
@@ -78,29 +76,32 @@ export type UpdateApplicantDocumentEvaluationRequestType = z.infer<
 >;
 
 export const CommentAuthorSchema = z.object({
-  memberId: z.number(),
+  memberId: z.number().optional(),
   nickname: z.string(),
-  part: PartNameSchema,
+  part: z.string(),
 });
 
 export const CommentSchema = z.object({
   author: CommentAuthorSchema,
   commentId: z.number(),
   content: z.string(),
-  createdAt: z.iso.datetime(),
+  createdAt: z.iso.datetime().optional(),
   isEdited: z.boolean(),
-  parentCommentId: z.number().nullable(),
+  parentCommentId: z
+    .number()
+    .nullish()
+    .transform((parentCommentId) => parentCommentId ?? null),
   sectionId: z.number(),
 });
 
 export const CreateCommentRequestSchema = z.object({
-  content: z.string(),
-  parentCommentId: z.number().nullable().optional(),
+  content: z.string().min(1),
+  parentCommentId: z.number().optional(),
   sectionId: z.number(),
 });
 
 export const UpdateCommentRequestSchema = z.object({
-  content: z.string(),
+  content: z.string().min(1),
 });
 
 export type CommentAuthorType = z.infer<typeof CommentAuthorSchema>;

@@ -29,13 +29,14 @@ export const Answer = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="bg-violet50 text-violet600 rounded-6 flex size-7 shrink-0 items-center justify-center self-start text-sm font-semibold">
-            {sectionId}
+            {sectionId ?? '-'}
           </span>
           <span className="text-neutralMuted text-17 font-semibold">{question}</span>
         </div>
 
         <Button
           className="self-start"
+          disabled={sectionId === undefined}
           left={<PiPlus />}
           onClick={(e) => {
             e.stopPropagation();

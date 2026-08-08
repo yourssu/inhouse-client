@@ -33,7 +33,7 @@ export const useWriteComment = ({
   const handleAddComment = () => {
     writeCommentWithToast({
       applicantId,
-      data: { content, parentCommentId, sectionId },
+      data: { content, ...(parentCommentId === null ? {} : { parentCommentId }), sectionId },
     });
 
     setContent('');

@@ -110,7 +110,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
               <Table.Cell>{partNameKo[applicant.part]}</Table.Cell>
               <Table.Cell>{applicant.studentId}</Table.Cell>
               <Table.Cell>{applicant.department}</Table.Cell>
-              <Table.Cell>{formatSemester(applicant.semester)}</Table.Cell>
+              <Table.Cell>{formatSemester(applicant.academicSemester)}</Table.Cell>
               <Table.Cell>{applicant.age}세</Table.Cell>
               <Table.Cell>{formatTemplates['2026-01-01'](applicant.applicationDate)}</Table.Cell>
               <Table.Cell className="w-12 min-w-12 flex-none">

@@ -1,11 +1,8 @@
-import type { Prettify } from '@yourssu-inhouse/inhouse-utils/type';
-
 import { isNil, omitBy } from 'es-toolkit';
 
 import { api } from '@/apis/api';
 import {
   ActiveMemberSchema,
-  type AmbiguousMemberType,
   CompletedMemberSchema,
   GraduatedMemberSchema,
   InactiveMemberSchema,
@@ -15,6 +12,16 @@ import {
   MemberRoleSchema,
   MemberStateSchema,
   MeSchema,
+  type UpdateActiveMemberRequest,
+  UpdateActiveMemberRequestSchema,
+  type UpdateCompletedMemberRequest,
+  UpdateCompletedMemberRequestSchema,
+  type UpdateGraduatedMemberRequest,
+  UpdateGraduatedMemberRequestSchema,
+  type UpdateInactiveMemberRequest,
+  UpdateInactiveMemberRequestSchema,
+  type UpdateWithdrawnMemberRequest,
+  UpdateWithdrawnMemberRequestSchema,
   WithdrawnMemberSchema,
 } from '@/apis/members/schema';
 
@@ -23,10 +30,19 @@ export type GetMembersParams = {
   search?: string;
 };
 
-export type PatchMemberParams = {
-  data: Prettify<Omit<AmbiguousMemberType, 'parts'> & { partIds?: number[] }>;
-  memberId: number;
-  prevState: string;
+export type PatchMemberParams =
+  | { data: UpdateActiveMemberRequest; memberId: number; prevState: 'active' }
+  | { data: UpdateCompletedMemberRequest; memberId: number; prevState: 'completed' }
+  | { data: UpdateGraduatedMemberRequest; memberId: number; prevState: 'graduated' }
+  | { data: UpdateInactiveMemberRequest; memberId: number; prevState: 'inactive' }
+  | { data: UpdateWithdrawnMemberRequest; memberId: number; prevState: 'withdrawn' };
+
+const updateMemberRequestSchemas = {
+  active: UpdateActiveMemberRequestSchema,
+  completed: UpdateCompletedMemberRequestSchema,
+  graduated: UpdateGraduatedMemberRequestSchema,
+  inactive: UpdateInactiveMemberRequestSchema,
+  withdrawn: UpdateWithdrawnMemberRequestSchema,
 };
 
 export const getMe = async () => {
@@ -95,7 +111,8 @@ export const getLastMemberSyncTime = async () => {
 };
 
 export const patchMember = async ({ memberId, data, prevState }: PatchMemberParams) => {
-  await api.patch(`members/${prevState}/${memberId}`, { json: data });
+  const request = updateMemberRequestSchemas[prevState].parse(data);
+  await api.patch(`members/${prevState}/${memberId}`, { json: request });
 };
 
 export const postMembersIncludeFromApplicants = async () => {

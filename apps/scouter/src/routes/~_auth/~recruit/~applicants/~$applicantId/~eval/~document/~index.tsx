@@ -107,7 +107,7 @@ const RouteComponent = () => {
           <InfoItem label="지원 파트">{partNameKo[applicant.part]}</InfoItem>
           <InfoItem label="학번">{applicant.studentId}</InfoItem>
           <InfoItem label="학과">{applicant.department}</InfoItem>
-          <InfoItem label="현재 학기">{formatSemester(applicant.semester)}</InfoItem>
+          <InfoItem label="현재 학기">{formatSemester(applicant.academicSemester)}</InfoItem>
           <InfoItem label="나이">{applicant.age}세</InfoItem>
           <InfoItem label="지원일">
             {formatTemplates['2026-01-01'](applicant.applicationDate)}
@@ -129,14 +129,23 @@ const RouteComponent = () => {
         >
           <Paper className="flex-[1_1_0]">
             <div className="flex flex-col gap-4 px-5">
-              {answers.map((answer) => {
+              {answers.map((answer, index) => {
+                const sectionId = answer.sectionId;
                 return (
                   <Answer
                     documentAnswer={answer}
-                    isSelected={answer.sectionId === selectedSectionId}
-                    key={answer.sectionId}
-                    onClick={() => handleClickSection(answer.sectionId)}
-                    onOpenCommentField={() => handleOpenCommentField(answer.sectionId)}
+                    isSelected={sectionId !== undefined && sectionId === selectedSectionId}
+                    key={sectionId ?? `${answer.question}-${index}`}
+                    onClick={() => {
+                      if (sectionId !== undefined) {
+                        handleClickSection(sectionId);
+                      }
+                    }}
+                    onOpenCommentField={() => {
+                      if (sectionId !== undefined) {
+                        handleOpenCommentField(sectionId);
+                      }
+                    }}
                   />
                 );
               })}
@@ -146,7 +155,10 @@ const RouteComponent = () => {
                 className="sticky top-3 -mx-4 flex max-h-[calc(100vh-1.5rem)] flex-col gap-5 overflow-y-auto px-4"
                 ref={scrollContainerRef}
               >
-                {answers.map(({ sectionId }) => {
+                {answers.flatMap(({ sectionId }) => {
+                  if (sectionId === undefined) {
+                    return [];
+                  }
                   const threads = threadsBySectionId.get(sectionId) ?? [];
                   const canAddComment = openCommentSectionId === sectionId;
 

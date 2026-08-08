@@ -1,5 +1,3 @@
-import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
-
 import { z } from 'zod/v4';
 
 import { DivisionNameSchema } from '@/apis/divisions/schema';
@@ -18,60 +16,119 @@ export const MemberStateSchema = z.enum(memberState);
 
 export const MemberRoleSchema = z.enum(memberRole);
 
-export const BaseMemberSchema = z.object({
+const MemberIdentitySchema = z.object({
   memberId: z.number(), // ID
   parts: z.array(z.object({ division: DivisionNameSchema, part: PartNameSchema })),
-  role: MemberRoleSchema, // 역할
+  role: z.string(), // 역할
   name: z.string(), // 이름
   nickname: z.string(), // 닉네임
-  email: z.email(), // 이메일
-  phoneNumber: z.string().nullable(), // 전화번호 (민감 필드)
-  department: z.string(), // 학과
-  studentId: z.string().nullable(), // 학번 (민감 필드)
-  birthDate: z.iso.date().nullable(), // 생년월일 (민감 필드)
-  joinDate: z.iso.date(), // 입부일
-  note: z.string().nullable(), // 비고 (민감 필드)
-  state: MemberStateSchema, // 활동 상태
+  state: z.string(), // 활동 상태
 });
 
-export const MeSchema = BaseMemberSchema.omit({
-  note: true,
-}).extend({
-  profileImageUrl: z.url(),
+export const BaseMemberSchema = MemberIdentitySchema.extend({
+  email: z.email(), // 이메일
+  phoneNumber: z.string().nullish(), // 전화번호 (민감 필드)
+  department: z.string(), // 학과
+  studentId: z.string().nullish(), // 학번 (민감 필드)
+  birthDate: z.iso.date().nullish(), // 생년월일 (민감 필드)
+  joinDate: z.iso.date(), // 입부일
+  note: z.string().nullish(), // 비고 (민감 필드)
+});
+
+export const MeSchema = MemberIdentitySchema.extend({
+  profileImageUrl: z.string(),
+  email: z.string(),
+  phoneNumber: z.string(),
+  birthDate: z.iso.date(),
+  department: z.string(),
+  studentId: z.string(),
+  joinDate: z.iso.date(),
   stateUpdatedTime: z.iso.datetime(),
-  // createdTime: z.iso.datetime(),
-  // updatedTime: z.iso.datetime(),
+  createdTime: z.iso.datetime(),
+  updatedTime: z.iso.datetime(),
 });
 
 export const ActiveMemberSchema = BaseMemberSchema.extend({
-  membershipFee: z.boolean().nullable(), // 회비 납부 여부 (민감 필드)
-  state: z.literal('액티브'),
-  grade: z.number().nullable(),
-  isOnLeave: z.boolean().nullable(),
+  membershipFee: z.boolean().nullish(), // 회비 납부 여부 (민감 필드)
+  grade: z.number().nullish(),
+  isOnLeave: z.boolean().nullish(),
 });
 
 export const InactiveMemberSchema = BaseMemberSchema.extend({
-  activePeriod: PeriodSchema, // 활동 기간
-  expectedReturnSemester: z.string().nullable(), // 복귀 예정 학기 (민감 필드)
-  // inactivePeriod: PeriodSchema, // 휴면 기간
-  state: z.literal('비액티브'),
+  activePeriod: PeriodSchema.nullable(), // 활동 기간
+  expectedReturnSemester: z.string().nullish(), // 복귀 예정 학기 (민감 필드)
+  inactivePeriod: PeriodSchema.nullable(), // 비액티브 기간
+  reason: z.string().nullish(),
+  smsReplied: z.boolean().nullish(),
+  smsReplyDesiredPeriod: z.string().nullish(),
+  activitySemestersLabel: z.string().nullish(),
+  totalActiveSemesters: z.number().nullish(),
+  totalInactiveSemesters: z.number().nullish(),
+  activeSemesterCountLabel: z.string().nullish(),
+  inactiveSemesterCountLabel: z.string().nullish(),
 });
 
 export const GraduatedMemberSchema = BaseMemberSchema.extend({
-  activePeriod: PeriodSchema.nullable(), // 활동 기간 (민감 필드)
+  activePeriod: PeriodSchema.nullish(), // 활동 기간 (민감 필드)
   isAdvisorDesired: z.boolean(), // 고문 희망 여부
-  state: z.literal('졸업'),
 });
 
 export const CompletedMemberSchema = BaseMemberSchema.extend({
-  activePeriod: PeriodSchema.nullable(), // 활동 기간 (민감 필드)
-  isAdvisorDesired: z.boolean(), // 고문 희망 여부
-  state: z.literal('수료'),
+  completionSemester: z.string().nullish(),
 });
 
-export const WithdrawnMemberSchema = BaseMemberSchema.extend({
-  withdrawnDate: z.iso.date().nullable(), // 탈퇴일자 (민감 필드)
-  state: z.literal('탈퇴'),
+export const WithdrawnMemberSchema = MemberIdentitySchema.extend({
+  withdrawnDate: z.iso.date().nullish(), // 탈퇴일자 (민감 필드)
+  note: z.string().nullish(),
+});
+
+const UpdateMemberCommonRequestSchema = z.object({
+  partIds: z.array(z.number()).optional(),
+  role: z.string().optional(),
+  name: z.string().optional(),
+  nickname: z.string().optional(),
+  state: z.string().optional(),
+  email: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  departmentId: z.number().optional(),
+  studentId: z.string().optional(),
+  birthDate: z.iso.date().optional(),
+  joinDate: z.iso.date().optional(),
+  note: z.string().optional(),
+});
+
+export const UpdateActiveMemberRequestSchema = UpdateMemberCommonRequestSchema.extend({
+  membershipFee: z.boolean().optional(),
+  grade: z.number().optional(),
+  isOnLeave: z.boolean().optional(),
+});
+
+export const UpdateInactiveMemberRequestSchema = UpdateMemberCommonRequestSchema.extend({
+  expectedReturnSemester: z.string().optional(),
+  reason: z.string().optional(),
+  smsReplied: z.boolean().optional(),
+  smsReplyDesiredPeriod: z.string().optional(),
+  activitySemestersLabel: z.string().optional(),
+  totalActiveSemesters: z.number().optional(),
+  totalInactiveSemesters: z.number().optional(),
+  activitySemestersPatch: z
+    .object({
+      activitySemestersLabel: z.string().optional(),
+      totalActiveSemesters: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const UpdateGraduatedMemberRequestSchema = UpdateMemberCommonRequestSchema.extend({
+  isAdvisorDesired: z.boolean().optional(),
+});
+
+export const UpdateCompletedMemberRequestSchema = UpdateMemberCommonRequestSchema.extend({
+  completionSemester: z.string().optional(),
+});
+
+export const UpdateWithdrawnMemberRequestSchema = UpdateMemberCommonRequestSchema.extend({
+  withdrawnDate: z.iso.date().optional(),
 });
 
 export const LastMemberSyncTimeSchema = z.object({
@@ -103,15 +160,8 @@ export type MemberListResponseType<T> = {
   isSensitiveMasked: boolean;
   members: T[];
 };
-export type AmbiguousMemberType = Partial<
-  Merge<
-    Merge<
-      Merge<
-        Merge<Merge<ActiveMemberType, GraduatedMemberType>, CompletedMemberType>,
-        InactiveMemberType
-      >,
-      WithdrawnMemberType
-    >,
-    { state: MemberStateType }
-  >
->;
+export type UpdateActiveMemberRequest = z.infer<typeof UpdateActiveMemberRequestSchema>;
+export type UpdateInactiveMemberRequest = z.infer<typeof UpdateInactiveMemberRequestSchema>;
+export type UpdateGraduatedMemberRequest = z.infer<typeof UpdateGraduatedMemberRequestSchema>;
+export type UpdateCompletedMemberRequest = z.infer<typeof UpdateCompletedMemberRequestSchema>;
+export type UpdateWithdrawnMemberRequest = z.infer<typeof UpdateWithdrawnMemberRequestSchema>;
