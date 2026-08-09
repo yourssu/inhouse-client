@@ -94,14 +94,14 @@ const RouteComponent = () => {
             comments={comments}
             onAddComment={setOpenCommentSectionId}
             renderBeforeThreads={(sectionId) =>
-              openCommentSectionId === sectionId ? (
+              openCommentSectionId === sectionId && (
                 <CommentField
                   applicantId={Number(applicantId)}
                   onClose={() => setOpenCommentSectionId(null)}
                   parentCommentId={null}
                   sectionId={sectionId}
                 />
-              ) : undefined
+              )
             }
             renderThread={({ isSelected, thread }) => (
               <Thread
