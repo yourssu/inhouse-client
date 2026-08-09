@@ -9,6 +9,7 @@ import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';
 import { MdCancel, MdEdit } from 'react-icons/md';
 
 import type { CommentType } from '@/apis/documents/schema';
+import type { CommentThreadType } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
 import { commentsQueryKey } from '@/apis/documents/query';
@@ -21,8 +22,7 @@ import {
   CommentBody,
   CommentItem,
   CommentThreadFrame,
-  type CommentThreadType,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentComment';
 
 export interface CommentProps extends CommentType {
   applicantId: number;
