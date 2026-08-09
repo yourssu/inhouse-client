@@ -5,14 +5,20 @@ import { MdMoreVert } from 'react-icons/md';
 interface ApplicantActionMenuProps {
   applicantId: number;
   applicantName: string;
+  partId: number;
 }
 
-export const ApplicantActionMenu = ({ applicantId, applicantName }: ApplicantActionMenuProps) => {
+export const ApplicantActionMenu = ({
+  applicantId,
+  applicantName,
+  partId,
+}: ApplicantActionMenuProps) => {
   const navigate = useNavigate();
 
   const handleDocumentEvaluationClick = () => {
     navigate({
       params: { applicantId: String(applicantId) },
+      search: { partId },
       to: '/recruit/applicants/$applicantId/eval/document',
     });
   };
