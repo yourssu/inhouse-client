@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
@@ -11,7 +11,7 @@ import { invert } from 'es-toolkit';
 import { Suspense, useState } from 'react';
 import { z } from 'zod/v4';
 
-import { semestersOption } from '@/apis/semesters/query';
+import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
 import { Paper } from '@/components/Paper';
 import { SemesterSelect } from '@/components/SemesterSelect';
 import { useMultiSelectActions } from '@/hooks/useMultiSelectActions';
@@ -33,7 +33,9 @@ const RouteComponent = () => {
     semesterId: useSetStateSelector(setSearch, 'semesterId'),
   };
 
-  const { data: semesters } = useSuspenseQuery(semestersOption());
+  const [{ data: currentSemester }, { data: semesters }] = useSuspenseQueries({
+    queries: [semestersNowOption(), semestersOption()],
+  });
   const selectedSemester = semesters.find(({ semesterId }) => semesterId === search.semesterId);
 
   const applicantMultiSelectActions = useMultiSelectActions<number>();
@@ -92,6 +94,7 @@ const RouteComponent = () => {
                 <Suspense fallback={<Table.Skeleton count={10} />}>
                   <ApplicantsTable
                     searchKeyword={keyword}
+                    semester={formatRecruitingSemester(currentSemester)}
                     semesterId={search.semesterId}
                     tab={applicantTabNameEn[tab]}
                   />
