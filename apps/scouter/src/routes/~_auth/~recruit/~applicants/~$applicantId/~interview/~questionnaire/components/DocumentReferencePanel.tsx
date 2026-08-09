@@ -6,8 +6,8 @@ import {
   CommentBody,
   CommentItem,
   CommentThreadFrame,
-  DocumentReview,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentComment';
+import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 
 interface DocumentReferencePanelProps {
   applicantId: number;
