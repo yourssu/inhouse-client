@@ -3,6 +3,11 @@ interface RecruitingSemester {
   year: number;
 }
 
+/**
+ * 모집 학기를 YYYY-T 형식으로 변환해요.
+ *
+ * @example formatRecruitingSemester({ year: 2025, term: 2 }) // '2025-2'
+ */
 export const formatRecruitingSemester = ({ term, year }: RecruitingSemester) => `${year}-${term}`;
 
 /**
