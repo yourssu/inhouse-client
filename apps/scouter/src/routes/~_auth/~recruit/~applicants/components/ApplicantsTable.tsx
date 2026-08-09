@@ -118,6 +118,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
                   <ApplicantActionMenu
                     applicantId={applicant.applicantId}
                     applicantName={applicant.name}
+                    partId={applicant.partId}
                   />
                 ) : (
                   <IconButton
