@@ -20,6 +20,7 @@ import { ApplicantSelectionBar } from '@/routes/~_auth/~recruit/~applicants/comp
 import { ApplicantsTable } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantsTable';
 import { ApplicantSelectionContext } from '@/routes/~_auth/~recruit/~applicants/context';
 import { applicantTabNameKo } from '@/routes/~_auth/~recruit/~applicants/type';
+import { formatRecruitingSemester } from '@/utils/semester';
 
 const RouteComponent = () => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/applicants/' });
@@ -70,7 +71,9 @@ const RouteComponent = () => {
                         setters.page(undefined);
                       }}
                       size="md"
-                      value={selectedSemester?.semester}
+                      value={
+                        selectedSemester ? formatRecruitingSemester(selectedSemester) : undefined
+                      }
                       variant="outline"
                     />
                     {(search.partId || search.semesterId) && (
@@ -90,7 +93,7 @@ const RouteComponent = () => {
                   <ApplicantsTable
                     searchKeyword={keyword}
                     semesterId={search.semesterId}
-                    state={applicantTabNameEn[tab]}
+                    tab={applicantTabNameEn[tab]}
                   />
                 </Suspense>
               </Paper>

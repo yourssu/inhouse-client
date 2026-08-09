@@ -7,6 +7,8 @@ export const applicantStates = [
   'UNDER_REVIEW',
   'DOCUMENT_ACCEPTED',
   'DOCUMENT_REJECTED',
+  'ASSIGNMENT_ACCEPTED',
+  'ASSIGNMENT_REJECTED',
   'INTERVIEW_ACCEPTED',
   'INTERVIEW_REJECTED',
   'INCUBATING_REJECTED',
@@ -17,6 +19,7 @@ export const ApplicantStateSchema = z.enum(applicantStates);
 
 export const ApplicantSchema = z.object({
   applicantId: z.number(),
+  partId: z.number(),
   division: DivisionNameSchema, // 구분
   part: PartNameSchema, // 파트
   name: z.string(), // 이름
@@ -26,11 +29,11 @@ export const ApplicantSchema = z.object({
   phoneNumber: z.string(), // 전화번호
   department: z.string(), // 학과
   studentId: z.string(), // 학번
-  semester: z.string(), // 학기
+  academicSemester: z.string(), // 재학 학기
   age: z.string(), // 나이
   availableTimes: z.array(z.iso.datetime()), // 면접 가능 시간
-  documentAverageScore: z.number().nullable(), // 서류 평균 점수
-  interviewAverageScore: z.number().nullable(), // 면접 평균 점수
+  documentAverageScore: z.number().nullish(), // 서류 평균 점수
+  interviewAverageScore: z.number().nullish(), // 면접 평균 점수
 });
 
 export const LastApplicantSyncTimeSchema = z.object({
@@ -38,7 +41,7 @@ export const LastApplicantSyncTimeSchema = z.object({
 });
 
 export const ApplicantDocumentAnswerSectionSchema = z.object({
-  sectionId: z.number(),
+  sectionId: z.number().optional(),
   question: z.string(),
   answer: z.string(),
 });
@@ -47,16 +50,16 @@ export const ApplicantDocumentAnswersSchema = z.array(ApplicantDocumentAnswerSec
 
 export const CreateApplicantRequestSchema = z.object({
   partId: z.number(),
-  name: z.string(),
+  name: z.string().min(1),
   state: ApplicantStateSchema,
   applicationDate: z.iso.date(),
   email: z.email(),
-  phoneNumber: z.string(),
+  phoneNumber: z.string().regex(/^010-\d{4}-\d{4}$/),
   departmentId: z.number(),
-  studentId: z.string(),
+  studentId: z.string().min(1),
   semesterId: z.number(),
-  age: z.string(),
-  academicSemester: z.string(),
+  age: z.string().min(1),
+  academicSemester: z.string().regex(/^\d-\d$/),
   availableTimes: z.array(z.iso.datetime()),
 });
 

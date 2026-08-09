@@ -5,10 +5,14 @@ import {
   ApplicantDocumentEvaluationsResponseSchema,
   ApplicantDocumentOthersEvaluationsSchema,
   CommentSchema,
+  CreateCommentRequestSchema,
   type CreateCommentRequestType,
   PartDocumentsRubricsSchema,
+  UpdateApplicantDocumentEvaluationRequestSchema,
+  UpdateCommentRequestSchema,
   type UpdateCommentRequestType,
   type UpdatePartDocumentRubricsRequestType,
+  UpdatePartDocumentsRubricsRequestSchema,
 } from '@/apis/documents/schema';
 
 export type PutApplicantDocumentEvaluationsParams = {
@@ -32,7 +36,8 @@ export const putApplicantDocumentEvaluations = async ({
   applicantId,
   data,
 }: PutApplicantDocumentEvaluationsParams) => {
-  await api.put(`/applicants/${applicantId}/documents/evaluations`, { json: data });
+  const request = UpdateApplicantDocumentEvaluationRequestSchema.parse(data);
+  await api.put(`/applicants/${applicantId}/documents/evaluations`, { json: request });
 };
 
 export const getApplicantDocumentComments = async (applicantId: number) => {
@@ -46,7 +51,8 @@ export type CreateCommentParams = {
 };
 
 export const postApplicantDocumentComment = async ({ applicantId, data }: CreateCommentParams) => {
-  await api.post(`applicants/${applicantId}/documents/comments`, { json: data });
+  const request = CreateCommentRequestSchema.parse(data);
+  await api.post(`applicants/${applicantId}/documents/comments`, { json: request });
 };
 export type DeleteCommentParams = {
   applicantId: number;
@@ -71,8 +77,9 @@ export const patchApplicantDocumentComment = async ({
   commentId,
   data,
 }: UpdateCommentParams) => {
+  const request = UpdateCommentRequestSchema.parse(data);
   const response = await api
-    .patch(`applicants/${applicantId}/documents/comments/${commentId}`, { json: data })
+    .patch(`applicants/${applicantId}/documents/comments/${commentId}`, { json: request })
     .json();
   return CommentSchema.parse(response);
 };
@@ -88,5 +95,6 @@ type PutPartDocumentRubricsParams = {
 };
 
 export const putPartDocumentsRubrics = async ({ partId, data }: PutPartDocumentRubricsParams) => {
-  await api.put(`parts/${partId}/documents/rubrics`, { json: data });
+  const request = UpdatePartDocumentsRubricsRequestSchema.parse(data);
+  await api.put(`parts/${partId}/documents/rubrics`, { json: request });
 };

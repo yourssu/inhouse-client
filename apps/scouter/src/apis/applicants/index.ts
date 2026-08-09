@@ -1,13 +1,13 @@
-import { isNil, omitBy } from 'es-toolkit';
-
 import { api } from '@/apis/api';
 import {
   ApplicantDocumentAnswersSchema,
   ApplicantSchema,
   type ApplicantStateType,
   ApplicantSyncResponseSchema,
+  CreateApplicantRequestSchema,
   type CreateApplicantRequestType,
   LastApplicantSyncTimeSchema,
+  UpdateApplicantRequestSchema,
   type UpdateApplicantRequestType,
 } from '@/apis/applicants/schema';
 
@@ -15,7 +15,8 @@ export type GetApplicantsParams = {
   name?: string;
   partId?: number;
   semesterId?: number;
-  state?: ApplicantStateType;
+  sort?: string;
+  states?: readonly ApplicantStateType[];
 };
 
 export type PatchApplicantParams = {
@@ -23,10 +24,36 @@ export type PatchApplicantParams = {
   data: UpdateApplicantRequestType;
 };
 
+const createApplicantsSearchParams = ({
+  name,
+  partId,
+  semesterId,
+  sort,
+  states,
+}: GetApplicantsParams) => {
+  const searchParams = new URLSearchParams();
+
+  if (name !== undefined) {
+    searchParams.set('name', name);
+  }
+  states?.forEach((state) => searchParams.append('states', state));
+  if (semesterId !== undefined) {
+    searchParams.set('semesterId', String(semesterId));
+  }
+  if (partId !== undefined) {
+    searchParams.set('partId', String(partId));
+  }
+  if (sort !== undefined) {
+    searchParams.set('sort', sort);
+  }
+
+  return searchParams;
+};
+
 export const getApplicants = async (params: GetApplicantsParams = {}) => {
   const response = await api
     .get('applicants', {
-      searchParams: omitBy(params, isNil),
+      searchParams: createApplicantsSearchParams(params),
     })
     .json();
   return ApplicantSchema.array().parse(response);
@@ -48,7 +75,8 @@ export const getApplicantDocumentAnswers = async (applicantId: number) => {
 };
 
 export const postApplicant = async (data: CreateApplicantRequestType) => {
-  await api.post('applicants', { json: data });
+  const request = CreateApplicantRequestSchema.parse(data);
+  await api.post('applicants', { json: request });
 };
 
 export const postApplicantsIncludeFromForms = async () => {
@@ -62,7 +90,8 @@ export const postApplicantsIncludeFromFormsBySemester = async (semesterId: numbe
 };
 
 export const patchApplicant = async ({ applicantId, data }: PatchApplicantParams) => {
-  await api.patch(`applicants/${applicantId}`, { json: data });
+  const request = UpdateApplicantRequestSchema.parse(data);
+  await api.patch(`applicants/${applicantId}`, { json: request });
 };
 
 export const deleteApplicant = async (applicantId: number) => {

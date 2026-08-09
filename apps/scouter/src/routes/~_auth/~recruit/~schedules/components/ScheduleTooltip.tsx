@@ -40,7 +40,7 @@ const ScheduleTooltipContent = ({
         <div className="flex flex-col gap-0.5">
           <div className="text-17 font-semibold">{applicant.name}</div>
           <div className="text-neutralSubtle text-13">
-            {applicant.age}세 · {formatSemester(applicant.semester)}
+            {applicant.age}세 · {formatSemester(applicant.academicSemester)}
           </div>
           <div className="text-neutralSubtle text-13">
             <span>{partNameKo[applicant.part]} 파트</span>

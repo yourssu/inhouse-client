@@ -43,7 +43,7 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
 
   const selectedPart = parts.find((p) => p.partName === mailSelection.partName);
   const { data: applicants } = useSuspenseQuery(
-    applicantsOption({ partId: selectedPart?.partId, state: 'UNDER_REVIEW' }),
+    applicantsOption({ partId: selectedPart?.partId, states: ['UNDER_REVIEW'] }),
   );
 
   const [receivers, setReceivers] = useState(applicants);

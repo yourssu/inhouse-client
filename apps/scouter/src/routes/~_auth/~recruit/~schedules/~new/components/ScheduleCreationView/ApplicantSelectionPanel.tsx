@@ -12,6 +12,7 @@ import { SemesterSelect } from '@/components/SemesterSelect';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduledApplicantIds } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
 import { partNameKo } from '@/types/parts';
+import { formatRecruitingSemester } from '@/utils/semester';
 
 interface ApplicantSelectionPanelProps {
   allApplicants: ApplicantType[];
@@ -62,7 +63,7 @@ export const ApplicantSelectionPanel = ({
   };
 
   const handleSemesterChange = (semester: SemesterType) => {
-    selectSemester(semester.semesterId, semester.semester);
+    selectSemester(semester.semesterId, formatRecruitingSemester(semester));
   };
 
   return (

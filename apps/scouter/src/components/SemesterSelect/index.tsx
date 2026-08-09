@@ -8,6 +8,7 @@ import { assert } from 'es-toolkit';
 import type { SemesterType } from '@/apis/semesters/schema';
 
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
+import { formatRecruitingSemester } from '@/utils/semester';
 
 type SemesterSelectProps = Omit<
   Merge<SelectProps<string>, { onValueChange?: (v: SemesterType) => void }>,
@@ -20,13 +21,13 @@ export const SemesterSelect = ({ onValueChange, className, ...props }: SemesterS
   });
 
   const sortedSemesters = semesters
-    // 최신 학기부터 이름순으로 정렬해요.
-    .toSorted((a, b) => b.semester.localeCompare(a.semester))
-    .map(({ semester }) => semester);
+    // 최신 학기부터 연도와 학기순으로 정렬해요.
+    .toSorted((a, b) => b.year - a.year || b.term - a.term);
 
-  const semesterOptions = sortedSemesters.slice(
-    sortedSemesters.findIndex((v) => v === now.semester),
+  const availableSemesters = sortedSemesters.slice(
+    sortedSemesters.findIndex(({ semesterId }) => semesterId === now.semesterId),
   );
+  const semesterOptions = availableSemesters.map(formatRecruitingSemester);
 
   return (
     <Select
@@ -34,7 +35,9 @@ export const SemesterSelect = ({ onValueChange, className, ...props }: SemesterS
       className={cn(className, 'w-fit')}
       items={semesterOptions}
       onValueChange={(v) => {
-        const semester = semesters.find(({ semester }) => semester === v);
+        const semester = availableSemesters.find(
+          (semester) => formatRecruitingSemester(semester) === v,
+        );
         assert(!!semester, `학기를 찾을 수 없어요: ${v}`);
         onValueChange?.(semester);
       }}

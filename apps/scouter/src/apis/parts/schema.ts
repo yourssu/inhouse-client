@@ -17,6 +17,7 @@ export const PartNameSchema = z.enum([
 export const PartSchema = z.object({
   partId: z.number(),
   partName: PartNameSchema,
+  hasAssignment: z.boolean(),
 });
 
 export type PartType = z.infer<typeof PartSchema>;

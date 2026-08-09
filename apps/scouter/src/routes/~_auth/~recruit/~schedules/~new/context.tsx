@@ -5,6 +5,7 @@ import { createContext, type PropsWithChildren, useCallback, useContext, useStat
 import type { DraftScheduleType } from '@/types/schedule';
 
 import { semestersNowOption } from '@/apis/semesters/query';
+import { formatRecruitingSemester } from '@/utils/semester';
 
 interface ScheduleCreationContextState {
   activeApplicantId: null | number;
@@ -57,7 +58,7 @@ export const ScheduleCreationProvider = ({ children }: PropsWithChildren) => {
   const [state, setState] = useState<ScheduleCreationContextState>({
     ...initialState,
     selectedSemesterId: semester.semesterId,
-    selectedSemester: semester.semester,
+    selectedSemester: formatRecruitingSemester(semester),
   });
 
   const enterCreationMode = useCallback(() => {
@@ -68,7 +69,7 @@ export const ScheduleCreationProvider = ({ children }: PropsWithChildren) => {
     setState({
       ...initialState,
       selectedSemesterId: semester.semesterId,
-      selectedSemester: semester.semester,
+      selectedSemester: formatRecruitingSemester(semester),
     });
   }, [semester]);
 

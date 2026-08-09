@@ -4,6 +4,16 @@ import type { CommentType } from '@/apis/documents/schema';
 
 export type CommentThreadType = CommentType[];
 
+const compareCommentCreatedAt = (a: CommentType, b: CommentType) => {
+  if (!a.createdAt) {
+    return b.createdAt ? 1 : 0;
+  }
+  if (!b.createdAt) {
+    return -1;
+  }
+  return compareAsc(a.createdAt, b.createdAt);
+};
+
 /**
  * parentCommentId는 자신이 속한 스레드의 루트 댓글을 가리킨다(depth는 항상 1).
  * 한 루트에 달린 답글들은 서로 다른 답글이 아니라 모두 같은 parentCommentId를 공유한다.
@@ -47,7 +57,7 @@ export const groupThreadsBySection = (
 
     const replies = (repliesByParentId.get(comment.commentId) ?? [])
       .slice()
-      .sort((a, b) => compareAsc(a.createdAt, b.createdAt));
+      .sort(compareCommentCreatedAt);
     const thread = [comment, ...replies];
 
     const sectionThreads = threadsBySection.get(comment.sectionId) ?? [];
@@ -56,7 +66,7 @@ export const groupThreadsBySection = (
   }
 
   for (const sectionThreads of threadsBySection.values()) {
-    sectionThreads.sort((a, b) => compareAsc(a[0].createdAt, b[0].createdAt));
+    sectionThreads.sort((a, b) => compareCommentCreatedAt(a[0], b[0]));
   }
 
   return threadsBySection;
