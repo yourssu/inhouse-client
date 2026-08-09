@@ -1,4 +1,4 @@
-import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
@@ -32,16 +32,17 @@ import { Answer } from './components/Answer';
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
+  const { partId } = Route.useSearch();
 
-  const [{ data: applicant }, { data: answers }, { data: comments }] = useSuspenseQueries({
-    queries: [
-      applicantByIdOption(Number(applicantId)),
-      applicantDocumentAnswersOption(Number(applicantId)),
-      applicantDocumentCommentsOption(Number(applicantId)),
-    ],
-  });
-
-  const { data: deadline } = useSuspenseQuery(getPartDocumentsDeadlineOption(applicant.partId));
+  const [{ data: applicant }, { data: answers }, { data: comments }, { data: deadline }] =
+    useSuspenseQueries({
+      queries: [
+        applicantByIdOption(Number(applicantId)),
+        applicantDocumentAnswersOption(Number(applicantId)),
+        applicantDocumentCommentsOption(Number(applicantId)),
+        getPartDocumentsDeadlineOption(partId),
+      ],
+    });
 
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '서류 평가'>('서류 평가');
 
