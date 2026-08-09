@@ -11,9 +11,14 @@ import {
 
 const qk = pluginQueryKey('scouter');
 
+export const applicantsQueryKeys = {
+  all: () => qk.for('applicants'),
+  list: (params?: GetApplicantsParams) => qk.for('applicants', params),
+};
+
 export const applicantsOption = (params?: GetApplicantsParams) =>
   queryOptions({
-    queryKey: qk.for('applicants', params),
+    queryKey: applicantsQueryKeys.list(params),
     queryFn: () => getApplicants(params),
   });
 
