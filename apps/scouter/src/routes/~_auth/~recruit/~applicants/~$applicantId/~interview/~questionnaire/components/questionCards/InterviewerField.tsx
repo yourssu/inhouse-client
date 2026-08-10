@@ -10,10 +10,16 @@ type InterviewerFieldName = `${QuestionCategory}.${number}.assignedInterviewerUs
 interface InterviewerFieldProps {
   activeMembers: ActiveMemberType[];
   control: Control<QuestionnaireFormValues>;
+  isRequired?: boolean;
   name: InterviewerFieldName;
 }
 
-export const InterviewerField = ({ activeMembers, control, name }: InterviewerFieldProps) => {
+export const InterviewerField = ({
+  activeMembers,
+  control,
+  isRequired = true,
+  name,
+}: InterviewerFieldProps) => {
   return (
     <div onClick={(event) => event.stopPropagation()}>
       <Controller
@@ -27,7 +33,7 @@ export const InterviewerField = ({ activeMembers, control, name }: InterviewerFi
             value={field.value}
           />
         )}
-        rules={{ required: '질문자를 선택해 주세요.' }}
+        rules={{ required: isRequired && '질문자를 선택해 주세요.' }}
       />
     </div>
   );

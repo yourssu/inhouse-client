@@ -58,6 +58,7 @@ export const CultureQuestionCard = ({
           <InterviewerField
             activeMembers={activeMembers}
             control={control}
+            isRequired={field.value === true}
             name={`CULTURE.${index}.assignedInterviewerUserId`}
           />
         </QuestionCardFrame>
