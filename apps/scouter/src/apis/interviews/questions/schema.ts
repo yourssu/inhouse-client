@@ -33,14 +33,27 @@ export const PartInterviewQuestionSchema = z.object({
 
 export const PartInterviewQuestionsSchema = z.array(PartInterviewQuestionSchema);
 
-export const SaveAssignedQuestionRequestSchema = z.object({
-  assignedInterviewerUserId: z.number(),
+const SaveAssignedQuestionRequestBaseSchema = z.object({
   sourceQuestionId: z.number().optional(),
   content: z.string().optional(),
-  category: QuestionCategorySchema,
   isSelected: z.boolean().optional(),
   requirementIds: z.array(z.number()),
 });
+
+const SaveCultureQuestionRequestSchema = SaveAssignedQuestionRequestBaseSchema.extend({
+  assignedInterviewerUserId: z.number().optional(),
+  category: z.literal('CULTURE'),
+});
+
+const SaveInterviewerRequiredQuestionRequestSchema = SaveAssignedQuestionRequestBaseSchema.extend({
+  assignedInterviewerUserId: z.number(),
+  category: QuestionCategorySchema.exclude(['CULTURE']),
+});
+
+export const SaveAssignedQuestionRequestSchema = z.union([
+  SaveCultureQuestionRequestSchema,
+  SaveInterviewerRequiredQuestionRequestSchema,
+]);
 
 export const SaveAssignedQuestionsRequestSchema = z.object({
   questions: z.array(SaveAssignedQuestionRequestSchema),

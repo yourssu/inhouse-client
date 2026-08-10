@@ -327,7 +327,7 @@ const toSaveAssignedQuestions = (
     sourceQuestionId: question.sourceQuestionId,
   })),
   ...values.CULTURE.map((question) => ({
-    assignedInterviewerUserId: question.assignedInterviewerUserId!,
+    assignedInterviewerUserId: question.assignedInterviewerUserId,
     category: 'CULTURE' as const,
     isSelected: question.isSelected,
     requirementIds: question.requirements.map(({ id }) => id),
