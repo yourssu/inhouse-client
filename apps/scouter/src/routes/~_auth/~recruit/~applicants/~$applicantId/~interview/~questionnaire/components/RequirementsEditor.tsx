@@ -26,6 +26,14 @@ interface RequirementsEditorProps {
 type SaveRequirements = (requirements: InterviewRequirements) => Promise<boolean>;
 type ValidateRequirementContent = (content: string) => string | true;
 
+const validateNonBlankRequirementContent: ValidateRequirementContent = (content) => {
+  if (content.trim() === '') {
+    return '요구조건을 입력해 주세요.';
+  }
+
+  return true;
+};
+
 export const RequirementsEditor = ({
   partId,
   requirements,
@@ -275,8 +283,10 @@ const EditableRequirementGroup = ({
                 </>
               )}
               rules={{
-                required: `요구조건을 입력해 주세요.`,
-                validate: (content) => validateUniqueContent(content),
+                validate: {
+                  nonBlank: validateNonBlankRequirementContent,
+                  unique: (content) => validateUniqueContent(content),
+                },
               }}
             />
           </form>
@@ -415,8 +425,10 @@ const EditableRequirementOption = ({
               </>
             )}
             rules={{
-              required: `요구조건을 입력해 주세요.`,
-              validate: validateContent,
+              validate: {
+                nonBlank: validateNonBlankRequirementContent,
+                unique: validateContent,
+              },
             }}
           />
         </form>
