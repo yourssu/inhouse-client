@@ -125,7 +125,7 @@ const EditableRequirementGroup = ({
     defaultValues: { content: '' },
     mode: 'onChange',
   });
-  const items = requirements[name];
+  const requirementsForCategory = requirements[name];
 
   const handleAddPopoverOpenChange = (isOpen: boolean) => {
     setIsAddPopoverOpen(isOpen);
@@ -139,7 +139,7 @@ const EditableRequirementGroup = ({
 
     const isSaved = await onSave({
       ...requirements,
-      [name]: [...items, { content: content.trim() }],
+      [name]: [...requirementsForCategory, { content: content.trim() }],
     });
 
     if (isSaved) {
@@ -151,33 +151,37 @@ const EditableRequirementGroup = ({
   const handleChange = (index: number, content: string) =>
     onSave({
       ...requirements,
-      [name]: items.map((item, itemIndex) => (itemIndex === index ? { ...item, content } : item)),
+      [name]: requirementsForCategory.map((requirement, requirementIndex) =>
+        requirementIndex === index ? { ...requirement, content } : requirement,
+      ),
     });
 
   const handleDelete = (index: number) =>
     onSave({
       ...requirements,
-      [name]: items.filter((_, itemIndex) => itemIndex !== index),
+      [name]: requirementsForCategory.filter((_, requirementIndex) => requirementIndex !== index),
     });
 
   return (
     <div className="border-greyOpacity200 bg-lightBackground rounded-10 flex flex-col gap-2 border px-4 py-3">
       <div className="flex items-center gap-1.5">
         <h4 className="text-13 text-neutralMuted font-medium">{label}</h4>
-        <span className="text-neutralSubtle text-xs">{items.length}</span>
+        <span className="text-neutralSubtle text-xs">{requirementsForCategory.length}</span>
       </div>
 
-      {items.length === 0 ? (
+      {requirementsForCategory.length === 0 ? (
         <p className="text-neutralSubtle text-xs">등록된 요구조건이 없어요.</p>
       ) : (
         <div className="flex flex-wrap gap-1.5">
-          {items.map((item, index) => (
+          {requirementsForCategory.map((requirement, index) => (
             <EditableRequirementOption
               color={color}
-              content={item.content}
-              isDeleteDisabled={item.id !== undefined && usedRequirementIds.has(item.id)}
+              content={requirement.content}
+              isDeleteDisabled={
+                requirement.id !== undefined && usedRequirementIds.has(requirement.id)
+              }
               isSaving={isSaving}
-              key={item.id ?? `${name}-${index}`}
+              key={requirement.id ?? `${name}-${index}`}
               label={label}
               onChange={(content) => handleChange(index, content)}
               onDelete={() => handleDelete(index)}
