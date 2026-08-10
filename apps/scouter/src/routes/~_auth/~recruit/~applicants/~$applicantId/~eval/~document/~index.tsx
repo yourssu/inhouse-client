@@ -6,7 +6,7 @@ import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Button, Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdPerson } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
@@ -23,12 +23,11 @@ import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~ev
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
 import { Thread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/Thread';
+import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
 import { CommentField } from '../components/CommentField';
-import { groupThreadsBySection } from '../utils/groupThreadsBySection';
-import { Answer } from './components/Answer';
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
@@ -45,52 +44,7 @@ const RouteComponent = () => {
     });
 
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '서류 평가'>('서류 평가');
-
-  const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
-
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const threadsBySectionId = useMemo(() => groupThreadsBySection(comments), [comments]);
-
-  const handleClickSection = (sectionId: number) => {
-    setSelectedSectionId((prev) => (prev === sectionId ? null : sectionId));
-  };
-
-  const handleOpenCommentField = (sectionId: number) => {
-    setSelectedSectionId(sectionId);
-    setOpenCommentSectionId(sectionId);
-  };
-
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const sectionRefs = useRef(new Map<number, HTMLDivElement>());
-
-  const registerSectionRef = (sectionId: number) => {
-    const ss = (el: HTMLDivElement | null) => {
-      if (el) {
-        sectionRefs.current.set(sectionId, el);
-      } else {
-        sectionRefs.current.delete(sectionId);
-      }
-    };
-
-    return ss;
-  };
-  useEffect(() => {
-    if (selectedSectionId == null) {
-      return;
-    }
-
-    const containerEl = scrollContainerRef.current;
-    const targetEl = sectionRefs.current.get(selectedSectionId);
-    if (!containerEl || !targetEl) {
-      return;
-    }
-
-    const containerRect = containerEl.getBoundingClientRect();
-    const targetRect = targetEl.getBoundingClientRect();
-    const nextScrollTop = containerEl.scrollTop + (targetRect.top - containerRect.top);
-
-    containerEl.scrollTo({ behavior: 'smooth', top: nextScrollTop });
-  }, [selectedSectionId]);
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -135,69 +89,29 @@ const RouteComponent = () => {
             </Paper>
           }
         >
-          <Paper className="flex-[1_1_0]">
-            <div className="flex flex-col gap-4 px-5">
-              {answers.map((answer, index) => {
-                const sectionId = answer.sectionId;
-                return (
-                  <Answer
-                    documentAnswer={answer}
-                    isSelected={sectionId !== undefined && sectionId === selectedSectionId}
-                    key={sectionId ?? `${answer.question}-${index}`}
-                    onClick={() => {
-                      if (sectionId !== undefined) {
-                        handleClickSection(sectionId);
-                      }
-                    }}
-                    onOpenCommentField={() => {
-                      if (sectionId !== undefined) {
-                        handleOpenCommentField(sectionId);
-                      }
-                    }}
-                  />
-                );
-              })}
-            </div>
-            <div className="relative px-5">
-              <div
-                className="sticky top-3 -mx-4 flex max-h-[calc(100vh-1.5rem)] flex-col gap-5 overflow-y-auto px-4"
-                ref={scrollContainerRef}
-              >
-                {answers.flatMap(({ sectionId }) => {
-                  if (sectionId === undefined) {
-                    return [];
-                  }
-                  const threads = threadsBySectionId.get(sectionId) ?? [];
-                  const canAddComment = openCommentSectionId === sectionId;
-
-                  return (
-                    <div
-                      className="flex flex-col gap-5"
-                      key={sectionId}
-                      ref={registerSectionRef(sectionId)}
-                    >
-                      {canAddComment && (
-                        <CommentField
-                          applicantId={Number(applicantId)}
-                          onClose={() => setOpenCommentSectionId(null)}
-                          parentCommentId={null}
-                          sectionId={sectionId}
-                        />
-                      )}
-                      {threads.map((thread) => (
-                        <Thread
-                          applicantId={Number(applicantId)}
-                          key={thread[0].commentId}
-                          selectedSectionId={selectedSectionId}
-                          thread={thread}
-                        />
-                      ))}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </Paper>
+          <DocumentReview
+            answers={answers}
+            comments={comments}
+            onAddComment={setOpenCommentSectionId}
+            renderBeforeThreads={(sectionId) =>
+              openCommentSectionId === sectionId && (
+                <CommentField
+                  applicantId={Number(applicantId)}
+                  onClose={() => setOpenCommentSectionId(null)}
+                  parentCommentId={null}
+                  sectionId={sectionId}
+                />
+              )
+            }
+            renderThread={({ isSelected, thread }) => (
+              <Thread
+                applicantId={Number(applicantId)}
+                isSelected={isSelected}
+                key={thread[0].commentId}
+                thread={thread}
+              />
+            )}
+          />
           <Paper className="relative w-100">
             <SwitchCase
               caseBy={{
