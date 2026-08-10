@@ -24,6 +24,7 @@ interface RequirementsEditorProps {
 }
 
 type SaveRequirements = (requirements: InterviewRequirements) => Promise<boolean>;
+type ValidateRequirementContent = (content: string) => string | true;
 
 export const RequirementsEditor = ({
   partId,
@@ -126,6 +127,25 @@ const EditableRequirementGroup = ({
     mode: 'onChange',
   });
   const requirementsForCategory = requirements[name];
+  const existingRequirementContents = new Set(
+    requirementsForCategory.map(({ content }) => content.trim()),
+  );
+
+  const validateUniqueContent = (content: string, currentContent?: string) => {
+    const normalizedContent = content.trim();
+
+    // 수정한 요구조건이 기존 요구조건과 동일한 경우 통과
+    if (normalizedContent === currentContent?.trim()) {
+      return true;
+    }
+
+    // 이미 존재하는 요구조건이라면 에러 메시지 반환
+    if (existingRequirementContents.has(normalizedContent)) {
+      return '이미 존재하는 요구조건이에요.';
+    }
+
+    return true;
+  };
 
   const handleAddPopoverOpenChange = (isOpen: boolean) => {
     setIsAddPopoverOpen(isOpen);
@@ -186,6 +206,7 @@ const EditableRequirementGroup = ({
               onChange={(content) => handleChange(index, content)}
               onDelete={() => handleDelete(index)}
               placeholder={placeholder}
+              validateContent={(content) => validateUniqueContent(content, requirement.content)}
             />
           ))}
         </div>
@@ -255,6 +276,7 @@ const EditableRequirementGroup = ({
               )}
               rules={{
                 required: `요구조건을 입력해 주세요.`,
+                validate: (content) => validateUniqueContent(content),
               }}
             />
           </form>
@@ -273,6 +295,7 @@ interface EditableRequirementOptionProps {
   onChange: (content: string) => Promise<boolean>;
   onDelete: () => Promise<boolean>;
   placeholder: string;
+  validateContent: ValidateRequirementContent;
 }
 
 interface EditableRequirementFormValues {
@@ -291,6 +314,7 @@ const EditableRequirementOption = ({
   onChange,
   onDelete,
   placeholder,
+  validateContent,
 }: EditableRequirementOptionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { control, handleSubmit, reset } = useForm<EditableRequirementFormValues>({
@@ -392,6 +416,7 @@ const EditableRequirementOption = ({
             )}
             rules={{
               required: `요구조건을 입력해 주세요.`,
+              validate: validateContent,
             }}
           />
         </form>
