@@ -1,4 +1,4 @@
-import * as PrimivtivePopover from '@radix-ui/react-popover';
+import * as PrimitivePopover from '@radix-ui/react-popover';
 import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 import { type SetStateAction, useContext, useState } from 'react';
@@ -14,9 +14,10 @@ import * as styles from './Popover.css';
 export interface PopoverProps {
   behavior?: PopoverBehaviorType;
   onOpenChange?: (v: boolean) => void;
+  open?: boolean;
 }
 
-interface ContentProps extends PrimivtivePopover.PopoverContentProps {
+interface ContentProps extends PrimitivePopover.PopoverContentProps {
   onCloseWithOutside?: () => void;
 }
 
@@ -36,8 +37,8 @@ const Content = ({
   };
 
   return (
-    <PrimivtivePopover.Portal>
-      <PrimivtivePopover.Content
+    <PrimitivePopover.Portal>
+      <PrimitivePopover.Content
         className={styles.primitiveContent}
         {...props}
         onClick={onClick}
@@ -67,8 +68,8 @@ const Content = ({
           <div className={clsx(popoverSurface({ padding: 'lg' }), className)}>{children}</div>
         </div>
         {side === 'top' && <div style={{ height: sideOffset }} />}
-      </PrimivtivePopover.Content>
-    </PrimivtivePopover.Portal>
+      </PrimitivePopover.Content>
+    </PrimitivePopover.Portal>
   );
 };
 
@@ -77,11 +78,11 @@ const Trigger = ({
   className,
   asChild = true,
   ...props
-}: React.PropsWithChildren<PrimivtivePopover.PopoverTriggerProps>) => {
+}: React.PropsWithChildren<PrimitivePopover.PopoverTriggerProps>) => {
   const { onClick, onPointerEnter, onPointerLeave } = usePopoverBehavior();
 
   return (
-    <PrimivtivePopover.Trigger
+    <PrimitivePopover.Trigger
       {...props}
       asChild={asChild}
       className={clsx(styles.trigger, className)}
@@ -94,7 +95,7 @@ const Trigger = ({
       tabIndex={asChild ? props.tabIndex : -1}
     >
       {children}
-    </PrimivtivePopover.Trigger>
+    </PrimitivePopover.Trigger>
   );
 };
 
@@ -112,25 +113,25 @@ export const Popover = ({
   children,
   behavior = 'click',
   onOpenChange,
+  open: controlledOpen,
 }: React.PropsWithChildren<PopoverProps>) => {
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
 
   const setOpenWrapper = (v: SetStateAction<boolean>) => {
-    if (typeof v === 'function') {
-      const next = v(open);
-      onOpenChange?.(next);
-      setOpen(() => next);
-    } else {
-      onOpenChange?.(v);
-      setOpen(v);
+    const next = typeof v === 'function' ? v(open) : v;
+    onOpenChange?.(next);
+
+    if (controlledOpen === undefined) {
+      setUncontrolledOpen(next);
     }
   };
 
   return (
     <PopoverContext.Provider value={{ behavior, open, setOpen: setOpenWrapper }}>
-      <PrimivtivePopover.Root onOpenChange={(v) => setOpenWrapper(v)} open={open}>
+      <PrimitivePopover.Root onOpenChange={(v) => setOpenWrapper(v)} open={open}>
         {children}
-      </PrimivtivePopover.Root>
+      </PrimitivePopover.Root>
     </PopoverContext.Provider>
   );
 };
