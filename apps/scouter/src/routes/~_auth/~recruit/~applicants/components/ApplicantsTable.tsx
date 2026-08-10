@@ -23,11 +23,17 @@ import { formatSemester } from '@/utils/semester';
 
 interface ApplicantsTableProps {
   searchKeyword: string;
+  semester: string;
   semesterId?: number;
   tab: ApplicantTabNameType;
 }
 
-export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTableProps) => {
+export const ApplicantsTable = ({
+  searchKeyword,
+  semester,
+  semesterId,
+  tab,
+}: ApplicantsTableProps) => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/applicants/' });
   const setters = {
     page: useSetStateSelector(setSearch, 'page'),
@@ -118,6 +124,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
                   hasAssignment={parts.some(
                     (part) => part.partId === applicant.partId && part.hasAssignment,
                   )}
+                  semester={semester}
                 />
               </Table.Cell>
             </Table.Row>
