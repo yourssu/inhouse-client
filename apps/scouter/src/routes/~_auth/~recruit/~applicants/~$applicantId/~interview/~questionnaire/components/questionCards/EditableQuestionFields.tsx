@@ -48,7 +48,15 @@ export const EditableQuestionFields = ({
                 )}
               </>
             )}
-            rules={{ required: '질문 내용을 입력해 주세요.' }}
+            rules={{
+              validate: (content) => {
+                if (content.trim() === '') {
+                  return '질문 내용을 입력해 주세요.';
+                }
+
+                return true;
+              },
+            }}
           />
         </div>
 
