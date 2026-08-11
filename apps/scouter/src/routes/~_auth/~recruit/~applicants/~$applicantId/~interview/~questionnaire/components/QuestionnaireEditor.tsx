@@ -283,30 +283,30 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
     switch (question.category) {
       case 'CULTURE':
         formValues.CULTURE.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId,
+          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
           content: question.content,
-          isSelected: question.isSelected,
+          isSelected: question.isSelected ?? undefined,
           requirements: question.requirements,
-          sourceQuestionId: question.sourceQuestionId,
+          sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
       case 'GLOBAL':
         formValues.GLOBAL.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId,
+          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
           content: question.content,
-          sourceQuestionId: question.sourceQuestionId,
+          sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
       case 'PART':
         formValues.PART.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId,
+          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
         break;
       case 'PERSONAL':
         formValues.PERSONAL.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId,
+          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
