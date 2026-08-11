@@ -2031,9 +2031,138 @@
         }
       }
     },
+    "/admin/recruiting/requirements/team-fit": {
+      "post": {
+        "tags": ["admin-requirement-controller"],
+        "operationId": "saveTeamFit",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "semester",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "form",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RequirementsForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/requirements/job-fit": {
+      "post": {
+        "tags": ["admin-requirement-controller"],
+        "operationId": "saveJobFit",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "semester",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "form",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RequirementsForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/requirements/culture-fit": {
+      "post": {
+        "tags": ["admin-requirement-controller"],
+        "operationId": "saveCultureFit",
+        "parameters": [
+          {
+            "name": "semester",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "form",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RequirementsForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/recruiting/parts/{partId}/assignments/toggle": {
       "post": {
-        "tags": ["recruiting-admin-controller"],
+        "tags": ["admin-part-controller"],
         "operationId": "toggleAssignment",
         "parameters": [
           {
@@ -4006,24 +4135,30 @@
         "properties": {
           "assignedInterviewerUserId": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "배정할 면접관 유저 ID"
           },
           "sourceQuestionId": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "카탈로그 원본 질문 ID (개인 질문인 경우 null)"
           },
           "content": {
-            "type": "string"
+            "type": "string",
+            "description": "질문 내용 (개인 질문이거나 PART 질문의 내용을 수정할 경우)"
           },
           "category": {
             "type": "string",
+            "description": "질문 카테고리",
             "enum": ["GLOBAL", "CULTURE", "PART", "PERSONAL"]
           },
           "isSelected": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "질문 선택 여부"
           },
           "requirementIds": {
             "type": "array",
+            "description": "질문 요구조건 ID 목록 (PERSONAL 혹은 PART 질문 수정 시 필요)",
             "items": {
               "type": "integer",
               "format": "int64"
@@ -4049,28 +4184,35 @@
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "배정 질문 ID (초기 기본 질문인 경우 null)"
           },
           "assignedInterviewerUserId": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "배정된 면접관 유저 ID"
           },
           "sourceQuestionId": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "카탈로그 원본 질문 ID (개인 질문인 경우 null)"
           },
           "content": {
-            "type": "string"
+            "type": "string",
+            "description": "질문 내용"
           },
           "category": {
             "type": "string",
+            "description": "질문 카테고리",
             "enum": ["GLOBAL", "CULTURE", "PART", "PERSONAL"]
           },
           "isSelected": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "질문 선택 여부"
           },
           "requirements": {
             "type": "array",
+            "description": "질문 요구조건 리스트",
             "items": {
               "$ref": "#/components/schemas/ReadQuestionRequirementResponse"
             }
@@ -4846,6 +4988,31 @@
           }
         },
         "required": ["cid", "contentType", "fileId", "fileName", "usage", "used"]
+      },
+      "RequirementItemParam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": ["content"]
+      },
+      "RequirementsForm": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequirementItemParam"
+            }
+          }
+        },
+        "required": ["items"]
       },
       "UpdateScheduleLocationRequest": {
         "type": "object",
