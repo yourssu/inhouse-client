@@ -8,12 +8,12 @@ export const QuestionRequirementSchema = z.object({
 });
 
 export const AssignedQuestionSchema = z.object({
-  id: z.number().optional(),
-  assignedInterviewerUserId: z.number().optional(),
-  sourceQuestionId: z.number().optional(),
+  id: z.number().nullish(),
+  assignedInterviewerUserId: z.number().nullish(),
+  sourceQuestionId: z.number().nullish(),
   content: z.string(),
   category: QuestionCategorySchema,
-  isSelected: z.boolean().optional(),
+  isSelected: z.boolean().nullish(),
   requirements: z.array(QuestionRequirementSchema),
 });
 
