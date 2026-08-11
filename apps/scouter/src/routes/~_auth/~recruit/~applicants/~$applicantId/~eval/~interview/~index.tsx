@@ -26,7 +26,7 @@ const RouteComponent = () => {
             title="면접 평가 준비 중이에요"
           />
         </Paper>
-        <Paper className="w-md shrink-0">사이드바</Paper>
+        <Paper className="w-100 shrink-0">사이드바</Paper>
       </main>
     </PageLayout.Content>
   );

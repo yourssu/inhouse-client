@@ -43,7 +43,7 @@ const QuestionnairePage = () => {
           </PanelBoundary>
         </section>
 
-        <aside aria-label="면접 질문지" className="sticky top-3 h-fit w-112 shrink-0">
+        <aside aria-label="면접 질문지" className="sticky top-3 h-fit w-100 shrink-0">
           <PanelBoundary
             description="면접 질문지와 요구조건을 다시 불러와 주세요."
             fallback={<QuestionnairePanelSkeleton />}
