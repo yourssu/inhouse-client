@@ -2,13 +2,11 @@ import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Button, Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
 import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { MdPerson } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
 import { z } from 'zod/v4';
 
@@ -22,9 +20,8 @@ import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
+import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
-import { partNameKo } from '@/types/parts';
-import { formatSemester } from '@/utils/semester';
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
@@ -44,36 +41,9 @@ const RouteComponent = () => {
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
-      <div className="flex items-center justify-between">
-        <div className="flex shrink-0 items-center gap-3">
-          <div className="bg-grey200 flex size-12 items-center justify-center rounded-lg">
-            <MdPerson className="size-7" />
-          </div>
-          <div>
-            <div className="text-sm">
-              <span className="text-violet600 font-medium">서류 평가</span>
-              <span className="text-neutralSubtle mx-1.5">·</span>
-              <span className="text-neutralSubtle">
-                {formatTemplates['(2026년)? 1월 1일, 오후 11:00'](deadline.deadline)} 마감
-              </span>
-            </div>
-            <div className="text-xl font-semibold">{applicant.name} 지원자</div>
-          </div>
-        </div>
+      <ApplicantPageHeader applicant={applicant} deadline={deadline.deadline} label="서류 평가" />
 
-        <div className="flex shrink-0 items-center gap-3">
-          <InfoItem label="지원 파트">{partNameKo[applicant.part]}</InfoItem>
-          <InfoItem label="학번">{applicant.studentId}</InfoItem>
-          <InfoItem label="학과">{applicant.department}</InfoItem>
-          <InfoItem label="현재 학기">{formatSemester(applicant.academicSemester)}</InfoItem>
-          <InfoItem label="나이">{applicant.age}세</InfoItem>
-          <InfoItem label="지원일">
-            {formatTemplates['2026-01-01'](applicant.applicationDate)}
-          </InfoItem>
-        </div>
-      </div>
-
-      <div className="flex flex-[1_1_0] gap-4 pt-7">
+      <main className="flex flex-[1_1_0] gap-4 pt-7">
         <ErrorBoundary
           fallback={
             <Paper className="flex size-full items-center justify-center">
@@ -128,17 +98,8 @@ const RouteComponent = () => {
             />
           </Paper>
         </ErrorBoundary>
-      </div>
+      </main>
     </PageLayout.Content>
-  );
-};
-
-const InfoItem = ({ label, children }: React.PropsWithChildren<{ label: string }>) => {
-  return (
-    <div className="text-13 border-greyOpacity200 flex items-center gap-2.5 not-first-of-type:border-l not-first-of-type:pl-3">
-      <div className="text-neutralSubtle">{label}</div>
-      <div className="text-neutralMuted font-medium">{children}</div>
-    </div>
   );
 };
 

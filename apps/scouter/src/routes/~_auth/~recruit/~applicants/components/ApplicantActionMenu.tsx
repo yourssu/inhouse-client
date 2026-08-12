@@ -45,6 +45,13 @@ export const ApplicantActionMenu = ({
     });
   };
 
+  const handleInterviewEvaluationClick = () => {
+    navigate({
+      params: { applicantId: String(applicantId) },
+      to: '/recruit/applicants/$applicantId/eval/interview',
+    });
+  };
+
   const handleQuestionnaireClick = () => {
     navigate({
       params: { applicantId: String(applicantId) },
@@ -93,9 +100,7 @@ export const ApplicantActionMenu = ({
         {hasAssignment && (
           <Menu.ButtonItem onClick={handleAssignmentEvaluationClick}>과제 평가</Menu.ButtonItem>
         )}
-        <Menu.ButtonItem className="disabled:cursor-not-allowed disabled:opacity-40" disabled>
-          면접 평가 · 준비 중
-        </Menu.ButtonItem>
+        <Menu.ButtonItem onClick={handleInterviewEvaluationClick}>면접 평가</Menu.ButtonItem>
         <Menu.ButtonItem onClick={handleQuestionnaireClick}>질문지 설계</Menu.ButtonItem>
       </Menu.Content>
     </Menu>

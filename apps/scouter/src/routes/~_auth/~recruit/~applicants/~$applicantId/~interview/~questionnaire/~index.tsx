@@ -3,11 +3,9 @@ import type { ReactNode } from 'react';
 import { QueryErrorResetBoundary, useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { Badge, Button, Result } from '@yourssu-inhouse/interior';
+import { Button, Result } from '@yourssu-inhouse/interior';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { MdPerson } from 'react-icons/md';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { applicantDocumentCommentsOption } from '@/apis/documents/query';
@@ -23,10 +21,8 @@ import {
   QuestionnairePageSkeleton,
   QuestionnairePanelSkeleton,
 } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireSkeletons';
+import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
-import { applicantStateKo } from '@/types/applicants';
-import { partNameKo } from '@/types/parts';
-import { formatSemester } from '@/utils/semester';
 
 const QuestionnairePage = () => {
   const { applicantId } = Route.useParams();
@@ -41,33 +37,7 @@ const QuestionnairePage = () => {
 
   return (
     <PageLayout.Content className="self-start py-7!" maxWidth="full">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="bg-grey200 flex size-12 shrink-0 items-center justify-center rounded-lg">
-            <MdPerson aria-hidden className="size-7" />
-          </div>
-          <div className="min-w-0">
-            <div className="text-violet600 text-sm font-medium">질문지 설계</div>
-            <h1 className="truncate text-xl font-semibold">{applicant.name} 지원자</h1>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          <InfoItem label="지원 파트">{partNameKo[applicant.part]}</InfoItem>
-          <InfoItem label="심사 상태">
-            <Badge color="violet" size="sm">
-              {applicantStateKo[applicant.state]}
-            </Badge>
-          </InfoItem>
-          <InfoItem label="학번">{applicant.studentId}</InfoItem>
-          <InfoItem label="학과">{applicant.department}</InfoItem>
-          <InfoItem label="현재 학기">{formatSemester(applicant.academicSemester)}</InfoItem>
-          <InfoItem label="나이">{applicant.age}세</InfoItem>
-          <InfoItem label="지원일">
-            {formatTemplates['2026-01-01'](applicant.applicationDate)}
-          </InfoItem>
-        </div>
-      </header>
+      <ApplicantPageHeader applicant={applicant} label="질문지 설계" />
 
       <main className="flex min-w-0 gap-4 pt-7">
         <section aria-label="지원서 답변과 코멘트" className="min-w-0 flex-1">
@@ -80,7 +50,7 @@ const QuestionnairePage = () => {
           </PanelBoundary>
         </section>
 
-        <aside aria-label="면접 질문지" className="sticky top-3 h-fit w-112 shrink-0">
+        <aside aria-label="면접 질문지" className="sticky top-3 h-fit w-100 shrink-0">
           <PanelBoundary
             description="면접 질문지와 요구조건을 다시 불러와 주세요."
             fallback={<QuestionnairePanelSkeleton />}
@@ -151,15 +121,6 @@ const PageError = ({ onRetry }: { onRetry: () => void }) => {
         </Button>
       </Paper>
     </PageLayout.Content>
-  );
-};
-
-const InfoItem = ({ label, children }: React.PropsWithChildren<{ label: string }>) => {
-  return (
-    <div className="text-13 border-greyOpacity200 flex items-center gap-2.5 not-first-of-type:border-l not-first-of-type:pl-3">
-      <div className="text-neutralSubtle">{label}</div>
-      <div className="text-neutralMuted font-medium">{children}</div>
-    </div>
   );
 };
 
