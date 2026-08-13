@@ -1,6 +1,6 @@
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
-import { useId, useState } from 'react';
+import { useDeferredValue, useId, useState } from 'react';
 
 interface InterviewTabProps<TTab extends string> {
   children: (p: { tab: Readonly<TTab> }) => React.ReactNode;
@@ -15,6 +15,7 @@ export const InterviewTab = <TTab extends string>({
 }: InterviewTabProps<TTab>) => {
   const id = useId();
   const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0] ?? null);
+  const deferredActiveTab = useDeferredValue(activeTab);
 
   const handleTabClick = (nextTab: TTab) => {
     setActiveTab((prev) => (prev === nextTab ? null : nextTab));
@@ -62,7 +63,7 @@ export const InterviewTab = <TTab extends string>({
         </div>
       </LayoutGroup>
       <AnimatePresence initial={false}>
-        {activeTab !== null && (
+        {deferredActiveTab !== null && (
           <motion.div
             animate={{ width: 'auto', opacity: 1 }}
             className="overflow-hidden"
@@ -70,7 +71,7 @@ export const InterviewTab = <TTab extends string>({
             initial={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            {children({ tab: activeTab })}
+            {children({ tab: deferredActiveTab })}
           </motion.div>
         )}
       </AnimatePresence>
