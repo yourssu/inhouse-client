@@ -10,7 +10,7 @@ interface DocumentAnswerForInterviewProps {
 export const DocumentAnswerForInterview = ({ applicantId }: DocumentAnswerForInterviewProps) => {
   const { data: documentAnswers } = useSuspenseQuery({
     ...applicantDocumentAnswersOption(applicantId),
-    staleTime: 10 * 60 * 1000,
+    staleTime: Infinity,
   });
 
   return (
