@@ -14,10 +14,10 @@ export const InterviewTab = <TTab extends string>({
   className,
 }: InterviewTabProps<TTab>) => {
   const id = useId();
-  const [openTab, setOpenTab] = useState<null | TTab>(tabs[0]);
+  const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0]);
 
   const handleTabClick = (nextTab: TTab) => {
-    setOpenTab((prev) => (prev === nextTab ? null : nextTab));
+    setActiveTab((prev) => (prev === nextTab ? null : nextTab));
   };
 
   return (
@@ -25,7 +25,7 @@ export const InterviewTab = <TTab extends string>({
       <LayoutGroup id={id}>
         <div className="flex flex-col gap-1.5" role="tablist">
           {tabs.map((item) => {
-            const isHighlighted = item === openTab;
+            const isHighlighted = item === activeTab;
 
             return (
               <button
@@ -62,7 +62,7 @@ export const InterviewTab = <TTab extends string>({
         </div>
       </LayoutGroup>
       <AnimatePresence initial={false}>
-        {openTab !== null && (
+        {activeTab !== null && (
           <motion.div
             animate={{ width: 'auto', opacity: 1 }}
             className="overflow-hidden"
@@ -70,7 +70,7 @@ export const InterviewTab = <TTab extends string>({
             initial={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            {children({ tab: openTab })}
+            {children({ tab: activeTab })}
           </motion.div>
         )}
       </AnimatePresence>
