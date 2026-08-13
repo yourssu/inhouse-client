@@ -3,9 +3,9 @@ import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { useId, useState } from 'react';
 
 interface InterviewTabProps<TTab extends string> {
-  children: (p: { tab: TTab }) => React.ReactNode;
+  children: (p: { tab: Readonly<TTab> }) => React.ReactNode;
   className?: string;
-  tabs: TTab[];
+  tabs: Readonly<TTab[]>;
 }
 
 export const InterviewTab = <TTab extends string>({

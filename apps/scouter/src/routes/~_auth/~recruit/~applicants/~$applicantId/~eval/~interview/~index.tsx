@@ -9,7 +9,7 @@ import { Paper } from '@/components/Paper';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 
-const INTERVIEW_TABS = ['질문', '지원서'] as const;
+const INTERVIEW_TABS: readonly string[] = ['질문', '지원서'];
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
@@ -20,7 +20,7 @@ const RouteComponent = () => {
       <ApplicantPageHeader applicant={applicant} label="면접 평가" />
 
       <main className="flex flex-[1_1_0] items-start gap-4 pt-7">
-        <InterviewTab className="w-fit" tabs={[...INTERVIEW_TABS]}>
+        <InterviewTab className="w-fit" tabs={INTERVIEW_TABS}>
           {({ tab }) => (
             <Paper className="h-full w-90 flex-1 p-4">
               <SwitchCase
