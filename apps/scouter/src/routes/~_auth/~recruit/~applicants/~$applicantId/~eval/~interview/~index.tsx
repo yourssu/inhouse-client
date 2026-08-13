@@ -1,14 +1,15 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
-import { Result } from '@yourssu-inhouse/interior';
-import { lotties } from '@yourssu-inhouse/resources';
 import { Suspense } from 'react';
+import { SwitchCase } from 'react-simplikit';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { Paper } from '@/components/Paper';
+import { Tab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/Tab';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
+
+const INTERVIEW_TABS = ['질문', '지원서'] as const;
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
@@ -18,14 +19,21 @@ const RouteComponent = () => {
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="면접 평가" />
 
-      <main className="flex flex-[1_1_0] gap-4 pt-7">
-        <Paper className="h-full flex-1 items-center justify-center">
-          <Result
-            description="면접 평가 기능은 아직 준비 중이에요."
-            figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
-            title="면접 평가 준비 중이에요"
-          />
-        </Paper>
+      <main className="flex flex-[1_1_0] items-start gap-4 pt-7">
+        <Tab className="w-fit" tabs={[...INTERVIEW_TABS]}>
+          {({ tab }) => (
+            <Paper className="h-full w-90 flex-1 p-4">
+              <SwitchCase
+                caseBy={{
+                  질문: () => <div>질문 콘텐츠 준비 중</div>,
+                  지원서: () => <div>지원서 콘텐츠 준비 중</div>,
+                }}
+                value={tab}
+              />
+            </Paper>
+          )}
+        </Tab>
+        <Paper className="h-full flex-1 flex-col gap-4">내부 패널</Paper>
         <Paper className="w-100 shrink-0">사이드바</Paper>
       </main>
     </PageLayout.Content>
