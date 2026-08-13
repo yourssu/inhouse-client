@@ -9,7 +9,7 @@ import { Paper } from '@/components/Paper';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 
-const INTERVIEW_TABS: readonly string[] = ['질문', '지원서'];
+const INTERVIEW_TABS = ['질문', '지원서'] as const;
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
