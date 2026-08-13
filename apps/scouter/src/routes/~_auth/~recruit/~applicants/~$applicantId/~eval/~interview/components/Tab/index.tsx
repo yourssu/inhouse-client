@@ -28,7 +28,7 @@ export const Tab = <TTab extends string>({ tabs, children, className }: TabProps
                 aria-selected={isHighlighted}
                 className={cn(
                   'rounded-6 relative flex cursor-pointer border-none px-3 py-2 transition-colors outline-none',
-                  isHighlighted ? 'bg-greyOpacity100' : 'bg-white',
+                  isHighlighted ? 'bg-greyOpacity100' : 'bg-lightBackground',
                 )}
                 key={item}
                 onClick={() => handleTabClick(item)}
