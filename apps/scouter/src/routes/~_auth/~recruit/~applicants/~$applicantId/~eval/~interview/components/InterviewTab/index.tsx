@@ -14,7 +14,7 @@ export const InterviewTab = <TTab extends string>({
   className,
 }: InterviewTabProps<TTab>) => {
   const id = useId();
-  const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0]);
+  const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0] ?? null);
 
   const handleTabClick = (nextTab: TTab) => {
     setActiveTab((prev) => (prev === nextTab ? null : nextTab));
