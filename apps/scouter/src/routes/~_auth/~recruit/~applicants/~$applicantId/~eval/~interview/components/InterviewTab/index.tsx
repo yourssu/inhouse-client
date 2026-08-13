@@ -2,13 +2,17 @@ import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { useId, useState } from 'react';
 
-interface TabProps<TTab extends string> {
+interface InterviewTabProps<TTab extends string> {
   children: (p: { tab: TTab }) => React.ReactNode;
   className?: string;
   tabs: TTab[];
 }
 
-export const Tab = <TTab extends string>({ tabs, children, className }: TabProps<TTab>) => {
+export const InterviewTab = <TTab extends string>({
+  tabs,
+  children,
+  className,
+}: InterviewTabProps<TTab>) => {
   const id = useId();
   const [openTab, setOpenTab] = useState<null | TTab>(tabs[0]);
 
