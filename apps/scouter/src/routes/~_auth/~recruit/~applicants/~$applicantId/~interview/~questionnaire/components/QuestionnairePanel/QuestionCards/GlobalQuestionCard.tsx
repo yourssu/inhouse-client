@@ -1,13 +1,11 @@
 import type { Control } from 'react-hook-form';
 
 import type { ActiveMemberType } from '@/apis/members/schema';
-import type {
-  GlobalQuestionFormValue,
-  QuestionnaireFormValues,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
-import { InterviewerField } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/InterviewerField';
-import { QuestionCardFrame } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/QuestionCardFrame';
+import type { GlobalQuestionFormValue, QuestionnaireFormValues } from '../questionnaireForm';
+
+import { InterviewerField } from './InterviewerField';
+import { QuestionCardFrame } from './QuestionCardFrame';
 
 interface GlobalQuestionCardProps {
   activeMembers: ActiveMemberType[];

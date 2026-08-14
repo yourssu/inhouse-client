@@ -3,9 +3,10 @@ import { type Control, Controller } from 'react-hook-form';
 
 import type { QuestionCategory } from '@/apis/interviews/questions/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
-import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
-import { QuestionnaireErrorMessage } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireErrorMessage';
+import type { QuestionnaireFormValues } from '../questionnaireForm';
+
+import { QuestionnaireErrorMessage } from '../QuestionnaireErrorMessage';
 
 type InterviewerFieldName = `${QuestionCategory}.${number}.assignedInterviewerUserId`;
 

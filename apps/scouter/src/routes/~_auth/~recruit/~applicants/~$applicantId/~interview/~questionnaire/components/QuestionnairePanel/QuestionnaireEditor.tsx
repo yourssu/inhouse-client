@@ -15,20 +15,22 @@ import type {
 } from '@/apis/interviews/questions/schema';
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
-import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
 import { saveAssignedQuestionsMutationOptions } from '@/apis/interviews/questions/query';
 import { Paper } from '@/components/Paper';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { CultureQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/CultureQuestionCard';
-import { GlobalQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/GlobalQuestionCard';
-import { PartQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/PartQuestionCard';
-import { PersonalQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/PersonalQuestionCard';
-import { QuestionnaireErrorMessage } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireErrorMessage';
-import { QuestionSection } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionSection';
-import { teamJobRequirementCategories } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/requirementOptions';
-import { RequirementsSection } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/RequirementsSection';
+
+import type { QuestionnaireFormValues } from './questionnaireForm';
+
+import { CultureQuestionCard } from './QuestionCards/CultureQuestionCard';
+import { GlobalQuestionCard } from './QuestionCards/GlobalQuestionCard';
+import { PartQuestionCard } from './QuestionCards/PartQuestionCard';
+import { PersonalQuestionCard } from './QuestionCards/PersonalQuestionCard';
+import { QuestionnaireErrorMessage } from './QuestionnaireErrorMessage';
+import { QuestionSection } from './QuestionSection';
+import { teamJobRequirementCategories } from './Requirements/requirementOptions';
+import { RequirementsSection } from './Requirements/RequirementsSection';
 
 interface QuestionnaireEditorProps {
   activeMembers: ActiveMemberType[];

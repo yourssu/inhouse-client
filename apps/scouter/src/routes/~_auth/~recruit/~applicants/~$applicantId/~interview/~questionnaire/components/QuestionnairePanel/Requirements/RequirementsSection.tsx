@@ -4,7 +4,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 
-import { requirementGroupConfigs } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/requirementOptions';
+import { requirementGroupConfigs } from './requirementOptions';
 
 interface RequirementsSectionProps {
   requirements: InterviewRequirements;

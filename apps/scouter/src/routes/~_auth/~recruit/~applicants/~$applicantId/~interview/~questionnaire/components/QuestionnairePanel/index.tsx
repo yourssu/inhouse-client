@@ -4,8 +4,9 @@ import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { activeMembersOption } from '@/apis/members/query';
 import { semestersNowOption } from '@/apis/semesters/query';
-import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireEditor';
 import { formatRecruitingSemester } from '@/utils/semester';
+
+import { QuestionnaireEditor } from './QuestionnaireEditor';
 
 interface QuestionnairePanelProps {
   applicantId: number;

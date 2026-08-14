@@ -5,11 +5,12 @@ import { MdDeleteOutline } from 'react-icons/md';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
-import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
-import { EditableQuestionFields } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/EditableQuestionFields';
-import { InterviewerField } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/InterviewerField';
-import { QuestionCardFrame } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/QuestionCardFrame';
+import type { QuestionnaireFormValues } from '../questionnaireForm';
+
+import { EditableQuestionFields } from './EditableQuestionFields';
+import { InterviewerField } from './InterviewerField';
+import { QuestionCardFrame } from './QuestionCardFrame';
 
 interface PartQuestionCardProps {
   activeMembers: ActiveMemberType[];

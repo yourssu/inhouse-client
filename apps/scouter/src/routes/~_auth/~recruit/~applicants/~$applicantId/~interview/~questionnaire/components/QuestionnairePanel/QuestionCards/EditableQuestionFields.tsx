@@ -4,10 +4,11 @@ import { MultilineTextField } from '@yourssu-inhouse/interior';
 import { type Control, Controller } from 'react-hook-form';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
-import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
-import { QuestionnaireErrorMessage } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireErrorMessage';
-import { RequirementPicker } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/RequirementPicker';
+import type { QuestionnaireFormValues } from '../questionnaireForm';
+
+import { QuestionnaireErrorMessage } from '../QuestionnaireErrorMessage';
+import { RequirementPicker } from '../Requirements/RequirementPicker';
 
 interface EditableQuestionFieldsProps {
   category: 'PART' | 'PERSONAL';

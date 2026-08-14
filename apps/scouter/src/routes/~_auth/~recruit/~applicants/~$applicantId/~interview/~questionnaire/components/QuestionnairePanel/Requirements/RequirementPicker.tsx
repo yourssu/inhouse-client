@@ -2,7 +2,7 @@ import { Combobox } from '@yourssu-inhouse/interior';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 
-import { teamJobOtherRequirementGroupConfigs } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/requirementOptions';
+import { teamJobOtherRequirementGroupConfigs } from './requirementOptions';
 
 interface RequirementPickerProps {
   invalid?: boolean;
