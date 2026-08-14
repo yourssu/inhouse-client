@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 import { Badge, Button } from '@yourssu-inhouse/interior';
 import { FieldArray, type SubmitHandler, useForm, Watch } from 'react-hook-form';
 
@@ -20,25 +18,20 @@ import { GlobalQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$appli
 import { PartQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/PartQuestionCard';
 import { PersonalQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/PersonalQuestionCard';
 import { QuestionSection } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionSection';
-import { teamJobOtherRequirementCategories } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/requirementOptions';
+import { teamJobRequirementCategories } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/requirementOptions';
+import { RequirementsSection } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/RequirementsSection';
 
 interface QuestionnaireEditorProps {
   activeMembers: ActiveMemberType[];
   applicantId: number;
   assignedQuestions: AssignedQuestions;
-  children: (props: QuestionnaireEditorRenderProps) => ReactNode;
   requirements: InterviewRequirements;
-}
-
-interface QuestionnaireEditorRenderProps {
-  usedRequirementIds: ReadonlySet<number>;
 }
 
 export const QuestionnaireEditor = ({
   activeMembers,
   applicantId,
   assignedQuestions,
-  children,
   requirements,
 }: QuestionnaireEditorProps) => {
   const openAlertDialog = useAlertDialog();
@@ -64,9 +57,6 @@ export const QuestionnaireEditor = ({
     ...saveAssignedQuestionsMutationOptions,
     successText: '질문지를 저장했어요.',
   });
-  const assignedRequirementIds = assignedQuestions.questions.flatMap((question) =>
-    question.requirements.map((requirement) => requirement.id),
-  );
 
   const onSubmit: SubmitHandler<QuestionnaireFormValues> = async (values) => {
     await mutateWithToast({
@@ -98,18 +88,7 @@ export const QuestionnaireEditor = ({
       </header>
 
       <div className="flex flex-col gap-4">
-        <Watch
-          compute={([partQuestions, personalQuestions]) =>
-            [...partQuestions, ...personalQuestions].flatMap((question) => question.requirementIds)
-          }
-          control={control}
-          name={['PART', 'PERSONAL'] as const}
-          render={(draftRequirementIds) =>
-            children({
-              usedRequirementIds: new Set([...assignedRequirementIds, ...draftRequirementIds]),
-            })
-          }
-        />
+        <RequirementsSection requirements={requirements} />
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <FieldArray<QuestionnaireFormValues, 'GLOBAL'>
@@ -257,12 +236,12 @@ const validateQuestionnaire = ({ questions, requirements }: ValidateQuestionnair
   const usedRequirementIds = new Set(
     [...questions.PART, ...questions.PERSONAL].flatMap(({ requirementIds }) => requirementIds),
   );
-  const unusedRequirements = teamJobOtherRequirementCategories.flatMap((category) =>
+  const unusedRequirements = teamJobRequirementCategories.flatMap((category) =>
     requirements[category].filter(({ id }) => id !== undefined && !usedRequirementIds.has(id)),
   );
   if (unusedRequirements.length > 0) {
     validationMessages.push(
-      `모든 요구조건을 질문에 한 번 이상 사용해 주세요: ${unusedRequirements
+      `Team fit과 Job fit 요구조건을 질문에 한 번 이상 사용해 주세요: ${unusedRequirements
         .map(({ content }) => content)
         .join(', ')}`,
     );

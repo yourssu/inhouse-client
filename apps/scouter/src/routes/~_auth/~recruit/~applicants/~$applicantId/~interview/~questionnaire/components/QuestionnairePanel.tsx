@@ -5,7 +5,6 @@ import { interviewRequirementsOption } from '@/apis/interviews/requirements/quer
 import { activeMembersOption } from '@/apis/members/query';
 import { semestersNowOption } from '@/apis/semesters/query';
 import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireEditor';
-import { RequirementsEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/RequirementsEditor';
 import { formatRecruitingSemester } from '@/utils/semester';
 
 interface QuestionnairePanelProps {
@@ -31,15 +30,6 @@ export const QuestionnairePanel = ({ applicantId, partId }: QuestionnairePanelPr
       applicantId={applicantId}
       assignedQuestions={assignedQuestions}
       requirements={requirements}
-    >
-      {({ usedRequirementIds }) => (
-        <RequirementsEditor
-          partId={partId}
-          requirements={requirements}
-          semester={semester}
-          usedRequirementIds={usedRequirementIds}
-        />
-      )}
-    </QuestionnaireEditor>
+    />
   );
 };

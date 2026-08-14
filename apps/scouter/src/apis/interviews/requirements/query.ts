@@ -1,4 +1,4 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
 import type {
@@ -6,10 +6,7 @@ import type {
   InterviewRequirementsParams,
 } from '@/apis/interviews/requirements/schema';
 
-import {
-  getInterviewRequirements,
-  updateInterviewRequirements,
-} from '@/apis/interviews/requirements';
+import { getInterviewRequirements } from '@/apis/interviews/requirements';
 
 const qk = pluginQueryKey('scouter');
 
@@ -26,12 +23,3 @@ export const interviewRequirementsOption = (params: InterviewRequirementsParams)
     queryKey: interviewRequirementsQueryKeys.part(params),
     queryFn: () => getInterviewRequirements(params),
   });
-
-export const updateInterviewRequirementsMutationOptions = mutationOptions({
-  mutationFn: updateInterviewRequirements,
-  onSuccess: (_, { partId, semester }, _onMutateResult, context) =>
-    // 변경한 파트 요구조건 쿼리 무효화
-    context.client.invalidateQueries({
-      queryKey: interviewRequirementsQueryKeys.part({ partId, semester }),
-    }),
-});
