@@ -58,7 +58,7 @@ export const QuestionnaireEditor = ({
         requirements,
       });
     },
-    values: toQuestionnaireFormValues(assignedQuestions),
+    values: toQuestionnaireFormValues(assignedQuestions, activeMembers),
   });
   const { isPending, mutateWithToast } = useToastedMutation({
     ...saveAssignedQuestionsMutationOptions,
@@ -271,7 +271,13 @@ const validateQuestionnaire = ({ questions, requirements }: ValidateQuestionnair
   return validationMessages.length === 0 || validationMessages.join('\n');
 };
 
-const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): QuestionnaireFormValues => {
+const toQuestionnaireFormValues = (
+  { questions }: AssignedQuestions,
+  activeMembers: ActiveMemberType[],
+): QuestionnaireFormValues => {
+  const interviewerIdByNickname = new Map(
+    activeMembers.map(({ memberId, nickname }) => [nickname, memberId]),
+  );
   const formValues: QuestionnaireFormValues = {
     GLOBAL: [],
     CULTURE: [],
@@ -280,10 +286,15 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
   };
 
   questions.forEach((question) => {
+    const assignedInterviewerUserId =
+      question.assignedInterviewerName === null || question.assignedInterviewerName === undefined
+        ? undefined
+        : interviewerIdByNickname.get(question.assignedInterviewerName);
+
     switch (question.category) {
       case 'CULTURE':
         formValues.CULTURE.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           isSelected: question.isSelected ?? undefined,
           requirements: question.requirements,
@@ -292,21 +303,21 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
         break;
       case 'GLOBAL':
         formValues.GLOBAL.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
       case 'PART':
         formValues.PART.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
         break;
       case 'PERSONAL':
         formValues.PERSONAL.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
