@@ -6,7 +6,7 @@ import {
   CommentBody,
   CommentItem,
   CommentThreadFrame,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentComment';
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview/DocumentComment';
 import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 
 interface DocumentReferencePanelProps {

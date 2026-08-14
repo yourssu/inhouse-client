@@ -19,15 +19,14 @@ import {
 } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
+import { CommentField } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview/CommentField';
+import { CommentThread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview/CommentThread';
+import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
-import { Thread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/Thread';
-import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
-
-import { CommentField } from '../components/CommentField';
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
@@ -104,7 +103,7 @@ const RouteComponent = () => {
               )
             }
             renderThread={({ isSelected, thread }) => (
-              <Thread
+              <CommentThread
                 applicantId={Number(applicantId)}
                 isSelected={isSelected}
                 key={thread[0].commentId}

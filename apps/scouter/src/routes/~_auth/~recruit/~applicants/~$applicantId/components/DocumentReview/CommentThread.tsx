@@ -9,20 +9,15 @@ import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';
 import { MdCancel, MdEdit } from 'react-icons/md';
 
 import type { CommentType } from '@/apis/documents/schema';
-import type { CommentThreadType } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
 import { commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
-import { useWriteComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/hooks/useWriteComment';
-import {
-  CommentBody,
-  CommentItem,
-  CommentThreadFrame,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentComment';
+import { CommentBody, CommentItem, CommentThreadFrame } from './DocumentComment';
+import { DetectOutsideClickArea } from './DetectOutsideClickArea';
+import { useWriteComment } from './useWriteComment';
 
 export interface CommentProps extends CommentType {
   applicantId: number;
@@ -195,13 +190,13 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   );
 };
 
-interface ThreadProps {
+interface CommentThreadProps {
   applicantId: number;
   isSelected: boolean;
-  thread: CommentThreadType;
+  thread: CommentType[];
 }
 
-export const Thread = ({ applicantId, isSelected, thread }: ThreadProps) => {
+export const CommentThread = ({ applicantId, isSelected, thread }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
   const [isReplying, setIsReplying] = useState(false);
 

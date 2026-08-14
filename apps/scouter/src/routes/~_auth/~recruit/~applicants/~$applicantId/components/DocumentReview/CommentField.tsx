@@ -1,8 +1,8 @@
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
-import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
-import { useWriteComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/hooks/useWriteComment';
+import { DetectOutsideClickArea } from './DetectOutsideClickArea';
+import { useWriteComment } from './useWriteComment';
 
 interface CommentFieldProps {
   applicantId: number;
