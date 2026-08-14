@@ -38,4 +38,5 @@ export const applicantDocumentAnswersOption = (applicantId: number) =>
   queryOptions({
     queryKey: qk.for('applicants', applicantId, 'answer'),
     queryFn: () => getApplicantDocumentAnswers(applicantId),
+    staleTime: Infinity,
   });
