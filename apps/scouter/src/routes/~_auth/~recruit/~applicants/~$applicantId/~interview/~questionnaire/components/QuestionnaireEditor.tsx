@@ -1,8 +1,16 @@
 import { Badge, Button } from '@yourssu-inhouse/interior';
-import { FieldArray, type SubmitHandler, useForm, Watch } from 'react-hook-form';
+import { useRef, useState } from 'react';
+import {
+  FieldArray,
+  type SubmitErrorHandler,
+  type SubmitHandler,
+  useForm,
+  Watch,
+} from 'react-hook-form';
 
 import type {
   AssignedQuestions,
+  QuestionCategory,
   SaveAssignedQuestionsRequest,
 } from '@/apis/interviews/questions/schema';
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
@@ -17,6 +25,7 @@ import { CultureQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$appl
 import { GlobalQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/GlobalQuestionCard';
 import { PartQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/PartQuestionCard';
 import { PersonalQuestionCard } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/PersonalQuestionCard';
+import { QuestionnaireErrorMessage } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireErrorMessage';
 import { QuestionSection } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionSection';
 import { teamJobRequirementCategories } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/requirementOptions';
 import { RequirementsSection } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/RequirementsSection';
@@ -35,6 +44,15 @@ export const QuestionnaireEditor = ({
   requirements,
 }: QuestionnaireEditorProps) => {
   const openAlertDialog = useAlertDialog();
+  const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
+    Record<QuestionCategory, boolean>
+  >({
+    CULTURE: true,
+    GLOBAL: true,
+    PART: true,
+    PERSONAL: true,
+  });
+  const errorSummaryRef = useRef<HTMLParagraphElement>(null);
   const {
     control,
     formState: { errors, isDirty },
@@ -67,6 +85,35 @@ export const QuestionnaireEditor = ({
     });
   };
 
+  const onInvalid: SubmitErrorHandler<QuestionnaireFormValues> = (fieldErrors) => {
+    const invalidCategories = questionCategories.filter(
+      (category) => fieldErrors[category] !== undefined,
+    );
+
+    if (invalidCategories.length > 0) {
+      setQuestionSectionOpenByCategory((current) => {
+        const next = { ...current };
+        invalidCategories.forEach((category) => {
+          next[category] = true;
+        });
+        return next;
+      });
+      return;
+    }
+
+    if (fieldErrors.form?.message !== undefined) {
+      // 오류 메시지 요소가 아직 렌더링되지 않았을 수 있으므로 다음 프레임에서 포커스를 설정해요.
+      requestAnimationFrame(() => errorSummaryRef.current?.focus());
+    }
+  };
+
+  const handleQuestionSectionOpenChange = (category: QuestionCategory, isOpen: boolean) => {
+    setQuestionSectionOpenByCategory((current) => ({
+      ...current,
+      [category]: isOpen,
+    }));
+  };
+
   return (
     <Paper className="w-full flex-col gap-6 p-5">
       <header className="flex items-center justify-between gap-3">
@@ -90,13 +137,20 @@ export const QuestionnaireEditor = ({
       <div className="flex flex-col gap-4">
         <RequirementsSection requirements={requirements} />
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={(event) => {
+            void handleSubmit(onSubmit, onInvalid)(event);
+          }}
+        >
           <FieldArray<QuestionnaireFormValues, 'GLOBAL'>
             control={control}
             name="GLOBAL"
             render={({ fields }) => (
               <QuestionSection
                 description="모든 지원자에게 공통으로 묻는 필수 질문이에요."
+                onOpenChange={(isOpen) => handleQuestionSectionOpenChange('GLOBAL', isOpen)}
+                open={questionSectionOpenByCategory.GLOBAL}
                 questions={fields}
                 renderQuestion={(question, index) => (
                   <GlobalQuestionCard
@@ -117,6 +171,8 @@ export const QuestionnaireEditor = ({
             render={({ fields }) => (
               <QuestionSection
                 description="면접에서 사용할 질문을 2개 이상 선택해요."
+                onOpenChange={(isOpen) => handleQuestionSectionOpenChange('CULTURE', isOpen)}
+                open={questionSectionOpenByCategory.CULTURE}
                 questions={fields}
                 renderQuestion={(question, index) => (
                   <CultureQuestionCard
@@ -144,6 +200,8 @@ export const QuestionnaireEditor = ({
                     requirementIds: [],
                   })
                 }
+                onOpenChange={(isOpen) => handleQuestionSectionOpenChange('PART', isOpen)}
+                open={questionSectionOpenByCategory.PART}
                 questions={fields}
                 renderQuestion={(_, index) => (
                   <PartQuestionCard
@@ -182,6 +240,8 @@ export const QuestionnaireEditor = ({
                     requirementIds: [],
                   })
                 }
+                onOpenChange={(isOpen) => handleQuestionSectionOpenChange('PERSONAL', isOpen)}
+                open={questionSectionOpenByCategory.PERSONAL}
                 questions={fields}
                 renderQuestion={(_, index) => (
                   <PersonalQuestionCard
@@ -198,9 +258,9 @@ export const QuestionnaireEditor = ({
           />
 
           {errors.form?.message && (
-            <p className="text-13 text-red600 whitespace-pre-line" role="alert">
+            <QuestionnaireErrorMessage ref={errorSummaryRef} tabIndex={-1}>
               {errors.form.message}
-            </p>
+            </QuestionnaireErrorMessage>
           )}
 
           <div className="bg-lightBackground sticky bottom-0 z-10 py-3">
@@ -219,6 +279,13 @@ export const QuestionnaireEditor = ({
     </Paper>
   );
 };
+
+const questionCategories = [
+  'GLOBAL',
+  'CULTURE',
+  'PART',
+  'PERSONAL',
+] as const satisfies ReadonlyArray<QuestionCategory>;
 
 interface ValidateQuestionnaireParams {
   questions: QuestionnaireFormValues;

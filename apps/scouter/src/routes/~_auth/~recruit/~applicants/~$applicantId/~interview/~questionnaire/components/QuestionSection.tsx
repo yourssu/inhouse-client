@@ -7,6 +7,8 @@ import { MdAdd, MdKeyboardArrowDown } from 'react-icons/md';
 interface QuestionSectionProps<TQuestion extends { id: Key }> {
   description: string;
   onAddQuestion?: () => void;
+  onOpenChange: (isOpen: boolean) => void;
+  open: boolean;
   questions: TQuestion[];
   renderQuestion: (question: TQuestion, index: number) => ReactNode;
   title: string;
@@ -15,12 +17,14 @@ interface QuestionSectionProps<TQuestion extends { id: Key }> {
 export const QuestionSection = <TQuestion extends { id: Key }>({
   description,
   onAddQuestion,
+  onOpenChange,
+  open,
   questions,
   renderQuestion,
   title,
 }: QuestionSectionProps<TQuestion>) => {
   return (
-    <Collapsible.Root className="flex flex-col gap-2" defaultOpen>
+    <Collapsible.Root className="flex flex-col gap-2" onOpenChange={onOpenChange} open={open}>
       <h3>
         <Collapsible.Trigger asChild>
           <button
@@ -44,7 +48,7 @@ export const QuestionSection = <TQuestion extends { id: Key }>({
         </Collapsible.Trigger>
       </h3>
 
-      <Collapsible.Content>
+      <Collapsible.Content className="data-[state=closed]:hidden" forceMount>
         <div className="flex flex-col gap-3">
           {questions.length === 0 ? (
             <p className="text-neutralSubtle px-4 py-6 text-center text-sm">

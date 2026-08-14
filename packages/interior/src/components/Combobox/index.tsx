@@ -1,7 +1,7 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import clsx from 'clsx';
 import { disassemble } from 'es-hangul';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Fieldset } from '@/components/Fieldset';
 
@@ -18,6 +18,7 @@ export interface ComboboxProps<TValue extends string> {
   onOpenChange?: (v: boolean) => void;
   onValueChange: (value: TValue[]) => void;
   placeholder?: string;
+  ref?: React.Ref<HTMLInputElement>;
   value: TValue[];
 }
 
@@ -30,12 +31,26 @@ export const Combobox = <TValue extends string>({
   onOpenChange,
   onValueChange,
   placeholder,
+  ref,
   value,
 }: ComboboxProps<TValue>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleInputRef = useCallback(
+    (element: HTMLInputElement | null) => {
+      inputRef.current = element;
+
+      if (typeof ref === 'function') {
+        ref(element);
+      } else if (ref !== null && ref !== undefined) {
+        ref.current = element;
+      }
+    },
+    [ref],
+  );
 
   const filteredItems = items.filter((item) => {
     const normalizedItem = item.normalize('NFC').toLowerCase();
@@ -177,7 +192,7 @@ export const Combobox = <TValue extends string>({
               }}
               onKeyDown={handleKeyDown}
               placeholder={value.length === 0 ? placeholder : ''}
-              ref={inputRef}
+              ref={handleInputRef}
               type="text"
               value={inputValue}
             />

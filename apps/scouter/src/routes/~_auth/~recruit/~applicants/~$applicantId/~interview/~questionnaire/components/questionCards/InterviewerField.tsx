@@ -32,6 +32,7 @@ export const InterviewerField = ({
             activeMembers={activeMembers}
             errorMessage={fieldState.error?.message}
             onChange={field.onChange}
+            ref={field.ref}
             value={field.value}
           />
         )}
@@ -45,6 +46,7 @@ interface InterviewerSelectProps {
   activeMembers: ActiveMemberType[];
   errorMessage?: string;
   onChange: (interviewerId: number) => void;
+  ref?: React.Ref<HTMLButtonElement>;
   value?: number;
 }
 
@@ -52,6 +54,7 @@ const InterviewerSelect = ({
   activeMembers,
   errorMessage,
   onChange,
+  ref,
   value,
 }: InterviewerSelectProps) => {
   const interviewerIdByNickname = new Map(
@@ -78,7 +81,8 @@ const InterviewerSelect = ({
           }
         }}
         placeholder="질문자를 선택하세요"
-        size="sm"
+        ref={ref}
+        size="md"
         value={value === undefined ? undefined : interviewerNicknameById.get(value)}
         variant="outline"
       />

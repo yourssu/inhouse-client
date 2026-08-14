@@ -71,6 +71,7 @@ export const EditableQuestionFields = ({
               <RequirementPicker
                 invalid={fieldState.invalid}
                 onChange={field.onChange}
+                ref={field.ref}
                 requirements={requirements}
                 selectedRequirementIds={field.value}
               />

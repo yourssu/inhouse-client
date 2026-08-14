@@ -7,6 +7,7 @@ import { teamJobOtherRequirementGroupConfigs } from '@/routes/~_auth/~recruit/~a
 interface RequirementPickerProps {
   invalid?: boolean;
   onChange: (requirementIds: number[]) => void;
+  ref?: React.Ref<HTMLInputElement>;
   requirements: InterviewRequirements;
   selectedRequirementIds: number[];
 }
@@ -14,6 +15,7 @@ interface RequirementPickerProps {
 export const RequirementPicker = ({
   invalid = false,
   onChange,
+  ref,
   requirements,
   selectedRequirementIds,
 }: RequirementPickerProps) => {
@@ -51,6 +53,7 @@ export const RequirementPicker = ({
         );
       }}
       placeholder="요구조건을 선택하세요"
+      ref={ref}
       value={value}
     />
   );
