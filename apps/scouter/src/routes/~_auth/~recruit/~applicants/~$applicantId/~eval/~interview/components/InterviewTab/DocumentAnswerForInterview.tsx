@@ -8,10 +8,7 @@ interface DocumentAnswerForInterviewProps {
 }
 
 export const DocumentAnswerForInterview = ({ applicantId }: DocumentAnswerForInterviewProps) => {
-  const { data: documentAnswers } = useSuspenseQuery({
-    ...applicantDocumentAnswersOption(applicantId),
-    staleTime: Infinity,
-  });
+  const { data: documentAnswers } = useSuspenseQuery(applicantDocumentAnswersOption(applicantId));
 
   return (
     <div className="flex flex-col p-2">
