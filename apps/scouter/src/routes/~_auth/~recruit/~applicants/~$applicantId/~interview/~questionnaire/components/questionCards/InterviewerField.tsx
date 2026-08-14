@@ -5,6 +5,8 @@ import type { QuestionCategory } from '@/apis/interviews/questions/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
+import { QuestionnaireErrorMessage } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireErrorMessage';
+
 type InterviewerFieldName = `${QuestionCategory}.${number}.assignedInterviewerUserId`;
 
 interface InterviewerFieldProps {
@@ -61,7 +63,10 @@ const InterviewerSelect = ({
   const nicknames = activeMembers.map(({ nickname }) => nickname);
 
   return (
-    <Fieldset help={errorMessage} label="질문자">
+    <Fieldset
+      help={errorMessage && <QuestionnaireErrorMessage>{errorMessage}</QuestionnaireErrorMessage>}
+      label="질문자"
+    >
       <Select
         className="w-full"
         invalid={!!errorMessage}

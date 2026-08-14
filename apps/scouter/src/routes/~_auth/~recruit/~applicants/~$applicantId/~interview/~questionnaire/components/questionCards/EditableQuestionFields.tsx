@@ -6,6 +6,7 @@ import { type Control, Controller } from 'react-hook-form';
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
+import { QuestionnaireErrorMessage } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireErrorMessage';
 import { RequirementPicker } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/RequirementPicker';
 
 interface EditableQuestionFieldsProps {
@@ -26,7 +27,7 @@ export const EditableQuestionFields = ({
   return (
     <>
       <div className="flex items-start gap-2">
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <Controller
             control={control}
             name={`${category}.${index}.content`}
@@ -42,9 +43,7 @@ export const EditableQuestionFields = ({
                   withHeightAutoResize
                 />
                 {fieldState.error?.message !== undefined && (
-                  <p className="text-13 text-red600 mt-1" role="alert">
-                    {fieldState.error.message}
-                  </p>
+                  <QuestionnaireErrorMessage>{fieldState.error.message}</QuestionnaireErrorMessage>
                 )}
               </>
             )}
@@ -63,7 +62,7 @@ export const EditableQuestionFields = ({
         {deleteButton}
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         <Controller
           control={control}
           name={`${category}.${index}.requirementIds`}
@@ -76,9 +75,7 @@ export const EditableQuestionFields = ({
                 selectedRequirementIds={field.value}
               />
               {fieldState.error?.message !== undefined && (
-                <p className="text-13 text-red600" role="alert">
-                  {fieldState.error.message}
-                </p>
+                <QuestionnaireErrorMessage>{fieldState.error.message}</QuestionnaireErrorMessage>
               )}
             </>
           )}
