@@ -11,7 +11,7 @@ export const DocumentAnswerForInterview = ({ applicantId }: DocumentAnswerForInt
   const { data: documentAnswers } = useSuspenseQuery(applicantDocumentAnswersOption(applicantId));
 
   return (
-    <div className="flex flex-col p-2">
+    <div className="flex flex-col p-5">
       {documentAnswers.map(({ sectionId, question, answer }, index) => {
         const isLastIndex = documentAnswers.length - 1 === index;
         return (
