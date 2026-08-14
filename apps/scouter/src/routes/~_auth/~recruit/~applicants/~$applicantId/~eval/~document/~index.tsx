@@ -19,12 +19,10 @@ import {
 } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
-import { CommentField } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview/CommentField';
-import { CommentThread } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview/CommentThread';
-import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
+import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
@@ -43,7 +41,6 @@ const RouteComponent = () => {
     });
 
   const [sidebarView, setSidebarView] = useState<'문항 설정' | '서류 평가'>('서류 평가');
-  const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -88,29 +85,7 @@ const RouteComponent = () => {
             </Paper>
           }
         >
-          <DocumentReview
-            answers={answers}
-            comments={comments}
-            onAddComment={setOpenCommentSectionId}
-            renderBeforeThreads={(sectionId) =>
-              openCommentSectionId === sectionId && (
-                <CommentField
-                  applicantId={Number(applicantId)}
-                  onClose={() => setOpenCommentSectionId(null)}
-                  parentCommentId={null}
-                  sectionId={sectionId}
-                />
-              )
-            }
-            renderThread={({ isSelected, thread }) => (
-              <CommentThread
-                applicantId={Number(applicantId)}
-                isSelected={isSelected}
-                key={thread[0].commentId}
-                thread={thread}
-              />
-            )}
-          />
+          <DocumentReview answers={answers} applicantId={Number(applicantId)} comments={comments} />
           <Paper className="relative w-100">
             <SwitchCase
               caseBy={{

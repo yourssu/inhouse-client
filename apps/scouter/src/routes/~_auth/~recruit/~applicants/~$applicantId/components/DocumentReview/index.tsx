@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 import { Button } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { compareAsc } from 'date-fns';
@@ -14,29 +12,20 @@ import type { CommentType } from '@/apis/documents/schema';
 
 import { Paper } from '@/components/Paper';
 
-export type CommentThreadType = CommentType[];
+import { CommentField } from './CommentField';
+import { CommentThread } from './CommentThread';
 
-interface RenderThreadParams {
-  isSelected: boolean;
-  thread: CommentThreadType;
-}
+type CommentThreadType = CommentType[];
 
 interface DocumentReviewProps {
   answers: ApplicantDocumentAnswersType;
+  applicantId: number;
   comments: readonly CommentType[];
-  onAddComment?: (sectionId: number) => void;
-  renderBeforeThreads?: (sectionId: number) => ReactNode;
-  renderThread: (params: RenderThreadParams) => ReactNode;
 }
 
-export const DocumentReview = ({
-  answers,
-  comments,
-  onAddComment,
-  renderBeforeThreads,
-  renderThread,
-}: DocumentReviewProps) => {
+export const DocumentReview = ({ applicantId, answers, comments }: DocumentReviewProps) => {
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
+  const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
   const threadsBySectionId = useMemo(() => groupThreadsBySection(comments), [comments]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
@@ -49,7 +38,7 @@ export const DocumentReview = ({
 
   const handleAddComment = (sectionId: number) => {
     setSelectedSectionId(sectionId);
-    onAddComment?.(sectionId);
+    setOpenCommentSectionId(sectionId);
   };
 
   const registerSectionRef = (sectionId: number) => (element: HTMLDivElement | null) => {
@@ -88,11 +77,7 @@ export const DocumentReview = ({
               documentAnswer={answer}
               isSelected={sectionId !== undefined && sectionId === selectedSectionId}
               key={sectionId ?? `${answer.question}-${index}`}
-              onAddComment={
-                onAddComment && sectionId !== undefined
-                  ? () => handleAddComment(sectionId)
-                  : undefined
-              }
+              onAddComment={sectionId === undefined ? undefined : () => handleAddComment(sectionId)}
               onClick={sectionId === undefined ? undefined : () => handleClickSection(sectionId)}
             />
           );
@@ -117,13 +102,22 @@ export const DocumentReview = ({
                 key={sectionId}
                 ref={registerSectionRef(sectionId)}
               >
-                {renderBeforeThreads?.(sectionId)}
-                {threads.map((thread) =>
-                  renderThread({
-                    isSelected: sectionId === selectedSectionId,
-                    thread,
-                  }),
+                {openCommentSectionId === sectionId && (
+                  <CommentField
+                    applicantId={applicantId}
+                    onClose={() => setOpenCommentSectionId(null)}
+                    parentCommentId={null}
+                    sectionId={sectionId}
+                  />
                 )}
+                {threads.map((thread) => (
+                  <CommentThread
+                    applicantId={applicantId}
+                    isSelected={sectionId === selectedSectionId}
+                    key={thread[0].commentId}
+                    thread={thread}
+                  />
+                ))}
               </div>
             );
           })}

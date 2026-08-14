@@ -14,7 +14,7 @@ import { applicantDocumentCommentsOption } from '@/apis/documents/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { InterviewRequirementsParamsSchema } from '@/apis/interviews/requirements/schema';
-import { activeMembersOption } from '@/apis/members/query';
+import { activeMembersOption, meOption } from '@/apis/members/query';
 import { semestersNowOption } from '@/apis/semesters/query';
 import { Paper } from '@/components/Paper';
 import { DocumentReferencePanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/DocumentReferencePanel';
@@ -186,6 +186,7 @@ export const Route = createFileRoute(
     context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
     context.queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
+    context.queryClient.prefetchQuery(meOption());
     context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
     context.queryClient.prefetchQuery(semestersNowOption());
 

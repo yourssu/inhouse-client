@@ -20,7 +20,8 @@ export const useWriteComment = ({
 }: UseWriteCommentParams) => {
   const queryClient = useQueryClient();
   const [content, setContent] = useState('');
-  const isContentEmpty = content === '';
+  const trimmedContent = content.trim();
+  const isContentEmpty = trimmedContent === '';
 
   const { isPending: isWritePending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
     mutationFn: postApplicantDocumentComment,
@@ -30,13 +31,23 @@ export const useWriteComment = ({
     },
   });
 
-  const handleAddComment = () => {
-    writeCommentWithToast({
+  const handleAddComment = async () => {
+    if (isContentEmpty || isWritePending) {
+      return;
+    }
+
+    const result = await writeCommentWithToast({
       applicantId,
-      data: { content, ...(parentCommentId === null ? {} : { parentCommentId }), sectionId },
+      data: {
+        content: trimmedContent,
+        ...(parentCommentId === null ? {} : { parentCommentId }),
+        sectionId,
+      },
     });
 
-    setContent('');
+    if (result.success) {
+      setContent('');
+    }
   };
 
   const handleClose = () => {
@@ -50,7 +61,7 @@ export const useWriteComment = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (!isContentEmpty && !isWritePending) {
-        handleAddComment();
+        void handleAddComment();
       }
     }
     if (e.key === 'Escape') {

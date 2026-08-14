@@ -15,8 +15,9 @@ import { commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { CommentBody, CommentItem, CommentThreadFrame } from './DocumentComment';
+
 import { DetectOutsideClickArea } from './DetectOutsideClickArea';
+import { CommentBody, CommentItem, CommentThreadFrame } from './DocumentComment';
 import { useWriteComment } from './useWriteComment';
 
 export interface CommentProps extends CommentType {
@@ -122,7 +123,12 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Menu>
               <Menu.Trigger>
-                <IconButton className="rounded-4" size="xxs" variant="inline">
+                <IconButton
+                  aria-label="댓글 메뉴"
+                  className="rounded-4"
+                  size="xxs"
+                  variant="inline"
+                >
                   <IoIosMore className="size-4" />
                 </IconButton>
               </Menu.Trigger>
@@ -166,6 +172,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
           />
           <div className="flex self-end">
             <IconButton
+              aria-label="댓글 수정 취소"
               className="rounded-full"
               onClick={handleCancelEdit}
               onMouseDown={(e) => e.preventDefault()}
@@ -174,7 +181,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               <MdCancel className="text-grey600 size-4.5" />
             </IconButton>
             <IconButton
+              aria-label="댓글 수정 저장"
               className="rounded-full"
+              disabled={isUpdatePending}
               onClick={handleSubmitEdit}
               onMouseDown={(e) => e.preventDefault()}
               size="xxs"
@@ -226,6 +235,7 @@ export const CommentThread = ({ applicantId, isSelected, thread }: CommentThread
             <MultilineTextField
               autoFocus
               className="min-h-fit overflow-hidden p-1.5"
+              disabled={isWritePending}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={'댓글 추가'}
@@ -234,6 +244,7 @@ export const CommentThread = ({ applicantId, isSelected, thread }: CommentThread
               withHeightAutoResize={true}
             />
             <IconButton
+              aria-label="답글 등록"
               className="my-auto"
               disabled={isWritePending || isContentEmpty}
               onClick={handleAddComment}
