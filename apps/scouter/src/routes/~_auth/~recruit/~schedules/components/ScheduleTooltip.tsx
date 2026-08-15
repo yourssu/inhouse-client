@@ -1,51 +1,41 @@
-import * as Tooltip from '@radix-ui/react-tooltip';
+import { HoverTooltip, type HoverTooltipContentProps } from '@yourssu-inhouse/interior';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 
 import { partNameKo } from '@/types/parts';
 
-export const ScheduleTooltip = ({ children }: React.PropsWithChildren) => (
-  <Tooltip.Provider delayDuration={0} skipDelayDuration={0}>
-    <Tooltip.Root>{children}</Tooltip.Root>
-  </Tooltip.Provider>
-);
-
-const ScheduleTooltipTrigger = ({ children }: React.PropsWithChildren) => (
-  <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
-);
-
-type ScheduleTooltipContentProps = React.PropsWithChildren<{
+interface ScheduleTooltipProps {
   applicant: Pick<ApplicantType, 'name' | 'part'>;
-  contentProps?: Tooltip.TooltipContentProps;
+  children: React.ReactElement;
+  contentProps?: HoverTooltipContentProps;
+  details: React.ReactNode;
   left?: string;
-}>;
+}
 
-const ScheduleTooltipContent = ({
+export const ScheduleTooltip = ({
   applicant,
   children,
   contentProps,
+  details,
   left,
-}: ScheduleTooltipContentProps) => (
-  <Tooltip.Portal>
-    <Tooltip.Content
-      align="start"
-      className="bg-backgroundLevel02 shadow-tooltip z-20 min-w-60 rounded-[14px] px-5.5 py-4.5"
-      side="bottom"
-      sideOffset={5}
-      {...contentProps}
-    >
-      <div className="text-15 flex flex-col gap-4.5">
+}: ScheduleTooltipProps) => (
+  <HoverTooltip
+    content={
+      <div className="flex flex-col gap-4.5">
         <div className="flex flex-col gap-0.5">
           <div className="text-17 font-semibold">{applicant.name}</div>
           <div className="text-neutralSubtle text-13">{partNameKo[applicant.part]} 파트</div>
         </div>
         <div className="flex flex-col gap-2">
-          {children}
+          {details}
           {left != null && <span className="text-violet600 text-13 mt-2.5">{left}</span>}
         </div>
       </div>
-    </Tooltip.Content>
-  </Tooltip.Portal>
+    }
+    contentProps={{ align: 'start', side: 'bottom', sideOffset: 5, ...contentProps }}
+  >
+    {children}
+  </HoverTooltip>
 );
 
 type ScheduleTooltipItemProps = React.PropsWithChildren<{
@@ -73,6 +63,4 @@ const ScheduleTooltipItem = ({ icon: Icon, right, children }: ScheduleTooltipIte
   );
 };
 
-ScheduleTooltip.Trigger = ScheduleTooltipTrigger;
-ScheduleTooltip.Content = ScheduleTooltipContent;
 ScheduleTooltip.Item = ScheduleTooltipItem;

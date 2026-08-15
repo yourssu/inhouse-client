@@ -78,48 +78,48 @@ const DraftScheduleItem = ({
   assert(!!applicant, `지원자를 찾을 수 없어요: ${schedule.applicantId}`);
 
   return (
-    <ScheduleTooltip>
-      <ScheduleTooltip.Trigger>
-        <div
-          className={clsx(
-            'absolute right-0.5 left-0.5 rounded border-2 px-1 py-0.5 select-none',
-            isOther
-              ? 'bg-violet500 border-violet500 w-[60%] opacity-50'
-              : 'bg-violet500 border-violet500',
-            !isDragging &&
-              'hover:bg-violet600 hover:border-violet600 ease-ease cursor-pointer transition-colors duration-200',
-            isDragging && 'pointer-events-none',
-          )}
-          onClick={() => {
-            if (isOther) {
-              onSwitchApplicant();
-            } else {
-              onRemove();
-            }
-          }}
-          onMouseDown={(e) => e.stopPropagation()}
-          style={{
-            top: `${top}px`,
-            height: `${height}px`,
-          }}
-        >
-          <span className="text-sm font-semibold text-white">{schedule.applicantName}</span>
-        </div>
-      </ScheduleTooltip.Trigger>
-      <ScheduleTooltip.Content
-        applicant={applicant}
-        left={isOther ? '클릭으로 지원자 탭 이동' : '클릭으로 일정 제거'}
+    <ScheduleTooltip
+      applicant={applicant}
+      details={
+        <>
+          <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
+            {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
+            {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
+          </ScheduleTooltip.Item>
+          <ScheduleTooltip.Item icon={MdLocationOn}>
+            {schedule.locationDetail == null
+              ? schedule.locationType
+              : `${schedule.locationType} (${schedule.locationDetail})`}
+          </ScheduleTooltip.Item>
+        </>
+      }
+      left={isOther ? '클릭으로 지원자 탭 이동' : '클릭으로 일정 제거'}
+    >
+      <div
+        className={clsx(
+          'absolute right-0.5 left-0.5 rounded border-2 px-1 py-0.5 select-none',
+          isOther
+            ? 'bg-violet500 border-violet500 w-[60%] opacity-50'
+            : 'bg-violet500 border-violet500',
+          !isDragging &&
+            'hover:bg-violet600 hover:border-violet600 ease-ease cursor-pointer transition-colors duration-200',
+          isDragging && 'pointer-events-none',
+        )}
+        onClick={() => {
+          if (isOther) {
+            onSwitchApplicant();
+          } else {
+            onRemove();
+          }
+        }}
+        onMouseDown={(e) => e.stopPropagation()}
+        style={{
+          top: `${top}px`,
+          height: `${height}px`,
+        }}
       >
-        <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
-          {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
-          {formatTemplates['23:00'](schedule.endTime)} ({duration}분)
-        </ScheduleTooltip.Item>
-        <ScheduleTooltip.Item icon={MdLocationOn}>
-          {schedule.locationDetail == null
-            ? schedule.locationType
-            : `${schedule.locationType} (${schedule.locationDetail})`}
-        </ScheduleTooltip.Item>
-      </ScheduleTooltip.Content>
+        <span className="text-sm font-semibold text-white">{schedule.applicantName}</span>
+      </div>
     </ScheduleTooltip>
   );
 };
