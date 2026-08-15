@@ -11,7 +11,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   ref?: React.Ref<HTMLButtonElement>;
   right?: React.ReactNode;
   size: 'lg' | 'md' | 'sm' | 'xl' | 'xs' | 'xxl' | 'xxs';
-  variant?: 'primary' | 'secondary' | 'subPrimary' | 'transparent';
+  variant?: 'danger' | 'primary' | 'secondary' | 'subPrimary' | 'transparent';
 }
 
 const useLoadingButtonSize = ({ loading }: { loading: boolean }) => {

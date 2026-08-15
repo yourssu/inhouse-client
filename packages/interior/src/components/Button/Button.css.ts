@@ -61,6 +61,19 @@ export const button = recipe({
           },
         },
       },
+      danger: {
+        backgroundColor: vars.color.palette.red600,
+        color: '#ffffff',
+        selectors: {
+          '&:hover:not(:disabled)': {
+            backgroundColor: vars.color.palette.red700,
+          },
+          '&:disabled': {
+            color: 'rgba(255, 255, 255, 0.45)',
+            backgroundColor: vars.color.palette.redOpacity200,
+          },
+        },
+      },
       transparent: {
         backgroundColor: 'transparent',
         color: vars.color.palette.greyOpacity800,

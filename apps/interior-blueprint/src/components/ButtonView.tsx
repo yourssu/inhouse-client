@@ -1,7 +1,7 @@
 import { Button, InlineButton } from '@yourssu-inhouse/interior';
 import { MdEdit } from 'react-icons/md';
 
-const variants = ['primary', 'secondary', 'subPrimary', 'transparent'] as const;
+const variants = ['primary', 'secondary', 'subPrimary', 'danger', 'transparent'] as const;
 const sizes = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;
 
 export const ButtonView = () => {
