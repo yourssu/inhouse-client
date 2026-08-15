@@ -361,7 +361,7 @@
       "get": {
         "tags": ["면접 질문"],
         "summary": "파트별 면접 질문 및 요구조건 조회",
-        "description": "GLOBAL, CULTURE, PART 질문과 매핑된 요구조건을 조회합니다.",
+        "description": "INTRO, OUTRO, CULTURE, PART 질문과 매핑된 요구조건을 조회합니다.",
         "operationId": "readAll",
         "parameters": [
           {
@@ -632,7 +632,7 @@
       "put": {
         "tags": ["면접 질문"],
         "summary": "전역·문화 면접 질문 수정/생성",
-        "description": "GLOBAL 및 CULTURE 질문을 생성합니다.",
+        "description": "INTRO, OUTRO 및 CULTURE 질문을 생성합니다.",
         "operationId": "upsertGlobalAndCulture",
         "requestBody": {
           "content": {
@@ -2254,6 +2254,35 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/questions/global": {
+      "post": {
+        "tags": ["admin-question-controller"],
+        "operationId": "saveGlobalQuestions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQuestionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -4243,7 +4272,7 @@
           },
           "category": {
             "type": "string",
-            "enum": ["GLOBAL", "CULTURE", "PART"]
+            "enum": ["INTRO", "OUTRO", "CULTURE", "PART"]
           },
           "content": {
             "type": "string"
@@ -4291,7 +4320,13 @@
       "CreateQuestionsRequest": {
         "type": "object",
         "properties": {
-          "global": {
+          "intro": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "outro": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Item"
@@ -4304,7 +4339,7 @@
             }
           }
         },
-        "required": ["culture", "global"]
+        "required": ["culture", "intro", "outro"]
       },
       "Item": {
         "type": "object",
@@ -4351,7 +4386,7 @@
           "category": {
             "type": "string",
             "description": "질문 카테고리",
-            "enum": ["GLOBAL", "CULTURE", "PART", "PERSONAL"]
+            "enum": ["INTRO", "OUTRO", "CULTURE", "PART", "PERSONAL"]
           },
           "isSelected": {
             "type": "boolean",
@@ -4409,7 +4444,7 @@
           "category": {
             "type": "string",
             "description": "질문 카테고리",
-            "enum": ["GLOBAL", "CULTURE", "PART", "PERSONAL"]
+            "enum": ["INTRO", "OUTRO", "CULTURE", "PART", "PERSONAL"]
           },
           "isSelected": {
             "type": "boolean",
@@ -6816,6 +6851,9 @@
             "type": "string",
             "format": "date"
           },
+          "applicationSemester": {
+            "type": "string"
+          },
           "email": {
             "type": "string"
           },
@@ -6859,6 +6897,7 @@
           "age",
           "applicantId",
           "applicationDate",
+          "applicationSemester",
           "availableTimes",
           "department",
           "division",

@@ -24,9 +24,9 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 import type { QuestionnaireFormValues } from './questionnaireForm';
 
 import { CultureQuestionCard } from './QuestionCards/CultureQuestionCard';
-import { GlobalQuestionCard } from './QuestionCards/GlobalQuestionCard';
 import { PartQuestionCard } from './QuestionCards/PartQuestionCard';
 import { PersonalQuestionCard } from './QuestionCards/PersonalQuestionCard';
+import { RequiredQuestionCard } from './QuestionCards/RequiredQuestionCard';
 import { QuestionnaireErrorMessage } from './QuestionnaireErrorMessage';
 import { QuestionSection } from './QuestionSection';
 import { teamJobRequirementCategories } from './Requirements/requirementOptions';
@@ -49,10 +49,11 @@ export const QuestionnaireEditor = ({
   const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
     Record<QuestionCategory, boolean>
   >({
+    INTRO: true,
     CULTURE: true,
-    GLOBAL: true,
     PART: true,
     PERSONAL: true,
+    OUTRO: true,
   });
   const errorSummaryRef = useRef<HTMLParagraphElement>(null);
   const {
@@ -121,8 +122,9 @@ export const QuestionnaireEditor = ({
       <header className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold">면접 질문지</h2>
         <Watch
-          compute={({ CULTURE, GLOBAL, PART, PERSONAL }) =>
-            GLOBAL.length +
+          compute={({ CULTURE, INTRO, OUTRO, PART, PERSONAL }) =>
+            INTRO.length +
+            OUTRO.length +
             CULTURE.filter(({ isSelected }) => isSelected === true).length +
             PART.length +
             PERSONAL.length
@@ -145,24 +147,25 @@ export const QuestionnaireEditor = ({
             void handleSubmit(onSubmit, onInvalid)(event);
           }}
         >
-          <FieldArray<QuestionnaireFormValues, 'GLOBAL'>
+          <FieldArray<QuestionnaireFormValues, 'INTRO'>
             control={control}
-            name="GLOBAL"
+            name="INTRO"
             render={({ fields }) => (
               <QuestionSection
                 description="모든 지원자에게 공통으로 묻는 필수 질문이에요."
-                onOpenChange={(isOpen) => handleQuestionSectionOpenChange('GLOBAL', isOpen)}
-                open={questionSectionOpenByCategory.GLOBAL}
+                onOpenChange={(isOpen) => handleQuestionSectionOpenChange('INTRO', isOpen)}
+                open={questionSectionOpenByCategory.INTRO}
                 questions={fields}
                 renderQuestion={(question, index) => (
-                  <GlobalQuestionCard
+                  <RequiredQuestionCard
                     activeMembers={activeMembers}
+                    category="INTRO"
                     control={control}
                     index={index}
                     question={question}
                   />
                 )}
-                title="필수 질문"
+                title="인트로 필수 질문"
               />
             )}
           />
@@ -259,6 +262,29 @@ export const QuestionnaireEditor = ({
             )}
           />
 
+          <FieldArray<QuestionnaireFormValues, 'OUTRO'>
+            control={control}
+            name="OUTRO"
+            render={({ fields }) => (
+              <QuestionSection
+                description="모든 지원자에게 공통으로 묻는 필수 질문이에요."
+                onOpenChange={(isOpen) => handleQuestionSectionOpenChange('OUTRO', isOpen)}
+                open={questionSectionOpenByCategory.OUTRO}
+                questions={fields}
+                renderQuestion={(question, index) => (
+                  <RequiredQuestionCard
+                    activeMembers={activeMembers}
+                    category="OUTRO"
+                    control={control}
+                    index={index}
+                    question={question}
+                  />
+                )}
+                title="아웃트로 필수 질문"
+              />
+            )}
+          />
+
           {errors.form?.message && (
             <QuestionnaireErrorMessage ref={errorSummaryRef} tabIndex={-1}>
               {errors.form.message}
@@ -283,10 +309,11 @@ export const QuestionnaireEditor = ({
 };
 
 const questionCategories = [
-  'GLOBAL',
+  'INTRO',
   'CULTURE',
   'PART',
   'PERSONAL',
+  'OUTRO',
 ] as const satisfies ReadonlyArray<QuestionCategory>;
 
 interface ValidateQuestionnaireParams {
@@ -321,10 +348,11 @@ const validateQuestionnaire = ({ questions, requirements }: ValidateQuestionnair
 
 const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): QuestionnaireFormValues => {
   const formValues: QuestionnaireFormValues = {
-    GLOBAL: [],
+    INTRO: [],
     CULTURE: [],
     PART: [],
     PERSONAL: [],
+    OUTRO: [],
   };
 
   questions.forEach((question) => {
@@ -340,8 +368,9 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
           sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
-      case 'GLOBAL':
-        formValues.GLOBAL.push({
+      case 'INTRO':
+      case 'OUTRO':
+        formValues[question.category].push({
           assignedInterviewerUserId,
           content: question.content,
           sourceQuestionId: question.sourceQuestionId ?? undefined,
@@ -370,9 +399,9 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
 const toSaveAssignedQuestions = (
   values: QuestionnaireFormValues,
 ): SaveAssignedQuestionsRequest['questions'] => [
-  ...values.GLOBAL.map((question) => ({
+  ...values.INTRO.map((question) => ({
     assignedInterviewerUserId: question.assignedInterviewerUserId!,
-    category: 'GLOBAL' as const,
+    category: 'INTRO' as const,
     requirementIds: [],
     sourceQuestionId: question.sourceQuestionId,
   })),
@@ -394,5 +423,11 @@ const toSaveAssignedQuestions = (
     category: 'PERSONAL' as const,
     content: question.content.trim(),
     requirementIds: question.requirementIds,
+  })),
+  ...values.OUTRO.map((question) => ({
+    assignedInterviewerUserId: question.assignedInterviewerUserId!,
+    category: 'OUTRO' as const,
+    requirementIds: [],
+    sourceQuestionId: question.sourceQuestionId,
   })),
 ];

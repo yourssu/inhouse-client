@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
 
-export const QuestionCategorySchema = z.enum(['GLOBAL', 'CULTURE', 'PART', 'PERSONAL']);
+export const QuestionCategorySchema = z.enum(['INTRO', 'OUTRO', 'CULTURE', 'PART', 'PERSONAL']);
 
 export const QuestionRequirementSchema = z.object({
   id: z.number(),
