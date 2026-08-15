@@ -8,20 +8,20 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 import type {
   InterviewRubricGroup,
   InterviewRubricGroupName,
+} from '@/apis/interviews/rubrics/schema';
+import type {
   UpdateInterviewRubricForm,
   UpdateInterviewRubricFormInput,
-} from '@/apis/interviews/rubrics/schema';
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/formValidationSchema';
 
 import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
 import {
   interviewRubricOption,
   updateInterviewRubricMutationOptions,
 } from '@/apis/interviews/rubrics/query';
-import {
-  interviewRubricGroupNames,
-  UpdateInterviewRubricFormSchema,
-} from '@/apis/interviews/rubrics/schema';
+import { interviewRubricGroupNames } from '@/apis/interviews/rubrics/schema';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { UpdateInterviewRubricFormSchema } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/formValidationSchema';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/InterviewScoreInput';
 import { RubricFieldError } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/RubricFieldError';
 import { TotalInterviewScore } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/TotalInterviewScore';
@@ -182,14 +182,15 @@ export const InterviewRubricSetting = ({
   );
 };
 
+/** 배점이 아직 설정되지 않은 항목은 0점으로 다뤄요. */
 const toFormValues = (groups: InterviewRubricGroup[]): UpdateInterviewRubricFormInput => ({
   groups: groups.map(({ group, groupMaxScore, items }) => ({
     group,
-    groupMaxScore: groupMaxScore.toString(),
+    groupMaxScore: (groupMaxScore ?? 0).toString(),
     items: items.map(({ itemId, maxScore, title }) => ({
       itemId,
       title,
-      maxScore: maxScore.toString(),
+      maxScore: (maxScore ?? 0).toString(),
     })),
   })),
 });

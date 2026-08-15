@@ -4,9 +4,9 @@ import { type Control, useWatch } from 'react-hook-form';
 import type {
   UpdateInterviewRubricForm,
   UpdateInterviewRubricFormInput,
-} from '@/apis/interviews/rubrics/schema';
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/formValidationSchema';
 
-import { INTERVIEW_RUBRIC_TOTAL_SCORE } from '@/apis/interviews/rubrics/schema';
+import { INTERVIEW_RUBRIC_TOTAL_SCORE } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/formValidationSchema';
 
 interface TotalInterviewScoreProps {
   control: Control<UpdateInterviewRubricFormInput, unknown, UpdateInterviewRubricForm>;
