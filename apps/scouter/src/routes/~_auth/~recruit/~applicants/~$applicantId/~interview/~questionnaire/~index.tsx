@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { QueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
+import { QueryErrorResetBoundary, useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
@@ -14,23 +14,30 @@ import { applicantDocumentCommentsOption } from '@/apis/documents/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { InterviewRequirementsParamsSchema } from '@/apis/interviews/requirements/schema';
-import { activeMembersOption } from '@/apis/members/query';
+import { activeMembersOption, meOption } from '@/apis/members/query';
 import { semestersNowOption } from '@/apis/semesters/query';
 import { Paper } from '@/components/Paper';
-import { DocumentReferencePanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/DocumentReferencePanel';
 import { QuestionnairePanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnairePanel';
 import {
   DocumentReferencePanelSkeleton,
   QuestionnairePageSkeleton,
   QuestionnairePanelSkeleton,
 } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireSkeletons';
+import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 import { applicantStateKo } from '@/types/applicants';
 import { partNameKo } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
 const QuestionnairePage = () => {
   const { applicantId } = Route.useParams();
-  const { data: applicant } = useSuspenseQuery(applicantByIdOption(Number(applicantId)));
+  const applicantIdNumber = Number(applicantId);
+  const [{ data: applicant }, { data: answers }, { data: comments }] = useSuspenseQueries({
+    queries: [
+      applicantByIdOption(applicantIdNumber),
+      applicantDocumentAnswersOption(applicantIdNumber),
+      applicantDocumentCommentsOption(applicantIdNumber),
+    ],
+  });
 
   return (
     <PageLayout.Content className="self-start py-7!" maxWidth="full">
@@ -69,7 +76,7 @@ const QuestionnairePage = () => {
             fallback={<DocumentReferencePanelSkeleton />}
             title="지원서 정보를 불러오지 못했어요"
           >
-            <DocumentReferencePanel applicantId={Number(applicantId)} />
+            <DocumentReview answers={answers} applicantId={applicantIdNumber} comments={comments} />
           </PanelBoundary>
         </section>
 
@@ -80,7 +87,7 @@ const QuestionnairePage = () => {
             title="질문지를 불러오지 못했어요"
           >
             <div className="max-h-[calc(100vh-1.5rem)] overflow-y-auto">
-              <QuestionnairePanel applicantId={Number(applicantId)} partId={applicant.partId} />
+              <QuestionnairePanel applicantId={applicantIdNumber} partId={applicant.partId} />
             </div>
           </PanelBoundary>
         </aside>
@@ -186,6 +193,7 @@ export const Route = createFileRoute(
     context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
     context.queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
+    context.queryClient.prefetchQuery(meOption());
     context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
     context.queryClient.prefetchQuery(semestersNowOption());
 

@@ -20,23 +20,31 @@ export const useWriteComment = ({
 }: UseWriteCommentParams) => {
   const queryClient = useQueryClient();
   const [content, setContent] = useState('');
-  const isContentEmpty = content === '';
+  const trimmedContent = content.trim();
+  const isContentEmpty = trimmedContent === '';
 
   const { isPending: isWritePending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
     mutationFn: postApplicantDocumentComment,
     successText: '코멘트를 작성했어요.',
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+      setContent('');
     },
   });
 
-  const handleAddComment = () => {
-    writeCommentWithToast({
-      applicantId,
-      data: { content, ...(parentCommentId === null ? {} : { parentCommentId }), sectionId },
-    });
+  const handleAddComment = async () => {
+    if (isContentEmpty || isWritePending) {
+      return;
+    }
 
-    setContent('');
+    await writeCommentWithToast({
+      applicantId,
+      data: {
+        content: trimmedContent,
+        ...(parentCommentId === null ? {} : { parentCommentId }),
+        sectionId,
+      },
+    });
   };
 
   const handleClose = () => {
@@ -50,7 +58,7 @@ export const useWriteComment = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (!isContentEmpty && !isWritePending) {
-        handleAddComment();
+        void handleAddComment();
       }
     }
     if (e.key === 'Escape') {

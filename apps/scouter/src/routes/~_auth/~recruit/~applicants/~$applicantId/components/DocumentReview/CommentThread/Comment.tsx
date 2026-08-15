@@ -1,31 +1,33 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef, useState } from 'react';
-import { BsArrowUpCircleFill } from 'react-icons/bs';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';
 import { MdCancel, MdEdit } from 'react-icons/md';
 
 import type { CommentType } from '@/apis/documents/schema';
-import type { CommentThreadType } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
 import { commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
-import { useWriteComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/hooks/useWriteComment';
-import {
-  CommentBody,
-  CommentItem,
-  CommentThreadFrame,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentComment';
 
-export interface CommentProps extends CommentType {
+interface CommentProps extends CommentType {
   applicantId: number;
+}
+
+interface CommentItemProps {
+  actions?: ReactNode;
+  children: ReactNode;
+  comment: CommentType;
+}
+
+interface CommentBodyProps {
+  children: ReactNode;
 }
 
 export const Comment = ({ applicantId, ...comment }: CommentProps) => {
@@ -127,7 +129,12 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Menu>
               <Menu.Trigger>
-                <IconButton className="rounded-4" size="xxs" variant="inline">
+                <IconButton
+                  aria-label="댓글 메뉴"
+                  className="rounded-4"
+                  size="xxs"
+                  variant="inline"
+                >
                   <IoIosMore className="size-4" />
                 </IconButton>
               </Menu.Trigger>
@@ -171,6 +178,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
           />
           <div className="flex self-end">
             <IconButton
+              aria-label="댓글 수정 취소"
               className="rounded-full"
               onClick={handleCancelEdit}
               onMouseDown={(e) => e.preventDefault()}
@@ -179,7 +187,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               <MdCancel className="text-grey600 size-4.5" />
             </IconButton>
             <IconButton
+              aria-label="댓글 수정 저장"
               className="rounded-full"
+              disabled={isUpdatePending}
               onClick={handleSubmitEdit}
               onMouseDown={(e) => e.preventDefault()}
               size="xxs"
@@ -195,60 +205,32 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   );
 };
 
-interface ThreadProps {
-  applicantId: number;
-  isSelected: boolean;
-  thread: CommentThreadType;
-}
-
-export const Thread = ({ applicantId, isSelected, thread }: ThreadProps) => {
-  const { sectionId, commentId: currentThreadId } = thread[0];
-  const [isReplying, setIsReplying] = useState(false);
-
-  const {
-    content,
-    handleAddComment,
-    handleClose,
-    handleKeyDown,
-    isContentEmpty,
-    isWritePending,
-    setContent,
-  } = useWriteComment({
-    applicantId,
-    onClose: () => setIsReplying(false),
-    parentCommentId: currentThreadId,
-    sectionId,
-  });
+const CommentItem = ({ actions, children, comment }: CommentItemProps) => {
+  const { author, createdAt, isEdited } = comment;
+  const relativeTime = createdAt
+    ? formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt))
+    : null;
 
   return (
-    <DetectOutsideClickArea onClickOutside={handleClose}>
-      <CommentThreadFrame isSelected={isSelected} onClick={() => setIsReplying(true)}>
-        {thread.map((comment) => (
-          <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
-        ))}
-        {isReplying && (
-          <div className="flex items-end gap-1">
-            <MultilineTextField
-              autoFocus
-              className="min-h-fit overflow-hidden p-1.5"
-              onChange={(e) => setContent(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={'댓글 추가'}
-              rows={1}
-              value={content}
-              withHeightAutoResize={true}
-            />
-            <IconButton
-              className="my-auto"
-              disabled={isWritePending || isContentEmpty}
-              onClick={handleAddComment}
-              size="md"
-            >
-              <BsArrowUpCircleFill className="size-5" />
-            </IconButton>
-          </div>
-        )}
-      </CommentThreadFrame>
-    </DetectOutsideClickArea>
+    <div className="group min-w-60 gap-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1 whitespace-nowrap">
+          <span className="text-13 font-medium">
+            {author.nickname} [{author.part}]
+          </span>
+          {relativeTime && (
+            <span className="text-neutralSubtle text-xs">
+              {isEdited ? `${relativeTime} (편집됨)` : relativeTime}
+            </span>
+          )}
+        </div>
+        {actions}
+      </div>
+      {children}
+    </div>
   );
 };
+
+const CommentBody = ({ children }: CommentBodyProps) => (
+  <p className="text-13 min-h-fit border-transparent p-0 pl-1 whitespace-pre-wrap">{children}</p>
+);

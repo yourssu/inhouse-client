@@ -1,8 +1,8 @@
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
-import { DetectOutsideClickArea } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DetectOutsideClickArea';
-import { useWriteComment } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/hooks/useWriteComment';
+import { DetectOutsideClickArea } from './DetectOutsideClickArea';
+import { useWriteComment } from './useWriteComment';
 
 interface CommentFieldProps {
   applicantId: number;
@@ -38,6 +38,7 @@ export const CommentField = ({
         <MultilineTextField
           autoFocus
           className="min-h-fit overflow-hidden p-1.5"
+          disabled={isWritePending}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={'댓글 추가'}
@@ -46,6 +47,7 @@ export const CommentField = ({
           withHeightAutoResize={true}
         />
         <IconButton
+          aria-label="댓글 등록"
           className="my-auto"
           disabled={isWritePending || isContentEmpty}
           onClick={handleAddComment}
