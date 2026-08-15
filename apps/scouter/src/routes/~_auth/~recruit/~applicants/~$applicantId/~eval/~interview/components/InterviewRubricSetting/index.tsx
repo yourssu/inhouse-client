@@ -4,7 +4,6 @@ import { useSuspenseQueries } from '@tanstack/react-query';
 import { Button, Divider } from '@yourssu-inhouse/interior';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { MdKeyboardArrowDown } from 'react-icons/md';
-import { useLoading } from 'react-simplikit';
 
 import type {
   InterviewRubricGroup,
@@ -73,27 +72,23 @@ export const InterviewRubricSetting = ({
     values: toFormValues(orderedGroups),
   });
 
-  const [loading, startLoading] = useLoading();
-
-  const { mutateWithToast } = useToastedMutation({
+  const { isPending, mutateWithToast } = useToastedMutation({
     ...updateInterviewRubricMutationOptions,
     successText: '배점 설정을 저장했어요.',
   });
 
-  const onSubmit: SubmitHandler<UpdateInterviewRubricForm> = async ({ groups }) =>
-    await startLoading(
-      mutateWithToast({
-        partId,
-        semester,
-        data: {
-          deadline: rubric.deadline,
-          groups: groups.map(({ group, items }) => ({
-            group,
-            items: items.map(({ itemId, maxScore }) => ({ itemId, maxScore })),
-          })),
-        },
-      }),
-    );
+  const onSubmit: SubmitHandler<UpdateInterviewRubricForm> = ({ groups }) =>
+    mutateWithToast({
+      partId,
+      semester,
+      data: {
+        deadline: rubric.deadline,
+        groups: groups.map(({ group, items }) => ({
+          group,
+          items: items.map(({ itemId, maxScore }) => ({ itemId, maxScore })),
+        })),
+      },
+    });
 
   return (
     <Collapsible.Root className="flex w-full flex-col">
@@ -183,7 +178,7 @@ export const InterviewRubricSetting = ({
           <Button
             className="w-full"
             disabled={isEvaluationSubmitted}
-            loading={loading}
+            loading={isPending}
             size="md"
             type="submit"
           >
