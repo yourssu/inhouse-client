@@ -1,4 +1,4 @@
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import clsx from 'clsx';
 import { type Control, useWatch } from 'react-hook-form';
 
 import type {
@@ -21,7 +21,7 @@ export const TotalInterviewScore = ({ control }: TotalInterviewScoreProps) => {
     <div className="flex items-center justify-between gap-2 p-2">
       <span className="text-14 font-semibold">총점</span>
       <span
-        className={cn(
+        className={clsx(
           'text-14 font-semibold',
           totalScore === INTERVIEW_RUBRIC_TOTAL_SCORE ? 'text-neutral' : 'text-red600',
         )}
