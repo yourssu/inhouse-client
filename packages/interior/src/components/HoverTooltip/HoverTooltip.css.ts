@@ -8,7 +8,7 @@ export const content = style({
   ...typography['13'],
   boxShadow: `0 0 0 1px ${vars.shadow.shadowMedium00}, 0 10px 30px 0 ${vars.shadow.shadowMedium01}, 0 20px 40px 0 ${vars.shadow.shadowMedium02}`, // shadow-tooltip
   zIndex: vars.zIndex.sticky,
-  maxWidth: 240,
+  maxWidth: 320,
   borderRadius: 14,
   paddingLeft: 22,
   paddingRight: 22,

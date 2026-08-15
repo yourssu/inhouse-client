@@ -1,7 +1,6 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 
-import { applicantsOption } from '@/apis/applicants/query';
 import { partsOption } from '@/apis/parts/query';
 import { interviewSchedulesOption } from '@/apis/schedule/query';
 import { useSearchState } from '@/hooks/useSearchState';
@@ -11,15 +10,10 @@ import { WeeklyCalendarGrid } from '@/routes/~_auth/~recruit/~schedules/componen
 export const WeeklyCalendar = () => {
   const [displayDate, setDisplayDate] = useState(new Date());
   const [search] = useSearchState({ from: '/_auth/recruit/schedules/' });
-  // Todo: schedule에 applicantId를 포함하도록 백엔드 요청
-  const [{ data: allSchedules }, { data: applicants }, { data: parts }] = useSuspenseQueries({
+  const [{ data: allSchedules }, { data: parts }] = useSuspenseQueries({
     queries: [
       {
         ...interviewSchedulesOption(),
-        staleTime: 1000 * 60 * 10,
-      },
-      {
-        ...applicantsOption(),
         staleTime: 1000 * 60 * 10,
       },
       partsOption(),
@@ -44,11 +38,7 @@ export const WeeklyCalendar = () => {
         <CalendarPaper.PartLegend />
       </CalendarPaper.Header>
       <CalendarPaper.Body>
-        <WeeklyCalendarGrid
-          applicants={applicants}
-          displayDate={displayDate}
-          schedules={schedules}
-        />
+        <WeeklyCalendarGrid displayDate={displayDate} schedules={schedules} />
       </CalendarPaper.Body>
     </CalendarPaper>
   );

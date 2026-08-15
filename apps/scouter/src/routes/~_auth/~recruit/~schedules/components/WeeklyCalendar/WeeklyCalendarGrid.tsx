@@ -1,8 +1,6 @@
 import { differenceInMinutes, isSameDay, setHours, setMinutes, startOfDay } from 'date-fns';
-import { assert } from 'es-toolkit';
 import { useState } from 'react';
 
-import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
 
 import { CurrentTimeIndicator } from '@/routes/~_auth/~recruit/~schedules/components/WeeklyCalendar/CurrentTimeIndicator';
@@ -14,7 +12,6 @@ import {
 } from '@/routes/~_auth/~recruit/~schedules/components/WeeklyCalendarLayout/type';
 
 interface WeeklyCalendarGridProps {
-  applicants: ApplicantType[];
   displayDate: Date;
   schedules: InterviewScheduleType[];
 }
@@ -134,11 +131,7 @@ const WeeklyScheduleItemPosition = ({
   );
 };
 
-export const WeeklyCalendarGrid = ({
-  applicants,
-  displayDate,
-  schedules,
-}: WeeklyCalendarGridProps) => {
+export const WeeklyCalendarGrid = ({ displayDate, schedules }: WeeklyCalendarGridProps) => {
   return (
     <div className="relative">
       <WeeklyCalendarLayout displayDate={displayDate}>
@@ -148,19 +141,15 @@ export const WeeklyCalendarGrid = ({
             const daySchedules = schedules.filter(({ startTime }) => isSameDay(startTime, date));
             const overlapLayout = calculateOverlapLayout(daySchedules);
 
-            return daySchedules.map((schedule) => {
-              const applicant = applicants.find((applicant) => applicant.name === schedule.name);
-              assert(!!applicant, `지원자를 찾을 수 없어요: ${schedule.name}`);
-              return (
-                <WeeklyScheduleItemPosition
-                  key={schedule.id}
-                  overlapInfo={overlapLayout.get(schedule.id)}
-                  schedule={schedule}
-                >
-                  <WeeklyScheduleItem applicant={applicant} schedule={schedule} />
-                </WeeklyScheduleItemPosition>
-              );
-            });
+            return daySchedules.map((schedule) => (
+              <WeeklyScheduleItemPosition
+                key={schedule.id}
+                overlapInfo={overlapLayout.get(schedule.id)}
+                schedule={schedule}
+              >
+                <WeeklyScheduleItem schedule={schedule} />
+              </WeeklyScheduleItemPosition>
+            ));
           }}
         </WeeklyCalendarLayout.Body>
       </WeeklyCalendarLayout>
