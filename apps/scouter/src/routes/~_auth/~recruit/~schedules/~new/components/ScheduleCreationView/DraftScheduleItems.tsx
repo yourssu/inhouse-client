@@ -80,6 +80,7 @@ const DraftScheduleItem = ({
   return (
     <ScheduleTooltip
       applicant={applicant}
+      contentProps={{ side: 'bottom', sideOffset: 5 }}
       details={
         <>
           <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>

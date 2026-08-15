@@ -22,7 +22,7 @@ export const ScheduleTooltip = ({
   <HoverTooltip
     content={
       <div className="flex flex-col gap-4.5">
-        <div className="flex flex-col gap-0.5">
+        <div className="flex items-baseline gap-1.5">
           <div className="text-17 font-semibold">{applicant.name}</div>
           <div className="text-neutralSubtle text-13">{partNameKo[applicant.part]} 파트</div>
         </div>
@@ -32,7 +32,11 @@ export const ScheduleTooltip = ({
         </div>
       </div>
     }
-    contentProps={{ align: 'start', side: 'bottom', sideOffset: 5, ...contentProps }}
+    contentProps={{
+      align: 'start',
+      ...contentProps,
+    }}
+    noArrow
   >
     {children}
   </HoverTooltip>
@@ -43,7 +47,11 @@ type ScheduleTooltipItemProps = React.PropsWithChildren<{
   right?: React.ReactNode;
 }>;
 
-const ScheduleTooltipItem = ({ icon: Icon, right, children }: ScheduleTooltipItemProps) => {
+const ScheduleTooltipItem = ({
+  children,
+  icon: Icon,
+  right,
+}: ScheduleTooltipItemProps) => {
   const content = (
     <div className="flex items-center gap-2">
       <Icon className="text-neutralDisabled size-6" />
