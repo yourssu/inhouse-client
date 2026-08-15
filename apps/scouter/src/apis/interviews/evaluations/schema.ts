@@ -21,7 +21,7 @@ export const MyInterviewEvaluationSchema = z.object({
   groups: z.array(InterviewEvaluationGroupSchema),
   overallComment: z.string(),
   result: InterviewEvaluationResultSchema,
-  submittedAt: z.iso.datetime({ offset: true }).optional(),
+  submittedAt: z.iso.datetime({ offset: true }).nullish(),
 });
 
 export const InterviewEvaluatorStatusValueSchema = z.enum([
