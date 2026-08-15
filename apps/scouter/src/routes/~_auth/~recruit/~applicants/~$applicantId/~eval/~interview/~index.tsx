@@ -7,7 +7,9 @@ import { lotties } from '@yourssu-inhouse/resources';
 import { Suspense } from 'react';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
+import { myInterviewEvaluationOption } from '@/apis/interviews/evaluations/query';
 import { Paper } from '@/components/Paper';
+import { OtherInterviewEvaluationsPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/OtherInterviewEvaluationsPanel';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 
 const RouteComponent = () => {
@@ -18,15 +20,20 @@ const RouteComponent = () => {
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="면접 평가" />
 
-      <main className="flex flex-[1_1_0] gap-4 pt-7">
-        <Paper className="h-full flex-1 items-center justify-center">
+      <main className="flex min-w-0 flex-[1_1_0] gap-4 pt-7">
+        <Paper className="h-full min-w-0 flex-1 items-center justify-center">
           <Result
             description="면접 평가 기능은 아직 준비 중이에요."
             figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
             title="면접 평가 준비 중이에요"
           />
         </Paper>
-        <Paper className="w-100 shrink-0">사이드바</Paper>
+        <aside aria-label="다른 평가자 평가" className="sticky top-3 h-fit w-100 shrink-0">
+          <OtherInterviewEvaluationsPanel
+            applicantId={Number(applicantId)}
+            interviewAverageScore={applicant.interviewAverageScore}
+          />
+        </aside>
       </main>
     </PageLayout.Content>
   );
@@ -42,5 +49,6 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     const applicantId = Number(params.applicantId);
 
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
+    context.queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
   },
 });
