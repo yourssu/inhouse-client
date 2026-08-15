@@ -13,7 +13,6 @@ import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { InterviewRequirementsParamsSchema } from '@/apis/interviews/requirements/schema';
 import { activeMembersOption, meOption } from '@/apis/members/query';
-import { semestersNowOption } from '@/apis/semesters/query';
 import { Paper } from '@/components/Paper';
 import { QuestionnairePanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnairePanel';
 import {
@@ -57,7 +56,11 @@ const QuestionnairePage = () => {
             title="질문지를 불러오지 못했어요"
           >
             <div className="max-h-[calc(100vh-1.5rem)] overflow-y-auto">
-              <QuestionnairePanel applicantId={applicantIdNumber} partId={applicant.partId} />
+              <QuestionnairePanel
+                applicantId={Number(applicantId)}
+                partId={applicant.partId}
+                semester={applicant.applicationSemester}
+              />
             </div>
           </PanelBoundary>
         </aside>
@@ -156,7 +159,6 @@ export const Route = createFileRoute(
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
     context.queryClient.prefetchQuery(meOption());
     context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
-    context.queryClient.prefetchQuery(semestersNowOption());
 
     if (deps.partId !== undefined) {
       context.queryClient.prefetchQuery(activeMembersOption({ partId: deps.partId }));

@@ -10,7 +10,6 @@ import { AssignmentEvalDialogContent } from '@/routes/~_auth/~recruit/~applicant
 interface ApplicantActionMenuProps {
   applicant: ApplicantType;
   hasAssignment: boolean;
-  semester: string;
 }
 
 // 이 상태일 때만 과제 평가 진입을 허용해요. 그 외 상태는 전부 에러 모달로 안내해요.
@@ -28,12 +27,8 @@ const assignmentEvalGateErrorContent: Partial<Record<ApplicantStateType, string>
   FINAL_ACCEPTED: '이미 다음 전형까지 진행된 지원자는 과제 평가를 다시 진행할 수 없어요.',
 };
 
-export const ApplicantActionMenu = ({
-  applicant,
-  hasAssignment,
-  semester,
-}: ApplicantActionMenuProps) => {
-  const { applicantId, name: applicantName, partId, state } = applicant;
+export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActionMenuProps) => {
+  const { applicantId, applicationSemester, name: applicantName, partId, state } = applicant;
   const navigate = useNavigate();
   const openAlertDialog = useAlertDialog();
 
@@ -55,7 +50,7 @@ export const ApplicantActionMenu = ({
   const handleQuestionnaireClick = () => {
     navigate({
       params: { applicantId: String(applicantId) },
-      search: { partId, semester },
+      search: { partId, semester: applicationSemester },
       to: '/recruit/applicants/$applicantId/interview/questionnaire',
     });
   };

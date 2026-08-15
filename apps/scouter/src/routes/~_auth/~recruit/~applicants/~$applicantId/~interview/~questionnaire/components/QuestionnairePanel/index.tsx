@@ -1,21 +1,17 @@
-import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { activeMembersOption } from '@/apis/members/query';
-import { semestersNowOption } from '@/apis/semesters/query';
-import { formatRecruitingSemester } from '@/utils/semester';
-
-import { QuestionnaireEditor } from './QuestionnaireEditor';
+import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnairePanel/QuestionnaireEditor';
 
 interface QuestionnairePanelProps {
   applicantId: number;
   partId: number;
+  semester: string;
 }
 
-export const QuestionnairePanel = ({ applicantId, partId }: QuestionnairePanelProps) => {
-  const { data: currentSemester } = useSuspenseQuery(semestersNowOption());
-  const semester = formatRecruitingSemester(currentSemester);
+export const QuestionnairePanel = ({ applicantId, partId, semester }: QuestionnairePanelProps) => {
   const [{ data: assignedQuestions }, { data: requirements }, { data: activeMembersResponse }] =
     useSuspenseQueries({
       queries: [

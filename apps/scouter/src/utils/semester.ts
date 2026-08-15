@@ -1,4 +1,4 @@
-interface RecruitingSemester {
+export interface RecruitingSemester {
   term: number;
   year: number;
 }

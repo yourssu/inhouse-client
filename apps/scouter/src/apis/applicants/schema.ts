@@ -24,6 +24,7 @@ export const ApplicantSchema = z.object({
   name: z.string(), // 이름
   state: ApplicantStateSchema, // 상태
   applicationDate: z.iso.date(), // 지원 날짜
+  applicationSemester: z.string().regex(/^\d{4}-[12]$/), // 지원 리쿠르팅 학기
   email: z.email(), // 이메일
   phoneNumber: z.string(), // 전화번호
   department: z.string(), // 학과
