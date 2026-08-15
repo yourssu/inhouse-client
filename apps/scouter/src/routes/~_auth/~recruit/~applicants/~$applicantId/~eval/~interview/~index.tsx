@@ -10,7 +10,6 @@ import { Paper } from '@/components/Paper';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
 import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
-import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewScriptContent';
 import {
   FIXED_SCRIPTS,
   INTRO_SCRIPT_ID,
@@ -84,7 +83,6 @@ const RouteComponent = () => {
                 selectedScript ? (
                   <div className="flex flex-col gap-3">
                     <div className="text-16 font-semibold">{selectedScript.title}</div>
-                    <InterviewScriptContent content={selectedScript.content} />
                   </div>
                 ) : null,
             }}
