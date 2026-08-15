@@ -3,7 +3,10 @@ import { type Control, Controller } from 'react-hook-form';
 
 import type { QuestionCategory } from '@/apis/interviews/questions/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
-import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
+
+import type { QuestionnaireFormValues } from '../questionnaireForm';
+
+import { QuestionnaireErrorMessage } from '../QuestionnaireErrorMessage';
 
 type InterviewerFieldName = `${QuestionCategory}.${number}.assignedInterviewerUserId`;
 
@@ -30,6 +33,7 @@ export const InterviewerField = ({
             activeMembers={activeMembers}
             errorMessage={fieldState.error?.message}
             onChange={field.onChange}
+            ref={field.ref}
             value={field.value}
           />
         )}
@@ -43,6 +47,7 @@ interface InterviewerSelectProps {
   activeMembers: ActiveMemberType[];
   errorMessage?: string;
   onChange: (interviewerId: number) => void;
+  ref?: React.Ref<HTMLButtonElement>;
   value?: number;
 }
 
@@ -50,6 +55,7 @@ const InterviewerSelect = ({
   activeMembers,
   errorMessage,
   onChange,
+  ref,
   value,
 }: InterviewerSelectProps) => {
   const interviewerIdByNickname = new Map(
@@ -61,7 +67,10 @@ const InterviewerSelect = ({
   const nicknames = activeMembers.map(({ nickname }) => nickname);
 
   return (
-    <Fieldset help={errorMessage} label="질문자">
+    <Fieldset
+      help={errorMessage && <QuestionnaireErrorMessage>{errorMessage}</QuestionnaireErrorMessage>}
+      label="질문자"
+    >
       <Select
         className="w-full"
         invalid={!!errorMessage}
@@ -73,7 +82,8 @@ const InterviewerSelect = ({
           }
         }}
         placeholder="질문자를 선택하세요"
-        size="sm"
+        ref={ref}
+        size="md"
         value={value === undefined ? undefined : interviewerNicknameById.get(value)}
         variant="outline"
       />

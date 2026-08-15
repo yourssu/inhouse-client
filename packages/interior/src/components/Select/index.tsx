@@ -16,6 +16,7 @@ export interface SelectProps<TValue extends string> {
   label?: React.ReactNode;
   onValueChange: (value: TValue) => void;
   placeholder: string;
+  ref?: React.Ref<HTMLButtonElement>;
   size: 'lg' | 'md' | 'sm' | 'xs';
   value: TValue | undefined;
   variant: 'dimmed' | 'inline' | 'outline';
@@ -34,6 +35,7 @@ export const Select = <TValue extends string>({
   contentProps,
   label,
   description,
+  ref,
 }: React.PropsWithChildren<SelectProps<TValue>>) => {
   /* 
     NOTE: Radix-ui Select 컴포넌트의 값을 정확하게 초기화하려면 filter를 undefined 대신 ''로 설정해야 해요.
@@ -49,6 +51,7 @@ export const Select = <TValue extends string>({
               styles.trigger({ variant, size, invalid, hasValue: !!value }),
               className,
             )}
+            ref={ref}
           >
             <div
               style={{

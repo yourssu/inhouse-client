@@ -4,9 +4,11 @@ import { MultilineTextField } from '@yourssu-inhouse/interior';
 import { type Control, Controller } from 'react-hook-form';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
-import type { QuestionnaireFormValues } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
-import { RequirementPicker } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/RequirementPicker';
+import type { QuestionnaireFormValues } from '../questionnaireForm';
+
+import { QuestionnaireErrorMessage } from '../QuestionnaireErrorMessage';
+import { RequirementPicker } from '../Requirements/RequirementPicker';
 
 interface EditableQuestionFieldsProps {
   category: 'PART' | 'PERSONAL';
@@ -26,7 +28,7 @@ export const EditableQuestionFields = ({
   return (
     <>
       <div className="flex items-start gap-2">
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <Controller
             control={control}
             name={`${category}.${index}.content`}
@@ -42,9 +44,7 @@ export const EditableQuestionFields = ({
                   withHeightAutoResize
                 />
                 {fieldState.error?.message !== undefined && (
-                  <p className="text-13 text-red600 mt-1" role="alert">
-                    {fieldState.error.message}
-                  </p>
+                  <QuestionnaireErrorMessage>{fieldState.error.message}</QuestionnaireErrorMessage>
                 )}
               </>
             )}
@@ -63,7 +63,7 @@ export const EditableQuestionFields = ({
         {deleteButton}
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         <Controller
           control={control}
           name={`${category}.${index}.requirementIds`}
@@ -72,13 +72,12 @@ export const EditableQuestionFields = ({
               <RequirementPicker
                 invalid={fieldState.invalid}
                 onChange={field.onChange}
+                ref={field.ref}
                 requirements={requirements}
                 selectedRequirementIds={field.value}
               />
               {fieldState.error?.message !== undefined && (
-                <p className="text-13 text-red600" role="alert">
-                  {fieldState.error.message}
-                </p>
+                <QuestionnaireErrorMessage>{fieldState.error.message}</QuestionnaireErrorMessage>
               )}
             </>
           )}

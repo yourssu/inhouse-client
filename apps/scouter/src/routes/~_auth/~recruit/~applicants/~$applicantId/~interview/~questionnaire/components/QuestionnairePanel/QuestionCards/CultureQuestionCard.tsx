@@ -2,13 +2,11 @@ import { Badge, Checkbox, Fieldset } from '@yourssu-inhouse/interior';
 import { type Control, Controller } from 'react-hook-form';
 
 import type { ActiveMemberType } from '@/apis/members/schema';
-import type {
-  CultureQuestionFormValue,
-  QuestionnaireFormValues,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionnaireForm';
 
-import { InterviewerField } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/InterviewerField';
-import { QuestionCardFrame } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/questionCards/QuestionCardFrame';
+import type { CultureQuestionFormValue, QuestionnaireFormValues } from '../questionnaireForm';
+
+import { InterviewerField } from './InterviewerField';
+import { QuestionCardFrame } from './QuestionCardFrame';
 
 interface CultureQuestionCardProps {
   activeMembers: ActiveMemberType[];

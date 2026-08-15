@@ -2,11 +2,12 @@ import { Combobox } from '@yourssu-inhouse/interior';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 
-import { teamJobOtherRequirementGroupConfigs } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/requirementOptions';
+import { teamJobOtherRequirementGroupConfigs } from './requirementOptions';
 
 interface RequirementPickerProps {
   invalid?: boolean;
   onChange: (requirementIds: number[]) => void;
+  ref?: React.Ref<HTMLInputElement>;
   requirements: InterviewRequirements;
   selectedRequirementIds: number[];
 }
@@ -14,6 +15,7 @@ interface RequirementPickerProps {
 export const RequirementPicker = ({
   invalid = false,
   onChange,
+  ref,
   requirements,
   selectedRequirementIds,
 }: RequirementPickerProps) => {
@@ -51,6 +53,7 @@ export const RequirementPicker = ({
         );
       }}
       placeholder="요구조건을 선택하세요"
+      ref={ref}
       value={value}
     />
   );
