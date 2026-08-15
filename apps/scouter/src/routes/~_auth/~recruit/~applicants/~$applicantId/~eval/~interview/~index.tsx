@@ -32,8 +32,8 @@ const RouteComponent = () => {
           <Suspense>
             <InterviewRubricSetting
               applicantId={Number(applicantId)}
-              applicationDate={applicant.applicationDate}
               partId={applicant.partId}
+              semester={applicant.applicationSemester}
             />
           </Suspense>
         </Paper>

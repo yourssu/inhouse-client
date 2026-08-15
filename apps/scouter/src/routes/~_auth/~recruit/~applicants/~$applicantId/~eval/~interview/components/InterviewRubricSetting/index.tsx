@@ -25,10 +25,6 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/InterviewScoreInput';
 import { RubricFieldError } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/RubricFieldError';
 import { TotalInterviewScore } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/TotalInterviewScore';
-import {
-  formatRecruitingSemester,
-  inferRecruitingSemesterFromApplicationDate,
-} from '@/utils/semester';
 
 const groupLabels: Record<InterviewRubricGroupName, string> = {
   CULTURE_FIT: '컬쳐핏',
@@ -38,19 +34,15 @@ const groupLabels: Record<InterviewRubricGroupName, string> = {
 
 interface InterviewRubricSettingProps {
   applicantId: number;
-  applicationDate: string;
   partId: number;
+  semester: string;
 }
 
 export const InterviewRubricSetting = ({
   applicantId,
-  applicationDate,
   partId,
+  semester,
 }: InterviewRubricSettingProps) => {
-  const semester = formatRecruitingSemester(
-    inferRecruitingSemesterFromApplicationDate(applicationDate),
-  );
-
   const [{ data: rubric }, { data: evaluatorStatuses }] = useSuspenseQueries({
     queries: [
       interviewRubricOption({ partId, semester }),
