@@ -7,7 +7,9 @@ import { lotties } from '@yourssu-inhouse/resources';
 import { Suspense } from 'react';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
+import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
 import { Paper } from '@/components/Paper';
+import { InterviewRubricSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 
 const RouteComponent = () => {
@@ -26,7 +28,15 @@ const RouteComponent = () => {
             title="면접 평가 준비 중이에요"
           />
         </Paper>
-        <Paper className="w-100 shrink-0">사이드바</Paper>
+        <Paper className="w-100 shrink-0 overflow-hidden p-0">
+          <Suspense>
+            <InterviewRubricSetting
+              applicantId={Number(applicantId)}
+              applicationDate={applicant.applicationDate}
+              partId={applicant.partId}
+            />
+          </Suspense>
+        </Paper>
       </main>
     </PageLayout.Content>
   );
@@ -42,5 +52,6 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     const applicantId = Number(params.applicantId);
 
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
+    context.queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
   },
 });
