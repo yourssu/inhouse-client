@@ -9,6 +9,7 @@ export const QuestionRequirementSchema = z.object({
 
 export const AssignedQuestionSchema = z.object({
   id: z.number().nullish(),
+  assignedInterviewerUserId: z.number().nullish(),
   assignedInterviewerName: z.string().nullish(),
   sourceQuestionId: z.number().nullish(),
   content: z.string(),

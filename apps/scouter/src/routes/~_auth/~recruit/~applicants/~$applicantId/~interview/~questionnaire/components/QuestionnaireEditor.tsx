@@ -58,7 +58,7 @@ export const QuestionnaireEditor = ({
         requirements,
       });
     },
-    values: toQuestionnaireFormValues(assignedQuestions, activeMembers),
+    values: toQuestionnaireFormValues(assignedQuestions),
   });
   const { isPending, mutateWithToast } = useToastedMutation({
     ...saveAssignedQuestionsMutationOptions,
@@ -271,13 +271,7 @@ const validateQuestionnaire = ({ questions, requirements }: ValidateQuestionnair
   return validationMessages.length === 0 || validationMessages.join('\n');
 };
 
-const toQuestionnaireFormValues = (
-  { questions }: AssignedQuestions,
-  activeMembers: ActiveMemberType[],
-): QuestionnaireFormValues => {
-  const interviewerIdByNickname = new Map(
-    activeMembers.map(({ memberId, nickname }) => [nickname, memberId]),
-  );
+const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): QuestionnaireFormValues => {
   const formValues: QuestionnaireFormValues = {
     GLOBAL: [],
     CULTURE: [],
@@ -286,10 +280,7 @@ const toQuestionnaireFormValues = (
   };
 
   questions.forEach((question) => {
-    const assignedInterviewerUserId =
-      question.assignedInterviewerName === null || question.assignedInterviewerName === undefined
-        ? undefined
-        : interviewerIdByNickname.get(question.assignedInterviewerName);
+    const assignedInterviewerUserId = question.assignedInterviewerUserId ?? undefined;
 
     switch (question.category) {
       case 'CULTURE':

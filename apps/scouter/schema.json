@@ -4388,6 +4388,11 @@
             "format": "int64",
             "description": "배정 질문 ID (초기 기본 질문인 경우 null)"
           },
+          "assignedInterviewerUserId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Assigned interviewer user ID (null for initial default questions)"
+          },
           "assignedInterviewerName": {
             "type": "string",
             "description": "배정된 면접관 영어 닉네임"
