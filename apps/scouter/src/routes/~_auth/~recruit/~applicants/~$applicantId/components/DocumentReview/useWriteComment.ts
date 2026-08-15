@@ -28,6 +28,7 @@ export const useWriteComment = ({
     successText: '코멘트를 작성했어요.',
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+      setContent('');
     },
   });
 
@@ -36,7 +37,7 @@ export const useWriteComment = ({
       return;
     }
 
-    const result = await writeCommentWithToast({
+    await writeCommentWithToast({
       applicantId,
       data: {
         content: trimmedContent,
@@ -44,10 +45,6 @@ export const useWriteComment = ({
         sectionId,
       },
     });
-
-    if (result.success) {
-      setContent('');
-    }
   };
 
   const handleClose = () => {
