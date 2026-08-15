@@ -1,25 +1,30 @@
 import type { Control } from 'react-hook-form';
 
+import type { QuestionCategory } from '@/apis/interviews/questions/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
-import type { GlobalQuestionFormValue, QuestionnaireFormValues } from '../questionnaireForm';
+import type { QuestionnaireFormValues, SourceQuestionFormValue } from '../questionnaireForm';
 
 import { InterviewerField } from './InterviewerField';
 import { QuestionCardFrame } from './QuestionCardFrame';
 
-interface GlobalQuestionCardProps {
+type RequiredQuestionCategory = Extract<QuestionCategory, 'INTRO' | 'OUTRO'>;
+
+interface RequiredQuestionCardProps {
   activeMembers: ActiveMemberType[];
+  category: RequiredQuestionCategory;
   control: Control<QuestionnaireFormValues>;
   index: number;
-  question: GlobalQuestionFormValue;
+  question: SourceQuestionFormValue;
 }
 
-export const GlobalQuestionCard = ({
+export const RequiredQuestionCard = ({
   activeMembers,
+  category,
   control,
   index,
   question,
-}: GlobalQuestionCardProps) => {
+}: RequiredQuestionCardProps) => {
   return (
     <QuestionCardFrame>
       <div className="flex items-start gap-2">
@@ -31,7 +36,7 @@ export const GlobalQuestionCard = ({
       <InterviewerField
         activeMembers={activeMembers}
         control={control}
-        name={`GLOBAL.${index}.assignedInterviewerUserId`}
+        name={`${category}.${index}.assignedInterviewerUserId`}
       />
     </QuestionCardFrame>
   );

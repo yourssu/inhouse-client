@@ -5,11 +5,11 @@ interface BaseQuestionFormValue {
   content: string;
 }
 
-export interface GlobalQuestionFormValue extends BaseQuestionFormValue {
+export interface SourceQuestionFormValue extends BaseQuestionFormValue {
   sourceQuestionId?: number;
 }
 
-export interface CultureQuestionFormValue extends GlobalQuestionFormValue {
+export interface CultureQuestionFormValue extends SourceQuestionFormValue {
   isSelected?: boolean;
   requirements: QuestionRequirement[];
 }
@@ -20,7 +20,8 @@ export interface PartPersonalQuestionFormValue extends BaseQuestionFormValue {
 
 export interface QuestionnaireFormValues {
   CULTURE: CultureQuestionFormValue[];
-  GLOBAL: GlobalQuestionFormValue[];
+  INTRO: SourceQuestionFormValue[];
+  OUTRO: SourceQuestionFormValue[];
   PART: PartPersonalQuestionFormValue[];
   PERSONAL: PartPersonalQuestionFormValue[];
 }
