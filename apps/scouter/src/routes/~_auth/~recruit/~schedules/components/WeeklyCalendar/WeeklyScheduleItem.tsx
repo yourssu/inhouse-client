@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { BiSolidCalendarCheck } from 'react-icons/bi';
 import { MdLocationOn } from 'react-icons/md';
 
-import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
 
 import { useResizeObserver } from '@/hooks/useResizeObserver';
@@ -15,11 +14,10 @@ import { ScheduleTooltip } from '@/routes/~_auth/~recruit/~schedules/components/
 import { partColorMap, partNameKo } from '@/types/parts';
 
 interface WeeklyScheduleItemProps {
-  applicant: ApplicantType;
   schedule: InterviewScheduleType;
 }
 
-export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemProps) => {
+export const WeeklyScheduleItem = ({ schedule }: WeeklyScheduleItemProps) => {
   const color = partColorMap[schedule.part];
   const duration = differenceInMinutes(schedule.endTime, schedule.startTime);
 
@@ -53,10 +51,7 @@ export const WeeklyScheduleItem = ({ applicant, schedule }: WeeklyScheduleItemPr
           </div>
         </div>
       </ScheduleTooltip.Trigger>
-      <ScheduleTooltip.Content
-        applicant={applicant}
-        contentProps={{ side: 'left', sideOffset: 10 }}
-      >
+      <ScheduleTooltip.Content applicant={schedule} contentProps={{ side: 'left', sideOffset: 10 }}>
         <ScheduleTooltip.Item icon={BiSolidCalendarCheck}>
           {formatTemplates['1월 1일 (월) 23:00'](schedule.startTime)} ~{' '}
           {formatTemplates['23:00'](schedule.endTime)} ({duration}분)

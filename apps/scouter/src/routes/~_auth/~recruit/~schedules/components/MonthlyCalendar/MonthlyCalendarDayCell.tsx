@@ -1,17 +1,14 @@
 import { tv } from '@yourssu-inhouse/interior-tailwind/utils';
 import clsx from 'clsx';
 import { getDate, isSunday, isToday } from 'date-fns';
-import { assert } from 'es-toolkit';
 import { useState } from 'react';
 
-import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
 import type { MonthlyCalendarDateState } from '@/routes/~_auth/~recruit/~schedules/utils/calendar';
 
 import { MonthlyScheduleItem } from '@/routes/~_auth/~recruit/~schedules/components/MonthlyCalendar/MonthlyScheduleItem';
 
 interface MonthlyCalendarDayCellProps {
-  applicants: ApplicantType[];
   date: Date;
   schedules: InterviewScheduleType[];
   state: MonthlyCalendarDateState;
@@ -29,12 +26,7 @@ const day = tv({
   },
 });
 
-export const MonthlyCalendarDayCell = ({
-  date,
-  state,
-  schedules,
-  applicants,
-}: MonthlyCalendarDayCellProps) => {
+export const MonthlyCalendarDayCell = ({ date, state, schedules }: MonthlyCalendarDayCellProps) => {
   const [showAllSchedules, setShowAllSchedules] = useState(false);
 
   const visibleSchedules = showAllSchedules ? schedules : schedules.slice(0, 3);
@@ -66,13 +58,9 @@ export const MonthlyCalendarDayCell = ({
         </span>
       </div>
       <div className="flex flex-col gap-1">
-        {visibleSchedules.map((schedule) => {
-          const applicant = applicants.find(({ name }) => name === schedule.name);
-          assert(!!applicant, `지원자를 찾을 수 없어요: ${schedule.name}`);
-          return (
-            <MonthlyScheduleItem applicant={applicant} key={schedule.id} schedule={schedule} />
-          );
-        })}
+        {visibleSchedules.map((schedule) => (
+          <MonthlyScheduleItem key={schedule.id} schedule={schedule} />
+        ))}
         {schedules.length > 3 && !showAllSchedules && (
           <button
             className="text-neutralDisabled hover:bg-greyOpacity100 ease-ease h-7 cursor-pointer rounded-lg px-1.5 text-left text-xs transition-colors"

@@ -1,10 +1,8 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 
 import { partNameKo } from '@/types/parts';
-import { formatSemester } from '@/utils/semester';
 
 export const ScheduleTooltip = ({ children }: React.PropsWithChildren) => (
   <Tooltip.Provider delayDuration={0} skipDelayDuration={0}>
@@ -17,7 +15,7 @@ const ScheduleTooltipTrigger = ({ children }: React.PropsWithChildren) => (
 );
 
 type ScheduleTooltipContentProps = React.PropsWithChildren<{
-  applicant: ApplicantType;
+  applicant: Pick<ApplicantType, 'name' | 'part'>;
   contentProps?: Tooltip.TooltipContentProps;
   left?: string;
 }>;
@@ -39,15 +37,7 @@ const ScheduleTooltipContent = ({
       <div className="text-15 flex flex-col gap-4.5">
         <div className="flex flex-col gap-0.5">
           <div className="text-17 font-semibold">{applicant.name}</div>
-          <div className="text-neutralSubtle text-13">
-            {applicant.age}세 · {formatSemester(applicant.academicSemester)}
-          </div>
-          <div className="text-neutralSubtle text-13">
-            <span>{partNameKo[applicant.part]} 파트</span>
-            <span className="ml-1">
-              {formatTemplates['1월 1일'](applicant.applicationDate)}에 지원
-            </span>
-          </div>
+          <div className="text-neutralSubtle text-13">{partNameKo[applicant.part]} 파트</div>
         </div>
         <div className="flex flex-col gap-2">
           {children}
