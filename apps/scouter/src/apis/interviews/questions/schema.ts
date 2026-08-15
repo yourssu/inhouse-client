@@ -10,6 +10,7 @@ export const QuestionRequirementSchema = z.object({
 export const AssignedQuestionSchema = z.object({
   id: z.number().nullish(),
   assignedInterviewerUserId: z.number().nullish(),
+  assignedInterviewerName: z.string().nullish(),
   sourceQuestionId: z.number().nullish(),
   content: z.string(),
   category: QuestionCategorySchema,
@@ -28,6 +29,7 @@ export const PartInterviewQuestionSchema = z.object({
   partId: z.number().optional(),
   category: PartQuestionCategorySchema,
   content: z.string(),
+  requirements: z.array(QuestionRequirementSchema),
   sortOrder: z.number(),
 });
 

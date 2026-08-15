@@ -280,10 +280,12 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
   };
 
   questions.forEach((question) => {
+    const assignedInterviewerUserId = question.assignedInterviewerUserId ?? undefined;
+
     switch (question.category) {
       case 'CULTURE':
         formValues.CULTURE.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           isSelected: question.isSelected ?? undefined,
           requirements: question.requirements,
@@ -292,21 +294,21 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
         break;
       case 'GLOBAL':
         formValues.GLOBAL.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
       case 'PART':
         formValues.PART.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
         break;
       case 'PERSONAL':
         formValues.PERSONAL.push({
-          assignedInterviewerUserId: question.assignedInterviewerUserId ?? undefined,
+          assignedInterviewerUserId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
