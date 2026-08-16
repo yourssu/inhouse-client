@@ -74,7 +74,6 @@ const RouteComponent = () => {
         </InterviewTab>
 
         <Paper className="flex-1 flex-col gap-4 p-0">
-          {/* SwitchCase와 그 안의 요소는 다음 브랜치에서 작업해요. 현재는 결과를 보여주기 위해 AI 생성 코드를 두었어요.*/}
           <SwitchCase
             caseBy={{
               질문: () =>
