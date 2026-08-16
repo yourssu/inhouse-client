@@ -12,13 +12,14 @@ import { Paper } from '@/components/Paper';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
 import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
+import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewScriptContent';
 import {
   FIXED_SCRIPTS,
-  INTRO_SCRIPT_ID,
+  INTRO_SCRIPT,
 } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/introScript';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 
-const INTERVIEW_TABS = ['질문 리스트', '지원서'] as const;
+const INTERVIEW_TABS = ['질문', '지원서'] as const;
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
@@ -38,10 +39,9 @@ const RouteComponent = () => {
     ],
   });
 
-  const [selectedQuestionId, setSelectedQuestionId] = useState<number>(INTRO_SCRIPT_ID);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<number>(INTRO_SCRIPT.id);
 
   const selectedQuestion = assignedQuestions.find(({ id }) => id === selectedQuestionId);
-
   const selectedScript = FIXED_SCRIPTS[selectedQuestionId] ?? null;
   const panelState = selectedScript == null ? '질문' : '스크립트';
 
@@ -55,7 +55,7 @@ const RouteComponent = () => {
             <Paper className="sticky top-3 h-full w-90 flex-1 scrollbar-gutter-stable overflow-y-auto p-0">
               <SwitchCase
                 caseBy={{
-                  '질문 리스트': () => (
+                  질문: () => (
                     <InterviewQuestionList
                       onSelectQuestion={setSelectedQuestionId}
                       questions={assignedQuestions}
@@ -70,7 +70,7 @@ const RouteComponent = () => {
           )}
         </InterviewTab>
 
-        <Paper className="flex-1 flex-col gap-4">
+        <Paper className="flex-1 flex-col gap-4 p-0">
           {/* SwitchCase와 그 안의 요소는 다음 브랜치에서 작업해요. 현재는 결과를 보여주기 위해 AI 생성 코드를 두었어요.*/}
           <SwitchCase
             caseBy={{
@@ -87,12 +87,7 @@ const RouteComponent = () => {
                     </ul>
                   </div>
                 ) : null,
-              스크립트: () =>
-                selectedScript ? (
-                  <div className="flex flex-col gap-3">
-                    <div className="text-16 font-semibold">{selectedScript.title}</div>
-                  </div>
-                ) : null,
+              스크립트: () => <InterviewScriptContent selectedScript={selectedScript} />,
             }}
             value={panelState}
           />

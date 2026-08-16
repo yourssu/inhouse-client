@@ -7,9 +7,7 @@ import type { AssignedQuestion, QuestionCategory } from '@/apis/interviews/quest
 
 import {
   INTRO_SCRIPT,
-  INTRO_SCRIPT_ID,
   OUTRO_SCRIPT,
-  OUTRO_SCRIPT_ID,
 } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/introScript';
 
 const CATEGORY_ORDER: QuestionCategory[] = [
@@ -48,8 +46,8 @@ export const InterviewQuestionList = ({
   return (
     <div className="w-full">
       <InterviewScript
-        isSelected={selectedQuestionId === INTRO_SCRIPT_ID}
-        onClickScript={() => onSelectQuestion(INTRO_SCRIPT_ID)}
+        isSelected={selectedQuestionId === INTRO_SCRIPT.id}
+        onClickScript={() => onSelectQuestion(INTRO_SCRIPT.id)}
         summary={INTRO_SCRIPT.summary}
         title={INTRO_SCRIPT.title}
       />
@@ -83,8 +81,8 @@ export const InterviewQuestionList = ({
       ))}
       <Divider />
       <InterviewScript
-        isSelected={selectedQuestionId === OUTRO_SCRIPT_ID}
-        onClickScript={() => onSelectQuestion(OUTRO_SCRIPT_ID)}
+        isSelected={selectedQuestionId === OUTRO_SCRIPT.id}
+        onClickScript={() => onSelectQuestion(OUTRO_SCRIPT.id)}
         summary={OUTRO_SCRIPT.summary}
         title={OUTRO_SCRIPT.title}
       />

@@ -1,6 +1,12 @@
-// TODO: 면접 스크립트 조회 API 연동 시 교체 (현재 백엔드 미구현). 연동 시 선택 키 표현(sentinel id)도 재검토.
-export const INTRO_SCRIPT_ID = -1;
-export const INTRO_SCRIPT = {
+export interface InterviewScriptTypes {
+  content: string;
+  id: number;
+  summary: string;
+  title: string;
+}
+
+export const INTRO_SCRIPT: InterviewScriptTypes = {
+  id: -1,
   title: '사전 안내 멘트',
   summary: '소개 및 아이스브레이킹',
   content: `[인사]
@@ -29,8 +35,8 @@ export const INTRO_SCRIPT = {
 그럼 면접 시작해도 괜찮을까요?`,
 };
 
-export const OUTRO_SCRIPT_ID = -2;
-export const OUTRO_SCRIPT = {
+export const OUTRO_SCRIPT: InterviewScriptTypes = {
+  id: -2,
   title: '면접 마무리 멘트',
   summary: '면접 다음 프로세스 안내',
   content: `[면접 다음 프로세스 안내]
@@ -46,7 +52,7 @@ export const OUTRO_SCRIPT = {
 면접 수고 많으셨습니다. 조심히 돌아가세요.😊`,
 };
 
-export const FIXED_SCRIPTS: Record<number, { content: string; title: string }> = {
-  [INTRO_SCRIPT_ID]: INTRO_SCRIPT,
-  [OUTRO_SCRIPT_ID]: OUTRO_SCRIPT,
+export const FIXED_SCRIPTS: Record<number, InterviewScriptTypes> = {
+  [INTRO_SCRIPT.id]: INTRO_SCRIPT,
+  [OUTRO_SCRIPT.id]: OUTRO_SCRIPT,
 };
