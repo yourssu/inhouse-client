@@ -88,7 +88,7 @@ const RouteComponent = () => {
           />
         </Paper>
 
-        <Paper className="w-100 shrink-0 overflow-hidden p-0">
+        <Paper className="w-100 shrink-0 flex flex-col overflow-hidden p-0">
           <Suspense>
             <InterviewRubricSetting
               applicantId={Number(applicantId)}
@@ -96,7 +96,7 @@ const RouteComponent = () => {
               semester={applicant.applicationSemester}
             />
           </Suspense>
-          <aside aria-label="다른 평가자 평가" className="w-full">
+          <aside aria-label="다른 평가자 평가" className="w-full p-4">
             <OtherInterviewEvaluationsPanel
               applicantId={Number(applicantId)}
               applicantName={applicant.name}
