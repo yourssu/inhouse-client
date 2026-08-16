@@ -21,7 +21,6 @@ import {
   myInterviewEvaluationOption,
   otherInterviewEvaluationsOption,
 } from '@/apis/interviews/evaluations/query';
-import { Paper } from '@/components/Paper';
 
 interface OtherInterviewEvaluationsPanelProps {
   applicantId: number;
@@ -60,7 +59,7 @@ const OtherInterviewEvaluationsGate = ({
 }: OtherInterviewEvaluationsPanelProps) => {
   const { data: myEvaluation } = useSuspenseQuery(myInterviewEvaluationOption(applicantId));
 
-  if (!myEvaluation.submittedAt) {
+  if (myEvaluation.submittedAt == null) {
     return <LockedOtherInterviewEvaluations />;
   }
 
@@ -80,7 +79,7 @@ const LockedOtherInterviewEvaluations = () => {
   };
 
   return (
-    <Paper className="w-full flex-col gap-5">
+    <div className="flex w-full flex-col gap-5">
       <header className="flex flex-col gap-1">
         <h2 className="text-xl font-semibold">다른 평가자 평가</h2>
         <p className="text-neutralMuted text-sm">
@@ -99,7 +98,7 @@ const LockedOtherInterviewEvaluations = () => {
           <span>제출 후 공개</span>
         </span>
       </button>
-    </Paper>
+    </div>
   );
 };
 
@@ -125,7 +124,7 @@ const SubmittedOtherInterviewEvaluations = ({
   const isAverageScorePending = interviewAverageScore == null;
 
   return (
-    <Paper className="w-full flex-col gap-5">
+    <div className="flex w-full flex-col gap-5">
       <header className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">다른 평가자 평가</h2>
         <dl className="bg-greyOpacity50 rounded-10 flex items-center justify-between gap-3 px-4 py-3">
@@ -158,7 +157,7 @@ const SubmittedOtherInterviewEvaluations = ({
           ))}
         </div>
       )}
-    </Paper>
+    </div>
   );
 };
 
@@ -232,10 +231,10 @@ const UnsubmittedInterviewEvaluatorCard = ({
 
 const OtherInterviewEvaluationsSkeleton = () => {
   return (
-    <Paper
+    <div
       aria-busy="true"
       aria-label="다른 평가자 평가 불러오는 중"
-      className="w-full flex-col gap-5"
+      className="flex w-full flex-col gap-5"
     >
       <div className="flex flex-col gap-3">
         <div
@@ -260,18 +259,18 @@ const OtherInterviewEvaluationsSkeleton = () => {
           key={index}
         />
       ))}
-    </Paper>
+    </div>
   );
 };
 
 const OtherInterviewEvaluationsError = ({ onRetry }: { onRetry: () => void }) => {
   return (
-    <Paper className="w-full flex-col items-center justify-center gap-4 text-center">
+    <div className="flex w-full flex-col items-center justify-center gap-4 text-center">
       <Result description="잠시 후 다시 시도해 주세요." title="다른 평가를 불러오지 못했어요" />
       <Button onClick={onRetry} size="sm" variant="secondary">
         다시 시도
       </Button>
-    </Paper>
+    </div>
   );
 };
 

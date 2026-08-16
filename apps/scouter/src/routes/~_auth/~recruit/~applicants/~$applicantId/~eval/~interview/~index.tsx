@@ -28,12 +28,14 @@ const RouteComponent = () => {
             title="면접 평가 준비 중이에요"
           />
         </Paper>
-        <aside aria-label="다른 평가자 평가" className="sticky top-3 h-fit w-100 shrink-0">
-          <OtherInterviewEvaluationsPanel
-            applicantId={Number(applicantId)}
-            interviewAverageScore={applicant.interviewAverageScore}
-          />
-        </aside>
+        <Paper className="sticky top-3 h-fit w-100 shrink-0">
+          <aside aria-label="다른 평가자 평가" className="w-full">
+            <OtherInterviewEvaluationsPanel
+              applicantId={Number(applicantId)}
+              interviewAverageScore={applicant.interviewAverageScore}
+            />
+          </aside>
+        </Paper>
       </main>
     </PageLayout.Content>
   );
