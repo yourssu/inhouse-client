@@ -1,4 +1,5 @@
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import clsx from 'clsx';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { useDeferredValue, useId, useState } from 'react';
 
@@ -33,7 +34,7 @@ export const InterviewTab = <TTab extends string>({
               <button
                 aria-controls={deferredActiveTab !== null ? `${id}-tabpanel` : undefined}
                 aria-selected={isHighlighted}
-                className={cn(
+                className={clsx(
                   'rounded-6 relative flex cursor-pointer border-none px-3 py-2 transition-colors outline-none',
                   isHighlighted ? 'bg-greyOpacity100' : 'bg-lightBackground',
                 )}
@@ -45,7 +46,7 @@ export const InterviewTab = <TTab extends string>({
                 type="button"
               >
                 <span
-                  className={cn(
+                  className={clsx(
                     'text-sm [text-orientation:upright] [writing-mode:vertical-rl]',
                     isHighlighted
                       ? 'text-violet600 font-semibold'
@@ -71,7 +72,7 @@ export const InterviewTab = <TTab extends string>({
           <motion.div
             animate={{ width: 'auto', opacity: 1 }}
             aria-labelledby={`${id}-tab-${deferredActiveTab}`}
-            className="overflow-hidden"
+            className="min-h-0 overflow-hidden"
             exit={{ width: 0, opacity: 0 }}
             id={`${id}-tabpanel`}
             initial={{ width: 0, opacity: 0 }}
