@@ -4,6 +4,8 @@ import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Suspense, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 
+import type { AssignedQuestions } from '@/apis/interviews/questions/schema';
+
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { Paper } from '@/components/Paper';
@@ -23,19 +25,22 @@ const RouteComponent = () => {
   const [{ data: applicant }, { data: assignedQuestions }] = useSuspenseQueries({
     queries: [
       applicantByIdOption(Number(applicantId)),
-      assignedQuestionsOption(Number(applicantId)),
+      {
+        ...assignedQuestionsOption(Number(applicantId)),
+        select: (data: AssignedQuestions) =>
+          data.questions.filter((question) => {
+            const isNonCultureFitQuestion = question.category !== 'CULTURE';
+            const isSelectedCultureFitQuestion =
+              question.category === 'CULTURE' && question.isSelected === true;
+            return isNonCultureFitQuestion || isSelectedCultureFitQuestion;
+          }),
+      },
     ],
   });
 
   const [selectedQuestionId, setSelectedQuestionId] = useState<number>(INTRO_SCRIPT_ID);
 
-  const visibleQuestions = assignedQuestions.questions.filter((question) => {
-    const isNonCultureFitQuestion = question.category !== 'CULTURE';
-    const isSelectedCultureFitQuestion =
-      question.category === 'CULTURE' && question.isSelected === true;
-    return isNonCultureFitQuestion || isSelectedCultureFitQuestion;
-  });
-  const selectedQuestion = visibleQuestions.find(({ id }) => id === selectedQuestionId);
+  const selectedQuestion = assignedQuestions.find(({ id }) => id === selectedQuestionId);
 
   const selectedScript = FIXED_SCRIPTS[selectedQuestionId] ?? null;
   const panelState = selectedScript == null ? '질문' : '스크립트';
@@ -53,7 +58,7 @@ const RouteComponent = () => {
                   '질문 리스트': () => (
                     <InterviewQuestionList
                       onSelectQuestion={setSelectedQuestionId}
-                      questions={visibleQuestions}
+                      questions={assignedQuestions}
                       selectedQuestionId={selectedQuestionId}
                     />
                   ),
