@@ -5,13 +5,15 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { Badge, Button, Divider, Result, useToast } from '@yourssu-inhouse/interior';
-import clsx from 'clsx';
+import { overlay } from 'overlay-kit';
 import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdLockOutline, MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
 
+import type { ApplicantStateType } from '@/apis/applicants/schema';
 import type {
   InterviewEvaluationResult,
+  InterviewEvaluatorStatus,
   InterviewEvaluatorStatusValue,
   OtherInterviewEvaluation,
 } from '@/apis/interviews/evaluations/schema';
@@ -21,14 +23,20 @@ import {
   myInterviewEvaluationOption,
   otherInterviewEvaluationsOption,
 } from '@/apis/interviews/evaluations/query';
+import { FinalInterviewEvaluationDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/FinalInterviewEvaluationDialog';
+import { InterviewAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewAverageScoreSummary';
 
 interface OtherInterviewEvaluationsPanelProps {
   applicantId: number;
+  applicantName: string;
+  applicantState: ApplicantStateType;
   interviewAverageScore?: null | number;
 }
 
 export const OtherInterviewEvaluationsPanel = ({
   applicantId,
+  applicantName,
+  applicantState,
   interviewAverageScore,
 }: OtherInterviewEvaluationsPanelProps) => {
   return (
@@ -44,6 +52,8 @@ export const OtherInterviewEvaluationsPanel = ({
           <Suspense fallback={<OtherInterviewEvaluationsSkeleton />}>
             <OtherInterviewEvaluationsGate
               applicantId={applicantId}
+              applicantName={applicantName}
+              applicantState={applicantState}
               interviewAverageScore={interviewAverageScore}
             />
           </Suspense>
@@ -55,23 +65,38 @@ export const OtherInterviewEvaluationsPanel = ({
 
 const OtherInterviewEvaluationsGate = ({
   applicantId,
+  applicantName,
+  applicantState,
   interviewAverageScore,
 }: OtherInterviewEvaluationsPanelProps) => {
   const { data: myEvaluation } = useSuspenseQuery(myInterviewEvaluationOption(applicantId));
 
   if (myEvaluation.submittedAt == null) {
-    return <LockedOtherInterviewEvaluations />;
+    return (
+      <LockedOtherInterviewEvaluations
+        applicantId={applicantId}
+        applicantName={applicantName}
+        applicantState={applicantState}
+        interviewAverageScore={interviewAverageScore}
+      />
+    );
   }
 
   return (
     <SubmittedOtherInterviewEvaluations
       applicantId={applicantId}
+      applicantName={applicantName}
+      applicantState={applicantState}
       interviewAverageScore={interviewAverageScore}
     />
   );
 };
 
-const LockedOtherInterviewEvaluations = () => {
+const LockedOtherInterviewEvaluations = ({
+  applicantId,
+  applicantName,
+  interviewAverageScore,
+}: OtherInterviewEvaluationsPanelProps) => {
   const toast = useToast();
 
   const handleClick = () => {
@@ -98,17 +123,30 @@ const LockedOtherInterviewEvaluations = () => {
           <span>제출 후 공개</span>
         </span>
       </button>
+      <Divider />
+      <FinalInterviewEvaluationButton
+        applicantId={applicantId}
+        applicantName={applicantName}
+        disabled
+        interviewAverageScore={interviewAverageScore}
+        submittedCount={0}
+        unsubmittedEvaluators={[]}
+      />
     </div>
   );
 };
 
 interface SubmittedOtherInterviewEvaluationsProps {
   applicantId: number;
+  applicantName: string;
+  applicantState: ApplicantStateType;
   interviewAverageScore?: null | number;
 }
 
 const SubmittedOtherInterviewEvaluations = ({
   applicantId,
+  applicantName,
+  applicantState,
   interviewAverageScore,
 }: SubmittedOtherInterviewEvaluationsProps) => {
   const [{ data: statuses }, { data: otherEvaluations }] = useSuspenseQueries({
@@ -121,25 +159,15 @@ const SubmittedOtherInterviewEvaluations = ({
   const submittedCount = statuses.filter(({ status }) => status === 'SUBMITTED').length;
   const unsubmittedEvaluators = statuses.filter(({ status }) => status !== 'SUBMITTED');
   const hasOtherEvaluators = otherEvaluations.length > 0 || unsubmittedEvaluators.length > 0;
-  const isAverageScorePending = interviewAverageScore == null;
 
   return (
     <div className="flex w-full flex-col gap-5">
       <header className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">다른 평가자 평가</h2>
-        <dl className="bg-greyOpacity50 rounded-10 flex items-center justify-between gap-3 px-4 py-3">
-          <dt className="text-neutralMuted text-sm">
-            면접 평균 점수 (제출자 {submittedCount}명 기준)
-          </dt>
-          <dd
-            className={clsx('shrink-0 tabular-nums', {
-              'text-neutralMuted text-sm font-medium': isAverageScorePending,
-              'text-violet500 text-base font-semibold': !isAverageScorePending,
-            })}
-          >
-            {isAverageScorePending ? '집계 전' : `${interviewAverageScore} / 100`}
-          </dd>
-        </dl>
+        <InterviewAverageScoreSummary
+          interviewAverageScore={interviewAverageScore}
+          submittedCount={submittedCount}
+        />
       </header>
 
       {!hasOtherEvaluators ? (
@@ -157,7 +185,54 @@ const SubmittedOtherInterviewEvaluations = ({
           ))}
         </div>
       )}
+      <Divider />
+      <FinalInterviewEvaluationButton
+        applicantId={applicantId}
+        applicantName={applicantName}
+        disabled={!finalInterviewEvaluationAllowedStates.includes(applicantState)}
+        interviewAverageScore={interviewAverageScore}
+        submittedCount={submittedCount}
+        unsubmittedEvaluators={unsubmittedEvaluators}
+      />
     </div>
+  );
+};
+
+interface FinalInterviewEvaluationButtonProps {
+  applicantId: number;
+  applicantName: string;
+  disabled: boolean;
+  interviewAverageScore?: null | number;
+  submittedCount: number;
+  unsubmittedEvaluators: InterviewEvaluatorStatus[];
+}
+
+const FinalInterviewEvaluationButton = ({
+  applicantId,
+  applicantName,
+  disabled,
+  interviewAverageScore,
+  submittedCount,
+  unsubmittedEvaluators,
+}: FinalInterviewEvaluationButtonProps) => {
+  const handleClick = () => {
+    void overlay.openAsync<boolean>(({ close, isOpen }) => (
+      <FinalInterviewEvaluationDialog
+        applicantId={applicantId}
+        applicantName={applicantName}
+        close={close}
+        interviewAverageScore={interviewAverageScore}
+        isOpen={isOpen}
+        submittedCount={submittedCount}
+        unsubmittedEvaluators={unsubmittedEvaluators}
+      />
+    ));
+  };
+
+  return (
+    <Button disabled={disabled} onClick={handleClick} size="lg">
+      최종 면접 결과 결정
+    </Button>
   );
 };
 
@@ -288,3 +363,10 @@ const interviewEvaluationResultOptions = {
   FINAL_PASS: { color: 'green', label: '면접 합격' },
   INTERVIEW_FAIL: { color: 'red', label: '면접 불합격' },
 } satisfies Record<InterviewEvaluationResult, { color: 'green' | 'red' | 'yellow'; label: string }>;
+
+const finalInterviewEvaluationAllowedStates: readonly ApplicantStateType[] = [
+  'DOCUMENT_ACCEPTED',
+  'ASSIGNMENT_ACCEPTED',
+  'FINAL_ACCEPTED',
+  'INTERVIEW_REJECTED',
+];

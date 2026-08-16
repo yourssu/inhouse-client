@@ -32,6 +32,8 @@ const RouteComponent = () => {
           <aside aria-label="다른 평가자 평가" className="w-full">
             <OtherInterviewEvaluationsPanel
               applicantId={Number(applicantId)}
+              applicantName={applicant.name}
+              applicantState={applicant.state}
               interviewAverageScore={applicant.interviewAverageScore}
             />
           </aside>
