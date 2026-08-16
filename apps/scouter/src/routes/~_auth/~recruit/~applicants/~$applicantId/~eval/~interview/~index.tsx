@@ -11,6 +11,7 @@ import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { Paper } from '@/components/Paper';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
+import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionContent';
 import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
 import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewScriptContent';
 import {
@@ -75,17 +76,8 @@ const RouteComponent = () => {
           <SwitchCase
             caseBy={{
               질문: () =>
-                selectedQuestion ? (
-                  <div className="flex flex-col gap-2">
-                    <div className="text-neutralMuted text-13">{selectedQuestion.category}</div>
-                    <div className="text-16 font-semibold">{selectedQuestion.content}</div>
-                    <div>질문자 {selectedQuestion.assignedInterviewerName}</div>
-                    <ul className="flex flex-col gap-1">
-                      {selectedQuestion.requirements.map((requirement) => (
-                        <li key={requirement.id}>{requirement.content}</li>
-                      ))}
-                    </ul>
-                  </div>
+                selectedQuestion != null ? (
+                  <InterviewQuestionContent question={selectedQuestion} />
                 ) : null,
               스크립트: () => <InterviewScriptContent selectedScript={selectedScript} />,
             }}
