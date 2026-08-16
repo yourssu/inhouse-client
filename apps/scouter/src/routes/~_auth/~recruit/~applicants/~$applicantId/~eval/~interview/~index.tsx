@@ -10,10 +10,11 @@ import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/appl
 import { myInterviewEvaluationOption } from '@/apis/interviews/evaluations/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { Paper } from '@/components/Paper';
+import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewQuestionContent';
+import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewScriptContent';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
 import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
-import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewScriptContent';
 import {
   FIXED_SCRIPTS,
   INTRO_SCRIPT,
@@ -77,17 +78,8 @@ const RouteComponent = () => {
           <SwitchCase
             caseBy={{
               질문: () =>
-                selectedQuestion ? (
-                  <div className="flex flex-col gap-2">
-                    <div className="text-neutralMuted text-13">{selectedQuestion.category}</div>
-                    <div className="text-16 font-semibold">{selectedQuestion.content}</div>
-                    <div>질문자 {selectedQuestion.assignedInterviewerName}</div>
-                    <ul className="flex flex-col gap-1">
-                      {selectedQuestion.requirements.map((requirement) => (
-                        <li key={requirement.id}>{requirement.content}</li>
-                      ))}
-                    </ul>
-                  </div>
+                selectedQuestion != null ? (
+                  <InterviewQuestionContent question={selectedQuestion} />
                 ) : null,
               스크립트: () => <InterviewScriptContent selectedScript={selectedScript} />,
             }}
