@@ -62,11 +62,11 @@ export const InterviewQuestionList = ({
           </span>
           <Divider />
           {categoryQuestions.map((question, index) => {
-            const isInterviwerAssignedQuestion = question.id != null;
+            const isInterviewerAssignedQuestion = question.id != null;
             return (
               <Fragment key={question.id ?? index}>
                 <InterviewQuestion
-                  isSelected={isInterviwerAssignedQuestion && question.id === selectedQuestionId}
+                  isSelected={isInterviewerAssignedQuestion && question.id === selectedQuestionId}
                   onClickQuestion={() => {
                     if (question.id != null) {
                       onSelectQuestion(question.id);
