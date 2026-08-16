@@ -29,9 +29,12 @@ const RouteComponent = () => {
 
   const [selectedQuestionId, setSelectedQuestionId] = useState<number>(INTRO_SCRIPT_ID);
 
-  const visibleQuestions = assignedQuestions.questions.filter(
-    (question) => question.category !== 'CULTURE' || question.isSelected === true,
-  );
+  const visibleQuestions = assignedQuestions.questions.filter((question) => {
+    const isNonCultureFitQuestion = question.category !== 'CULTURE';
+    const isSelectedCultureFitQuestion =
+      question.category === 'CULTURE' && question.isSelected === true;
+    return isNonCultureFitQuestion || isSelectedCultureFitQuestion;
+  });
   const selectedQuestion = visibleQuestions.find(({ id }) => id === selectedQuestionId);
 
   const selectedScript = FIXED_SCRIPTS[selectedQuestionId] ?? null;
