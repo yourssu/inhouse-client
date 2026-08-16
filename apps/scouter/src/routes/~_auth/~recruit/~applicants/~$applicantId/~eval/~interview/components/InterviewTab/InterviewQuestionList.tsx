@@ -9,6 +9,7 @@ import {
   INTRO_SCRIPT,
   OUTRO_SCRIPT,
 } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/introScript';
+import { questionCategoryKo } from '@/types/questions';
 
 const CATEGORY_ORDER: QuestionCategory[] = [
   'INTRO',
@@ -17,14 +18,6 @@ const CATEGORY_ORDER: QuestionCategory[] = [
   'PERSONAL',
   'OUTRO',
 ] as const;
-
-const CATEGORY_LABEL: Record<QuestionCategory, string> = {
-  INTRO: '인트로 필수 질문',
-  OUTRO: '아웃트로 필수 질문',
-  CULTURE: '컬처핏 질문',
-  PART: '파트 공통 질문',
-  PERSONAL: '지원자 개인 질문',
-} as const;
 
 interface InterviewQuestionListProps {
   onSelectQuestion: (questionId: number) => void;
@@ -56,7 +49,7 @@ export const InterviewQuestionList = ({
       {questionSections.map(({ category, categoryQuestions }, sectionIndex) => (
         <div className="flex flex-col" key={category}>
           <span className="text-neutralMuted px-4 py-2 text-base font-bold">
-            {CATEGORY_LABEL[category]}
+            {questionCategoryKo[category]}
           </span>
           <Divider />
           {categoryQuestions.map((question, index) => {
