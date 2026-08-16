@@ -9,11 +9,11 @@ import type { AssignedQuestions } from '@/apis/interviews/questions/schema';
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { Paper } from '@/components/Paper';
+import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewQuestionContent';
+import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewScriptContent';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
-import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionContent';
 import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
-import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewScriptContent';
 import {
   FIXED_SCRIPTS,
   INTRO_SCRIPT,
