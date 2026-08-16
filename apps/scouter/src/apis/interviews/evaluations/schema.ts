@@ -63,3 +63,4 @@ export type InterviewEvaluatorStatusValue = z.infer<typeof InterviewEvaluatorSta
 export type InterviewEvaluatorStatus = z.infer<typeof InterviewEvaluatorStatusSchema>;
 export type OtherInterviewEvaluationItem = z.infer<typeof OtherInterviewEvaluationItemSchema>;
 export type OtherInterviewEvaluation = z.infer<typeof OtherInterviewEvaluationSchema>;
+export type InterviewEvaluatorStatuses = z.infer<typeof InterviewEvaluatorStatusesSchema>;
