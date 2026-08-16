@@ -1,33 +1,91 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
-import { Result } from '@yourssu-inhouse/interior';
-import { lotties } from '@yourssu-inhouse/resources';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
+import { SwitchCase } from 'react-simplikit';
 
-import { applicantByIdOption } from '@/apis/applicants/query';
+import type { AssignedQuestions } from '@/apis/interviews/questions/schema';
+
+import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { myInterviewEvaluationOption } from '@/apis/interviews/evaluations/query';
+import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { Paper } from '@/components/Paper';
+import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewQuestionContent';
+import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewScriptContent';
+import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
+import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
+import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
+import {
+  FIXED_SCRIPTS,
+  INTRO_SCRIPT,
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/introScript';
 import { OtherInterviewEvaluationsPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/OtherInterviewEvaluationsPanel';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 
+const INTERVIEW_TABS = ['질문', '지원서'] as const;
+
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
-  const { data: applicant } = useSuspenseQuery(applicantByIdOption(Number(applicantId)));
+  const [{ data: applicant }, { data: assignedQuestions }] = useSuspenseQueries({
+    queries: [
+      applicantByIdOption(Number(applicantId)),
+      {
+        ...assignedQuestionsOption(Number(applicantId)),
+        select: (data: AssignedQuestions) =>
+          data.questions.filter((question) => {
+            const isNonCultureFitQuestion = question.category !== 'CULTURE';
+            const isSelectedCultureFitQuestion =
+              question.category === 'CULTURE' && question.isSelected === true;
+            return isNonCultureFitQuestion || isSelectedCultureFitQuestion;
+          }),
+      },
+    ],
+  });
+
+  const [selectedQuestionId, setSelectedQuestionId] = useState<number>(INTRO_SCRIPT.id);
+
+  const selectedQuestion = assignedQuestions.find(({ id }) => id === selectedQuestionId);
+  const selectedScript = FIXED_SCRIPTS[selectedQuestionId] ?? null;
+  const panelState = selectedScript == null ? '질문' : '스크립트';
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="면접 평가" />
 
-      <main className="flex min-w-0 flex-[1_1_0] gap-4 pt-7">
-        <Paper className="h-full min-w-0 flex-1 items-center justify-center">
-          <Result
-            description="면접 평가 기능은 아직 준비 중이에요."
-            figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
-            title="면접 평가 준비 중이에요"
+      <main className="flex min-h-0 flex-[1_1_0] items-start gap-4 pt-7">
+        <InterviewTab className="min-h-0 w-fit self-stretch" tabs={INTERVIEW_TABS}>
+          {({ tab }) => (
+            <Paper className="sticky top-3 h-full w-90 flex-1 scrollbar-gutter-stable overflow-y-auto p-0">
+              <SwitchCase
+                caseBy={{
+                  질문: () => (
+                    <InterviewQuestionList
+                      onSelectQuestion={setSelectedQuestionId}
+                      questions={assignedQuestions}
+                      selectedQuestionId={selectedQuestionId}
+                    />
+                  ),
+                  지원서: () => <DocumentAnswerForInterview applicantId={Number(applicantId)} />,
+                }}
+                value={tab}
+              />
+            </Paper>
+          )}
+        </InterviewTab>
+
+        <Paper className="flex-1 flex-col gap-4 p-0">
+          <SwitchCase
+            caseBy={{
+              질문: () =>
+                selectedQuestion != null ? (
+                  <InterviewQuestionContent question={selectedQuestion} />
+                ) : null,
+              스크립트: () => <InterviewScriptContent selectedScript={selectedScript} />,
+            }}
+            value={panelState}
           />
         </Paper>
+
         <Paper className="sticky top-3 h-fit w-100 shrink-0">
           <aside aria-label="다른 평가자 평가" className="w-full">
             <OtherInterviewEvaluationsPanel
@@ -54,5 +112,7 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
 
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
     context.queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
+    context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
+    context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
   },
 });
