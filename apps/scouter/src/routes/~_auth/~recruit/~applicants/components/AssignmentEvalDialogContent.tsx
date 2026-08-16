@@ -49,12 +49,7 @@ export const AssignmentEvalDialogContent = ({
         </p>
       </Dialog.Content>
       <Dialog.ButtonGroup>
-        <Dialog.Button
-          className="bg-red600 hover:bg-red700 text-white"
-          loading={isPending}
-          onClick={() => failMutateWithToast()}
-          variant="secondary"
-        >
+        <Dialog.Button loading={isPending} onClick={() => failMutateWithToast()} variant="danger">
           불합격
         </Dialog.Button>
         <Dialog.Button loading={isPending} onClick={() => passMutateWithToast()} variant="primary">

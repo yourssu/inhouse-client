@@ -83,7 +83,7 @@ export const QuestionnairePageSkeleton = () => {
           <section className="min-w-0 flex-1">
             <DocumentReferencePanelSkeleton />
           </section>
-          <aside className="sticky top-3 h-fit w-112 shrink-0">
+          <aside className="sticky top-3 h-fit w-100 shrink-0">
             <QuestionnairePanelSkeleton />
           </aside>
         </main>
