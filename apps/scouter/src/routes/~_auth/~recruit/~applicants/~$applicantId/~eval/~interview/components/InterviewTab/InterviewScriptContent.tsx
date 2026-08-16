@@ -15,8 +15,8 @@ export const InterviewScriptContent = ({ selectedScript }: InterviewScriptConten
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-1 p-5">
-        <div className="text-18 font-semibold">{title}</div>
-        <div className="text-neutralMuted text-xs font-semibold">{summary}</div>
+        <span className="text-18 font-semibold">{title}</span>
+        <span className="text-neutralMuted text-xs font-semibold">{summary}</span>
       </div>
 
       <Divider />
