@@ -1,4 +1,7 @@
-import type { InterviewEvaluationResult } from '@/apis/interviews/evaluations/schema';
+import type {
+  InterviewEvaluationResult,
+  InterviewEvaluatorStatusValue,
+} from '@/apis/interviews/evaluations/schema';
 import type { InterviewRubricGroupName } from '@/apis/interviews/rubrics/schema';
 
 export const interviewRubricFitTypeKo = {
@@ -14,3 +17,12 @@ export const interviewResultKo = {
   FINAL_PASS: '최종 합격',
   INTERVIEW_FAIL: '면접 불합격',
 } as const satisfies Record<InterviewEvaluationResult, string>;
+
+export const interviewEvaluatorStatusOptions = {
+  NOT_STARTED: { color: 'grey', label: '미작성' },
+  IN_PROGRESS: { color: 'yellow', label: '미제출' },
+  SUBMITTED: { color: 'green', label: '제출 완료' },
+} satisfies Record<
+  InterviewEvaluatorStatusValue,
+  { color: 'green' | 'grey' | 'yellow'; label: string }
+>;

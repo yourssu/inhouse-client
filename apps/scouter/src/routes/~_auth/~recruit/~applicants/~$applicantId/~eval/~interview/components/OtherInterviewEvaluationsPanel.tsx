@@ -25,7 +25,7 @@ import {
 } from '@/apis/interviews/evaluations/query';
 import { FinalInterviewEvaluationDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/FinalInterviewEvaluationDialog';
 import { InterviewAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewAverageScoreSummary';
-import { interviewResultKo } from '@/types/interviews';
+import { interviewEvaluatorStatusOptions, interviewResultKo } from '@/types/interviews';
 
 interface OtherInterviewEvaluationsPanelProps {
   applicantId: number;
@@ -349,15 +349,6 @@ const OtherInterviewEvaluationsError = ({ onRetry }: { onRetry: () => void }) =>
     </div>
   );
 };
-
-const interviewEvaluatorStatusOptions = {
-  NOT_STARTED: { color: 'grey', label: '미작성' },
-  IN_PROGRESS: { color: 'yellow', label: '미제출' },
-  SUBMITTED: { color: 'green', label: '제출 완료' },
-} satisfies Record<
-  InterviewEvaluatorStatusValue,
-  { color: 'green' | 'grey' | 'yellow'; label: string }
->;
 
 const interviewEvaluationResultOptions = {
   PENDING: { color: 'yellow', label: interviewResultKo.PENDING },
