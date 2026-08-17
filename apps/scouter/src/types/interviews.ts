@@ -1,7 +1,7 @@
 import type { InterviewEvaluationResult } from '@/apis/interviews/evaluations/schema';
 import type { InterviewRubricGroupName } from '@/apis/interviews/rubrics/schema';
 
-export const interviewRubricGroupKo = {
+export const interviewRubricFitTypeKo = {
   CULTURE_FIT: '컬쳐핏',
   TEAM_FIT: '팀핏',
   JOB_FIT: '잡핏',
