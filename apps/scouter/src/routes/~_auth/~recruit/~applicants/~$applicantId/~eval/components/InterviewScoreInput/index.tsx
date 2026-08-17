@@ -3,6 +3,8 @@ import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 interface InterviewScoreInputProps {
   ariaLabel: string;
   invalid: boolean;
+  /** 지정하면 이 값을 초과해 입력할 수 없고, 자동으로 이 값으로 잘려요. */
+  maxScore?: number;
   onBlur: () => void;
   onChange: (value: string) => void;
   value: string;
@@ -11,6 +13,7 @@ interface InterviewScoreInputProps {
 export const InterviewScoreInput = ({
   ariaLabel,
   invalid,
+  maxScore,
   onBlur,
   onChange,
   value,
@@ -28,6 +31,11 @@ export const InterviewScoreInput = ({
       const nextValue = event.target.value;
 
       if (!/^\d*$/.test(nextValue)) {
+        return;
+      }
+
+      if (maxScore != null && Number(nextValue) > maxScore) {
+        onChange(maxScore.toString());
         return;
       }
 

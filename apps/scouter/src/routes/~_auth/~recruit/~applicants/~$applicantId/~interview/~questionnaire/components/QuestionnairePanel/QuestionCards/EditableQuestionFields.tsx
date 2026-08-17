@@ -5,9 +5,10 @@ import { type Control, Controller } from 'react-hook-form';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 
+import { FieldErrorMessage } from '@/components/FieldErrorMessage';
+
 import type { QuestionnaireFormValues } from '../questionnaireForm';
 
-import { QuestionnaireErrorMessage } from '../QuestionnaireErrorMessage';
 import { RequirementPicker } from '../Requirements/RequirementPicker';
 
 interface EditableQuestionFieldsProps {
@@ -44,7 +45,7 @@ export const EditableQuestionFields = ({
                   withHeightAutoResize
                 />
                 {fieldState.error?.message !== undefined && (
-                  <QuestionnaireErrorMessage>{fieldState.error.message}</QuestionnaireErrorMessage>
+                  <FieldErrorMessage>{fieldState.error.message}</FieldErrorMessage>
                 )}
               </>
             )}
@@ -77,7 +78,7 @@ export const EditableQuestionFields = ({
                 selectedRequirementIds={field.value}
               />
               {fieldState.error?.message !== undefined && (
-                <QuestionnaireErrorMessage>{fieldState.error.message}</QuestionnaireErrorMessage>
+                <FieldErrorMessage>{fieldState.error.message}</FieldErrorMessage>
               )}
             </>
           )}

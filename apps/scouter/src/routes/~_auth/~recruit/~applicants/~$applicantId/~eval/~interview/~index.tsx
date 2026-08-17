@@ -1,6 +1,7 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
+import { Divider } from '@yourssu-inhouse/interior';
 import { Suspense, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 
@@ -10,6 +11,7 @@ import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/appl
 import { myInterviewEvaluationOption } from '@/apis/interviews/evaluations/query';
 import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
+import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewQuestionContent';
 import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewScriptContent';
@@ -21,6 +23,7 @@ import {
   FIXED_SCRIPTS,
   INTRO_SCRIPT,
 } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/introScript';
+import { MyInterviewEvaluationPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel';
 import { OtherInterviewEvaluationsPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/OtherInterviewEvaluationsPanel';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 
@@ -88,7 +91,7 @@ const RouteComponent = () => {
           />
         </Paper>
 
-        <Paper className="w-100 shrink-0 flex flex-col overflow-hidden p-0">
+        <Paper className="flex w-100 shrink-0 flex-col overflow-hidden p-0">
           <Suspense>
             <InterviewRubricSetting
               applicantId={Number(applicantId)}
@@ -96,6 +99,17 @@ const RouteComponent = () => {
               semester={applicant.applicationSemester}
             />
           </Suspense>
+          <Divider />
+          <aside aria-label="내 면접 평가" className="w-full p-4">
+            <Suspense>
+              <MyInterviewEvaluationPanel
+                applicantId={Number(applicantId)}
+                partId={applicant.partId}
+                semester={applicant.applicationSemester}
+              />
+            </Suspense>
+          </aside>
+          <Divider />
           <aside aria-label="다른 평가자 평가" className="w-full p-4">
             <OtherInterviewEvaluationsPanel
               applicantId={Number(applicantId)}
@@ -124,5 +138,6 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
     context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
     context.queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
+    context.queryClient.prefetchQuery(meOption());
   },
 });

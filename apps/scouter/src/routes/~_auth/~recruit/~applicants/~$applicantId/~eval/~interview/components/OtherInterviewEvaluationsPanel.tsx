@@ -25,6 +25,7 @@ import {
 } from '@/apis/interviews/evaluations/query';
 import { FinalInterviewEvaluationDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/FinalInterviewEvaluationDialog';
 import { InterviewAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewAverageScoreSummary';
+import { interviewResultKo } from '@/types/interviews';
 
 interface OtherInterviewEvaluationsPanelProps {
   applicantId: number;
@@ -359,9 +360,9 @@ const interviewEvaluatorStatusOptions = {
 >;
 
 const interviewEvaluationResultOptions = {
-  PENDING: { color: 'yellow', label: '보류' },
-  FINAL_PASS: { color: 'green', label: '면접 합격' },
-  INTERVIEW_FAIL: { color: 'red', label: '면접 불합격' },
+  PENDING: { color: 'yellow', label: interviewResultKo.PENDING },
+  FINAL_PASS: { color: 'green', label: interviewResultKo.FINAL_PASS },
+  INTERVIEW_FAIL: { color: 'red', label: interviewResultKo.INTERVIEW_FAIL },
 } satisfies Record<InterviewEvaluationResult, { color: 'green' | 'red' | 'yellow'; label: string }>;
 
 const finalInterviewEvaluationAllowedStates: readonly ApplicantStateType[] = [

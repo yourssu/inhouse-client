@@ -2186,6 +2186,52 @@
         }
       }
     },
+    "/admin/recruiting/requirements/other": {
+      "post": {
+        "tags": ["admin-requirement-controller"],
+        "operationId": "saveOther",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "semester",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "form",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RequirementsForm"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/recruiting/requirements/job-fit": {
       "post": {
         "tags": ["admin-requirement-controller"],
@@ -4533,7 +4579,7 @@
       },
       "SaveInterviewEvaluationRequest": {
         "type": "object",
-        "description": "면접 평가 임시저장 또는 최종 제출 요청",
+        "description": "면접 평가 제출 및 결과 상태, 제출 상태 변경",
         "properties": {
           "items": {
             "type": "array",
@@ -4556,7 +4602,7 @@
           },
           "submit": {
             "type": "boolean",
-            "description": "최종 제출 여부. false는 임시저장, true는 최종 제출입니다.",
+            "description": "최종 제출 여부. false는 기본 상태, true는 최종 제출입니다.",
             "example": true
           }
         },
