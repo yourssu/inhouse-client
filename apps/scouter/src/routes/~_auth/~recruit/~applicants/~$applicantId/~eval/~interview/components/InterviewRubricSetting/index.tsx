@@ -21,7 +21,7 @@ import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { UpdateInterviewRubricFormSchema } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/formValidationSchema';
 import { TotalInterviewScore } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/TotalInterviewScore';
-import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewScoreInput';
+import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { interviewRubricGroupKo } from '@/types/interviews';
 
 interface InterviewRubricSettingProps {
