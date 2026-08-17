@@ -39,6 +39,7 @@ import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { MyInterviewEvaluationFormSchema } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel/formValidationSchema';
+import { PeerItemScoresTooltip } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel/PeerItemScoresTooltip';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import {
   interviewResultKo,
@@ -72,6 +73,7 @@ export const MyInterviewEvaluationPanel = ({
   });
 
   const isRubricSet = orderedRubricGroups.every(({ groupMaxScore }) => groupMaxScore !== 0);
+  const isMyEvaluationSubmitted = myEvaluation.submittedAt != null;
 
   const {
     control,
@@ -95,12 +97,16 @@ export const MyInterviewEvaluationPanel = ({
   const { invalidate: invalidateEvaluatorStatuses } = useQueryInvalidation(
     interviewEvaluationsQueryKeys.statuses(applicantId),
   );
+  const { invalidate: invalidateOtherEvaluations } = useQueryInvalidation(
+    interviewEvaluationsQueryKeys.others(applicantId),
+  );
 
   const { isPending, mutateWithToast: mutateMyInterviewEvaluation } = useToastedMutation({
     mutationFn: saveMyInterviewEvaluation,
     onSuccess: () => {
       invalidateMyEvaluation();
       invalidateEvaluatorStatuses();
+      invalidateOtherEvaluations();
     },
     successText: '평가를 제출했어요.',
   });
@@ -132,14 +138,15 @@ export const MyInterviewEvaluationPanel = ({
               isRubricSet={isRubricSet}
               key={fitType}
             >
-              {requirements.map(({ itemId, title, maxScore }, itemIndex) => (
+              {requirements.map((requirement, itemIndex) => (
                 <EvaluationField
+                  applicantId={applicantId}
                   control={control}
                   groupIndex={groupIndex}
+                  isMyEvaluationSubmitted={isMyEvaluationSubmitted}
                   itemIndex={itemIndex}
-                  key={itemId}
-                  maxScore={maxScore}
-                  title={title}
+                  key={requirement.itemId}
+                  requirement={requirement}
                 />
               ))}
             </EvaluationCardByFit>
@@ -162,7 +169,7 @@ export const MyInterviewEvaluationPanel = ({
         size="md"
         type="submit"
       >
-        {myEvaluation.submittedAt == null ? '내 평가 제출하기' : '내 평가 다시 제출하기'}
+        {!isMyEvaluationSubmitted ? '내 평가 제출하기' : '내 평가 다시 제출하기'}
       </Button>
     </form>
   );
@@ -205,47 +212,62 @@ const EvaluationCardByFit = ({
 );
 
 interface EvaluationFieldProps {
+  applicantId: number;
   control: Control<MyInterviewEvaluationFormInput, unknown, MyInterviewEvaluationForm>;
   groupIndex: number;
+  isMyEvaluationSubmitted: boolean;
   itemIndex: number;
-  maxScore: number;
-  title: string;
+  requirement: InterviewRubricGroup['items'][number];
 }
 
 const EvaluationField = ({
+  applicantId,
   control,
   groupIndex,
+  isMyEvaluationSubmitted,
   itemIndex,
-  maxScore,
-  title,
-}: EvaluationFieldProps) => (
-  <Controller
-    control={control}
-    name={`groups.${groupIndex}.items.${itemIndex}.score`}
-    render={({ field, fieldState }) => (
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-neutral text-13">{title}</span>
+  requirement,
+}: EvaluationFieldProps) => {
+  const { itemId, maxScore, title } = requirement;
 
-          <div className="flex items-center gap-1">
-            <InterviewScoreInput
-              ariaLabel={`${title} 점수`}
-              invalid={fieldState.invalid}
-              maxScore={maxScore}
-              onBlur={field.onBlur}
-              onChange={field.onChange}
-              value={field.value}
-            />
-            <span className="text-13 text-neutralMuted shrink-0">{`/ ${maxScore}`}</span>
+  return (
+    <Controller
+      control={control}
+      name={`groups.${groupIndex}.items.${itemIndex}.score`}
+      render={({ field, fieldState }) => (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-1">
+              <span className="text-neutral text-13">{title}</span>
+              <PeerItemScoresTooltip
+                applicantId={applicantId}
+                isMyEvaluationSubmitted={isMyEvaluationSubmitted}
+                itemId={itemId}
+                maxScore={maxScore}
+                title={title}
+              />
+            </span>
+
+            <div className="flex items-center gap-1">
+              <InterviewScoreInput
+                ariaLabel={`${title} 점수`}
+                invalid={fieldState.invalid}
+                maxScore={maxScore}
+                onBlur={field.onBlur}
+                onChange={field.onChange}
+                value={field.value}
+              />
+              <span className="text-13 text-neutralMuted shrink-0">{`/ ${maxScore}`}</span>
+            </div>
           </div>
+          {fieldState.error?.message && (
+            <FieldErrorMessage>{fieldState.error.message}</FieldErrorMessage>
+          )}
         </div>
-        {fieldState.error?.message && (
-          <FieldErrorMessage>{fieldState.error.message}</FieldErrorMessage>
-        )}
-      </div>
-    )}
-  />
-);
+      )}
+    />
+  );
+};
 
 interface EvaluationSummarySectionProps {
   control: Control<MyInterviewEvaluationFormInput, unknown, MyInterviewEvaluationForm>;
