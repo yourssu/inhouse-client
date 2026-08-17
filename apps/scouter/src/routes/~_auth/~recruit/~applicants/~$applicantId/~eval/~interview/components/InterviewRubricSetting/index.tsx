@@ -5,10 +5,7 @@ import { Button, Divider } from '@yourssu-inhouse/interior';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-import type {
-  InterviewRubricGroup,
-  InterviewRubricGroupName,
-} from '@/apis/interviews/rubrics/schema';
+import type { InterviewRubricGroup } from '@/apis/interviews/rubrics/schema';
 import type {
   UpdateInterviewRubricForm,
   UpdateInterviewRubricFormInput,
@@ -20,17 +17,12 @@ import {
   updateInterviewRubricMutationOptions,
 } from '@/apis/interviews/rubrics/query';
 import { interviewRubricGroupNames } from '@/apis/interviews/rubrics/schema';
+import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { UpdateInterviewRubricFormSchema } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/formValidationSchema';
-import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/InterviewScoreInput';
-import { RubricFieldError } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/RubricFieldError';
 import { TotalInterviewScore } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting/TotalInterviewScore';
-
-const groupLabels: Record<InterviewRubricGroupName, string> = {
-  CULTURE_FIT: '컬쳐핏',
-  TEAM_FIT: '팀핏',
-  JOB_FIT: '잡핏',
-};
+import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewScoreInput';
+import { interviewRubricGroupKo } from '@/types/interviews';
 
 interface InterviewRubricSettingProps {
   applicantId: number;
@@ -112,13 +104,15 @@ export const InterviewRubricSetting = ({
               key={group}
             >
               <div className="flex items-center justify-between gap-2 px-4">
-                <h4 className="text-14 text-neutralMuted font-semibold">{groupLabels[group]}</h4>
+                <h4 className="text-14 text-neutralMuted font-semibold">
+                  {interviewRubricGroupKo[group]}
+                </h4>
                 <Controller
                   control={control}
                   name={`groups.${groupIndex}.groupMaxScore`}
                   render={({ field, fieldState }) => (
                     <InterviewScoreInput
-                      ariaLabel={`${groupLabels[group]} 총점`}
+                      ariaLabel={`${interviewRubricGroupKo[group]} 총점`}
                       invalid={fieldState.invalid}
                       onBlur={field.onBlur}
                       onChange={field.onChange}
@@ -129,7 +123,11 @@ export const InterviewRubricSetting = ({
               </div>
               <Divider />
               <div className="flex flex-col justify-between gap-2 px-4">
-                <RubricFieldError message={errors.groups?.[groupIndex]?.groupMaxScore?.message} />
+                {errors.groups?.[groupIndex]?.groupMaxScore?.message && (
+                  <FieldErrorMessage>
+                    {errors.groups[groupIndex].groupMaxScore.message}
+                  </FieldErrorMessage>
+                )}
 
                 {requirements.map(({ itemId, title }, itemIndex) => (
                   <div className="flex flex-col gap-1" key={itemId}>
@@ -150,16 +148,18 @@ export const InterviewRubricSetting = ({
                         )}
                       />
                     </div>
-                    <RubricFieldError
-                      message={errors.groups?.[groupIndex]?.items?.[itemIndex]?.maxScore?.message}
-                    />
+                    {errors.groups?.[groupIndex]?.items?.[itemIndex]?.maxScore?.message && (
+                      <FieldErrorMessage>
+                        {errors.groups[groupIndex].items[itemIndex].maxScore.message}
+                      </FieldErrorMessage>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
           ))}
 
-          <RubricFieldError message={errors.groups?.message} />
+          {errors.groups?.message && <FieldErrorMessage>{errors.groups.message}</FieldErrorMessage>}
 
           {isEvaluationSubmitted && (
             <span className="text-13 text-neutralSubtle">
@@ -182,15 +182,14 @@ export const InterviewRubricSetting = ({
   );
 };
 
-/** 배점이 아직 설정되지 않은 항목은 0점으로 다뤄요. */
 const toFormValues = (groups: InterviewRubricGroup[]): UpdateInterviewRubricFormInput => ({
   groups: groups.map(({ group, groupMaxScore, items }) => ({
     group,
-    groupMaxScore: (groupMaxScore ?? 0).toString(),
+    groupMaxScore: groupMaxScore.toString(),
     items: items.map(({ itemId, maxScore, title }) => ({
       itemId,
       title,
-      maxScore: (maxScore ?? 0).toString(),
+      maxScore: maxScore.toString(),
     })),
   })),
 });
