@@ -5,7 +5,7 @@ export const interviewRubricGroupNames = ['CULTURE_FIT', 'TEAM_FIT', 'JOB_FIT'] 
 
 export const InterviewRubricGroupNameSchema = z.enum(interviewRubricGroupNames);
 
-const ResponseScoreSchema = z.number().nullish();
+const ResponseScoreSchema = z.number();
 
 export const InterviewRubricItemSchema = z.object({
   itemId: z.number(),

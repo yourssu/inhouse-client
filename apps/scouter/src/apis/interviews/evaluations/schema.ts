@@ -54,6 +54,18 @@ export const OtherInterviewEvaluationSchema = z.object({
 
 export const OtherInterviewEvaluationsSchema = z.array(OtherInterviewEvaluationSchema);
 
+export const SaveInterviewEvaluationItemSchema = z.object({
+  itemId: z.int(),
+  score: z.int32().min(1),
+});
+
+export const SaveInterviewEvaluationRequestSchema = z.object({
+  items: z.array(SaveInterviewEvaluationItemSchema).min(1),
+  overallComment: z.string(),
+  result: InterviewEvaluationResultSchema,
+  submit: z.boolean(),
+});
+
 export type InterviewEvaluationResult = z.infer<typeof InterviewEvaluationResultSchema>;
 export type InterviewEvaluationGroupType = z.infer<typeof InterviewEvaluationGroupTypeSchema>;
 export type InterviewEvaluationItem = z.infer<typeof InterviewEvaluationItemSchema>;
@@ -64,3 +76,5 @@ export type InterviewEvaluatorStatus = z.infer<typeof InterviewEvaluatorStatusSc
 export type OtherInterviewEvaluationItem = z.infer<typeof OtherInterviewEvaluationItemSchema>;
 export type OtherInterviewEvaluation = z.infer<typeof OtherInterviewEvaluationSchema>;
 export type InterviewEvaluatorStatuses = z.infer<typeof InterviewEvaluatorStatusesSchema>;
+export type SaveInterviewEvaluationItem = z.infer<typeof SaveInterviewEvaluationItemSchema>;
+export type SaveInterviewEvaluationRequest = z.infer<typeof SaveInterviewEvaluationRequestSchema>;
