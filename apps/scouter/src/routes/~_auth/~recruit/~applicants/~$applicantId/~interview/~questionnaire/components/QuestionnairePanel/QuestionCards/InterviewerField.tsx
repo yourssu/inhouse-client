@@ -4,9 +4,9 @@ import { type Control, Controller } from 'react-hook-form';
 import type { QuestionCategory } from '@/apis/interviews/questions/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
-import type { QuestionnaireFormValues } from '../questionnaireForm';
+import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 
-import { QuestionnaireErrorMessage } from '../QuestionnaireErrorMessage';
+import type { QuestionnaireFormValues } from '../questionnaireForm';
 
 type InterviewerFieldName = `${QuestionCategory}.${number}.assignedInterviewerUserId`;
 
@@ -68,7 +68,7 @@ const InterviewerSelect = ({
 
   return (
     <Fieldset
-      help={errorMessage && <QuestionnaireErrorMessage>{errorMessage}</QuestionnaireErrorMessage>}
+      help={errorMessage && <FieldErrorMessage>{errorMessage}</FieldErrorMessage>}
       label="질문자"
     >
       <Select

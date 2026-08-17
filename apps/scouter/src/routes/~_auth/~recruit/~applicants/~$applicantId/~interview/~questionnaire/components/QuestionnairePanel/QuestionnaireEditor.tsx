@@ -17,6 +17,7 @@ import type { InterviewRequirements } from '@/apis/interviews/requirements/schem
 import type { ActiveMemberType } from '@/apis/members/schema';
 
 import { saveAssignedQuestionsMutationOptions } from '@/apis/interviews/questions/query';
+import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { Paper } from '@/components/Paper';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -27,7 +28,6 @@ import { CultureQuestionCard } from './QuestionCards/CultureQuestionCard';
 import { PartQuestionCard } from './QuestionCards/PartQuestionCard';
 import { PersonalQuestionCard } from './QuestionCards/PersonalQuestionCard';
 import { RequiredQuestionCard } from './QuestionCards/RequiredQuestionCard';
-import { QuestionnaireErrorMessage } from './QuestionnaireErrorMessage';
 import { QuestionSection } from './QuestionSection';
 import { teamJobRequirementCategories } from './Requirements/requirementOptions';
 import { RequirementsSection } from './Requirements/RequirementsSection';
@@ -286,9 +286,9 @@ export const QuestionnaireEditor = ({
           />
 
           {errors.form?.message && (
-            <QuestionnaireErrorMessage ref={errorSummaryRef} tabIndex={-1}>
+            <FieldErrorMessage ref={errorSummaryRef} tabIndex={-1}>
               {errors.form.message}
-            </QuestionnaireErrorMessage>
+            </FieldErrorMessage>
           )}
 
           <div className="bg-lightBackground sticky bottom-0 z-10 py-3">
