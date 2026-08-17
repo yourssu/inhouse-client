@@ -82,7 +82,7 @@ export const InterviewRubricSetting = ({
       <Collapsible.Root className="flex w-full flex-col">
         <Collapsible.Trigger asChild>
           <button
-            className="group hover:bg-greyOpacity50 rounded-10 focus-visible:outline-violet500 gap-3text-left flex w-full cursor-pointer items-center justify-between px-2 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2"
+            className="group hover:bg-greyOpacity50 rounded-10 focus-visible:outline-violet500 flex w-full cursor-pointer items-center justify-between gap-3 px-2 text-left transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2"
             type="button"
           >
             <span className="font-semibold">설정 열기</span>
