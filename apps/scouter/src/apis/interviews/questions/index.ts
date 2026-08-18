@@ -1,6 +1,8 @@
 import { api } from '@/apis/api';
 import {
   AssignedQuestionsSchema,
+  type PartInterviewQuestionsParams,
+  PartInterviewQuestionsParamsSchema,
   PartInterviewQuestionsSchema,
   type SaveAssignedQuestionsRequest,
   SaveAssignedQuestionsRequestSchema,
@@ -16,8 +18,11 @@ export const getAssignedQuestions = async (applicantId: number) => {
   return AssignedQuestionsSchema.parse(response);
 };
 
-export const getPartInterviewQuestions = async (partId: number) => {
-  const response = await api.get(`parts/${partId}/interviews/questions`).json();
+export const getPartInterviewQuestions = async (params: PartInterviewQuestionsParams) => {
+  const { partId, semester } = PartInterviewQuestionsParamsSchema.parse(params);
+  const response = await api
+    .get(`semesters/${semester}/parts/${partId}/interviews/questions`)
+    .json();
   return PartInterviewQuestionsSchema.parse(response);
 };
 

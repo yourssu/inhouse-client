@@ -27,6 +27,141 @@
     }
   ],
   "paths": {
+    "/semesters/{semester}/parts/{partId}/interviews/questions": {
+      "get": {
+        "tags": ["면접 질문"],
+        "summary": "파트별 면접 질문 및 요구조건 조회",
+        "description": "INTRO, OUTRO, CULTURE, PART 질문과 매핑된 요구조건을 조회합니다. CULTURE/PART 는 지정된 학기 기준으로 필터링됩니다. 학기는 '2026-1' 형식으로 전달합니다.",
+        "operationId": "readAll",
+        "parameters": [
+          {
+            "name": "semester",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadQuestionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["면접 질문"],
+        "summary": "파트별 면접 공통 질문 전체 수정",
+        "description": "id가 있으면 수정하고 없으면 생성하며, 누락된 기존 질문은 삭제합니다. 학기는 '2026-1' 형식으로 전달합니다.",
+        "operationId": "upsertParts",
+        "parameters": [
+          {
+            "name": "semester",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePartQuestionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadQuestionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/semesters/{semester}/interviews/questions": {
+      "put": {
+        "tags": ["면접 질문"],
+        "summary": "전역·문화 면접 질문 수정/생성",
+        "description": "INTRO, OUTRO 및 CULTURE 질문을 생성합니다. CULTURE 질문은 지정된 학기에 귀속되고, INTRO/OUTRO는 학기에 무관하게 공유됩니다. 학기는 '2026-1' 형식으로 전달합니다.",
+        "operationId": "upsertGlobalAndCulture",
+        "parameters": [
+          {
+            "name": "semester",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateQuestionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReadQuestionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/recruiter/schedule/part/{partId}": {
       "put": {
         "tags": ["면접 일정"],
@@ -357,82 +492,6 @@
         }
       }
     },
-    "/parts/{partId}/interviews/questions": {
-      "get": {
-        "tags": ["면접 질문"],
-        "summary": "파트별 면접 질문 및 요구조건 조회",
-        "description": "INTRO, OUTRO, CULTURE, PART 질문과 매핑된 요구조건을 조회합니다.",
-        "operationId": "readAll",
-        "parameters": [
-          {
-            "name": "partId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReadQuestionResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["면접 질문"],
-        "summary": "파트별 면접 공통 질문 전체 수정",
-        "description": "id가 있으면 수정하고 없으면 생성하며, 누락된 기존 질문은 삭제합니다.",
-        "operationId": "upsertParts",
-        "parameters": [
-          {
-            "name": "partId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePartQuestionsRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReadQuestionResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/parts/{partId}/documents/rubrics": {
       "get": {
         "tags": ["서류 평가 문항"],
@@ -624,39 +683,6 @@
           "200": {
             "description": "OK",
             "content": {}
-          }
-        }
-      }
-    },
-    "/interviews/questions": {
-      "put": {
-        "tags": ["면접 질문"],
-        "summary": "전역·문화 면접 질문 수정/생성",
-        "description": "INTRO, OUTRO 및 CULTURE 질문을 생성합니다.",
-        "operationId": "upsertGlobalAndCulture",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateQuestionsRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReadQuestionResponse"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -2319,6 +2345,16 @@
       "post": {
         "tags": ["admin-question-controller"],
         "operationId": "saveGlobalQuestions",
+        "parameters": [
+          {
+            "name": "semester",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4027,6 +4063,136 @@
   },
   "components": {
     "schemas": {
+      "PartQuestionRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requirementIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "required": ["content", "requirementIds", "sortOrder"]
+      },
+      "UpdatePartQuestionsRequest": {
+        "type": "object",
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartQuestionRequest"
+            }
+          }
+        },
+        "required": ["questions"]
+      },
+      "QuestionRequirementDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": ["content", "id"]
+      },
+      "ReadQuestionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "partId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["INTRO", "OUTRO", "CULTURE", "PART"]
+          },
+          "content": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionRequirementDto"
+            }
+          }
+        },
+        "required": ["category", "content", "id", "requirements", "sortOrder"]
+      },
+      "CreateQuestionsRequest": {
+        "type": "object",
+        "properties": {
+          "intro": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "outro": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          },
+          "culture": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Item"
+            }
+          }
+        },
+        "required": ["culture", "intro", "outro"]
+      },
+      "Item": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requirementIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "required": ["content", "requirementIds", "sortOrder"]
+      },
       "CreateScheduleCommand": {
         "type": "object",
         "properties": {
@@ -4115,7 +4281,7 @@
             "format": "int32",
             "description": "항목의 최대 배점. 0 이상",
             "example": 10,
-            "minimum": 0
+            "minimum": 1
           }
         },
         "required": ["itemId", "maxScore"]
@@ -4255,87 +4421,6 @@
         },
         "required": ["culture", "job", "other", "team"]
       },
-      "PartQuestionRequest": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "content": {
-            "type": "string",
-            "minLength": 1
-          },
-          "sortOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "requirementIds": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        },
-        "required": ["content", "requirementIds", "sortOrder"]
-      },
-      "UpdatePartQuestionsRequest": {
-        "type": "object",
-        "properties": {
-          "questions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PartQuestionRequest"
-            }
-          }
-        },
-        "required": ["questions"]
-      },
-      "QuestionRequirementDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "content": {
-            "type": "string"
-          }
-        },
-        "required": ["content", "id"]
-      },
-      "ReadQuestionResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "partId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "category": {
-            "type": "string",
-            "enum": ["INTRO", "OUTRO", "CULTURE", "PART"]
-          },
-          "content": {
-            "type": "string"
-          },
-          "sortOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "requirements": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QuestionRequirementDto"
-            }
-          }
-        },
-        "required": ["category", "content", "id", "requirements", "sortOrder"]
-      },
       "UpdateRubricRequest": {
         "type": "object",
         "properties": {
@@ -4345,7 +4430,8 @@
           },
           "maxScore": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "minimum": 1
           },
           "criterionDetail": {
             "type": "string"
@@ -4362,55 +4448,6 @@
           }
         },
         "required": ["deadline"]
-      },
-      "CreateQuestionsRequest": {
-        "type": "object",
-        "properties": {
-          "intro": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Item"
-            }
-          },
-          "outro": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Item"
-            }
-          },
-          "culture": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Item"
-            }
-          }
-        },
-        "required": ["culture", "intro", "outro"]
-      },
-      "Item": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "content": {
-            "type": "string",
-            "minLength": 1
-          },
-          "sortOrder": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "requirementIds": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        },
-        "required": ["content", "requirementIds", "sortOrder"]
       },
       "SaveAssignedQuestionRequest": {
         "type": "object",
