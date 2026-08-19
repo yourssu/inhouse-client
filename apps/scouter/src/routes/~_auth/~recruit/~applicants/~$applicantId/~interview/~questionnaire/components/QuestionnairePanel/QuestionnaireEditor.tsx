@@ -405,10 +405,11 @@ const toSaveAssignedQuestions = (
     requirementIds: [],
     sourceQuestionId: question.sourceQuestionId,
   })),
-  ...values.CULTURE.map((question) => ({
-    assignedInterviewerUserId: question.assignedInterviewerUserId,
+  // 선택하지 않은 컬처핏 질문은 질문자가 배정되지 않으므로 저장 대상에서 제외해요.
+  ...values.CULTURE.filter(({ isSelected }) => isSelected === true).map((question) => ({
+    assignedInterviewerUserId: question.assignedInterviewerUserId!,
     category: 'CULTURE' as const,
-    isSelected: question.isSelected,
+    isSelected: true,
     requirementIds: question.requirements.map(({ id }) => id),
     sourceQuestionId: question.sourceQuestionId,
   })),

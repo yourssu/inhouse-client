@@ -58,13 +58,17 @@ const InterviewerSelect = ({
   ref,
   value,
 }: InterviewerSelectProps) => {
+  // 질문자 배정에는 멤버 ID가 아니라 로그인 계정 ID가 필요해서, 계정이 연동된 멤버만 선택할 수 있어요.
+  const assignableMembers = activeMembers.flatMap(({ nickname, userId }) =>
+    userId === undefined || userId === null ? [] : [{ nickname, userId }],
+  );
   const interviewerIdByNickname = new Map(
-    activeMembers.map(({ memberId, nickname }) => [nickname, memberId]),
+    assignableMembers.map(({ nickname, userId }) => [nickname, userId]),
   );
   const interviewerNicknameById = new Map(
-    activeMembers.map(({ memberId, nickname }) => [memberId, nickname]),
+    assignableMembers.map(({ nickname, userId }) => [userId, nickname]),
   );
-  const nicknames = activeMembers.map(({ nickname }) => nickname);
+  const nicknames = assignableMembers.map(({ nickname }) => nickname);
 
   return (
     <Fieldset

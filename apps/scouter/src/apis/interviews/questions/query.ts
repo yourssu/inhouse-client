@@ -1,6 +1,8 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
+import type { PartInterviewQuestionsParams } from '@/apis/interviews/questions/schema';
+
 import {
   getAssignedQuestions,
   getPartInterviewQuestions,
@@ -12,7 +14,7 @@ const qk = pluginQueryKey('scouter');
 export const interviewQuestionsQueryKeys = {
   all: () => qk.for('interviews', 'questions'),
   applicant: (applicantId: number) => qk.for('interviews', 'questions', 'applicant', applicantId),
-  part: (partId: number) => qk.for('interviews', 'questions', 'part', partId),
+  part: (params: PartInterviewQuestionsParams) => qk.for('interviews', 'questions', 'part', params),
 };
 
 export const assignedQuestionsOption = (applicantId: number) =>
@@ -21,10 +23,10 @@ export const assignedQuestionsOption = (applicantId: number) =>
     queryFn: () => getAssignedQuestions(applicantId),
   });
 
-export const partInterviewQuestionsOption = (partId: number) =>
+export const partInterviewQuestionsOption = (params: PartInterviewQuestionsParams) =>
   queryOptions({
-    queryKey: interviewQuestionsQueryKeys.part(partId),
-    queryFn: () => getPartInterviewQuestions(partId),
+    queryKey: interviewQuestionsQueryKeys.part(params),
+    queryFn: () => getPartInterviewQuestions(params),
   });
 
 export const saveAssignedQuestionsMutationOptions = mutationOptions({

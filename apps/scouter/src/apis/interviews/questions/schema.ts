@@ -35,27 +35,20 @@ export const PartInterviewQuestionSchema = z.object({
 
 export const PartInterviewQuestionsSchema = z.array(PartInterviewQuestionSchema);
 
-const SaveAssignedQuestionRequestBaseSchema = z.object({
+export const PartInterviewQuestionsParamsSchema = z.object({
+  partId: z.number(),
+  semester: z.string().regex(/^\d{4}-[12]$/),
+});
+
+// 모든 카테고리의 질문에 질문자 배정이 필요해요.
+export const SaveAssignedQuestionRequestSchema = z.object({
+  assignedInterviewerUserId: z.number(),
+  category: QuestionCategorySchema,
   sourceQuestionId: z.number().optional(),
   content: z.string().optional(),
   isSelected: z.boolean().optional(),
   requirementIds: z.array(z.number()),
 });
-
-const SaveCultureQuestionRequestSchema = SaveAssignedQuestionRequestBaseSchema.extend({
-  assignedInterviewerUserId: z.number().optional(),
-  category: z.literal('CULTURE'),
-});
-
-const SaveInterviewerRequiredQuestionRequestSchema = SaveAssignedQuestionRequestBaseSchema.extend({
-  assignedInterviewerUserId: z.number(),
-  category: QuestionCategorySchema.exclude(['CULTURE']),
-});
-
-export const SaveAssignedQuestionRequestSchema = z.union([
-  SaveCultureQuestionRequestSchema,
-  SaveInterviewerRequiredQuestionRequestSchema,
-]);
 
 export const SaveAssignedQuestionsRequestSchema = z.object({
   questions: z.array(SaveAssignedQuestionRequestSchema),
@@ -67,5 +60,6 @@ export type AssignedQuestion = z.infer<typeof AssignedQuestionSchema>;
 export type AssignedQuestions = z.infer<typeof AssignedQuestionsSchema>;
 export type PartQuestionCategory = z.infer<typeof PartQuestionCategorySchema>;
 export type PartInterviewQuestion = z.infer<typeof PartInterviewQuestionSchema>;
+export type PartInterviewQuestionsParams = z.infer<typeof PartInterviewQuestionsParamsSchema>;
 export type SaveAssignedQuestionRequest = z.infer<typeof SaveAssignedQuestionRequestSchema>;
 export type SaveAssignedQuestionsRequest = z.infer<typeof SaveAssignedQuestionsRequestSchema>;
