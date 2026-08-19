@@ -52,6 +52,7 @@ export const ActiveMemberSchema = BaseMemberSchema.extend({
   membershipFee: z.boolean().nullish(), // 회비 납부 여부 (민감 필드)
   grade: z.number().nullish(),
   isOnLeave: z.boolean().nullish(),
+  userId: z.number().nullish(), // 로그인 계정 ID (계정이 연동되지 않은 멤버는 null)
 });
 
 export const InactiveMemberSchema = BaseMemberSchema.extend({
