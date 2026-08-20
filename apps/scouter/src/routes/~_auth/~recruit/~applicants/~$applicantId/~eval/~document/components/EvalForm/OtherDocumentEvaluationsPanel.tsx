@@ -7,19 +7,26 @@ import { useState } from 'react';
 import { MdLockOutline, MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';
 
-import type { ApplicantDocumentOthersEvaluationsType } from '@/apis/documents/schema';
+import type {
+  ApplicantDocumentOthersEvaluationsType,
+  DocumentEvaluatorStatusValue,
+} from '@/apis/documents/schema';
 
 import {
+  documentEvaluatorStatusesOption,
   getApplicantDocumentsEvaluationsOption,
   getApplicantDocumentsOthersEvaluationsOption,
 } from '@/apis/documents/query';
+import { DocumentAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/DocumentAverageScoreSummary';
 
 interface OtherDocumentEvaluationsPanelProps {
   applicantId: number;
+  documentAverageScore?: null | number;
 }
 
 export const OtherDocumentEvaluationsPanel = ({
   applicantId,
+  documentAverageScore,
 }: OtherDocumentEvaluationsPanelProps) => {
   const [{ data: myEvaluation }, { data: othersEvaluations }] = useSuspenseQueries({
     queries: [
@@ -32,7 +39,13 @@ export const OtherDocumentEvaluationsPanel = ({
     return <LockedOtherDocumentEvaluations />;
   }
 
-  return <SubmittedOtherDocumentEvaluations othersEvaluations={othersEvaluations} />;
+  return (
+    <SubmittedOtherDocumentEvaluations
+      applicantId={applicantId}
+      documentAverageScore={documentAverageScore}
+      othersEvaluations={othersEvaluations}
+    />
+  );
 };
 
 const LockedOtherDocumentEvaluations = () => {
@@ -66,18 +79,36 @@ const LockedOtherDocumentEvaluations = () => {
   );
 };
 
-const SubmittedOtherDocumentEvaluations = ({
-  othersEvaluations,
-}: {
+interface SubmittedOtherDocumentEvaluationsProps {
+  applicantId: number;
+  documentAverageScore?: null | number;
   othersEvaluations: ApplicantDocumentOthersEvaluationsType;
-}) => {
+}
+
+const SubmittedOtherDocumentEvaluations = ({
+  applicantId,
+  documentAverageScore,
+  othersEvaluations,
+}: SubmittedOtherDocumentEvaluationsProps) => {
+  const { data: statuses } = useSuspenseQueries({
+    queries: [documentEvaluatorStatusesOption(applicantId)],
+  })[0];
+
+  const submittedCount = statuses.filter(({ status }) => status === 'SUBMITTED').length;
+  const unsubmittedEvaluators = statuses.filter(({ status }) => status !== 'SUBMITTED');
+  const hasOtherEvaluators = othersEvaluations.length > 0 || unsubmittedEvaluators.length > 0;
+
   return (
     <div className="flex w-full flex-col gap-5 pt-2">
       <header className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">다른 평가자 평가</h2>
+        <DocumentAverageScoreSummary
+          documentAverageScore={documentAverageScore}
+          submittedCount={submittedCount}
+        />
       </header>
 
-      {othersEvaluations.length === 0 ? (
+      {!hasOtherEvaluators ? (
         <Result
           figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
           title="아직 다른 평가자가 없어요"
@@ -95,6 +126,9 @@ const SubmittedOtherDocumentEvaluations = ({
               />
             ),
           )}
+          {unsubmittedEvaluators.map(({ name, status, userId }) => (
+            <UnsubmittedDocumentEvaluatorCard key={userId} name={name} status={status} />
+          ))}
         </div>
       )}
     </div>
@@ -167,3 +201,30 @@ const OtherDocumentEvaluationCollapsible = ({
     </Collapsible.Root>
   );
 };
+
+interface UnsubmittedDocumentEvaluatorCardProps {
+  name: string;
+  status: DocumentEvaluatorStatusValue;
+}
+
+const UnsubmittedDocumentEvaluatorCard = ({
+  name,
+  status,
+}: UnsubmittedDocumentEvaluatorCardProps) => {
+  const statusOption = documentEvaluatorStatusOptions[status];
+
+  return (
+    <div className="border-greyOpacity200 rounded-10 flex w-full items-center justify-between gap-3 border px-4 py-3">
+      <span className="min-w-0 truncate font-semibold">{name}</span>
+      <Badge color={statusOption.color} size="sm">
+        {statusOption.label}
+      </Badge>
+    </div>
+  );
+};
+
+const documentEvaluatorStatusOptions = {
+  NOT_STARTED: { color: 'grey', label: '미작성' },
+  IN_PROGRESS: { color: 'grey', label: '작성 중' },
+  SUBMITTED: { color: 'violet', label: '제출 완료' },
+} satisfies Record<DocumentEvaluatorStatusValue, { color: 'grey' | 'violet'; label: string }>;
