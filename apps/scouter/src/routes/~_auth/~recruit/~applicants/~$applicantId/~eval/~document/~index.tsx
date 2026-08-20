@@ -65,40 +65,28 @@ const RouteComponent = () => {
               <EvalForm />
               <Divider className="my-6" />
               <div className="flex flex-col gap-5">
-                <OtherDocumentEvaluationsPanel applicantId={Number(applicantId)} />
+                <OtherDocumentEvaluationsPanel
+                  applicantId={Number(applicantId)}
+                  documentAverageScore={applicant.documentAverageScore}
+                />
                 <Divider />
-                <div className="flex flex-col">
-                  {applicant.documentAverageScore != null ? (
-                    <div className="flex items-center justify-between px-1 pb-4">
-                      <span className="text-16 text-neutral font-bold">서류 평균 점수</span>
-                      <span className="text-24 text-violet600 font-bold">
-                        {Math.min(Math.round(applicant.documentAverageScore), 100)} / 100
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between px-1 pb-4">
-                      <span className="text-16 text-neutral font-bold">서류 평균 점수</span>
-                      <span className="text-neutral text-xs">아직 제출된 평가 없음</span>
-                    </div>
-                  )}
-                  <Button
-                    disabled={evaluations.items.length === 0}
-                    onClick={() => {
-                      overlay.open(({ isOpen, close }) => {
-                        return (
-                          <FinalEvalDialog
-                            applicantId={Number(applicantId)}
-                            close={close}
-                            isOpen={isOpen}
-                          />
-                        );
-                      });
-                    }}
-                    size="lg"
-                  >
-                    최종 서류 평가
-                  </Button>
-                </div>
+                <Button
+                  disabled={evaluations.items.length === 0}
+                  onClick={() => {
+                    overlay.open(({ isOpen, close }) => {
+                      return (
+                        <FinalEvalDialog
+                          applicantId={Number(applicantId)}
+                          close={close}
+                          isOpen={isOpen}
+                        />
+                      );
+                    });
+                  }}
+                  size="lg"
+                >
+                  최종 서류 평가
+                </Button>
               </div>
             </div>
           </Paper>

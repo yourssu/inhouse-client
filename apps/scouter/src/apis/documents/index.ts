@@ -7,6 +7,7 @@ import {
   CommentSchema,
   CreateCommentRequestSchema,
   type CreateCommentRequestType,
+  DocumentEvaluatorStatusesSchema,
   PartDocumentsDeadlineSchema,
   PartDocumentsRubricsSchema,
   UpdateApplicantDocumentEvaluationRequestSchema,
@@ -31,6 +32,11 @@ export const getApplicantDocumentsOthersEvaluations = async (applicantId: number
   const res = await api.get(`applicants/${applicantId}/documents/evaluations/others`).json();
 
   return ApplicantDocumentOthersEvaluationsSchema.parse(res);
+};
+
+export const getApplicantDocumentEvaluatorStatuses = async (applicantId: number) => {
+  const res = await api.get(`applicants/${applicantId}/documents/evaluations/status`).json();
+  return DocumentEvaluatorStatusesSchema.parse(res);
 };
 
 export const getPartDocumentsDeadline = async (partId: number) => {

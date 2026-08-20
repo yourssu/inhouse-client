@@ -18,7 +18,7 @@ export const OtherEvaluationsCollapsible = ({
   rubric,
   isEvaluationDone,
 }: OtherEvaluationsCollapsibleProps) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <Collapsible.Root className="flex flex-col" onOpenChange={setOpen} open={open}>
