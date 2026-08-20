@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { useSuspenseQueries } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import {
   Badge,
@@ -82,9 +82,19 @@ export const EvalForm = () => {
 
   const [loading, startLoading] = useLoading();
 
+  const queryClient = useQueryClient();
+
   const mutation = useToastedMutation({
     mutationFn: putApplicantDocumentEvaluations,
     successText: '평가 제출에 성공했어요.',
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getApplicantDocumentsEvaluationsOption(Number(applicantId)).queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: applicantByIdOption(Number(applicantId)).queryKey,
+      });
+    },
   });
 
   const onSubmit: SubmitHandler<UpdateApplicantDocumentEvaluationFormType> = async (data) =>
