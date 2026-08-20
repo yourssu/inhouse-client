@@ -102,6 +102,10 @@ const targets = !base
       const apps = changedApps(base);
       if (apps === 'all') return allTargets();
       const selected = new Set(apps);
+      // shell 이 host Tailwind 단일 빌드로 모든 remote 의 utility 까지 산출하는 CSS 단일 출처예요.
+      // remote 소스만 바뀌어도 새 utility 가 shell CSS 에 반영되어야 하므로, 변경 앱이 하나라도 있으면
+      // shell 을 항상 함께 배포해요. shell 자체가 바뀐 경우엔 이미 selected 에 있어 no-op예요.
+      if (selected.size > 0) selected.add('shell');
       return allTargets().filter((t) => selected.has(t.app));
     })();
 

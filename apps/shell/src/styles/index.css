@@ -22,12 +22,12 @@
   소스에서만 쓰는 utility(grow, rounded-xl, grid-cols-2, ...)가 누락되므로, apps 하위 모든 src
   디렉터리를 @source glob 으로 명시 스캔해 단일 Tailwind 출력에 포함시켜요.
 
-  - glob 은 반드시 디렉터리 경로만 적어야 해요. `/**` 와 같은 파일 glob 을 끝에 붙이면
-    Vite 빌드 시 루트 디렉터리 밖의 파일을 제대로 스캔하지 못하는 이슈가 있어요.
-  - 새 remote 가 늘어도 이 줄을 고치지 않아도 돼요 — `*` 가 apps 아래 모든 디렉터리를 커버해요.
+  - glob 은 반드시 디렉터리 재귀를 뜻하는 `**` 슬래시로 끝나야 해요. `src` 디렉터리를 파일 glob
+    없이 쓰면 매치가 0건이에요.
+  - 새 remote 가 늘어도 이 줄을 고치지 않아도 돼요 — glob 이 apps 아래 모든 src 를 커버해요.
   - exterior/interior 패키지 소스는 각 패키지 index.css 가 자체 @source 로 선언해요.
 */
-@source '../../../*/src';
+@source '../../../*/src/**';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
