@@ -8,14 +8,15 @@ import { SwitchCase } from 'react-simplikit';
 import type { AssignedQuestions } from '@/apis/interviews/questions/schema';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
-import { myInterviewEvaluationOption } from '@/apis/interviews/evaluations/query';
-import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
+import {
+  interviewEvaluatorStatusesOption,
+  myInterviewEvaluationOption,
+} from '@/apis/interviews/evaluations/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewQuestionContent';
 import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewScriptContent';
-import { InterviewRubricSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSetting';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
 import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
@@ -92,14 +93,6 @@ const RouteComponent = () => {
         </Paper>
 
         <Paper className="flex w-100 shrink-0 flex-col overflow-hidden p-0">
-          <Suspense>
-            <InterviewRubricSetting
-              applicantId={Number(applicantId)}
-              partId={applicant.partId}
-              semester={applicant.applicationSemester}
-            />
-          </Suspense>
-          <Divider />
           <aside aria-label="내 면접 평가" className="w-full p-4">
             <Suspense>
               <MyInterviewEvaluationPanel
