@@ -32,7 +32,6 @@ export const InterviewQuestionContent = ({ question }: InterviewQuestionContentP
         <span className="text-neutralMuted text-15">
           질문자: <span className="text-violet600">{assignedInterviewerName}</span>
         </span>
-
         <span />
       </div>
     </div>
