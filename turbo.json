@@ -8,11 +8,7 @@
       "outputs": ["dist/**"]
     },
     "@yourssu-inhouse/shell#build": {
-      "dependsOn": [
-        "^build",
-        "@yourssu-inhouse/scouter#build",
-        "@yourssu-inhouse/member#build"
-      ]
+      "dependsOn": ["^build"]
     },
     "fix": {
       "dependsOn": ["fix:lint", "fix:format"]
