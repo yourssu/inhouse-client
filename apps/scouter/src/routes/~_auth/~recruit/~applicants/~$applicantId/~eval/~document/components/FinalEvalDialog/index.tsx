@@ -5,7 +5,10 @@ import { IoMdAlert } from 'react-icons/io';
 
 import { patchApplicant } from '@/apis/applicants';
 import { applicantByIdOption } from '@/apis/applicants/query';
-import { getApplicantDocumentsOthersEvaluationsOption } from '@/apis/documents/query';
+import {
+  getApplicantDocumentsEvaluationsOption,
+  getApplicantDocumentsOthersEvaluationsOption,
+} from '@/apis/documents/query';
 import { partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
@@ -21,8 +24,12 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
   const mutation = useToastedMutation({
     mutationFn: patchApplicant,
     successText: '최종 서류 평가를 제출했어요.',
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: applicantByIdOption(applicantId).queryKey }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getApplicantDocumentsEvaluationsOption(applicantId).queryKey,
+      });
+      queryClient.invalidateQueries({ queryKey: applicantByIdOption(applicantId).queryKey });
+    },
   });
 
   const { data: applicant } = useSuspenseQuery(applicantByIdOption(applicantId));
