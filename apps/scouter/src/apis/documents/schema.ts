@@ -2,6 +2,21 @@ import z from 'zod/v4';
 
 const documentResults = ['PENDING', 'DOCUMENT_PASS', 'DOCUMENT_FAIL'] as const;
 const DocumentResultSchema = z.enum(documentResults);
+
+export const DocumentEvaluatorStatusValueSchema = z.enum([
+  'NOT_STARTED',
+  'IN_PROGRESS',
+  'SUBMITTED',
+]);
+
+export const DocumentEvaluatorStatusSchema = z.object({
+  userId: z.number(),
+  name: z.string(),
+  status: DocumentEvaluatorStatusValueSchema,
+});
+
+export const DocumentEvaluatorStatusesSchema = z.array(DocumentEvaluatorStatusSchema);
+
 export const ApplicantDocumentOthersEvaluationsSchema = z.array(
   z.object({
     evaluatorId: z.number(),
@@ -74,6 +89,10 @@ export type UpdateApplicantDocumentEvaluationFormType = z.infer<
 export type UpdateApplicantDocumentEvaluationRequestType = z.infer<
   typeof UpdateApplicantDocumentEvaluationRequestSchema
 >;
+
+export type DocumentEvaluatorStatusValue = z.infer<typeof DocumentEvaluatorStatusValueSchema>;
+export type DocumentEvaluatorStatus = z.infer<typeof DocumentEvaluatorStatusSchema>;
+export type DocumentEvaluatorStatuses = z.infer<typeof DocumentEvaluatorStatusesSchema>;
 
 export const CommentAuthorSchema = z.object({
   memberId: z.number().optional(),

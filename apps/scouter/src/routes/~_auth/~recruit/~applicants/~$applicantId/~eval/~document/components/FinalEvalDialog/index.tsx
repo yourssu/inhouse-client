@@ -83,7 +83,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
       </Dialog.Content>
       <Dialog.ButtonGroup>
         <Dialog.Button
-          className="w-26"
+          className="w-[104px]"
           disabled={finalState !== 'DOCUMENT_REJECTED' && mutation.isPending}
           loading={finalState === 'DOCUMENT_REJECTED' && mutation.isPending}
           onClick={() => {
@@ -96,6 +96,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
           최종 불합격
         </Dialog.Button>
         <Dialog.Button
+          className="w-[104px]"
           disabled={finalState !== 'DOCUMENT_ACCEPTED' && mutation.isPending}
           loading={finalState === 'DOCUMENT_ACCEPTED' && mutation.isPending}
           onClick={() => {

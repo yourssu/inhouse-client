@@ -3,6 +3,7 @@ import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
 
 import {
   getApplicantDocumentComments,
+  getApplicantDocumentEvaluatorStatuses,
   getApplicantDocumentsEvaluations,
   getApplicantDocumentsOthersEvaluations,
   getPartDocumentsDeadline,
@@ -21,6 +22,12 @@ export const getApplicantDocumentsOthersEvaluationsOption = (applicantId: number
   queryOptions({
     queryKey: qk.for('applicants', applicantId, 'documents', 'evaluations', 'others'),
     queryFn: () => getApplicantDocumentsOthersEvaluations(applicantId),
+  });
+
+export const documentEvaluatorStatusesOption = (applicantId: number) =>
+  queryOptions({
+    queryKey: qk.for('applicants', applicantId, 'documents', 'evaluations', 'status'),
+    queryFn: () => getApplicantDocumentEvaluatorStatuses(applicantId),
   });
 
 export const commentsQueryKey = (applicantId: number) =>
