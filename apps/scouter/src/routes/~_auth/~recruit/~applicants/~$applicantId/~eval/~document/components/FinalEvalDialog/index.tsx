@@ -1,27 +1,13 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
-import { Dialog, Select } from '@yourssu-inhouse/interior';
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
-import { useLoading } from 'react-simplikit';
-import z from 'zod/v4';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { Dialog } from '@yourssu-inhouse/interior';
+import { useState } from 'react';
+import { IoMdAlert } from 'react-icons/io';
 
 import { patchApplicant } from '@/apis/applicants';
 import { applicantByIdOption } from '@/apis/applicants/query';
-import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { getApplicantDocumentsOthersEvaluationsOption } from '@/apis/documents/query';
+import { partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-
-const applicantDocumentKoreanStates = ['최종 서류 합격', '최종 서류 불합격'] as const;
-
-const applicantDocumentStateMapping = {
-  '최종 서류 합격': 'DOCUMENT_ACCEPTED',
-  '최종 서류 불합격': 'DOCUMENT_REJECTED',
-} as const;
-
-const finalEvalFormSchema = z.object({
-  finalState: z
-    .enum(applicantDocumentKoreanStates)
-    .transform((state) => applicantDocumentStateMapping[state]),
-});
 
 interface FinalEvalDialogProps {
   applicantId: number;
@@ -30,8 +16,6 @@ interface FinalEvalDialogProps {
 }
 
 export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogProps) => {
-  const openAlertDialog = useAlertDialog();
-
   const queryClient = useQueryClient();
 
   const mutation = useToastedMutation({
@@ -41,29 +25,27 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
       queryClient.invalidateQueries({ queryKey: applicantByIdOption(applicantId).queryKey }),
   });
 
-  const { handleSubmit, control } = useForm({
-    resolver: zodResolver(finalEvalFormSchema),
-  });
+  const { data: applicant } = useSuspenseQuery(applicantByIdOption(applicantId));
+  const { data: othersEvaluations } = useSuspenseQuery(
+    getApplicantDocumentsOthersEvaluationsOption(applicantId),
+  );
+  const { data: parts } = useSuspenseQuery(partsOption());
+  const part = parts.find((p) => p.partName === applicant.part);
+  const hasAssignment = part?.hasAssignment ?? false;
 
-  const [loading, startLoading] = useLoading();
+  const [finalState, setFinalState] = useState<'DOCUMENT_ACCEPTED' | 'DOCUMENT_REJECTED' | null>(
+    null,
+  );
 
-  const onSubmit: SubmitHandler<z.infer<typeof finalEvalFormSchema>> = async ({ finalState }) => {
-    // TODO: 멤버 조회 스키마 정상화 이후에 모든 멤버가 각자 서류 평가를 제출했는지 확인하는 로직이 들어가야 함
-    const closeWithTrue = await openAlertDialog({
-      title: '정말 최종 서류 평가를 제출할까요?',
-      content: '최종 서류 평가는 나중에 다시 수정할 수 있어요.',
-      primaryButtonText: '확인',
-      secondaryButtonText: '취소',
+  const unsubmittedEvaluators = othersEvaluations.filter(
+    (evaluator) => evaluator.items.length === 0,
+  );
+
+  const onSubmit = async (finalState: 'DOCUMENT_ACCEPTED' | 'DOCUMENT_REJECTED') => {
+    const { success } = await mutation.mutateWithToast({
+      applicantId,
+      data: { state: finalState },
     });
-
-    if (!closeWithTrue) {
-      return;
-    }
-
-    const { success } = await startLoading(
-      mutation.mutateWithToast({ applicantId, data: { state: finalState } }),
-    );
-
     if (success) {
       close();
     }
@@ -71,38 +53,61 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
 
   return (
     <Dialog closeableWithOutside={true} onClose={close} open={isOpen}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Dialog.Header onClickCloseButton={close}>
-          <Dialog.Title>최종 서류 평가 제출</Dialog.Title>
-        </Dialog.Header>
-        <Dialog.Content className="flex flex-col gap-4">
-          다른 평가자의 상세 평가는 서류 평가 화면에서 확인할 수 있어요. <br /> 최종 서류 결과는
-          개별 평가자의 평가결과와 별도로 지원자 상태에 저장돼요.
-          <Controller
-            control={control}
-            name="finalState"
-            render={({ field }) => (
-              <Select
-                className="w-fit"
-                items={applicantDocumentKoreanStates}
-                onValueChange={field.onChange}
-                placeholder="최종 합/불 여부"
-                size="lg"
-                value={field.value}
-                variant="dimmed"
-              />
-            )}
-          />
-        </Dialog.Content>
-        <Dialog.ButtonGroup>
-          <Dialog.Button onClick={close} type="button" variant="secondary">
-            취소
-          </Dialog.Button>
-          <Dialog.Button loading={loading} type="submit" variant="primary">
-            제출
-          </Dialog.Button>
-        </Dialog.ButtonGroup>
-      </form>
+      <Dialog.Header onClickCloseButton={close}>
+        <Dialog.Title>최종 서류 평가</Dialog.Title>
+      </Dialog.Header>
+      <Dialog.Content className="flex w-100 flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <p className="text-neutral font-medium">
+            <span className="text-violet600">{applicant.name}</span>님의 최종 서류 결과를 결정해요.
+          </p>
+          <p className="text-neutralSubtle text-xs">
+            {hasAssignment
+              ? '서류 평가 결과는 과제 평가 전까지 다시 수정 가능해요.'
+              : '서류 평가 결과는 면접 평가 전까지 다시 수정 가능해요.'}
+          </p>
+        </div>
+        {unsubmittedEvaluators.length > 0 && (
+          <section className="bg-orange50 rounded-10 flex flex-col px-4 py-3">
+            <h3 className="text-orange600 flex items-center gap-1.5 font-semibold">
+              <IoMdAlert aria-hidden className="size-5 shrink-0" />
+              <span>아직 평가를 제출하지 않은 평가자가 있어요.</span>
+            </h3>
+            <ul className="text-neutralSubtle flex flex-col text-sm" role="list">
+              {unsubmittedEvaluators.map((evaluator) => (
+                <li key={evaluator.evaluatorId}>{evaluator.evaluatorName}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </Dialog.Content>
+      <Dialog.ButtonGroup>
+        <Dialog.Button
+          className="w-26"
+          disabled={finalState !== 'DOCUMENT_REJECTED' && mutation.isPending}
+          loading={finalState === 'DOCUMENT_REJECTED' && mutation.isPending}
+          onClick={() => {
+            setFinalState('DOCUMENT_REJECTED');
+            onSubmit('DOCUMENT_REJECTED');
+          }}
+          type="button"
+          variant="danger"
+        >
+          최종 불합격
+        </Dialog.Button>
+        <Dialog.Button
+          disabled={finalState !== 'DOCUMENT_ACCEPTED' && mutation.isPending}
+          loading={finalState === 'DOCUMENT_ACCEPTED' && mutation.isPending}
+          onClick={() => {
+            setFinalState('DOCUMENT_ACCEPTED');
+            onSubmit('DOCUMENT_ACCEPTED');
+          }}
+          type="button"
+          variant="primary"
+        >
+          최종 합격
+        </Dialog.Button>
+      </Dialog.ButtonGroup>
     </Dialog>
   );
 };

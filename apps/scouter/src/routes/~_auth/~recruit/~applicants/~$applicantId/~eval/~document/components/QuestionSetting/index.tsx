@@ -39,17 +39,13 @@ export const QuestionSetting = ({ applicantId }: QuestionSettingProps) => {
         </Suspense>
       ),
       customized: true,
+      closeableWithOutside: false,
+      closeButton: false,
     });
   };
 
   return (
-    <Button
-      className="absolute top-4 right-4"
-      onClick={handleDialogTrigger}
-      size="sm"
-      type="button"
-      variant="subPrimary"
-    >
+    <Button onClick={handleDialogTrigger} size="sm" type="button" variant="subPrimary">
       문항 설정
     </Button>
   );

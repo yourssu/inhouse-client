@@ -12,13 +12,14 @@ import { z } from 'zod/v4';
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import {
   applicantDocumentCommentsOption,
+  getApplicantDocumentsEvaluationsOption,
   getPartDocumentsDeadlineOption,
 } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
+import { OtherDocumentEvaluationsPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherDocumentEvaluationsPanel';
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
-import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
 
@@ -26,15 +27,21 @@ const RouteComponent = () => {
   const { applicantId } = Route.useParams();
   const { partId } = Route.useSearch();
 
-  const [{ data: applicant }, { data: answers }, { data: comments }, { data: deadline }] =
-    useSuspenseQueries({
-      queries: [
-        applicantByIdOption(Number(applicantId)),
-        applicantDocumentAnswersOption(Number(applicantId)),
-        applicantDocumentCommentsOption(Number(applicantId)),
-        getPartDocumentsDeadlineOption(partId),
-      ],
-    });
+  const [
+    { data: applicant },
+    { data: answers },
+    { data: comments },
+    { data: deadline },
+    { data: evaluations },
+  ] = useSuspenseQueries({
+    queries: [
+      applicantByIdOption(Number(applicantId)),
+      applicantDocumentAnswersOption(Number(applicantId)),
+      applicantDocumentCommentsOption(Number(applicantId)),
+      getPartDocumentsDeadlineOption(partId),
+      getApplicantDocumentsEvaluationsOption(Number(applicantId)),
+    ],
+  });
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -53,31 +60,46 @@ const RouteComponent = () => {
           }
         >
           <DocumentReview answers={answers} applicantId={Number(applicantId)} comments={comments} />
-          <Paper className="relative w-100">
+          <Paper className="relative w-100 p-4">
             <div className="w-full">
               <EvalForm />
               <Divider className="my-6" />
-              <div className="flex flex-col">
-                {/* TODO: 지원자 조회 정상화 이후 버튼 위에 해당 지원자의 서류 평가 점수 평균과 최종 합불 여부를 출력해야 함 */}
-                <Button
-                  onClick={() => {
-                    overlay.open(({ isOpen, close }) => {
-                      return (
-                        <FinalEvalDialog
-                          applicantId={Number(applicantId)}
-                          close={close}
-                          isOpen={isOpen}
-                        />
-                      );
-                    });
-                  }}
-                  size="lg"
-                >
-                  최종 서류 평가 제출하기
-                </Button>
+              <div className="flex flex-col gap-5">
+                <OtherDocumentEvaluationsPanel applicantId={Number(applicantId)} />
+                <Divider />
+                <div className="flex flex-col">
+                  {applicant.documentAverageScore != null ? (
+                    <div className="flex items-center justify-between px-1 pb-4">
+                      <span className="text-16 text-neutral font-bold">서류 평균 점수</span>
+                      <span className="text-24 text-violet600 font-bold">
+                        {Math.min(Math.round(applicant.documentAverageScore), 100)} / 100
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between px-1 pb-4">
+                      <span className="text-16 text-neutral font-bold">서류 평균 점수</span>
+                      <span className="text-neutral text-xs">아직 제출된 평가 없음</span>
+                    </div>
+                  )}
+                  <Button
+                    disabled={evaluations.items.length === 0}
+                    onClick={() => {
+                      overlay.open(({ isOpen, close }) => {
+                        return (
+                          <FinalEvalDialog
+                            applicantId={Number(applicantId)}
+                            close={close}
+                            isOpen={isOpen}
+                          />
+                        );
+                      });
+                    }}
+                    size="lg"
+                  >
+                    최종 서류 평가
+                  </Button>
+                </div>
               </div>
-
-              <QuestionSetting applicantId={Number(applicantId)} />
             </div>
           </Paper>
         </ErrorBoundary>

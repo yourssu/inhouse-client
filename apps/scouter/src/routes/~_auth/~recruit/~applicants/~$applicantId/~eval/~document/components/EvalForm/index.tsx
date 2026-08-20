@@ -1,9 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import * as Collapsible from '@radix-ui/react-collapsible';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { Button, Fieldset, MultilineTextField, Select } from '@yourssu-inhouse/interior';
+import {
+  Badge,
+  Button,
+  Divider,
+  Fieldset,
+  MultilineTextField,
+  Select,
+} from '@yourssu-inhouse/interior';
 import { invert } from 'es-toolkit';
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import { MdAdd, MdRemove } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
@@ -18,10 +28,12 @@ import {
   UpdateApplicantDocumentEvaluationFormSchema,
   type UpdateApplicantDocumentEvaluationFormType,
 } from '@/apis/documents/schema';
+import { meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
-import { OtherOverallEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherOverallEvaluationsCollapsible';
+import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
+import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 
 const documentResultMapping = {
   PENDING: '보류',
@@ -34,8 +46,8 @@ export const EvalForm = () => {
     from: '/_auth/recruit/applicants/$applicantId/eval/document/',
   });
 
-  const [{ data: applicant }, { data: parts }] = useSuspenseQueries({
-    queries: [applicantByIdOption(Number(applicantId)), partsOption()],
+  const [{ data: applicant }, { data: parts }, { data: me }] = useSuspenseQueries({
+    queries: [applicantByIdOption(Number(applicantId)), partsOption(), meOption()],
   });
 
   const part = parts.find((part) => part.partName === applicant.part) ?? parts[0];
@@ -49,7 +61,11 @@ export const EvalForm = () => {
       ],
     });
 
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit,
+    control,
+    formState: { isDirty },
+  } = useForm({
     resolver: zodResolver(UpdateApplicantDocumentEvaluationFormSchema),
     defaultValues: {
       items:
@@ -60,6 +76,9 @@ export const EvalForm = () => {
       result: documentResultMapping[evaluations.result],
     },
   });
+
+  const watchedItems = useWatch({ control, name: 'items' });
+  const quantitativeScore = watchedItems.reduce((sum, item) => sum + (Number(item.score) || 0), 0);
 
   const [loading, startLoading] = useLoading();
 
@@ -83,96 +102,150 @@ export const EvalForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <h3 className="font-semibold">질문별 서류평가</h3>
+        <div className="flex flex-col gap-4">
+          <header className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-semibold">질문별 서류평가</h2>
+            {evaluations.items.length === 0 ? (
+              <QuestionSetting applicantId={Number(applicantId)} />
+            ) : (
+              <Badge color="green" size="md">
+                제출 완료
+              </Badge>
+            )}
+          </header>
 
           <div className="flex flex-col gap-4">
             {rubrics.map((rubric, idx) => (
-              <div className="flex flex-col" key={rubric.sectionId}>
-                <span className="text-15">{`${idx + 1}. ${rubric.question}`}</span>
-
-                <Fieldset label="배점">
+              <div
+                className="border-greyOpacity200 bg-lightBackground rounded-10 flex flex-col gap-2 border py-3"
+                key={rubric.sectionId}
+              >
+                <div className="flex items-center justify-between gap-2 px-4">
+                  <h4 className="text-14 text-neutral font-semibold break-keep">
+                    {rubric.question}
+                  </h4>
                   <Controller
                     control={control}
                     name={`items.${idx}.score`}
-                    render={({ field }) => (
-                      <div>
-                        <input
-                          className="h-lg rounded-8 border-grey200 focus:border-violet500 hover:not-focus:not-disabled:border-violetOpacity200 border px-3 outline-none"
-                          {...field}
-                          onChange={(event) => {
-                            const value = event.target.value;
-
-                            if (!/^\d*$/.test(value)) {
-                              return;
-                            }
-
-                            field.onChange(value);
-                          }}
-                          type="text"
+                    render={({ field, fieldState }) => (
+                      <div className="flex items-center gap-1">
+                        <InterviewScoreInput
+                          ariaLabel={`문항 ${idx + 1} 점수`}
+                          className="text-13"
+                          invalid={fieldState.invalid}
+                          maxScore={rubric.maxScore}
+                          onBlur={field.onBlur}
+                          onChange={field.onChange}
+                          value={field.value}
                         />
-                        {` / ${rubric.maxScore}`}
+                        <span className="text-13 text-neutral shrink-0 font-semibold">{`/ ${rubric.maxScore}`}</span>
                       </div>
                     )}
                   />
-                </Fieldset>
+                </div>
 
-                <Fieldset label="코멘트">
+                <Divider className="my-1" />
+
+                <QualitativeEvaluationCollapsible defaultOpen={evaluations.items.length !== 0}>
                   <Controller
                     control={control}
                     name={`items.${idx}.memo`}
-                    render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
+                    render={({ field }) => (
+                      <MultilineTextField
+                        {...field}
+                        placeholder="평가 내용을 작성해주세요..."
+                        withHeightAutoResize
+                      />
+                    )}
                   />
-                </Fieldset>
+                </QualitativeEvaluationCollapsible>
 
-                <OtherEvaluationsCollapsible
-                  isEvaluationDone={evaluations.items.length !== 0}
-                  othersEvaluations={othersEvaluations}
-                  rubric={rubric}
-                />
+                {evaluations.items.length !== 0 && (
+                  <>
+                    <Divider className="my-1" />
+                    <OtherEvaluationsCollapsible
+                      isEvaluationDone={evaluations.items.length !== 0}
+                      othersEvaluations={othersEvaluations}
+                      rubric={rubric}
+                    />
+                  </>
+                )}
               </div>
             ))}
           </div>
         </div>
 
-        <div>
-          <h3 className="font-semibold">총평 및 평가결과</h3>
-          <Fieldset label="총평">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-14 font-semibold">{`${me.nickname} 총평`}</span>
+            <div className="flex items-center gap-2">
+              <Badge color="yellow" size="sm">
+                {`정량평가 ${quantitativeScore}점`}
+              </Badge>
+              <Controller
+                control={control}
+                name="result"
+                render={({ field }) => (
+                  <Select
+                    className="w-fit"
+                    items={documentKoreanResults}
+                    onValueChange={field.onChange}
+                    placeholder="평가 결과를 선택하세요"
+                    size="md"
+                    value={field.value}
+                    variant="dimmed"
+                  />
+                )}
+              />
+            </div>
+          </div>
+
+          <Fieldset>
             <Controller
               control={control}
               name="overallComment"
-              render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
-            />
-          </Fieldset>
-
-          <Fieldset label="평가결과">
-            <Controller
-              control={control}
-              name="result"
               render={({ field }) => (
-                <Select
-                  className="w-fit"
-                  items={documentKoreanResults}
-                  onValueChange={field.onChange}
-                  placeholder="평가 결과를 선택하세요"
-                  size="lg"
-                  value={field.value}
-                  variant="dimmed"
+                <MultilineTextField
+                  {...field}
+                  placeholder="총평을 작성해주세요..."
+                  withHeightAutoResize
                 />
               )}
             />
           </Fieldset>
         </div>
 
-        <OtherOverallEvaluationsCollapsible
-          isEvaluationDone={evaluations.items.length !== 0}
-          othersEvaluations={othersEvaluations}
-        />
-
-        <Button loading={loading} size="lg" type="submit">
-          내 평가 제출하기
+        <Button
+          disabled={evaluations.items.length !== 0 && !isDirty}
+          loading={loading}
+          size="lg"
+          type="submit"
+        >
+          {evaluations.items.length === 0 ? '내 평가 제출하기' : '내 평가 수정하기'}
         </Button>
       </div>
     </form>
+  );
+};
+
+const QualitativeEvaluationCollapsible = ({
+  children,
+  defaultOpen = false,
+}: {
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) => {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <Collapsible.Root className="flex flex-col" onOpenChange={setOpen} open={open}>
+      <Collapsible.Trigger className="text-14 text-neutral flex cursor-pointer items-center justify-between px-4 py-1 font-semibold">
+        정성평가
+        {open ? <MdRemove className="text-16" /> : <MdAdd className="text-16" />}
+      </Collapsible.Trigger>
+      <Collapsible.Content className="flex flex-col gap-4 px-4 pt-3 pb-2">
+        {children}
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 };
