@@ -8,8 +8,10 @@ import { SwitchCase } from 'react-simplikit';
 import type { AssignedQuestions } from '@/apis/interviews/questions/schema';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
-import { myInterviewEvaluationOption } from '@/apis/interviews/evaluations/query';
-import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
+import {
+  interviewEvaluatorStatusesOption,
+  myInterviewEvaluationOption,
+} from '@/apis/interviews/evaluations/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';

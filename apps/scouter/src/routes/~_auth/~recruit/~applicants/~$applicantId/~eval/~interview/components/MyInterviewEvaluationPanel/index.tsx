@@ -38,6 +38,7 @@ import { meOption } from '@/apis/members/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { InterviewRubricSettingButton } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSettingButton';
 import { MyInterviewEvaluationFormSchema } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel/formValidationSchema';
 import { PeerItemScoresTooltip } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel/PeerItemScoresTooltip';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
@@ -58,14 +59,22 @@ export const MyInterviewEvaluationPanel = ({
   partId,
   semester,
 }: MyInterviewEvaluationPanelProps) => {
-  const [{ data: orderedRubricGroups }, { data: myEvaluation }, { data: me }] = useSuspenseQueries({
+  const [
+    {
+      data: { isRubricLocked, orderedRubricGroups },
+    },
+    { data: myEvaluation },
+    { data: me },
+  ] = useSuspenseQueries({
     queries: [
       {
         ...interviewRubricOption({ partId, semester }),
-        select: (data: InterviewRubric) =>
-          interviewRubricGroupNames.flatMap(
+        select: (data: InterviewRubric) => ({
+          isRubricLocked: data.isLocked,
+          orderedRubricGroups: interviewRubricGroupNames.flatMap(
             (groupName) => data.groups.find(({ group }) => group === groupName) ?? [],
           ),
+        }),
       },
       myInterviewEvaluationOption(applicantId),
       meOption(),
@@ -125,8 +134,13 @@ export const MyInterviewEvaluationPanel = ({
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      <header className="flex flex-col gap-3">
+      <header className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold">내 평가</h2>
+        <InterviewRubricSettingButton
+          isLocked={isRubricLocked}
+          partId={partId}
+          semester={semester}
+        />
       </header>
       <div className="flex flex-col gap-3">
         {orderedRubricGroups.map(
