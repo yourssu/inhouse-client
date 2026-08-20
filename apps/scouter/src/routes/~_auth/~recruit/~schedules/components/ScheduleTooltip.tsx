@@ -47,11 +47,7 @@ type ScheduleTooltipItemProps = React.PropsWithChildren<{
   right?: React.ReactNode;
 }>;
 
-const ScheduleTooltipItem = ({
-  children,
-  icon: Icon,
-  right,
-}: ScheduleTooltipItemProps) => {
+const ScheduleTooltipItem = ({ children, icon: Icon, right }: ScheduleTooltipItemProps) => {
   const content = (
     <div className="flex items-center gap-2">
       <Icon className="text-neutralDisabled size-6" />
