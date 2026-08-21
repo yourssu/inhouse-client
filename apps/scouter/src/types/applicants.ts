@@ -18,21 +18,15 @@ const documentEvalActionAllowedStates: readonly ApplicantStateType[] = [
   'DOCUMENT_REJECTED',
 ];
 
-export const isDocumentEvalActionAllowed = (state: ApplicantStateType): boolean =>
-  documentEvalActionAllowedStates.includes(state);
-
-// 이 상태일 때만 과제 평가 진입을 허용해요. 그 외 상태는 전부 에러 모달로 안내해요.
+// 과제 평가 진입을 허용하는 지원자 상태에요.
 const assignmentEvalActionAllowedStates: readonly ApplicantStateType[] = [
   'ASSIGNMENT_ACCEPTED',
   'ASSIGNMENT_REJECTED',
   'DOCUMENT_ACCEPTED',
 ];
 
-export const isAssignmentEvalActionAllowed = (state: ApplicantStateType): boolean =>
-  assignmentEvalActionAllowedStates.includes(state);
-
 // 질문지 설계 페이지 진입을 허용하는 지원자 상태예요.
-const interviewQuestionnaireActionAllowedStates: readonly ApplicantStateType[] = [
+const questionnaireActionAllowedStates: readonly ApplicantStateType[] = [
   'UNDER_REVIEW',
   'DOCUMENT_ACCEPTED',
   'ASSIGNMENT_ACCEPTED',
@@ -40,9 +34,6 @@ const interviewQuestionnaireActionAllowedStates: readonly ApplicantStateType[] =
   'INCUBATING_REJECTED',
   'FINAL_ACCEPTED',
 ];
-
-export const isInterviewQuestionnaireActionAllowed = (state: ApplicantStateType): boolean =>
-  interviewQuestionnaireActionAllowedStates.includes(state);
 
 // 면접 평가 페이지 진입을 허용하는 지원자 상태예요.
 const interviewEvalActionAllowedStates: readonly ApplicantStateType[] = [
@@ -53,6 +44,15 @@ const interviewEvalActionAllowedStates: readonly ApplicantStateType[] = [
   'INCUBATING_REJECTED',
   'FINAL_ACCEPTED',
 ];
+
+export const isDocumentEvalActionAllowed = (state: ApplicantStateType): boolean =>
+  documentEvalActionAllowedStates.includes(state);
+
+export const isAssignmentEvalActionAllowed = (state: ApplicantStateType): boolean =>
+  assignmentEvalActionAllowedStates.includes(state);
+
+export const isQuestionnaireActionAllowed = (state: ApplicantStateType): boolean =>
+  questionnaireActionAllowedStates.includes(state);
 
 export const isInterviewEvalActionAllowed = (state: ApplicantStateType): boolean =>
   interviewEvalActionAllowedStates.includes(state);

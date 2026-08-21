@@ -9,7 +9,7 @@ import { AssignmentEvalDialogContent } from '@/routes/~_auth/~recruit/~applicant
 import {
   isAssignmentEvalActionAllowed,
   isInterviewEvalActionAllowed,
-  isInterviewQuestionnaireActionAllowed,
+  isQuestionnaireActionAllowed,
 } from '@/types/applicants';
 
 interface ApplicantActionMenuProps {
@@ -31,7 +31,7 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
 
   const isAssignmentEvaluationDisabled = state === 'DOCUMENT_REJECTED';
   const isInterviewEvaluationDisabled = !isInterviewEvalActionAllowed(state);
-  const isQuestionnaireDisabled = !isInterviewQuestionnaireActionAllowed(state);
+  const isQuestionnaireDisabled = !isQuestionnaireActionAllowed(state);
 
   const handleDocumentEvaluationClick = () => {
     navigate({
