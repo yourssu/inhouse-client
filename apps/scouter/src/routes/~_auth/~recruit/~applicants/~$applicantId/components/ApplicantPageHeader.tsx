@@ -12,11 +12,10 @@ import { formatSemester } from '@/utils/semester';
 
 interface ApplicantPageHeaderProps {
   applicant: ApplicantType;
-  deadline?: string;
   label: string;
 }
 
-export const ApplicantPageHeader = ({ applicant, deadline, label }: ApplicantPageHeaderProps) => {
+export const ApplicantPageHeader = ({ applicant, label }: ApplicantPageHeaderProps) => {
   return (
     <header className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex min-w-0 items-center gap-3">
@@ -26,14 +25,6 @@ export const ApplicantPageHeader = ({ applicant, deadline, label }: ApplicantPag
         <div className="min-w-0">
           <div className="text-sm">
             <span className="text-violet600 font-medium">{label}</span>
-            {deadline !== undefined && (
-              <>
-                <span className="text-neutralSubtle mx-1.5">·</span>
-                <span className="text-neutralSubtle">
-                  {formatTemplates['(2026년)? 1월 1일, 오후 11:00'](deadline)} 마감
-                </span>
-              </>
-            )}
           </div>
           <h1 className="truncate text-xl font-semibold">{applicant.name} 지원자</h1>
         </div>

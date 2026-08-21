@@ -35,7 +35,6 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   const handleDocumentEvaluationClick = () => {
     navigate({
       params: { applicantId: String(applicantId) },
-      search: { partId },
       to: '/recruit/applicants/$applicantId/eval/document',
     });
   };
