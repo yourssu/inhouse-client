@@ -31,7 +31,7 @@ export const QuestionSetting = ({ applicant }: QuestionSettingProps) => {
 
   const openQuestionSettingDialog = useAlertDialog();
 
-  const isActionAllowed = isDocumentEvalActionAllowed(state);
+  const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(state);
 
   const handleDialogTrigger = () => {
     return openQuestionSettingDialog({
@@ -53,7 +53,7 @@ export const QuestionSetting = ({ applicant }: QuestionSettingProps) => {
 
   return (
     <Button
-      disabled={!isActionAllowed}
+      disabled={isDocumentEvaluationDisabled}
       onClick={handleDialogTrigger}
       size="sm"
       type="button"

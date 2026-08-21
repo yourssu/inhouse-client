@@ -47,7 +47,7 @@ const RouteComponent = () => {
   const { data: rubrics } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
   const isScoringComplete = rubrics.reduce((sum, rubric) => sum + rubric.maxScore, 0) === 100;
-  const isActionAllowed = isDocumentEvalActionAllowed(applicant.state);
+  const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(applicant.state);
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -79,7 +79,7 @@ const RouteComponent = () => {
                     />
                     <Divider />
                     <Button
-                      disabled={evaluations.items.length === 0 || !isActionAllowed}
+                      disabled={evaluations.items.length === 0 || isDocumentEvaluationDisabled}
                       onClick={() => {
                         overlay.open(({ isOpen, close }) => {
                           return (

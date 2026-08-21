@@ -58,7 +58,7 @@ export const EvalForm = () => {
 
   const part = parts.find((part) => part.partName === applicant.part) ?? parts[0];
 
-  const isActionAllowed = isDocumentEvalActionAllowed(applicant.state);
+  const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(applicant.state);
 
   const [{ data: evaluations }, { data: rubrics }, { data: othersEvaluations }] =
     useSuspenseQueries({
@@ -177,7 +177,7 @@ export const EvalForm = () => {
                           <InterviewScoreInput
                             ariaLabel={`문항 ${idx + 1} 점수`}
                             className="text-13"
-                            disabled={!isActionAllowed}
+                            disabled={isDocumentEvaluationDisabled}
                             invalid={fieldState.invalid}
                             maxScore={rubric.maxScore}
                             onBlur={field.onBlur}
@@ -203,7 +203,7 @@ export const EvalForm = () => {
                     render={({ field }) => (
                       <MultilineTextField
                         {...field}
-                        disabled={!isActionAllowed}
+                        disabled={isDocumentEvaluationDisabled}
                         placeholder="평가 내용을 작성해주세요..."
                         withHeightAutoResize
                       />
@@ -264,7 +264,7 @@ export const EvalForm = () => {
               render={({ field }) => (
                 <MultilineTextField
                   {...field}
-                  disabled={!isActionAllowed}
+                  disabled={isDocumentEvaluationDisabled}
                   placeholder="총평을 작성해주세요..."
                   withHeightAutoResize
                 />
@@ -274,7 +274,7 @@ export const EvalForm = () => {
         </div>
 
         <Button
-          disabled={(evaluations.items.length !== 0 && !isDirty) || !isActionAllowed}
+          disabled={(evaluations.items.length !== 0 && !isDirty) || isDocumentEvaluationDisabled}
           loading={loading}
           size="lg"
           type="submit"
