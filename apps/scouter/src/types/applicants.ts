@@ -18,15 +18,15 @@ const documentEvalActionAllowedStates: readonly ApplicantStateType[] = [
   'DOCUMENT_REJECTED',
 ];
 
-// 과제 평가 진입을 허용하는 지원자 상태에요.
-const assignmentEvalActionAllowedStates: readonly ApplicantStateType[] = [
+// 과제 평가 모달 진입을 허용하는 지원자 상태에요.
+const assignmentEvalAccessAllowedStates: readonly ApplicantStateType[] = [
   'ASSIGNMENT_ACCEPTED',
   'ASSIGNMENT_REJECTED',
   'DOCUMENT_ACCEPTED',
 ];
 
 // 질문지 설계 페이지 진입을 허용하는 지원자 상태예요.
-const questionnaireActionAllowedStates: readonly ApplicantStateType[] = [
+const questionnaireAccessAllowedStates: readonly ApplicantStateType[] = [
   'UNDER_REVIEW',
   'DOCUMENT_ACCEPTED',
   'ASSIGNMENT_ACCEPTED',
@@ -36,7 +36,7 @@ const questionnaireActionAllowedStates: readonly ApplicantStateType[] = [
 ];
 
 // 면접 평가 페이지 진입을 허용하는 지원자 상태예요.
-const interviewEvalActionAllowedStates: readonly ApplicantStateType[] = [
+const interviewEvalAccessAllowedStates: readonly ApplicantStateType[] = [
   'UNDER_REVIEW',
   'DOCUMENT_ACCEPTED',
   'ASSIGNMENT_ACCEPTED',
@@ -48,11 +48,11 @@ const interviewEvalActionAllowedStates: readonly ApplicantStateType[] = [
 export const isDocumentEvalActionAllowed = (state: ApplicantStateType): boolean =>
   documentEvalActionAllowedStates.includes(state);
 
-export const isAssignmentEvalActionAllowed = (state: ApplicantStateType): boolean =>
-  assignmentEvalActionAllowedStates.includes(state);
+export const isAssignmentEvalAccessAllowed = (state: ApplicantStateType): boolean =>
+  assignmentEvalAccessAllowedStates.includes(state);
 
-export const isQuestionnaireActionAllowed = (state: ApplicantStateType): boolean =>
-  questionnaireActionAllowedStates.includes(state);
+export const isQuestionnaireAccessAllowed = (state: ApplicantStateType): boolean =>
+  questionnaireAccessAllowedStates.includes(state);
 
-export const isInterviewEvalActionAllowed = (state: ApplicantStateType): boolean =>
-  interviewEvalActionAllowedStates.includes(state);
+export const isInterviewEvalAccessAllowed = (state: ApplicantStateType): boolean =>
+  interviewEvalAccessAllowedStates.includes(state);

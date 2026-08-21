@@ -7,9 +7,9 @@ import type { ApplicantStateType, ApplicantType } from '@/apis/applicants/schema
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { AssignmentEvalDialogContent } from '@/routes/~_auth/~recruit/~applicants/components/AssignmentEvalDialogContent';
 import {
-  isAssignmentEvalActionAllowed,
-  isInterviewEvalActionAllowed,
-  isQuestionnaireActionAllowed,
+  isAssignmentEvalAccessAllowed,
+  isInterviewEvalAccessAllowed,
+  isQuestionnaireAccessAllowed,
 } from '@/types/applicants';
 
 interface ApplicantActionMenuProps {
@@ -29,9 +29,12 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   const navigate = useNavigate();
   const openAlertDialog = useAlertDialog();
 
+  // 서류 불합이면 과제 평가 자체가 의미 없는 상태라 메뉴 항목을 아예 비활성화해요.
+  // 그 외 차단 상태는 isAssignmentEvaluationAccessDisabled가 담당하고, 클릭 시 에러 모달로 안내해요.
   const isAssignmentEvaluationDisabled = state === 'DOCUMENT_REJECTED';
-  const isInterviewEvaluationDisabled = !isInterviewEvalActionAllowed(state);
-  const isQuestionnaireDisabled = !isQuestionnaireActionAllowed(state);
+  const isAssignmentEvaluationAccessDisabled = !isAssignmentEvalAccessAllowed(state);
+  const isInterviewEvaluationDisabled = !isInterviewEvalAccessAllowed(state);
+  const isQuestionnaireDisabled = !isQuestionnaireAccessAllowed(state);
 
   const handleDocumentEvaluationClick = () => {
     navigate({
@@ -56,7 +59,7 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   };
 
   const handleAssignmentEvaluationClick = async () => {
-    if (!isAssignmentEvalActionAllowed(state)) {
+    if (isAssignmentEvaluationAccessDisabled) {
       await openAlertDialog({
         content:
           assignmentEvalGateErrorContent[state] ?? '지금 상태에서는 과제 평가를 진행할 수 없어요.',
