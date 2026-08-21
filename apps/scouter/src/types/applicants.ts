@@ -21,7 +21,17 @@ const documentEvalActionAllowedStates: readonly ApplicantStateType[] = [
 export const isDocumentEvalActionAllowed = (state: ApplicantStateType): boolean =>
   documentEvalActionAllowedStates.includes(state);
 
-// 면접 질문지 설계 페이지의 질문지 저장, 질문 추가, 질문자 선택 액션을 허용하는 지원자 상태예요.
+// 이 상태일 때만 과제 평가 진입을 허용해요. 그 외 상태는 전부 에러 모달로 안내해요.
+const assignmentEvalActionAllowedStates: readonly ApplicantStateType[] = [
+  'ASSIGNMENT_ACCEPTED',
+  'ASSIGNMENT_REJECTED',
+  'DOCUMENT_ACCEPTED',
+];
+
+export const isAssignmentEvalActionAllowed = (state: ApplicantStateType): boolean =>
+  assignmentEvalActionAllowedStates.includes(state);
+
+// 질문지 설계 페이지 진입을 허용하는 지원자 상태예요.
 const interviewQuestionnaireActionAllowedStates: readonly ApplicantStateType[] = [
   'UNDER_REVIEW',
   'DOCUMENT_ACCEPTED',
