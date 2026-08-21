@@ -1,9 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
 import { useDelayedValue, useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
-import { Checkbox, Pagination, Result, Table } from '@yourssu-inhouse/interior';
+import { Badge, Pagination, Result, Table } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';
@@ -13,10 +12,10 @@ import { partsOption } from '@/apis/parts/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
 import { ApplicantActionMenu } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantActionMenu';
-import { useApplicantSelectionContext } from '@/routes/~_auth/~recruit/~applicants/context';
 import {
   applicantStatesByTab,
   type ApplicantTabNameType,
+  getApplicantReviewStatus,
 } from '@/routes/~_auth/~recruit/~applicants/type';
 import { partNameKo, type PartNameKoType } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
@@ -45,7 +44,6 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
       name: useDelayedValue(searchKeyword) || undefined,
     }),
   );
-  const applicantIds = applicants.map(({ applicantId }) => applicantId);
 
   const {
     items: paginatedApplicants,
@@ -55,8 +53,6 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
     currentPage: search.page ?? 1,
     pageSize: 10,
   });
-
-  const { isSelected, isAllSelected, toggle, toggleAll } = useApplicantSelectionContext();
 
   const onPartFilterChange = (v: PartNameKoType) => {
     const partNameEn = invert(partNameKo)[v];
@@ -72,12 +68,6 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
     <>
       <Table className="px-3 pb-4" rowCount={paginatedApplicants.length}>
         <Table.Head>
-          <Table.Th className="w-fit min-w-fit flex-none pr-3">
-            <Checkbox
-              checked={isAllSelected(applicantIds)}
-              onCheckedChange={(checked) => toggleAll(applicantIds, checked)}
-            />
-          </Table.Th>
           <Table.Th align="left">{`지원자 목록 · ${applicants.length}명`}</Table.Th>
           <Table.ThSelect
             items={objectValues(partNameKo)}
@@ -89,44 +79,43 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
           <Table.Th>학과</Table.Th>
           <Table.Th>현재 학기</Table.Th>
           <Table.Th infoContent="연도 기준 나이예요.">나이</Table.Th>
-          <Table.Th>지원일</Table.Th>
+          <Table.Th>심사 상태</Table.Th>
           <Table.Th className="w-12 min-w-12 flex-none">
             <span className="sr-only">지원자 액션</span>
           </Table.Th>
         </Table.Head>
         <Table.Body>
-          {paginatedApplicants.map((applicant) => (
-            <Table.Row key={applicant.applicantId}>
-              <Table.Cell className="w-fit min-w-fit flex-none pr-3">
-                <Checkbox
-                  checked={isSelected(applicant.applicantId)}
-                  onCheckedChange={(checked) => toggle(applicant.applicantId, checked)}
-                />
-              </Table.Cell>
-              <Table.Cell align="left" className="text-neutral font-medium">
-                <span className="shrink-0">{applicant.name}</span>
-              </Table.Cell>
-              <Table.Cell>{partNameKo[applicant.part]}</Table.Cell>
-              <Table.Cell>{applicant.studentId}</Table.Cell>
-              <Table.Cell>{applicant.department}</Table.Cell>
-              <Table.Cell>{formatSemester(applicant.academicSemester)}</Table.Cell>
-              <Table.Cell>{applicant.age}세</Table.Cell>
-              <Table.Cell>{formatTemplates['2026-01-01'](applicant.applicationDate)}</Table.Cell>
-              <Table.Cell className="w-12 min-w-12 flex-none">
-                <ApplicantActionMenu
-                  applicant={applicant}
-                  hasAssignment={parts.some(
-                    (part) => part.partId === applicant.partId && part.hasAssignment,
-                  )}
-                />
-              </Table.Cell>
-            </Table.Row>
-          ))}
+          {paginatedApplicants.map((applicant) => {
+            const hasAssignment = parts.some(
+              (part) => part.partId === applicant.partId && part.hasAssignment,
+            );
+
+            return (
+              <Table.Row key={applicant.applicantId}>
+                <Table.Cell align="left" className="text-neutral font-medium">
+                  <span className="shrink-0">{applicant.name}</span>
+                </Table.Cell>
+                <Table.Cell>{partNameKo[applicant.part]}</Table.Cell>
+                <Table.Cell>{applicant.studentId}</Table.Cell>
+                <Table.Cell>{applicant.department}</Table.Cell>
+                <Table.Cell>{formatSemester(applicant.academicSemester)}</Table.Cell>
+                <Table.Cell>{applicant.age}세</Table.Cell>
+                <Table.Cell>
+                  <Badge color="violet" size="sm">
+                    {getApplicantReviewStatus(applicant.state, hasAssignment)}
+                  </Badge>
+                </Table.Cell>
+                <Table.Cell className="w-12 min-w-12 flex-none">
+                  <ApplicantActionMenu applicant={applicant} hasAssignment={hasAssignment} />
+                </Table.Cell>
+              </Table.Row>
+            );
+          })}
         </Table.Body>
       </Table>
       {paginatedApplicants.length === 0 && (
         <Result
-          description="상태를 변경하거나 필터를 제거해보세요."
+          description="검색어를 변경하거나 필터를 제거해보세요."
           figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
           title="검색된 지원자가 없어요"
         />
