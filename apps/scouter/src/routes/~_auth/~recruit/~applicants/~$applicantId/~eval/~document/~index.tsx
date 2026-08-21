@@ -7,13 +7,11 @@ import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { z } from 'zod/v4';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import {
   applicantDocumentCommentsOption,
   getApplicantDocumentsEvaluationsOption,
-  getPartDocumentsDeadlineOption,
 } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
@@ -25,27 +23,20 @@ import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicant
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
-  const { partId } = Route.useSearch();
 
-  const [
-    { data: applicant },
-    { data: answers },
-    { data: comments },
-    { data: deadline },
-    { data: evaluations },
-  ] = useSuspenseQueries({
-    queries: [
-      applicantByIdOption(Number(applicantId)),
-      applicantDocumentAnswersOption(Number(applicantId)),
-      applicantDocumentCommentsOption(Number(applicantId)),
-      getPartDocumentsDeadlineOption(partId),
-      getApplicantDocumentsEvaluationsOption(Number(applicantId)),
-    ],
-  });
+  const [{ data: applicant }, { data: answers }, { data: comments }, { data: evaluations }] =
+    useSuspenseQueries({
+      queries: [
+        applicantByIdOption(Number(applicantId)),
+        applicantDocumentAnswersOption(Number(applicantId)),
+        applicantDocumentCommentsOption(Number(applicantId)),
+        getApplicantDocumentsEvaluationsOption(Number(applicantId)),
+      ],
+    });
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
-      <ApplicantPageHeader applicant={applicant} deadline={deadline.deadline} label="서류 평가" />
+      <ApplicantPageHeader applicant={applicant} label="서류 평가" />
 
       <main className="flex flex-[1_1_0] gap-4 pt-7">
         <ErrorBoundary
@@ -102,14 +93,9 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
       <RouteComponent />
     </Suspense>
   ),
-  validateSearch: z.object({
-    partId: z.number(),
-  }),
-  loaderDeps: ({ search }) => ({ partId: search.partId }),
-  loader: ({ context, params, deps }) => {
+  loader: ({ context, params }) => {
     const applicantId = Number(params.applicantId);
 
-    context.queryClient.prefetchQuery(getPartDocumentsDeadlineOption(deps.partId));
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
     context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
     context.queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
