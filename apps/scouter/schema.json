@@ -2879,6 +2879,45 @@
         }
       }
     },
+    "/internal/dev/parts/{partId}/documents/rubrics/reset-max-scores": {
+      "patch": {
+        "tags": ["[DEV] 서류 평가 문항 배점 초기화"],
+        "summary": "서류 평가 문항 배점 초기화 (QA용)",
+        "description": "해당 파트의 모든 서류 평가 문항 배점을 0으로 초기화합니다. 해당 문항을 참조하는 서류 평가가 남아있으면 초기화할 수 없습니다. 스카우터 팀원만 호출 가능.",
+        "operationId": "resetMaxScoresToZero",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "path",
+            "description": "파트 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "초기화 성공",
+            "content": {}
+          },
+          "403": {
+            "description": "스카우터 팀원이 아님",
+            "content": {}
+          },
+          "404": {
+            "description": "파트를 찾을 수 없음",
+            "content": {}
+          },
+          "409": {
+            "description": "해당 파트에 서류 평가가 존재해 초기화할 수 없음",
+            "content": {}
+          }
+        }
+      }
+    },
     "/applicants/{applicantId}": {
       "get": {
         "tags": ["리크루팅 지원자"],
@@ -7388,7 +7427,7 @@
             "example": "질문에 대한 답변이 구조적이고 문화 적합성이 높습니다."
           },
           "result": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "면접 평가 결과",
             "enum": ["PENDING", "FINAL_PASS", "INTERVIEW_FAIL"],
             "example": "FINAL_PASS"
@@ -7400,16 +7439,16 @@
             "example": "2026-08-01T09:30:00"
           }
         },
-        "required": ["groups", "overallComment", "result", "totalScore"]
+        "required": ["groups", "overallComment", "totalScore"]
       },
       "ReadEvaluatorStatusResponse": {
         "type": "object",
         "description": "지원자에 대한 면접 평가자별 작성 진행 상태",
         "properties": {
           "userId": {
-            "type": "integer",
+            "type": ["integer", "null"],
             "format": "int64",
-            "description": "평가자 사용자 ID",
+            "description": "평가자 사용자 ID (User 엔티티가 없는 경우 null)",
             "example": 23
           },
           "name": {
@@ -7424,7 +7463,7 @@
             "example": "SUBMITTED"
           }
         },
-        "required": ["name", "status", "userId"]
+        "required": ["name", "status"]
       },
       "ReadOtherInterviewEvaluationItemResponse": {
         "type": "object",

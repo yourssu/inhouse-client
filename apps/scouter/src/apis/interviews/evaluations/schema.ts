@@ -20,7 +20,7 @@ export const MyInterviewEvaluationSchema = z.object({
   totalScore: z.int32(),
   groups: z.array(InterviewEvaluationGroupSchema),
   overallComment: z.string(),
-  result: InterviewEvaluationResultSchema,
+  result: InterviewEvaluationResultSchema.nullish(),
   submittedAt: z.iso.datetime({ local: true, offset: true }).nullish(),
 });
 

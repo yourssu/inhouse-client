@@ -197,6 +197,7 @@ export const MyInterviewEvaluationPanel = ({
             control={control}
             nickname={me.nickname}
             quantitativeScore={quantitativeScore}
+            resultErrorMessage={errors.result?.message}
           />
 
           {!isRubricSet && (
@@ -316,36 +317,42 @@ interface EvaluationSummarySectionProps {
   control: Control<MyInterviewEvaluationFormInput, unknown, MyInterviewEvaluationForm>;
   nickname: string;
   quantitativeScore: number;
+  resultErrorMessage: string | undefined;
 }
 
 const EvaluationSummarySection = ({
   control,
   nickname,
   quantitativeScore,
+  resultErrorMessage,
 }: EvaluationSummarySectionProps) => (
   <div className="flex flex-col gap-3">
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-14 font-semibold">{`${nickname} 총평`}</span>
-      <div className="flex items-center gap-2">
-        <Badge color="yellow" size="sm">
-          {`정량평가 ${quantitativeScore}점`}
-        </Badge>
-        <Controller
-          control={control}
-          name="result"
-          render={({ field }) => (
-            <Select
-              className="w-fit"
-              items={interviewResultsKo}
-              onValueChange={field.onChange}
-              placeholder="평가 결과를 선택하세요"
-              size="md"
-              value={field.value}
-              variant="dimmed"
-            />
-          )}
-        />
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-14 font-semibold">{`${nickname} 총평`}</span>
+        <div className="flex items-center gap-2">
+          <Badge color="yellow" size="sm">
+            {`정량평가 ${quantitativeScore}점`}
+          </Badge>
+          <Controller
+            control={control}
+            name="result"
+            render={({ field, fieldState }) => (
+              <Select
+                className="w-fit"
+                invalid={fieldState.invalid}
+                items={interviewResultsKo}
+                onValueChange={field.onChange}
+                placeholder="평가 결과"
+                size="md"
+                value={field.value}
+                variant="dimmed"
+              />
+            )}
+          />
+        </div>
       </div>
+      {resultErrorMessage != null && <FieldErrorMessage>{resultErrorMessage}</FieldErrorMessage>}
     </div>
 
     <Fieldset>
@@ -396,6 +403,6 @@ const toFormValues = (
   return {
     groups,
     overallComment: myEvaluation.overallComment,
-    result: interviewResultKo[myEvaluation.result],
+    result: myEvaluation.result == null ? undefined : interviewResultKo[myEvaluation.result],
   };
 };
