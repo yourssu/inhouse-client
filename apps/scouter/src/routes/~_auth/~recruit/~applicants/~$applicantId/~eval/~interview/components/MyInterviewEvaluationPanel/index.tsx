@@ -12,6 +12,7 @@ import {
 } from '@yourssu-inhouse/interior';
 import { invert } from 'es-toolkit';
 import { type Control, Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import { IoMdAlert } from 'react-icons/io';
 
 import type {
   InterviewEvaluationItem,
@@ -48,16 +49,24 @@ import {
   interviewRubricFitTypeKo,
 } from '@/types/interviews';
 
-interface MyInterviewEvaluationPanelProps {
+interface MyInterviewEvaluationPanelBaseProps {
   applicantId: number;
   partId: number;
   semester: string;
 }
 
+type MyInterviewEvaluationPanelProps = MyInterviewEvaluationPanelBaseProps &
+  (
+    | { isSubmissionDisabled: false; submissionDisabledReason?: never }
+    | { isSubmissionDisabled: true; submissionDisabledReason: string }
+  );
+
 export const MyInterviewEvaluationPanel = ({
   applicantId,
+  isSubmissionDisabled,
   partId,
   semester,
+  submissionDisabledReason,
 }: MyInterviewEvaluationPanelProps) => {
   const [
     {
@@ -120,7 +129,15 @@ export const MyInterviewEvaluationPanel = ({
     successText: '평가를 제출했어요.',
   });
 
-  const onSubmit: SubmitHandler<MyInterviewEvaluationForm> = ({ groups, overallComment, result }) =>
+  const onSubmit: SubmitHandler<MyInterviewEvaluationForm> = ({
+    groups,
+    overallComment,
+    result,
+  }) => {
+    if (isSubmissionDisabled) {
+      return;
+    }
+
     mutateMyInterviewEvaluation({
       applicantId,
       data: {
@@ -131,9 +148,10 @@ export const MyInterviewEvaluationPanel = ({
         submit: true,
       },
     });
+  };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <div className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold">내 평가</h2>
         <InterviewRubricSettingButton
@@ -142,50 +160,61 @@ export const MyInterviewEvaluationPanel = ({
           semester={semester}
         />
       </header>
-      <div className="flex flex-col gap-3">
-        {orderedRubricGroups.map(
-          ({ group: fitType, groupMaxScore: fitMaxScore, items: requirements }, groupIndex) => (
-            <EvaluationCardByFit
-              fitMaxScore={fitMaxScore}
-              fitType={fitType}
-              groupErrorMessage={errors.groups?.[groupIndex]?.groupMaxScore?.message}
-              isRubricSet={isRubricSet}
-              key={fitType}
-            >
-              {requirements.map((requirement, itemIndex) => (
-                <EvaluationField
-                  applicantId={applicantId}
-                  control={control}
-                  groupIndex={groupIndex}
-                  isMyEvaluationSubmitted={isMyEvaluationSubmitted}
-                  itemIndex={itemIndex}
-                  key={requirement.itemId}
-                  requirement={requirement}
-                />
-              ))}
-            </EvaluationCardByFit>
-          ),
-        )}
-      </div>
+      {isSubmissionDisabled ? (
+        <p className="bg-orange50 text-orange600 rounded-10 flex items-center gap-1.5 px-4 py-3 text-sm font-medium">
+          <IoMdAlert aria-hidden className="size-5 shrink-0" />
+          <span>{submissionDisabledReason}</span>
+        </p>
+      ) : (
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col gap-3">
+            {orderedRubricGroups.map(
+              ({ group: fitType, groupMaxScore: fitMaxScore, items: requirements }, groupIndex) => (
+                <EvaluationCardByFit
+                  fitMaxScore={fitMaxScore}
+                  fitType={fitType}
+                  groupErrorMessage={errors.groups?.[groupIndex]?.groupMaxScore?.message}
+                  isRubricSet={isRubricSet}
+                  key={fitType}
+                >
+                  {requirements.map((requirement, itemIndex) => (
+                    <EvaluationField
+                      applicantId={applicantId}
+                      control={control}
+                      groupIndex={groupIndex}
+                      isMyEvaluationSubmitted={isMyEvaluationSubmitted}
+                      itemIndex={itemIndex}
+                      key={requirement.itemId}
+                      requirement={requirement}
+                    />
+                  ))}
+                </EvaluationCardByFit>
+              ),
+            )}
+          </div>
 
-      <EvaluationSummarySection
-        control={control}
-        nickname={me.nickname}
-        quantitativeScore={quantitativeScore}
-      />
+          <EvaluationSummarySection
+            control={control}
+            nickname={me.nickname}
+            quantitativeScore={quantitativeScore}
+          />
 
-      {!isRubricSet && <FieldErrorMessage>배점 설정 후 평가를 제출할 수 있어요.</FieldErrorMessage>}
+          {!isRubricSet && (
+            <FieldErrorMessage>배점 설정 후 평가를 제출할 수 있어요.</FieldErrorMessage>
+          )}
 
-      <Button
-        className="w-full"
-        disabled={!isRubricSet}
-        loading={isPending}
-        size="md"
-        type="submit"
-      >
-        {!isMyEvaluationSubmitted ? '내 평가 제출하기' : '내 평가 다시 제출하기'}
-      </Button>
-    </form>
+          <Button
+            className="w-full"
+            disabled={!isRubricSet}
+            loading={isPending}
+            size="md"
+            type="submit"
+          >
+            {!isMyEvaluationSubmitted ? '내 평가 제출하기' : '내 평가 다시 제출하기'}
+          </Button>
+        </form>
+      )}
+    </div>
   );
 };
 

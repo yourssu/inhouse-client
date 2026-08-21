@@ -5,6 +5,7 @@ import { Divider } from '@yourssu-inhouse/interior';
 import { Suspense, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 
+import type { ApplicantStateType } from '@/apis/applicants/schema';
 import type { AssignedQuestions } from '@/apis/interviews/questions/schema';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
@@ -15,6 +16,7 @@ import {
 import { interviewMemosOption } from '@/apis/interviews/memos/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { meOption } from '@/apis/members/query';
+import { partsOption } from '@/apis/parts/query';
 import { Paper } from '@/components/Paper';
 import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewQuestionContent';
 import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewScriptContent';
@@ -32,9 +34,18 @@ import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$appl
 
 const INTERVIEW_TABS = ['질문', '지원서'] as const;
 
+interface InterviewEvaluationSubmissionAvailabilityParams {
+  applicantState: ApplicantStateType;
+  hasAssignment: boolean;
+}
+
+type InterviewEvaluationSubmissionAvailability =
+  | { isSubmissionDisabled: false; submissionDisabledReason?: never }
+  | { isSubmissionDisabled: true; submissionDisabledReason: string };
+
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
-  const [{ data: applicant }, { data: assignedQuestions }] = useSuspenseQueries({
+  const [{ data: applicant }, { data: assignedQuestions }, { data: parts }] = useSuspenseQueries({
     queries: [
       applicantByIdOption(Number(applicantId)),
       {
@@ -47,6 +58,7 @@ const RouteComponent = () => {
             return isNonCultureFitQuestion || isSelectedCultureFitQuestion;
           }),
       },
+      partsOption(),
     ],
   });
 
@@ -55,6 +67,13 @@ const RouteComponent = () => {
   const selectedQuestion = assignedQuestions.find(({ id }) => id === selectedQuestionId);
   const selectedScript = FIXED_SCRIPTS[selectedQuestionId] ?? null;
   const panelState = selectedScript == null ? '질문' : '스크립트';
+  const hasAssignment = parts.some(
+    (part) => part.partId === applicant.partId && part.hasAssignment,
+  );
+  const submissionAvailability = getInterviewEvaluationSubmissionAvailability({
+    applicantState: applicant.state,
+    hasAssignment,
+  });
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -110,18 +129,23 @@ const RouteComponent = () => {
                 applicantId={Number(applicantId)}
                 partId={applicant.partId}
                 semester={applicant.applicationSemester}
+                {...submissionAvailability}
               />
             </Suspense>
           </aside>
-          <Divider />
-          <aside aria-label="다른 평가자 평가" className="w-full p-4">
-            <OtherInterviewEvaluationsPanel
-              applicantId={Number(applicantId)}
-              applicantName={applicant.name}
-              applicantState={applicant.state}
-              interviewAverageScore={applicant.interviewAverageScore}
-            />
-          </aside>
+          {!submissionAvailability.isSubmissionDisabled && (
+            <>
+              <Divider />
+              <aside aria-label="다른 평가자 평가" className="w-full p-4">
+                <OtherInterviewEvaluationsPanel
+                  applicantId={Number(applicantId)}
+                  applicantName={applicant.name}
+                  applicantState={applicant.state}
+                  interviewAverageScore={applicant.interviewAverageScore}
+                />
+              </aside>
+            </>
+          )}
         </Paper>
       </main>
     </PageLayout.Content>
@@ -146,3 +170,24 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     context.queryClient.prefetchQuery(meOption());
   },
 });
+
+const getInterviewEvaluationSubmissionAvailability = ({
+  applicantState,
+  hasAssignment,
+}: InterviewEvaluationSubmissionAvailabilityParams): InterviewEvaluationSubmissionAvailability => {
+  if (applicantState === 'UNDER_REVIEW') {
+    return {
+      isSubmissionDisabled: true,
+      submissionDisabledReason: '서류 최종 합격/불합격 결정 후 면접 평가를 제출할 수 있어요.',
+    };
+  }
+
+  if (hasAssignment && applicantState === 'DOCUMENT_ACCEPTED') {
+    return {
+      isSubmissionDisabled: true,
+      submissionDisabledReason: '과제 최종 합격/불합격 결정 후 면접 평가를 제출할 수 있어요.',
+    };
+  }
+
+  return { isSubmissionDisabled: false };
+};
