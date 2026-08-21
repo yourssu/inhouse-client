@@ -3,7 +3,6 @@ import type { Control } from 'react-hook-form';
 import { IconButton } from '@yourssu-inhouse/interior';
 import { MdDeleteOutline } from 'react-icons/md';
 
-import type { ApplicantType } from '@/apis/applicants/schema';
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
@@ -15,7 +14,6 @@ import { QuestionCardFrame } from './QuestionCardFrame';
 
 interface PartQuestionCardProps {
   activeMembers: ActiveMemberType[];
-  applicant: ApplicantType;
   control: Control<QuestionnaireFormValues>;
   index: number;
   onDelete: () => Promise<void>;
@@ -24,7 +22,6 @@ interface PartQuestionCardProps {
 
 export const PartQuestionCard = ({
   activeMembers,
-  applicant,
   control,
   index,
   onDelete,
@@ -52,7 +49,6 @@ export const PartQuestionCard = ({
 
       <InterviewerField
         activeMembers={activeMembers}
-        applicant={applicant}
         control={control}
         name={`PART.${index}.assignedInterviewerUserId`}
       />
