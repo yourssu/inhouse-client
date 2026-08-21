@@ -18,6 +18,7 @@ import { mailReservationGroupsOption } from '@/apis/mails/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
 import { MailReceiversText } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailReceiversText';
+import { MailReservationGroupDeleteButton } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailReservationGroupDeleteButton';
 import { MailStatusBadge } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailStatusBadge';
 import { mailStatusNameMap, mailStatusNames } from '@/types/mails';
 
@@ -94,7 +95,7 @@ export const MailListTable = () => {
                       </IconButton>
                     </Menu.Trigger>
                     <Menu.Content align="end">
-                      <Menu.ButtonItem>Todo: 백엔드 mailid 개선 완료 시 구현 예정</Menu.ButtonItem>
+                      <MailReservationGroupDeleteButton reservationGroupId={item.groupId} />
                     </Menu.Content>
                   </Menu>
                 </Table.Cell>

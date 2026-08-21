@@ -127,3 +127,7 @@ export const getMailReservationGroups = async (): Promise<MailReservationGroupsR
   const res = await api.get('api/mails/reservation/groups').json();
   return MailReservationGroupsResponseSchema.parse(res);
 };
+
+export const deleteMailReservationGroup = async (reservationGroupId: number) => {
+  await api.delete(`api/mails/reservation/groups/${reservationGroupId}`);
+};
