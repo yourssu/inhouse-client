@@ -4,7 +4,12 @@ import * as Collapsible from '@radix-ui/react-collapsible';
 import { Badge, Button } from '@yourssu-inhouse/interior';
 import { MdAdd, MdKeyboardArrowDown } from 'react-icons/md';
 
+import type { ApplicantType } from '@/apis/applicants/schema';
+
+import { isInterviewQuestionnaireActionAllowed } from '@/types/applicants';
+
 interface QuestionSectionProps<TQuestion extends { id: Key }> {
+  applicant: ApplicantType;
   description: string;
   onAddQuestion?: () => void;
   onOpenChange: (isOpen: boolean) => void;
@@ -15,6 +20,7 @@ interface QuestionSectionProps<TQuestion extends { id: Key }> {
 }
 
 export const QuestionSection = <TQuestion extends { id: Key }>({
+  applicant,
   description,
   onAddQuestion,
   onOpenChange,
@@ -23,6 +29,8 @@ export const QuestionSection = <TQuestion extends { id: Key }>({
   renderQuestion,
   title,
 }: QuestionSectionProps<TQuestion>) => {
+  const { state } = applicant;
+  const isActionAllowed = isInterviewQuestionnaireActionAllowed(state);
   return (
     <Collapsible.Root className="flex flex-col gap-2" onOpenChange={onOpenChange} open={open}>
       <h3>
@@ -65,6 +73,7 @@ export const QuestionSection = <TQuestion extends { id: Key }>({
           {onAddQuestion !== undefined && (
             <Button
               className="w-full"
+              disabled={!isActionAllowed}
               onClick={onAddQuestion}
               size="sm"
               type="button"

@@ -1,5 +1,6 @@
 import type { Control } from 'react-hook-form';
 
+import type { ApplicantType } from '@/apis/applicants/schema';
 import type { QuestionCategory } from '@/apis/interviews/questions/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
@@ -12,6 +13,7 @@ type RequiredQuestionCategory = Extract<QuestionCategory, 'INTRO' | 'OUTRO'>;
 
 interface RequiredQuestionCardProps {
   activeMembers: ActiveMemberType[];
+  applicant: ApplicantType;
   category: RequiredQuestionCategory;
   control: Control<QuestionnaireFormValues>;
   index: number;
@@ -20,6 +22,7 @@ interface RequiredQuestionCardProps {
 
 export const RequiredQuestionCard = ({
   activeMembers,
+  applicant,
   category,
   control,
   index,
@@ -35,6 +38,7 @@ export const RequiredQuestionCard = ({
 
       <InterviewerField
         activeMembers={activeMembers}
+        applicant={applicant}
         control={control}
         name={`${category}.${index}.assignedInterviewerUserId`}
       />

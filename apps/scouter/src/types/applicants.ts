@@ -20,3 +20,16 @@ const documentEvalActionAllowedStates: readonly ApplicantStateType[] = [
 
 export const isDocumentEvalActionAllowed = (state: ApplicantStateType): boolean =>
   documentEvalActionAllowedStates.includes(state);
+
+// 면접 질문지 설계 페이지의 질문지 저장, 질문 추가, 질문자 선택 액션을 허용하는 지원자 상태예요.
+const interviewQuestionnaireActionAllowedStates: readonly ApplicantStateType[] = [
+  'UNDER_REVIEW',
+  'DOCUMENT_ACCEPTED',
+  'ASSIGNMENT_ACCEPTED',
+  'INTERVIEW_REJECTED',
+  'INCUBATING_REJECTED',
+  'FINAL_ACCEPTED',
+];
+
+export const isInterviewQuestionnaireActionAllowed = (state: ApplicantStateType): boolean =>
+  interviewQuestionnaireActionAllowedStates.includes(state);

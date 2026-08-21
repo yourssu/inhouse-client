@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Badge, Button } from '@yourssu-inhouse/interior';
 import { useRef, useState } from 'react';
 import {
@@ -16,11 +17,13 @@ import type {
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
+import { applicantByIdOption } from '@/apis/applicants/query';
 import { saveAssignedQuestionsMutationOptions } from '@/apis/interviews/questions/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { Paper } from '@/components/Paper';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { isInterviewQuestionnaireActionAllowed } from '@/types/applicants';
 
 import type { QuestionnaireFormValues } from './questionnaireForm';
 
@@ -46,6 +49,8 @@ export const QuestionnaireEditor = ({
   requirements,
 }: QuestionnaireEditorProps) => {
   const openAlertDialog = useAlertDialog();
+  const { data: applicant } = useSuspenseQuery(applicantByIdOption(applicantId));
+  const isActionAllowed = isInterviewQuestionnaireActionAllowed(applicant.state);
   const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
     Record<QuestionCategory, boolean>
   >({
@@ -152,6 +157,7 @@ export const QuestionnaireEditor = ({
             name="INTRO"
             render={({ fields }) => (
               <QuestionSection
+                applicant={applicant}
                 description="모든 지원자에게 공통으로 묻는 필수 질문이에요."
                 onOpenChange={(isOpen) => handleQuestionSectionOpenChange('INTRO', isOpen)}
                 open={questionSectionOpenByCategory.INTRO}
@@ -159,6 +165,7 @@ export const QuestionnaireEditor = ({
                 renderQuestion={(question, index) => (
                   <RequiredQuestionCard
                     activeMembers={activeMembers}
+                    applicant={applicant}
                     category="INTRO"
                     control={control}
                     index={index}
@@ -175,6 +182,7 @@ export const QuestionnaireEditor = ({
             name="CULTURE"
             render={({ fields }) => (
               <QuestionSection
+                applicant={applicant}
                 description="면접에서 사용할 질문을 2개 이상 선택해요."
                 onOpenChange={(isOpen) => handleQuestionSectionOpenChange('CULTURE', isOpen)}
                 open={questionSectionOpenByCategory.CULTURE}
@@ -182,6 +190,7 @@ export const QuestionnaireEditor = ({
                 renderQuestion={(question, index) => (
                   <CultureQuestionCard
                     activeMembers={activeMembers}
+                    applicant={applicant}
                     control={control}
                     index={index}
                     question={question}
@@ -197,6 +206,7 @@ export const QuestionnaireEditor = ({
             name="PART"
             render={({ append, fields, remove }) => (
               <QuestionSection
+                applicant={applicant}
                 description="같은 파트 지원자에게 공통으로 사용하는 질문이에요."
                 onAddQuestion={() =>
                   append({
@@ -211,6 +221,7 @@ export const QuestionnaireEditor = ({
                 renderQuestion={(_, index) => (
                   <PartQuestionCard
                     activeMembers={activeMembers}
+                    applicant={applicant}
                     control={control}
                     index={index}
                     onDelete={async () => {
@@ -237,6 +248,7 @@ export const QuestionnaireEditor = ({
             name="PERSONAL"
             render={({ append, fields, remove }) => (
               <QuestionSection
+                applicant={applicant}
                 description="지원자에게만 묻는 개인 질문이에요."
                 onAddQuestion={() =>
                   append({
@@ -251,6 +263,7 @@ export const QuestionnaireEditor = ({
                 renderQuestion={(_, index) => (
                   <PersonalQuestionCard
                     activeMembers={activeMembers}
+                    applicant={applicant}
                     control={control}
                     index={index}
                     onDelete={async () => remove(index)}
@@ -267,6 +280,7 @@ export const QuestionnaireEditor = ({
             name="OUTRO"
             render={({ fields }) => (
               <QuestionSection
+                applicant={applicant}
                 description="모든 지원자에게 공통으로 묻는 필수 질문이에요."
                 onOpenChange={(isOpen) => handleQuestionSectionOpenChange('OUTRO', isOpen)}
                 open={questionSectionOpenByCategory.OUTRO}
@@ -274,6 +288,7 @@ export const QuestionnaireEditor = ({
                 renderQuestion={(question, index) => (
                   <RequiredQuestionCard
                     activeMembers={activeMembers}
+                    applicant={applicant}
                     category="OUTRO"
                     control={control}
                     index={index}
@@ -294,7 +309,7 @@ export const QuestionnaireEditor = ({
           <div className="bg-lightBackground sticky bottom-0 z-10 py-3">
             <Button
               className="w-full"
-              disabled={!isDirty}
+              disabled={!isDirty || !isActionAllowed}
               loading={isPending}
               size="md"
               type="submit"

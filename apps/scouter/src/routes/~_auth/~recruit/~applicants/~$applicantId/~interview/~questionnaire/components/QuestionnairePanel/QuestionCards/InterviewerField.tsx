@@ -1,10 +1,12 @@
 import { Fieldset, Select } from '@yourssu-inhouse/interior';
 import { type Control, Controller } from 'react-hook-form';
 
+import type { ApplicantType } from '@/apis/applicants/schema';
 import type { QuestionCategory } from '@/apis/interviews/questions/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
+import { isInterviewQuestionnaireActionAllowed } from '@/types/applicants';
 
 import type { QuestionnaireFormValues } from '../questionnaireForm';
 
@@ -12,6 +14,7 @@ type InterviewerFieldName = `${QuestionCategory}.${number}.assignedInterviewerUs
 
 interface InterviewerFieldProps {
   activeMembers: ActiveMemberType[];
+  applicant: ApplicantType;
   control: Control<QuestionnaireFormValues>;
   isRequired?: boolean;
   name: InterviewerFieldName;
@@ -19,6 +22,7 @@ interface InterviewerFieldProps {
 
 export const InterviewerField = ({
   activeMembers,
+  applicant,
   control,
   isRequired = true,
   name,
@@ -31,6 +35,7 @@ export const InterviewerField = ({
         render={({ field, fieldState }) => (
           <InterviewerSelect
             activeMembers={activeMembers}
+            applicant={applicant}
             errorMessage={fieldState.error?.message}
             onChange={field.onChange}
             ref={field.ref}
@@ -45,6 +50,7 @@ export const InterviewerField = ({
 
 interface InterviewerSelectProps {
   activeMembers: ActiveMemberType[];
+  applicant: ApplicantType;
   errorMessage?: string;
   onChange: (interviewerId: number) => void;
   ref?: React.Ref<HTMLButtonElement>;
@@ -53,11 +59,14 @@ interface InterviewerSelectProps {
 
 const InterviewerSelect = ({
   activeMembers,
+  applicant,
   errorMessage,
   onChange,
   ref,
   value,
 }: InterviewerSelectProps) => {
+  const { state } = applicant;
+  const isActionAllowed = isInterviewQuestionnaireActionAllowed(state);
   // 질문자 배정에는 멤버 ID가 아니라 로그인 계정 ID가 필요해서, 계정이 연동된 멤버만 선택할 수 있어요.
   const assignableMembers = activeMembers.flatMap(({ nickname, userId }) =>
     userId === undefined || userId === null ? [] : [{ nickname, userId }],
@@ -77,6 +86,7 @@ const InterviewerSelect = ({
     >
       <Select
         className="w-full"
+        disabled={!isActionAllowed}
         invalid={!!errorMessage}
         items={nicknames}
         onValueChange={(nickname) => {

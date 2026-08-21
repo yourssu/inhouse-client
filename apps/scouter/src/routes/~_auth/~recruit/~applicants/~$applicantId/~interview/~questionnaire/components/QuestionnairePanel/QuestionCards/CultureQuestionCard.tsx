@@ -1,6 +1,7 @@
 import { Badge, Checkbox, Fieldset } from '@yourssu-inhouse/interior';
 import { type Control, Controller } from 'react-hook-form';
 
+import type { ApplicantType } from '@/apis/applicants/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
 import type { CultureQuestionFormValue, QuestionnaireFormValues } from '../questionnaireForm';
@@ -10,6 +11,7 @@ import { QuestionCardFrame } from './QuestionCardFrame';
 
 interface CultureQuestionCardProps {
   activeMembers: ActiveMemberType[];
+  applicant: ApplicantType;
   control: Control<QuestionnaireFormValues>;
   index: number;
   question: CultureQuestionFormValue;
@@ -17,6 +19,7 @@ interface CultureQuestionCardProps {
 
 export const CultureQuestionCard = ({
   activeMembers,
+  applicant,
   control,
   index,
   question,
@@ -55,6 +58,7 @@ export const CultureQuestionCard = ({
 
           <InterviewerField
             activeMembers={activeMembers}
+            applicant={applicant}
             control={control}
             isRequired={field.value === true}
             name={`CULTURE.${index}.assignedInterviewerUserId`}
