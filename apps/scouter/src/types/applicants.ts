@@ -10,3 +10,13 @@ export const applicantStateKo = {
   INCUBATING_REJECTED: '인큐베이팅 불합',
   FINAL_ACCEPTED: '최종 합격',
 } as const satisfies Record<ApplicantStateType, string>;
+
+// 서류 평가 폼의 점수 입력, 코멘트, 제출, 최종 평가, 배점 설정 액션을 허용하는 지원자 상태예요.
+const documentEvalActionAllowedStates: readonly ApplicantStateType[] = [
+  'UNDER_REVIEW',
+  'DOCUMENT_ACCEPTED',
+  'DOCUMENT_REJECTED',
+];
+
+export const isDocumentEvalActionAllowed = (state: ApplicantStateType): boolean =>
+  documentEvalActionAllowedStates.includes(state);

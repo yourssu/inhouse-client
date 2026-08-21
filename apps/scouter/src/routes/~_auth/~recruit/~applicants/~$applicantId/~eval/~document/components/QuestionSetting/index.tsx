@@ -6,6 +6,8 @@ import { Suspense } from 'react';
 import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import z from 'zod/v4';
 
+import type { ApplicantStateType } from '@/apis/applicants/schema';
+
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { putPartDocumentsRubrics } from '@/apis/documents';
 import {
@@ -18,13 +20,17 @@ import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
+import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
 interface QuestionSettingProps {
   applicantId: number;
+  applicantState: ApplicantStateType;
 }
 
-export const QuestionSetting = ({ applicantId }: QuestionSettingProps) => {
+export const QuestionSetting = ({ applicantId, applicantState }: QuestionSettingProps) => {
   const openQuestionSettingDialog = useAlertDialog();
+
+  const isActionAllowed = isDocumentEvalActionAllowed(applicantState);
 
   const handleDialogTrigger = () => {
     return openQuestionSettingDialog({
@@ -45,7 +51,13 @@ export const QuestionSetting = ({ applicantId }: QuestionSettingProps) => {
   };
 
   return (
-    <Button onClick={handleDialogTrigger} size="sm" type="button" variant="subPrimary">
+    <Button
+      disabled={!isActionAllowed}
+      onClick={handleDialogTrigger}
+      size="sm"
+      type="button"
+      variant="subPrimary"
+    >
       문항 설정
     </Button>
   );
