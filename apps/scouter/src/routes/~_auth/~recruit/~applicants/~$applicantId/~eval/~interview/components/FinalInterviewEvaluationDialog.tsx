@@ -7,15 +7,12 @@ import { patchApplicant } from '@/apis/applicants';
 import { applicantsQueryKeys } from '@/apis/applicants/query';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { InterviewAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewAverageScoreSummary';
 
 interface FinalInterviewEvaluationDialogProps {
   applicantId: number;
   applicantName: string;
   close: (submitted: boolean) => void;
-  interviewAverageScore?: null | number;
   isOpen: boolean;
-  submittedCount: number;
   unsubmittedEvaluators: InterviewEvaluatorStatus[];
 }
 
@@ -23,9 +20,7 @@ export const FinalInterviewEvaluationDialog = ({
   applicantId,
   applicantName,
   close,
-  interviewAverageScore,
   isOpen,
-  submittedCount,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationDialogProps) => {
   const { invalidate } = useQueryInvalidation(applicantsQueryKeys.all());
@@ -74,11 +69,6 @@ export const FinalInterviewEvaluationDialog = ({
         <p className="text-neutral font-medium">
           <span className="text-violet600">{applicantName}</span>님의 최종 면접 결과를 결정해요.
         </p>
-
-        <InterviewAverageScoreSummary
-          interviewAverageScore={interviewAverageScore}
-          submittedCount={submittedCount}
-        />
 
         {unsubmittedEvaluators.length > 0 && (
           <section className="bg-orange50 rounded-10 flex flex-col px-4 py-3">

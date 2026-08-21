@@ -96,7 +96,6 @@ const OtherInterviewEvaluationsGate = ({
 const LockedOtherInterviewEvaluations = ({
   applicantId,
   applicantName,
-  interviewAverageScore,
 }: OtherInterviewEvaluationsPanelProps) => {
   const toast = useToast();
 
@@ -129,8 +128,6 @@ const LockedOtherInterviewEvaluations = ({
         applicantId={applicantId}
         applicantName={applicantName}
         disabled
-        interviewAverageScore={interviewAverageScore}
-        submittedCount={0}
         unsubmittedEvaluators={[]}
       />
     </div>
@@ -191,8 +188,6 @@ const SubmittedOtherInterviewEvaluations = ({
         applicantId={applicantId}
         applicantName={applicantName}
         disabled={!finalInterviewEvaluationAllowedStates.includes(applicantState)}
-        interviewAverageScore={interviewAverageScore}
-        submittedCount={submittedCount}
         unsubmittedEvaluators={unsubmittedEvaluators}
       />
     </div>
@@ -203,8 +198,6 @@ interface FinalInterviewEvaluationButtonProps {
   applicantId: number;
   applicantName: string;
   disabled: boolean;
-  interviewAverageScore?: null | number;
-  submittedCount: number;
   unsubmittedEvaluators: InterviewEvaluatorStatus[];
 }
 
@@ -212,8 +205,6 @@ const FinalInterviewEvaluationButton = ({
   applicantId,
   applicantName,
   disabled,
-  interviewAverageScore,
-  submittedCount,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationButtonProps) => {
   const handleClick = () => {
@@ -222,9 +213,7 @@ const FinalInterviewEvaluationButton = ({
         applicantId={applicantId}
         applicantName={applicantName}
         close={close}
-        interviewAverageScore={interviewAverageScore}
         isOpen={isOpen}
-        submittedCount={submittedCount}
         unsubmittedEvaluators={unsubmittedEvaluators}
       />
     ));
