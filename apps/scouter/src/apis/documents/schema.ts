@@ -89,6 +89,9 @@ export type ApplicantDocumentOthersEvaluationsType = z.infer<
 export type UpdateApplicantDocumentEvaluationFormType = z.infer<
   typeof UpdateApplicantDocumentEvaluationFormSchema
 >;
+export type UpdateApplicantDocumentEvaluationFormInputType = z.input<
+  typeof UpdateApplicantDocumentEvaluationFormSchema
+>;
 export type UpdateApplicantDocumentEvaluationRequestType = z.infer<
   typeof UpdateApplicantDocumentEvaluationRequestSchema
 >;

@@ -25,6 +25,7 @@ import {
 } from '@/apis/documents/query';
 import {
   documentKoreanResults,
+  type UpdateApplicantDocumentEvaluationFormInputType,
   UpdateApplicantDocumentEvaluationFormSchema,
   type UpdateApplicantDocumentEvaluationFormType,
 } from '@/apis/documents/schema';
@@ -66,7 +67,7 @@ export const EvalForm = () => {
     handleSubmit,
     control,
     formState: { errors, isDirty },
-  } = useForm({
+  } = useForm<UpdateApplicantDocumentEvaluationFormInputType, undefined, UpdateApplicantDocumentEvaluationFormType>({
     resolver: zodResolver(UpdateApplicantDocumentEvaluationFormSchema),
     defaultValues: {
       items:
