@@ -11,7 +11,14 @@ import {
   Select,
 } from '@yourssu-inhouse/interior';
 import { invert } from 'es-toolkit';
-import { type Control, Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import {
+  type Control,
+  Controller,
+  type SubmitHandler,
+  useController,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 import { IoMdAlert } from 'react-icons/io';
 
 import type {
@@ -197,7 +204,6 @@ export const MyInterviewEvaluationPanel = ({
             control={control}
             nickname={me.nickname}
             quantitativeScore={quantitativeScore}
-            resultErrorMessage={errors.result?.message}
           />
 
           {!isRubricSet && (
@@ -317,53 +323,54 @@ interface EvaluationSummarySectionProps {
   control: Control<MyInterviewEvaluationFormInput, unknown, MyInterviewEvaluationForm>;
   nickname: string;
   quantitativeScore: number;
-  resultErrorMessage: string | undefined;
 }
 
 const EvaluationSummarySection = ({
   control,
   nickname,
   quantitativeScore,
-  resultErrorMessage,
-}: EvaluationSummarySectionProps) => (
-  <div className="flex flex-col gap-3">
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-14 font-semibold">{`${nickname} 총평`}</span>
-        <div className="flex items-center gap-2">
-          <Badge color="yellow" size="sm">
-            {`정량평가 ${quantitativeScore}점`}
-          </Badge>
-          <Controller
-            control={control}
-            name="result"
-            render={({ field, fieldState }) => (
-              <Select
-                className="w-fit"
-                invalid={fieldState.invalid}
-                items={interviewResultsKo}
-                onValueChange={field.onChange}
-                placeholder="평가 결과"
-                size="md"
-                value={field.value}
-                variant="dimmed"
-              />
-            )}
-          />
-        </div>
-      </div>
-      {resultErrorMessage != null && <FieldErrorMessage>{resultErrorMessage}</FieldErrorMessage>}
-    </div>
+}: EvaluationSummarySectionProps) => {
+  const { field: resultField, fieldState: resultFieldState } = useController({
+    control,
+    name: 'result',
+  });
 
-    <Fieldset>
-      <Controller
-        control={control}
-        name="overallComment"
-        render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
-      />
-    </Fieldset>
-  </div>
-);
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-14 font-semibold">{`${nickname} 총평`}</span>
+          <div className="flex items-center gap-2">
+            <Badge color="yellow" size="sm">
+              {`정량평가 ${quantitativeScore}점`}
+            </Badge>
+            <Select
+              className="w-fit"
+              invalid={resultFieldState.invalid}
+              items={interviewResultsKo}
+              onValueChange={resultField.onChange}
+              placeholder="평가 결과"
+              size="md"
+              value={resultField.value}
+              variant="dimmed"
+            />
+          </div>
+        </div>
+        {resultFieldState.error?.message != null && (
+          <FieldErrorMessage>{resultFieldState.error.message}</FieldErrorMessage>
+        )}
+      </div>
+
+      <Fieldset>
+        <Controller
+          control={control}
+          name="overallComment"
+          render={({ field }) => <MultilineTextField {...field} withHeightAutoResize />}
+        />
+      </Fieldset>
+    </div>
+  );
+};
 
 const findScore = (
   items: InterviewEvaluationItem[],
