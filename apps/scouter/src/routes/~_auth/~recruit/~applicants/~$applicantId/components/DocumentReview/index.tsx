@@ -72,6 +72,7 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
               key={sectionId ?? `${answer.question}-${index}`}
               onAddComment={sectionId === undefined ? undefined : () => handleAddComment(sectionId)}
               onClick={sectionId === undefined ? undefined : () => handleClickSection(sectionId)}
+              questionNumber={index + 1}
             />
           );
         })}

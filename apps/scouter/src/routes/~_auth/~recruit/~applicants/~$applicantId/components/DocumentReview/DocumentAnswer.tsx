@@ -9,6 +9,7 @@ interface DocumentAnswerProps {
   isSelected: boolean;
   onAddComment?: () => void;
   onClick?: () => void;
+  questionNumber: number;
 }
 
 export const DocumentAnswer = ({
@@ -16,8 +17,9 @@ export const DocumentAnswer = ({
   isSelected,
   onAddComment,
   onClick,
+  questionNumber,
 }: DocumentAnswerProps) => {
-  const { sectionId, question, answer } = documentAnswer;
+  const { question, answer } = documentAnswer;
 
   return (
     <div
@@ -30,7 +32,7 @@ export const DocumentAnswer = ({
       <div className="flex items-baseline justify-between">
         <div className="flex items-center gap-2">
           <span className="bg-violet50 text-violet600 rounded-6 flex size-7 shrink-0 items-center justify-center self-start text-sm font-semibold">
-            {sectionId ?? '-'}
+            {questionNumber}
           </span>
           <span className="text-neutralMuted text-17 font-semibold">{question}</span>
         </div>
