@@ -39,6 +39,7 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
+import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
 const documentResultMapping = {
   PENDING: '보류',
@@ -57,6 +58,8 @@ export const EvalForm = () => {
 
   const part = parts.find((part) => part.partName === applicant.part) ?? parts[0];
 
+  const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(applicant.state);
+
   const [{ data: evaluations }, { data: rubrics }, { data: othersEvaluations }] =
     useSuspenseQueries({
       queries: [
@@ -70,7 +73,11 @@ export const EvalForm = () => {
     handleSubmit,
     control,
     formState: { errors, isDirty },
-  } = useForm<UpdateApplicantDocumentEvaluationFormInputType, undefined, UpdateApplicantDocumentEvaluationFormType>({
+  } = useForm<
+    UpdateApplicantDocumentEvaluationFormInputType,
+    undefined,
+    UpdateApplicantDocumentEvaluationFormType
+  >({
     resolver: zodResolver(UpdateApplicantDocumentEvaluationFormSchema),
     defaultValues: {
       items:
@@ -122,7 +129,7 @@ export const EvalForm = () => {
     <header className="flex items-center justify-between gap-3">
       <h2 className="text-xl font-semibold">질문별 서류평가</h2>
       {evaluations.items.length === 0 ? (
-        <QuestionSetting applicantId={Number(applicantId)} />
+        <QuestionSetting applicant={applicant} />
       ) : (
         <Badge color="green" size="md">
           제출 완료
@@ -151,7 +158,6 @@ export const EvalForm = () => {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
           {header}
-
           <div className="flex flex-col gap-4">
             {rubrics.map((rubric, idx) => (
               <div
@@ -171,6 +177,7 @@ export const EvalForm = () => {
                           <InterviewScoreInput
                             ariaLabel={`문항 ${idx + 1} 점수`}
                             className="text-13"
+                            disabled={isDocumentEvaluationDisabled}
                             invalid={fieldState.invalid}
                             maxScore={rubric.maxScore}
                             onBlur={field.onBlur}
@@ -196,6 +203,7 @@ export const EvalForm = () => {
                     render={({ field }) => (
                       <MultilineTextField
                         {...field}
+                        disabled={isDocumentEvaluationDisabled}
                         placeholder="평가 내용을 작성해주세요..."
                         withHeightAutoResize
                       />
@@ -256,6 +264,7 @@ export const EvalForm = () => {
               render={({ field }) => (
                 <MultilineTextField
                   {...field}
+                  disabled={isDocumentEvaluationDisabled}
                   placeholder="총평을 작성해주세요..."
                   withHeightAutoResize
                 />
@@ -265,7 +274,7 @@ export const EvalForm = () => {
         </div>
 
         <Button
-          disabled={evaluations.items.length !== 0 && !isDirty}
+          disabled={(evaluations.items.length !== 0 && !isDirty) || isDocumentEvaluationDisabled}
           loading={loading}
           size="lg"
           type="submit"

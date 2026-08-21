@@ -22,6 +22,7 @@ import { OtherDocumentEvaluationsPanel } from '@/routes/~_auth/~recruit/~applica
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
 import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
+import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
@@ -46,6 +47,7 @@ const RouteComponent = () => {
   const { data: rubrics } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
   const isScoringComplete = rubrics.reduce((sum, rubric) => sum + rubric.maxScore, 0) === 100;
+  const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(applicant.state);
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -77,7 +79,7 @@ const RouteComponent = () => {
                     />
                     <Divider />
                     <Button
-                      disabled={evaluations.items.length === 0}
+                      disabled={evaluations.items.length === 0 || isDocumentEvaluationDisabled}
                       onClick={() => {
                         overlay.open(({ isOpen, close }) => {
                           return (
