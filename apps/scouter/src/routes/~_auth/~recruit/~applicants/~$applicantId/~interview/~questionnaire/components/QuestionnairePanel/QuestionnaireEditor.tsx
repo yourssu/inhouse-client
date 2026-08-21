@@ -402,7 +402,6 @@ const toSaveAssignedQuestions = (
   ...values.INTRO.map((question) => ({
     assignedInterviewerUserId: question.assignedInterviewerUserId!,
     category: 'INTRO' as const,
-    requirementIds: [],
     sourceQuestionId: question.sourceQuestionId,
   })),
   // 선택하지 않은 컬처핏 질문은 질문자가 배정되지 않으므로 저장 대상에서 제외해요.
@@ -410,7 +409,6 @@ const toSaveAssignedQuestions = (
     assignedInterviewerUserId: question.assignedInterviewerUserId!,
     category: 'CULTURE' as const,
     isSelected: true,
-    requirementIds: question.requirements.map(({ id }) => id),
     sourceQuestionId: question.sourceQuestionId,
   })),
   ...values.PART.map((question) => ({
@@ -428,7 +426,6 @@ const toSaveAssignedQuestions = (
   ...values.OUTRO.map((question) => ({
     assignedInterviewerUserId: question.assignedInterviewerUserId!,
     category: 'OUTRO' as const,
-    requirementIds: [],
     sourceQuestionId: question.sourceQuestionId,
   })),
 ];

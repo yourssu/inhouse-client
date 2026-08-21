@@ -47,7 +47,7 @@ export const SaveAssignedQuestionRequestSchema = z.object({
   sourceQuestionId: z.number().optional(),
   content: z.string().optional(),
   isSelected: z.boolean().optional(),
-  requirementIds: z.array(z.number()),
+  requirementIds: z.array(z.number()).nullish(),
 });
 
 export const SaveAssignedQuestionsRequestSchema = z.object({

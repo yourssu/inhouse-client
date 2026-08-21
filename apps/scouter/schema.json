@@ -4069,6 +4069,56 @@
         }
       }
     },
+    "/internal/dev/parts/{partId}/interviews/rubrics/{semester}": {
+      "delete": {
+        "tags": ["[DEV] 면접 루브릭 초기화"],
+        "summary": "면접 루브릭 초기화 (QA용)",
+        "description": "해당 파트·학기의 면접 루브릭을 삭제합니다. 삭제 후에는 면접 요구조건 기반의 미저장 템플릿으로 다시 조회됩니다. 해당 루브릭 항목을 참조하는 면접 평가가 남아있으면 초기화할 수 없습니다. 스카우터 팀원만 호출 가능.",
+        "operationId": "resetByPartIdAndSemester",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "path",
+            "description": "파트 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 3
+          },
+          {
+            "name": "semester",
+            "in": "path",
+            "description": "학기 식별자. YYYY-1 또는 YYYY-2 형식",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-[12]$"
+            },
+            "example": "2026-1"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "삭제 성공",
+            "content": {}
+          },
+          "403": {
+            "description": "스카우터 팀원이 아님",
+            "content": {}
+          },
+          "404": {
+            "description": "파트를 찾을 수 없음",
+            "content": {}
+          },
+          "409": {
+            "description": "해당 파트에 면접 평가가 존재해 초기화할 수 없음",
+            "content": {}
+          }
+        }
+      }
+    },
     "/internal/dev/applicants/{applicantId}/evaluations": {
       "delete": {
         "tags": ["[DEV] 지원자 평가 데이터 삭제"],
@@ -4681,15 +4731,15 @@
             "description": "질문 선택 여부"
           },
           "requirementIds": {
-            "type": "array",
-            "description": "질문 요구조건 ID 목록 (PERSONAL 혹은 PART 질문 수정 시 필요)",
+            "type": ["array", "null"],
+            "description": "질문 요구조건 ID 목록 (PERSONAL 혹은 PART 질문 수정 시 필요. null 전달 시 기존 요구조건 유지)",
             "items": {
               "type": "integer",
               "format": "int64"
             }
           }
         },
-        "required": ["assignedInterviewerUserId", "category", "requirementIds"]
+        "required": ["assignedInterviewerUserId", "category"]
       },
       "SaveAssignedQuestionsRequest": {
         "type": "object",
