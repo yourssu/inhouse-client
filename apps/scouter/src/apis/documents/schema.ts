@@ -51,17 +51,20 @@ export const ApplicantDocumentEvaluationsResponseSchema = z.object({
 });
 
 export const documentKoreanResults = ['보류', '서류 합격', '서류 불합격'] as const;
-const DocumentKoreanResultSchema = z.enum(documentKoreanResults);
 export const UpdateApplicantDocumentEvaluationFormSchema = z.object({
   items: z.array(
     z.object({
       sectionId: z.number(),
-      score: z.string().min(1).regex(/^\d+$/).transform(Number),
+      score: z
+        .string()
+        .regex(/^\d+$/, '점수를 입력해 주세요.')
+        .transform(Number)
+        .refine((score) => score >= 1, '점수는 1점 이상이어야 해요.'),
       memo: z.string(),
     }),
   ),
   overallComment: z.string(),
-  result: DocumentKoreanResultSchema,
+  result: z.enum(documentKoreanResults, { error: '상태평가를 선택해 주세요.' }),
 });
 
 export const UpdateApplicantDocumentEvaluationRequestSchema = z.object({

@@ -30,6 +30,7 @@ import {
 } from '@/apis/documents/schema';
 import { meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
+import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
 import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
@@ -64,7 +65,7 @@ export const EvalForm = () => {
   const {
     handleSubmit,
     control,
-    formState: { isDirty },
+    formState: { errors, isDirty },
   } = useForm({
     resolver: zodResolver(UpdateApplicantDocumentEvaluationFormSchema),
     defaultValues: {
@@ -73,7 +74,9 @@ export const EvalForm = () => {
           ? rubrics.map(({ sectionId }) => ({ sectionId, score: '0', memo: '' }))
           : evaluations.items.map((item) => ({ ...item, score: item.score.toString() })),
       overallComment: evaluations.overallComment,
-      result: documentResultMapping[evaluations.result],
+      // 미제출 상태에서는 상태평가를 반드시 선택하도록 기본값을 비워 placeholder를 노출해요.
+      result:
+        evaluations.items.length === 0 ? undefined : documentResultMapping[evaluations.result],
     },
   });
 
@@ -138,17 +141,22 @@ export const EvalForm = () => {
                     control={control}
                     name={`items.${idx}.score`}
                     render={({ field, fieldState }) => (
-                      <div className="flex items-center gap-1">
-                        <InterviewScoreInput
-                          ariaLabel={`문항 ${idx + 1} 점수`}
-                          className="text-13"
-                          invalid={fieldState.invalid}
-                          maxScore={rubric.maxScore}
-                          onBlur={field.onBlur}
-                          onChange={field.onChange}
-                          value={field.value}
-                        />
-                        <span className="text-13 text-neutral shrink-0 font-semibold">{`/ ${rubric.maxScore}`}</span>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1">
+                          <InterviewScoreInput
+                            ariaLabel={`문항 ${idx + 1} 점수`}
+                            className="text-13"
+                            invalid={fieldState.invalid}
+                            maxScore={rubric.maxScore}
+                            onBlur={field.onBlur}
+                            onChange={field.onChange}
+                            value={field.value}
+                          />
+                          <span className="text-13 text-neutral shrink-0 font-semibold">{`/ ${rubric.maxScore}`}</span>
+                        </div>
+                        {fieldState.error?.message && (
+                          <FieldErrorMessage>{fieldState.error.message}</FieldErrorMessage>
+                        )}
                       </div>
                     )}
                   />
@@ -186,28 +194,34 @@ export const EvalForm = () => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-14 font-semibold">{`${me.nickname} 총평`}</span>
-            <div className="flex items-center gap-2">
-              <Badge color="yellow" size="sm">
-                {`정량평가 ${quantitativeScore}점`}
-              </Badge>
-              <Controller
-                control={control}
-                name="result"
-                render={({ field }) => (
-                  <Select
-                    className="w-fit"
-                    items={documentKoreanResults}
-                    onValueChange={field.onChange}
-                    placeholder="평가 결과를 선택하세요"
-                    size="md"
-                    value={field.value}
-                    variant="dimmed"
-                  />
-                )}
-              />
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-14 font-semibold">{`${me.nickname} 총평`}</span>
+              <div className="flex items-center gap-2">
+                <Badge color="yellow" size="sm">
+                  {`정량평가 ${quantitativeScore}점`}
+                </Badge>
+                <Controller
+                  control={control}
+                  name="result"
+                  render={({ field, fieldState }) => (
+                    <Select
+                      className="w-fit"
+                      invalid={fieldState.invalid}
+                      items={documentKoreanResults}
+                      onValueChange={field.onChange}
+                      placeholder="상태평가"
+                      size="md"
+                      value={field.value}
+                      variant="dimmed"
+                    />
+                  )}
+                />
+              </div>
             </div>
+            {errors.result?.message && (
+              <FieldErrorMessage>{errors.result.message}</FieldErrorMessage>
+            )}
           </div>
 
           <Fieldset>
