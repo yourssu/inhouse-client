@@ -35,7 +35,6 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   const { author, commentId, content } = comment;
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
-  // TODO: 백엔드에서 myData에 userId를 내려줄 예정. 현재는 오류 발생
   const isMyComment = userId === myData.userId;
   const { invalidate: invalidateComments } = useQueryInvalidation(commentsQueryKey(applicantId));
 
