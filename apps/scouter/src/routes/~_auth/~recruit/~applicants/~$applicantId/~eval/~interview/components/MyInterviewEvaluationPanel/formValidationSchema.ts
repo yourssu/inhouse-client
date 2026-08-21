@@ -9,6 +9,11 @@ const ScoreSchema = z
   .transform(Number)
   .refine((score) => score >= 1, '점수는 1점 이상이어야 해요.');
 
+const InterviewResultFormSchema = z
+  .enum(interviewResultsKo)
+  .optional()
+  .pipe(z.enum(interviewResultsKo, { error: '평가 결과를 선택해 주세요.' }));
+
 /**
  * 폼 전용 스키마
  *
@@ -32,7 +37,7 @@ export const MyInterviewEvaluationFormSchema = z
       }),
     ),
     overallComment: z.string(),
-    result: z.enum(interviewResultsKo),
+    result: InterviewResultFormSchema,
   })
   .superRefine(({ groups }, context) => {
     groups.forEach(({ groupMaxScore, items }, groupIndex) => {
