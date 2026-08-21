@@ -54,7 +54,7 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
     navigate({
       params: { applicantId: String(applicantId) },
       search: { partId, semester: applicationSemester },
-      to: '/recruit/applicants/$applicantId/interview/questionnaire',
+      to: '/recruit/applicants/$applicantId/eval/questionnaire',
     });
   };
 

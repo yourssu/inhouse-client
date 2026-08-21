@@ -14,14 +14,14 @@ import { interviewRequirementsOption } from '@/apis/interviews/requirements/quer
 import { InterviewRequirementsParamsSchema } from '@/apis/interviews/requirements/schema';
 import { activeMembersOption, meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
-import { QuestionnairePanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnairePanel';
+import { QuestionnairePanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnairePanel';
 import {
   DocumentReferencePanelSkeleton,
   QuestionnairePageSkeleton,
   QuestionnairePanelSkeleton,
-} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnaireSkeletons';
-import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/ApplicantPageHeader';
-import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/components/DocumentReview';
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnaireSkeletons';
+import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/ApplicantPageHeader';
+import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DocumentReview';
 
 const QuestionnairePage = () => {
   const { applicantId } = Route.useParams();
@@ -146,9 +146,7 @@ const RouteComponent = () => {
   );
 };
 
-export const Route = createFileRoute(
-  '/_auth/recruit/applicants/$applicantId/interview/questionnaire/',
-)({
+export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eval/questionnaire/')({
   component: RouteComponent,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps, params }) => {

@@ -3,7 +3,7 @@ import { useSuspenseQueries } from '@tanstack/react-query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { activeMembersOption } from '@/apis/members/query';
-import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~interview/~questionnaire/components/QuestionnairePanel/QuestionnaireEditor';
+import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnairePanel/QuestionnaireEditor';
 
 interface QuestionnairePanelProps {
   applicantId: number;
