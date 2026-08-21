@@ -33,3 +33,16 @@ const interviewQuestionnaireActionAllowedStates: readonly ApplicantStateType[] =
 
 export const isInterviewQuestionnaireActionAllowed = (state: ApplicantStateType): boolean =>
   interviewQuestionnaireActionAllowedStates.includes(state);
+
+// 면접 평가 페이지 진입을 허용하는 지원자 상태예요.
+const interviewEvalActionAllowedStates: readonly ApplicantStateType[] = [
+  'UNDER_REVIEW',
+  'DOCUMENT_ACCEPTED',
+  'ASSIGNMENT_ACCEPTED',
+  'INTERVIEW_REJECTED',
+  'INCUBATING_REJECTED',
+  'FINAL_ACCEPTED',
+];
+
+export const isInterviewEvalActionAllowed = (state: ApplicantStateType): boolean =>
+  interviewEvalActionAllowedStates.includes(state);

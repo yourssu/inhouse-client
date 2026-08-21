@@ -6,6 +6,7 @@ import type { ApplicantStateType, ApplicantType } from '@/apis/applicants/schema
 
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { AssignmentEvalDialogContent } from '@/routes/~_auth/~recruit/~applicants/components/AssignmentEvalDialogContent';
+import { isInterviewEvalActionAllowed } from '@/types/applicants';
 
 interface ApplicantActionMenuProps {
   applicant: ApplicantType;
@@ -31,6 +32,8 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   const { applicantId, applicationSemester, name: applicantName, partId, state } = applicant;
   const navigate = useNavigate();
   const openAlertDialog = useAlertDialog();
+
+  const isInterviewEvaluationDisabled = !isInterviewEvalActionAllowed(state);
 
   const handleDocumentEvaluationClick = () => {
     navigate({
@@ -94,7 +97,13 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
         {hasAssignment && (
           <Menu.ButtonItem onClick={handleAssignmentEvaluationClick}>과제 평가</Menu.ButtonItem>
         )}
-        <Menu.ButtonItem onClick={handleInterviewEvaluationClick}>면접 평가</Menu.ButtonItem>
+        <Menu.ButtonItem
+          className="disabled:cursor-not-allowed disabled:opacity-40"
+          disabled={isInterviewEvaluationDisabled}
+          onClick={handleInterviewEvaluationClick}
+        >
+          면접 평가
+        </Menu.ButtonItem>
         <Menu.ButtonItem onClick={handleQuestionnaireClick}>질문지 설계</Menu.ButtonItem>
       </Menu.Content>
     </Menu>
