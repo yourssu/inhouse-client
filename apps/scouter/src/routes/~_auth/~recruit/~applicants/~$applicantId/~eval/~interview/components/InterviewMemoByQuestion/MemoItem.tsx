@@ -22,7 +22,7 @@ export const MemoItem = ({ applicantId, memo }: MemoItemProps) => {
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
   // TODO: 현재는 userId와 memberId 값이 달라 오류가 발생해요. 백엔드가 myData에 userId를 추가해줄 예정이에요
-  const isMyMemo = userId === myData.memberId;
+  const isMyMemo = userId === myData.userId;
 
   const openMemoDeletionDialog = useAlertDialog();
   const { invalidate: invalidateMemos } = useQueryInvalidation(interviewMemosQueryKey(applicantId));
