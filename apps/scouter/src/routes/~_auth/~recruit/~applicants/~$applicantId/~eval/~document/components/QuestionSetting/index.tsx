@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import z from 'zod/v4';
 
-import type { ApplicantStateType } from '@/apis/applicants/schema';
+import type { ApplicantType } from '@/apis/applicants/schema';
 
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { putPartDocumentsRubrics } from '@/apis/documents';
@@ -23,14 +23,15 @@ import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$appl
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
 interface QuestionSettingProps {
-  applicantId: number;
-  applicantState: ApplicantStateType;
+  applicant: ApplicantType;
 }
 
-export const QuestionSetting = ({ applicantId, applicantState }: QuestionSettingProps) => {
+export const QuestionSetting = ({ applicant }: QuestionSettingProps) => {
+  const { state, applicantId } = applicant;
+
   const openQuestionSettingDialog = useAlertDialog();
 
-  const isActionAllowed = isDocumentEvalActionAllowed(applicantState);
+  const isActionAllowed = isDocumentEvalActionAllowed(state);
 
   const handleDialogTrigger = () => {
     return openQuestionSettingDialog({

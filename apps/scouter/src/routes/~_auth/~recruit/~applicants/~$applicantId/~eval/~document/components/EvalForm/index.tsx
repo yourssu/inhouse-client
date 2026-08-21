@@ -129,7 +129,7 @@ export const EvalForm = () => {
     <header className="flex items-center justify-between gap-3">
       <h2 className="text-xl font-semibold">질문별 서류평가</h2>
       {evaluations.items.length === 0 ? (
-        <QuestionSetting applicantId={Number(applicantId)} applicantState={applicant.state} />
+        <QuestionSetting applicant={applicant} />
       ) : (
         <Badge color="green" size="md">
           제출 완료
