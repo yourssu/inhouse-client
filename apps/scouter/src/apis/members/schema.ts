@@ -46,6 +46,7 @@ export const MeSchema = MemberIdentitySchema.extend({
   stateUpdatedTime: z.iso.datetime(),
   createdTime: z.iso.datetime(),
   updatedTime: z.iso.datetime(),
+  userId: z.number(),
 });
 
 export const ActiveMemberSchema = BaseMemberSchema.extend({

@@ -149,7 +149,7 @@ const combinePeerScoreRows = ([statusesResult, scoreByEvaluatorIdResult, meResul
   { data: MeType },
 ]): Prettify<PeerScoreRow>[] =>
   statusesResult.data
-    .filter(({ userId }) => userId !== meResult.data.memberId)
+    .filter(({ userId }) => userId !== meResult.data.userId)
     .map(({ name, status, userId }) => ({
       name,
       // 미제출자의 점수는 마스킹될 수 있어서 제출 완료일 때만 읽어요.
