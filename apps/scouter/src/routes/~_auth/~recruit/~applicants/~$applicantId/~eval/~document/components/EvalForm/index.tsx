@@ -2,14 +2,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
+import { Lottie } from '@toss/lottie';
 import {
   Badge,
   Button,
   Divider,
   Fieldset,
   MultilineTextField,
+  Result,
   Select,
 } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { useState } from 'react';
 import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
@@ -81,6 +84,8 @@ export const EvalForm = () => {
     },
   });
 
+  const isScoringComplete = rubrics.reduce((sum, rubric) => sum + rubric.maxScore, 0) === 100;
+
   const watchedItems = useWatch({ control, name: 'items' });
   const quantitativeScore = watchedItems.reduce((sum, item) => sum + (Number(item.score) || 0), 0);
 
@@ -113,20 +118,39 @@ export const EvalForm = () => {
       }),
     );
 
+  const header = (
+    <header className="flex items-center justify-between gap-3">
+      <h2 className="text-xl font-semibold">질문별 서류평가</h2>
+      {evaluations.items.length === 0 ? (
+        <QuestionSetting applicantId={Number(applicantId)} />
+      ) : (
+        <Badge color="green" size="md">
+          제출 완료
+        </Badge>
+      )}
+    </header>
+  );
+
+  if (!isScoringComplete) {
+    return (
+      <div className="flex flex-[1_1_0] flex-col gap-4">
+        {header}
+        <div className="flex flex-[1_1_0] items-center justify-center">
+          <Result
+            description="상단의 문항 설정 버튼을 눌러서 진행할 수 있어요."
+            figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
+            title="문항별 배점 설정을 완료해주세요"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
-          <header className="flex items-center justify-between gap-3">
-            <h2 className="text-xl font-semibold">질문별 서류평가</h2>
-            {evaluations.items.length === 0 ? (
-              <QuestionSetting applicantId={Number(applicantId)} />
-            ) : (
-              <Badge color="green" size="md">
-                제출 완료
-              </Badge>
-            )}
-          </header>
+          {header}
 
           <div className="flex flex-col gap-4">
             {rubrics.map((rubric, idx) => (

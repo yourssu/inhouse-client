@@ -1,4 +1,4 @@
-import { useSuspenseQueries } from '@tanstack/react-query';
+import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
@@ -12,8 +12,10 @@ import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/appl
 import {
   applicantDocumentCommentsOption,
   getApplicantDocumentsEvaluationsOption,
+  getPartDocumentsRubricsOption,
 } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
+import { partsOption } from '@/apis/parts/query';
 import { Paper } from '@/components/Paper';
 import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm';
 import { OtherDocumentEvaluationsPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherDocumentEvaluationsPanel';
@@ -24,15 +26,26 @@ import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicant
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
 
-  const [{ data: applicant }, { data: answers }, { data: comments }, { data: evaluations }] =
-    useSuspenseQueries({
-      queries: [
-        applicantByIdOption(Number(applicantId)),
-        applicantDocumentAnswersOption(Number(applicantId)),
-        applicantDocumentCommentsOption(Number(applicantId)),
-        getApplicantDocumentsEvaluationsOption(Number(applicantId)),
-      ],
-    });
+  const [
+    { data: applicant },
+    { data: answers },
+    { data: comments },
+    { data: evaluations },
+    { data: parts },
+  ] = useSuspenseQueries({
+    queries: [
+      applicantByIdOption(Number(applicantId)),
+      applicantDocumentAnswersOption(Number(applicantId)),
+      applicantDocumentCommentsOption(Number(applicantId)),
+      getApplicantDocumentsEvaluationsOption(Number(applicantId)),
+      partsOption(),
+    ],
+  });
+
+  const part = parts.find((p) => p.partName === applicant.part) ?? parts[0];
+  const { data: rubrics } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
+
+  const isScoringComplete = rubrics.reduce((sum, rubric) => sum + rubric.maxScore, 0) === 100;
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
@@ -52,33 +65,37 @@ const RouteComponent = () => {
         >
           <DocumentReview answers={answers} applicantId={Number(applicantId)} comments={comments} />
           <Paper className="relative w-100 p-4">
-            <div className="w-full">
+            <div className="flex w-full flex-col">
               <EvalForm />
-              <Divider className="my-6" />
-              <div className="flex flex-col gap-5">
-                <OtherDocumentEvaluationsPanel
-                  applicantId={Number(applicantId)}
-                  documentAverageScore={applicant.documentAverageScore}
-                />
-                <Divider />
-                <Button
-                  disabled={evaluations.items.length === 0}
-                  onClick={() => {
-                    overlay.open(({ isOpen, close }) => {
-                      return (
-                        <FinalEvalDialog
-                          applicantId={Number(applicantId)}
-                          close={close}
-                          isOpen={isOpen}
-                        />
-                      );
-                    });
-                  }}
-                  size="lg"
-                >
-                  최종 서류 평가
-                </Button>
-              </div>
+              {isScoringComplete && (
+                <>
+                  <Divider className="my-6" />
+                  <div className="flex flex-col gap-5">
+                    <OtherDocumentEvaluationsPanel
+                      applicantId={Number(applicantId)}
+                      documentAverageScore={applicant.documentAverageScore}
+                    />
+                    <Divider />
+                    <Button
+                      disabled={evaluations.items.length === 0}
+                      onClick={() => {
+                        overlay.open(({ isOpen, close }) => {
+                          return (
+                            <FinalEvalDialog
+                              applicantId={Number(applicantId)}
+                              close={close}
+                              isOpen={isOpen}
+                            />
+                          );
+                        });
+                      }}
+                      size="lg"
+                    >
+                      최종 서류 평가
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           </Paper>
         </ErrorBoundary>
