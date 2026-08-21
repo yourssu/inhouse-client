@@ -12,11 +12,13 @@ import {
   interviewEvaluatorStatusesOption,
   myInterviewEvaluationOption,
 } from '@/apis/interviews/evaluations/query';
+import { interviewMemosOption } from '@/apis/interviews/memos/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { InterviewQuestionContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewQuestionContent';
 import { InterviewScriptContent } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewContent/InterviewScriptContent';
+import { InterviewMemoByQuestion } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewMemoByQuestion';
 import { InterviewTab } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab';
 import { DocumentAnswerForInterview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/DocumentAnswerForInterview';
 import { InterviewQuestionList } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/InterviewQuestionList';
@@ -79,12 +81,21 @@ const RouteComponent = () => {
           )}
         </InterviewTab>
 
-        <Paper className="flex-1 flex-col gap-4 p-0">
+        <Paper className="flex-1 flex-col p-0">
           <SwitchCase
             caseBy={{
               질문: () =>
                 selectedQuestion != null ? (
-                  <InterviewQuestionContent question={selectedQuestion} />
+                  <>
+                    <InterviewQuestionContent question={selectedQuestion} />
+                    {/* 면접관이 확정하지 않은 기본 미리보기 질문은 id가 없어요(OpenAPI 스펙 명시).*/}
+                    {selectedQuestion.id != null && (
+                      <InterviewMemoByQuestion
+                        applicantId={Number(applicantId)}
+                        sectionId={selectedQuestion.id}
+                      />
+                    )}
+                  </>
                 ) : null,
               스크립트: () => <InterviewScriptContent selectedScript={selectedScript} />,
             }}
@@ -130,6 +141,7 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     context.queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
     context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
     context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
+    context.queryClient.prefetchQuery(interviewMemosOption(applicantId));
     context.queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
     context.queryClient.prefetchQuery(meOption());
   },

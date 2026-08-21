@@ -1,6 +1,6 @@
 import type { KeyboardEvent, ReactNode } from 'react';
 
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +14,7 @@ import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@
 import { commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface CommentProps extends CommentType {
@@ -32,10 +33,11 @@ interface CommentBodyProps {
 
 export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   const { author, commentId, content } = comment;
-  const { memberId } = author;
+  const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
-  const isMyComment = memberId === myData.memberId;
-  const queryClient = useQueryClient();
+  // TODO: 백엔드에서 myData에 userId를 내려줄 예정. 현재는 오류 발생
+  const isMyComment = userId === myData.memberId;
+  const { invalidate: invalidateComments } = useQueryInvalidation(commentsQueryKey(applicantId));
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
@@ -47,7 +49,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
       successText: '코멘트를 수정했어요.',
       onSuccess: () => {
         setIsEditing(false);
-        queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+        invalidateComments();
       },
     });
 
@@ -104,7 +106,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+        invalidateComments();
       },
     });
 

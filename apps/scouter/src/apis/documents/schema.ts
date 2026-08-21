@@ -95,9 +95,9 @@ export type DocumentEvaluatorStatus = z.infer<typeof DocumentEvaluatorStatusSche
 export type DocumentEvaluatorStatuses = z.infer<typeof DocumentEvaluatorStatusesSchema>;
 
 export const CommentAuthorSchema = z.object({
-  memberId: z.number().optional(),
   nickname: z.string(),
   part: z.string(),
+  userId: z.number(),
 });
 
 export const CommentSchema = z.object({
