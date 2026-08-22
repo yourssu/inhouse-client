@@ -85,7 +85,7 @@ export const EvalForm = () => {
           ? rubrics.map(({ sectionId }) => ({ sectionId, score: '0', memo: '' }))
           : evaluations.items.map((item) => ({ ...item, score: item.score.toString() })),
       overallComment: evaluations.overallComment,
-      // 미제출 상태에서는 상태평가를 반드시 선택하도록 기본값을 비워 placeholder를 노출해요.
+      // 미제출 상태에서는 평가 결과를 반드시 선택하도록 기본값을 비워 placeholder를 노출해요.
       result:
         evaluations.items.length === 0 ? undefined : documentResultMapping[evaluations.result],
     },
@@ -243,7 +243,7 @@ export const EvalForm = () => {
                       invalid={fieldState.invalid}
                       items={documentKoreanResults}
                       onValueChange={field.onChange}
-                      placeholder="상태평가"
+                      placeholder="평가 결과"
                       size="md"
                       value={field.value}
                       variant="dimmed"
