@@ -183,9 +183,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               className="rounded-full"
               onClick={handleCancelEdit}
               onMouseDown={(e) => e.preventDefault()}
-              size="xxs"
+              size="xs"
             >
-              <MdCancel className="text-grey600 size-4.5" />
+              <MdCancel className="text-grey600 size-5" />
             </IconButton>
             <IconButton
               aria-label="댓글 수정 저장"
@@ -193,9 +193,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               disabled={isUpdatePending}
               onClick={handleSubmitEdit}
               onMouseDown={(e) => e.preventDefault()}
-              size="xxs"
+              size="xs"
             >
-              <IoIosCheckmarkCircle className="text-violet600 size-4.5" />
+              <IoIosCheckmarkCircle className="text-violet600 size-5" />
             </IconButton>
           </div>
         </div>
