@@ -35,11 +35,11 @@ const QuestionnairePage = () => {
   });
 
   return (
-    <PageLayout.Content className="self-start py-7!" maxWidth="full">
+    <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="질문지 설계" />
 
-      <main className="flex min-w-0 gap-4 pt-7">
-        <section aria-label="지원서 답변과 코멘트" className="min-w-0 flex-1">
+      <main className="flex min-h-0 min-w-0 flex-[1_1_0] gap-4 pt-7">
+        <section aria-label="지원서 답변과 코멘트" className="flex min-h-0 min-w-0 flex-1 flex-col">
           <PanelBoundary
             description="서류 답변과 코멘트를 다시 불러와 주세요."
             fallback={<DocumentReferencePanelSkeleton />}
@@ -49,13 +49,13 @@ const QuestionnairePage = () => {
           </PanelBoundary>
         </section>
 
-        <aside aria-label="면접 질문지" className="sticky top-3 h-fit w-100 shrink-0">
+        <aside aria-label="면접 질문지" className="flex min-h-0 w-100 shrink-0 flex-col">
           <PanelBoundary
             description="면접 질문지와 요구조건을 다시 불러와 주세요."
             fallback={<QuestionnairePanelSkeleton />}
             title="질문지를 불러오지 못했어요"
           >
-            <div className="max-h-[calc(100vh-1.5rem)] overflow-y-auto">
+            <div className="flex min-h-0 flex-1 overflow-y-auto">
               <QuestionnairePanel
                 applicantId={Number(applicantId)}
                 partId={applicant.partId}
