@@ -149,8 +149,7 @@ const combinePeerScoreRows = ([statusesResult, scoreByEvaluatorIdResult, meResul
   { data: MeType },
 ]): Prettify<PeerScoreRow>[] =>
   statusesResult.data
-    // null !== me.userId는 항상 true라 User 엔티티 없는 평가자는 자연스럽게 남고, 나 자신만 제외돼요.
-    .filter(({ userId }) => userId !== meResult.data.userId)
+    .filter(({ memberId }) => memberId !== meResult.data.memberId)
     .map(({ memberId, name, status, userId }) => ({
       memberId,
       name,
