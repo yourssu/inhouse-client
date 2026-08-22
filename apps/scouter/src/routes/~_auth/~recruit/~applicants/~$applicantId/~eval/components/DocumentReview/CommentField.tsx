@@ -1,4 +1,5 @@
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
+import { useEffect, useRef } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
 import { DetectOutsideClickArea } from './DetectOutsideClickArea';
@@ -31,6 +32,13 @@ export const CommentField = ({
     parentCommentId,
     sectionId,
   });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (isContentEmpty && textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+  }, [isContentEmpty]);
 
   return (
     <DetectOutsideClickArea onClickOutside={handleClose}>
@@ -42,13 +50,13 @@ export const CommentField = ({
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={'댓글 추가'}
+          ref={textareaRef}
           rows={1}
           value={content}
           withHeightAutoResize={true}
         />
         <IconButton
           aria-label="댓글 등록"
-          className="my-auto"
           disabled={isWritePending || isContentEmpty}
           onClick={handleAddComment}
           size="md"

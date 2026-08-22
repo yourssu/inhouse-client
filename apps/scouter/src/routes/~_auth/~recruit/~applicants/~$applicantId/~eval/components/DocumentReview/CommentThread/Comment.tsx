@@ -183,9 +183,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               className="rounded-full"
               onClick={handleCancelEdit}
               onMouseDown={(e) => e.preventDefault()}
-              size="xxs"
+              size="xs"
             >
-              <MdCancel className="text-grey600 size-4.5" />
+              <MdCancel className="text-grey600 size-5" />
             </IconButton>
             <IconButton
               aria-label="댓글 수정 저장"
@@ -193,9 +193,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               disabled={isUpdatePending}
               onClick={handleSubmitEdit}
               onMouseDown={(e) => e.preventDefault()}
-              size="xxs"
+              size="xs"
             >
-              <IoIosCheckmarkCircle className="text-violet600 size-4.5" />
+              <IoIosCheckmarkCircle className="text-violet600 size-5" />
             </IconButton>
           </div>
         </div>
@@ -213,7 +213,7 @@ const CommentItem = ({ actions, children, comment }: CommentItemProps) => {
     : null;
 
   return (
-    <div className="group min-w-60 gap-2">
+    <div className="group min-w-60">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1 whitespace-nowrap">
           <span className="text-13 font-medium">
@@ -233,5 +233,7 @@ const CommentItem = ({ actions, children, comment }: CommentItemProps) => {
 };
 
 const CommentBody = ({ children }: CommentBodyProps) => (
-  <p className="text-13 min-h-fit border-transparent p-0 pl-1 whitespace-pre-wrap">{children}</p>
+  <p className="text-13 min-h-fit border-transparent p-0 pl-1 wrap-break-word whitespace-pre-wrap">
+    {children}
+  </p>
 );
