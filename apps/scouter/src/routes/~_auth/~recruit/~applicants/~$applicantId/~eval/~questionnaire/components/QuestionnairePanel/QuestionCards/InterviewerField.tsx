@@ -8,7 +8,7 @@ import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 
 import type { QuestionnaireFormValues } from '../questionnaireForm';
 
-type InterviewerFieldName = `${QuestionCategory}.${number}.assignedInterviewerUserId`;
+type InterviewerFieldName = `${QuestionCategory}.${number}.assignedMemberId`;
 
 interface InterviewerFieldProps {
   activeMembers: ActiveMemberType[];
@@ -46,7 +46,7 @@ export const InterviewerField = ({
 interface InterviewerSelectProps {
   activeMembers: ActiveMemberType[];
   errorMessage?: string;
-  onChange: (interviewerId: number) => void;
+  onChange: (memberId: number) => void;
   ref?: React.Ref<HTMLButtonElement>;
   value?: number;
 }
@@ -58,17 +58,13 @@ const InterviewerSelect = ({
   ref,
   value,
 }: InterviewerSelectProps) => {
-  // 질문자 배정에는 멤버 ID가 아니라 로그인 계정 ID가 필요해서, 계정이 연동된 멤버만 선택할 수 있어요.
-  const assignableMembers = activeMembers.flatMap(({ nickname, userId }) =>
-    userId === undefined || userId === null ? [] : [{ nickname, userId }],
+  const memberIdByNickname = new Map(
+    activeMembers.map(({ memberId, nickname }) => [nickname, memberId]),
   );
-  const interviewerIdByNickname = new Map(
-    assignableMembers.map(({ nickname, userId }) => [nickname, userId]),
+  const interviewerNicknameByMemberId = new Map(
+    activeMembers.map(({ memberId, nickname }) => [memberId, nickname]),
   );
-  const interviewerNicknameById = new Map(
-    assignableMembers.map(({ nickname, userId }) => [userId, nickname]),
-  );
-  const nicknames = assignableMembers.map(({ nickname }) => nickname);
+  const nicknames = activeMembers.map(({ nickname }) => nickname);
 
   return (
     <Fieldset
@@ -80,15 +76,15 @@ const InterviewerSelect = ({
         invalid={!!errorMessage}
         items={nicknames}
         onValueChange={(nickname) => {
-          const interviewerId = interviewerIdByNickname.get(nickname);
-          if (interviewerId !== undefined) {
-            onChange(interviewerId);
+          const memberId = memberIdByNickname.get(nickname);
+          if (memberId !== undefined) {
+            onChange(memberId);
           }
         }}
         placeholder="질문자를 선택하세요"
         ref={ref}
         size="md"
-        value={value === undefined ? undefined : interviewerNicknameById.get(value)}
+        value={value === undefined ? undefined : interviewerNicknameByMemberId.get(value)}
         variant="outline"
       />
     </Fieldset>

@@ -9,7 +9,7 @@ interface InterviewQuestionContentProps {
 }
 
 export const InterviewQuestionContent = ({ question }: InterviewQuestionContentProps) => {
-  const { assignedInterviewerName, category, requirements, content } = question;
+  const { assignedMemberName, category, requirements, content } = question;
 
   return (
     <div className="flex flex-col">
@@ -30,7 +30,7 @@ export const InterviewQuestionContent = ({ question }: InterviewQuestionContentP
         </div>
         <span className="text-neutral font-medium">{content}</span>
         <span className="text-neutralMuted text-15">
-          질문자: <span className="text-violet600">{assignedInterviewerName}</span>
+          질문자: <span className="text-violet600">{assignedMemberName}</span>
         </span>
         <span />
       </div>
