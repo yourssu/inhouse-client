@@ -77,11 +77,6 @@ export const EvalForm = () => {
 
   const isMyEvaluationSubmitted = evaluations.submittedAt != null;
 
-  /**
-   * TODO: 서류 배점 응답에도 서버가 내려주는 isLocked가 추가되면 이 파생을 지우고
-   * 면접(InterviewRubric.isLocked)처럼 응답 필드를 그대로 사용해요.
-   * 지금은 평가자 상태로 "한 명 이상 제출"을 클라이언트에서 계산해요. (SCO-304)
-   */
   const isRubricLocked = statuses.some(({ status }) => status === 'SUBMITTED');
 
   const {
