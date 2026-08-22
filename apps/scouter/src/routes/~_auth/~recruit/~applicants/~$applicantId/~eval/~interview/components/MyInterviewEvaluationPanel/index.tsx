@@ -154,11 +154,17 @@ export const MyInterviewEvaluationPanel = ({
     <div className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold">내 평가</h2>
-        <InterviewRubricSettingButton
-          isLocked={isRubricLocked}
-          partId={partId}
-          semester={semester}
-        />
+        {isMyEvaluationSubmitted ? (
+          <Badge color="green" size="md">
+            제출 완료
+          </Badge>
+        ) : (
+          <InterviewRubricSettingButton
+            isLocked={isRubricLocked}
+            partId={partId}
+            semester={semester}
+          />
+        )}
       </header>
       {isSubmissionDisabled ? (
         <p className="bg-orange50 text-orange600 rounded-10 flex items-center gap-1.5 px-4 py-3 text-sm font-medium">
