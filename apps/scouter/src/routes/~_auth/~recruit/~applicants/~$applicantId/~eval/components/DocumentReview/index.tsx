@@ -60,8 +60,8 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
   }, [selectedSectionId]);
 
   return (
-    <Paper className="flex-[1_1_0] gap-4">
-      <div className="flex flex-col gap-4">
+    <Paper className="min-h-0 flex-[1_1_0] gap-4 overflow-hidden">
+      <div className="flex min-h-0 flex-col gap-4 overflow-y-auto">
         {answers.map((answer, index) => {
           const { sectionId } = answer;
 
@@ -78,9 +78,9 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
         })}
       </div>
 
-      <div className="relative">
+      <div className="relative flex min-h-0 flex-col">
         <div
-          className="sticky top-3 -mx-4 flex max-h-[calc(100vh-1.5rem)] flex-col gap-5 overflow-y-auto px-4"
+          className="-mx-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4"
           ref={scrollContainerRef}
         >
           {answers.flatMap(({ sectionId }) => {

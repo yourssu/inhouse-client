@@ -53,7 +53,7 @@ const RouteComponent = () => {
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="서류 평가" />
 
-      <main className="flex flex-[1_1_0] gap-4 pt-7">
+      <main className="flex min-h-0 flex-[1_1_0] gap-4 pt-7">
         <ErrorBoundary
           fallback={
             <Paper className="flex size-full items-center justify-center">
@@ -66,8 +66,8 @@ const RouteComponent = () => {
           }
         >
           <DocumentReview answers={answers} applicantId={Number(applicantId)} comments={comments} />
-          <Paper className="relative w-100 p-4">
-            <div className="flex w-full flex-col">
+          <Paper className="relative min-h-0 w-100 overflow-hidden p-4">
+            <div className="flex min-h-0 w-full flex-col overflow-y-auto">
               <EvalForm />
               {isScoringComplete && (
                 <>
