@@ -200,7 +200,7 @@ export const QuestionnaireEditor = ({
                 description="같은 파트 지원자에게 공통으로 사용하는 질문이에요."
                 onAddQuestion={() =>
                   append({
-                    assignedInterviewerUserId: undefined,
+                    assignedMemberId: undefined,
                     content: '',
                     requirementIds: [],
                   })
@@ -240,7 +240,7 @@ export const QuestionnaireEditor = ({
                 description="지원자에게만 묻는 개인 질문이에요."
                 onAddQuestion={() =>
                   append({
-                    assignedInterviewerUserId: undefined,
+                    assignedMemberId: undefined,
                     content: '',
                     requirementIds: [],
                   })
@@ -356,12 +356,12 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
   };
 
   questions.forEach((question) => {
-    const assignedInterviewerUserId = question.assignedInterviewerUserId ?? undefined;
+    const assignedMemberId = question.assignedMemberId ?? undefined;
 
     switch (question.category) {
       case 'CULTURE':
         formValues.CULTURE.push({
-          assignedInterviewerUserId,
+          assignedMemberId,
           content: question.content,
           isSelected: question.isSelected ?? undefined,
           requirements: question.requirements,
@@ -371,21 +371,21 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
       case 'INTRO':
       case 'OUTRO':
         formValues[question.category].push({
-          assignedInterviewerUserId,
+          assignedMemberId,
           content: question.content,
           sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
       case 'PART':
         formValues.PART.push({
-          assignedInterviewerUserId,
+          assignedMemberId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
         break;
       case 'PERSONAL':
         formValues.PERSONAL.push({
-          assignedInterviewerUserId,
+          assignedMemberId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
         });
@@ -400,31 +400,31 @@ const toSaveAssignedQuestions = (
   values: QuestionnaireFormValues,
 ): SaveAssignedQuestionsRequest['questions'] => [
   ...values.INTRO.map((question) => ({
-    assignedInterviewerUserId: question.assignedInterviewerUserId!,
+    assignedMemberId: question.assignedMemberId!,
     category: 'INTRO' as const,
     sourceQuestionId: question.sourceQuestionId,
   })),
   // 선택하지 않은 컬처핏 질문은 질문자가 배정되지 않으므로 저장 대상에서 제외해요.
   ...values.CULTURE.filter(({ isSelected }) => isSelected === true).map((question) => ({
-    assignedInterviewerUserId: question.assignedInterviewerUserId!,
+    assignedMemberId: question.assignedMemberId!,
     category: 'CULTURE' as const,
     isSelected: true,
     sourceQuestionId: question.sourceQuestionId,
   })),
   ...values.PART.map((question) => ({
-    assignedInterviewerUserId: question.assignedInterviewerUserId!,
+    assignedMemberId: question.assignedMemberId!,
     category: 'PART' as const,
     content: question.content.trim(),
     requirementIds: question.requirementIds,
   })),
   ...values.PERSONAL.map((question) => ({
-    assignedInterviewerUserId: question.assignedInterviewerUserId!,
+    assignedMemberId: question.assignedMemberId!,
     category: 'PERSONAL' as const,
     content: question.content.trim(),
     requirementIds: question.requirementIds,
   })),
   ...values.OUTRO.map((question) => ({
-    assignedInterviewerUserId: question.assignedInterviewerUserId!,
+    assignedMemberId: question.assignedMemberId!,
     category: 'OUTRO' as const,
     sourceQuestionId: question.sourceQuestionId,
   })),

@@ -90,7 +90,7 @@ interface InterviewQuestionProps {
 }
 
 const InterviewQuestion = ({ isSelected, onClickQuestion, question }: InterviewQuestionProps) => {
-  const { assignedInterviewerName, content, id, requirements } = question;
+  const { assignedMemberName, content, id, requirements } = question;
   const isSelectable = id != null;
 
   return (
@@ -111,7 +111,7 @@ const InterviewQuestion = ({ isSelected, onClickQuestion, question }: InterviewQ
             isSelected ? 'text-violet600' : 'text-neutralMuted',
           )}
         >
-          {assignedInterviewerName}
+          {assignedMemberName}
         </span>
         {requirements.map(({ content: requirementContent, id: requirementId }) => (
           <Badge color="violet" key={requirementId} size="sm">

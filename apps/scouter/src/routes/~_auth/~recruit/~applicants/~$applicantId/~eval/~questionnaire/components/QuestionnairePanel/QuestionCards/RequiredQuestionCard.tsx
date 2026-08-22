@@ -36,7 +36,7 @@ export const RequiredQuestionCard = ({
       <InterviewerField
         activeMembers={activeMembers}
         control={control}
-        name={`${category}.${index}.assignedInterviewerUserId`}
+        name={`${category}.${index}.assignedMemberId`}
       />
     </QuestionCardFrame>
   );

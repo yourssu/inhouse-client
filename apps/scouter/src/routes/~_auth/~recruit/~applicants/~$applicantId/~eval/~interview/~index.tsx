@@ -82,7 +82,7 @@ const RouteComponent = () => {
       <main className="flex min-h-0 flex-[1_1_0] items-start gap-4 pt-7">
         <InterviewTab className="min-h-0 w-fit self-stretch" tabs={INTERVIEW_TABS}>
           {({ tab }) => (
-            <Paper className="sticky top-3 h-full w-90 flex-1 scrollbar-gutter-stable overflow-y-auto p-0">
+            <Paper className="h-full w-90 flex-1 scrollbar-gutter-stable overflow-y-auto p-0">
               <SwitchCase
                 caseBy={{
                   질문: () => (
@@ -100,7 +100,7 @@ const RouteComponent = () => {
           )}
         </InterviewTab>
 
-        <Paper className="flex-1 flex-col p-0">
+        <Paper className="min-h-0 flex-1 flex-col self-stretch overflow-y-auto p-0">
           <SwitchCase
             caseBy={{
               질문: () =>
@@ -122,7 +122,7 @@ const RouteComponent = () => {
           />
         </Paper>
 
-        <Paper className="flex w-100 shrink-0 flex-col overflow-hidden p-0">
+        <Paper className="flex min-h-0 w-100 shrink-0 flex-col self-stretch overflow-y-auto p-0">
           <aside aria-label="내 면접 평가" className="w-full p-4">
             <Suspense>
               <MyInterviewEvaluationPanel

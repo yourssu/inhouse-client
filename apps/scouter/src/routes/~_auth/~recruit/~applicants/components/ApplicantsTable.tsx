@@ -15,8 +15,8 @@ import { ApplicantActionMenu } from '@/routes/~_auth/~recruit/~applicants/compon
 import {
   applicantStatesByTab,
   type ApplicantTabNameType,
-  getApplicantReviewStatus,
 } from '@/routes/~_auth/~recruit/~applicants/type';
+import { applicantStateKo } from '@/types/applicants';
 import { partNameKo, type PartNameKoType } from '@/types/parts';
 import { formatSemester } from '@/utils/semester';
 
@@ -102,7 +102,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
                 <Table.Cell>{applicant.age}세</Table.Cell>
                 <Table.Cell>
                   <Badge color="violet" size="sm">
-                    {getApplicantReviewStatus(applicant.state, hasAssignment)}
+                    {applicantStateKo[applicant.state]}
                   </Badge>
                 </Table.Cell>
                 <Table.Cell className="w-12 min-w-12 flex-none">
