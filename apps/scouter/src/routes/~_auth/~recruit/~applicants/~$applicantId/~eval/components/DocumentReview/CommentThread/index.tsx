@@ -69,7 +69,6 @@ export const CommentThread = ({ applicantId, isSelected, thread }: CommentThread
             />
             <IconButton
               aria-label="답글 등록"
-              className="my-auto"
               disabled={isWritePending || isContentEmpty}
               onClick={handleAddComment}
               size="md"

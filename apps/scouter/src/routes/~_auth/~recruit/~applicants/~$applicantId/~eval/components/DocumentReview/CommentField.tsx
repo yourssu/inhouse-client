@@ -57,7 +57,6 @@ export const CommentField = ({
         />
         <IconButton
           aria-label="댓글 등록"
-          className="my-auto"
           disabled={isWritePending || isContentEmpty}
           onClick={handleAddComment}
           size="md"
