@@ -78,7 +78,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
           <Table.Th>학번</Table.Th>
           <Table.Th>학과</Table.Th>
           <Table.Th>현재 학기</Table.Th>
-          <Table.Th infoContent="연도 기준 나이예요.">나이</Table.Th>
+          <Table.Th>출생년도</Table.Th>
           <Table.Th>심사 상태</Table.Th>
           <Table.Th className="w-12 min-w-12 flex-none">
             <span className="sr-only">지원자 액션</span>
@@ -99,7 +99,7 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
                 <Table.Cell>{applicant.studentId}</Table.Cell>
                 <Table.Cell>{applicant.department}</Table.Cell>
                 <Table.Cell>{formatSemester(applicant.academicSemester)}</Table.Cell>
-                <Table.Cell>{applicant.age}세</Table.Cell>
+                <Table.Cell>{applicant.age}</Table.Cell>
                 <Table.Cell>
                   <Badge color="violet" size="sm">
                     {applicantStateKo[applicant.state]}

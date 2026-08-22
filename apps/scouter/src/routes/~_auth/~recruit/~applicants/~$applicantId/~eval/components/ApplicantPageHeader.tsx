@@ -40,7 +40,7 @@ export const ApplicantPageHeader = ({ applicant, label }: ApplicantPageHeaderPro
         <InfoItem label="학번">{applicant.studentId}</InfoItem>
         <InfoItem label="학과">{applicant.department}</InfoItem>
         <InfoItem label="현재 학기">{formatSemester(applicant.academicSemester)}</InfoItem>
-        <InfoItem label="나이">{applicant.age}세</InfoItem>
+        <InfoItem label="출생년도">{applicant.age}</InfoItem>
         <InfoItem label="지원일">
           {formatTemplates['2026-01-01'](applicant.applicationDate)}
         </InfoItem>
