@@ -11,6 +11,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import {
   applicantDocumentCommentsOption,
+  documentEvaluatorStatusesOption,
   getApplicantDocumentsEvaluationsOption,
   getPartDocumentsRubricsOption,
 } from '@/apis/documents/query';
@@ -118,6 +119,7 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
     context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
     context.queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
+    context.queryClient.prefetchQuery(documentEvaluatorStatusesOption(applicantId));
     context.queryClient.prefetchQuery(meOption());
   },
 });

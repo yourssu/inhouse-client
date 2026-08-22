@@ -22,6 +22,7 @@ import { useLoading } from 'react-simplikit';
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { putApplicantDocumentEvaluations } from '@/apis/documents';
 import {
+  documentEvaluatorStatusesOption,
   getApplicantDocumentsEvaluationsOption,
   getApplicantDocumentsOthersEvaluationsOption,
   getPartDocumentsRubricsOption,
@@ -36,8 +37,8 @@ import { meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { DocumentRubricSettingButton } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/DocumentRubricSettingButton';
 import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherEvaluationsCollapsible';
-import { QuestionSetting } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/QuestionSetting';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
@@ -60,14 +61,23 @@ export const EvalForm = () => {
 
   const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(applicant.state);
 
-  const [{ data: evaluations }, { data: rubrics }, { data: othersEvaluations }] =
-    useSuspenseQueries({
-      queries: [
-        getApplicantDocumentsEvaluationsOption(Number(applicantId)),
-        getPartDocumentsRubricsOption(part.partId),
-        getApplicantDocumentsOthersEvaluationsOption(Number(applicantId)),
-      ],
-    });
+  const [
+    { data: evaluations },
+    { data: rubrics },
+    { data: othersEvaluations },
+    { data: statuses },
+  ] = useSuspenseQueries({
+    queries: [
+      getApplicantDocumentsEvaluationsOption(Number(applicantId)),
+      getPartDocumentsRubricsOption(part.partId),
+      getApplicantDocumentsOthersEvaluationsOption(Number(applicantId)),
+      documentEvaluatorStatusesOption(Number(applicantId)),
+    ],
+  });
+
+  const isMyEvaluationSubmitted = evaluations.submittedAt != null;
+
+  const isRubricLocked = statuses.some(({ status }) => status === 'SUBMITTED');
 
   const {
     handleSubmit,
@@ -128,12 +138,12 @@ export const EvalForm = () => {
   const header = (
     <header className="flex items-center justify-between gap-3">
       <h2 className="text-xl font-semibold">질문별 서류평가</h2>
-      {evaluations.items.length === 0 ? (
-        <QuestionSetting applicant={applicant} />
-      ) : (
+      {isMyEvaluationSubmitted ? (
         <Badge color="green" size="md">
           제출 완료
         </Badge>
+      ) : (
+        <DocumentRubricSettingButton applicant={applicant} isLocked={isRubricLocked} />
       )}
     </header>
   );
