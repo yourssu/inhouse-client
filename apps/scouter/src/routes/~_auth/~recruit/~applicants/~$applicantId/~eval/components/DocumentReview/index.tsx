@@ -22,6 +22,7 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
   const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
+  const showCommentPanel = comments.length > 0 || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -61,7 +62,7 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
 
   return (
     <Paper className="min-h-0 flex-[1_1_0] gap-4 overflow-hidden">
-      <div className="flex min-h-0 flex-col gap-4 overflow-y-auto">
+      <div className="flex min-h-0 min-w-0 flex-[3_1_0] flex-col gap-4 overflow-y-auto">
         {answers.map((answer, index) => {
           const { sectionId } = answer;
 
@@ -78,45 +79,47 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
         })}
       </div>
 
-      <div className="relative flex min-h-0 flex-col">
-        <div
-          className="-mx-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4"
-          ref={scrollContainerRef}
-        >
-          {answers.flatMap(({ sectionId }) => {
-            if (sectionId === undefined) {
-              return [];
-            }
+      {showCommentPanel && (
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <div
+            className="-mx-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4"
+            ref={scrollContainerRef}
+          >
+            {answers.flatMap(({ sectionId }) => {
+              if (sectionId === undefined) {
+                return [];
+              }
 
-            const threads = threadsBySectionId.get(sectionId) ?? [];
+              const threads = threadsBySectionId.get(sectionId) ?? [];
 
-            return (
-              <div
-                className="flex flex-col gap-5"
-                key={sectionId}
-                ref={registerSectionRef(sectionId)}
-              >
-                {openCommentSectionId === sectionId && (
-                  <CommentField
-                    applicantId={applicantId}
-                    onClose={() => setOpenCommentSectionId(null)}
-                    parentCommentId={null}
-                    sectionId={sectionId}
-                  />
-                )}
-                {threads.map((thread) => (
-                  <CommentThread
-                    applicantId={applicantId}
-                    isSelected={sectionId === selectedSectionId}
-                    key={thread[0].commentId}
-                    thread={thread}
-                  />
-                ))}
-              </div>
-            );
-          })}
+              return (
+                <div
+                  className="flex flex-col gap-5"
+                  key={sectionId}
+                  ref={registerSectionRef(sectionId)}
+                >
+                  {openCommentSectionId === sectionId && (
+                    <CommentField
+                      applicantId={applicantId}
+                      onClose={() => setOpenCommentSectionId(null)}
+                      parentCommentId={null}
+                      sectionId={sectionId}
+                    />
+                  )}
+                  {threads.map((thread) => (
+                    <CommentThread
+                      applicantId={applicantId}
+                      isSelected={sectionId === selectedSectionId}
+                      key={thread[0].commentId}
+                      thread={thread}
+                    />
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </Paper>
   );
 };

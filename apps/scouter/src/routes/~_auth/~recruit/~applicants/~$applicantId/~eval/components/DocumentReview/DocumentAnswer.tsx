@@ -53,7 +53,7 @@ export const DocumentAnswer = ({
         )}
       </div>
 
-      <p className="text-neutral pl-9 whitespace-pre-wrap">{answer}</p>
+      <p className="text-neutral pl-9 wrap-break-word whitespace-pre-wrap">{answer}</p>
     </div>
   );
 };
