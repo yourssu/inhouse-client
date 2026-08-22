@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
-import { Badge, Button, Dialog, Divider } from '@yourssu-inhouse/interior';
+import { useQueryClient, useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
+import { Badge, Button, Dialog, Divider, useToast } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { Suspense } from 'react';
 import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
@@ -11,6 +11,7 @@ import type { ApplicantType } from '@/apis/applicants/schema';
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { putPartDocumentsRubrics } from '@/apis/documents';
 import {
+  documentEvaluatorStatusesOption,
   getApplicantDocumentsEvaluationsOption,
   getPartDocumentsRubricsOption,
 } from '@/apis/documents/query';
@@ -21,6 +22,8 @@ import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
+
+const rubricSettingDisabledMessage = '파트 내 지원자에 대한 서류 평가가 시작돼서 배점을 변경할 수 없어요.'
 
 interface DocumentRubricSettingButtonProps {
   applicant: ApplicantType;
@@ -41,7 +44,7 @@ export const DocumentRubricSettingButton = ({
     if (isLocked) {
       return openRubricSettingDialog({
         title: '배점 변경 불가',
-        content: '한 명 이상의 평가자가 평가를 제출하여 배점을 변경할 수 없어요.',
+        content: rubricSettingDisabledMessage,
         primaryButtonText: '확인',
       });
     }
@@ -98,6 +101,9 @@ const DocumentRubricSettingForm = ({
 
   const { data: rubrics } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
+  const queryClient = useQueryClient();
+  const toast = useToast();
+
   const {
     control,
     handleSubmit,
@@ -142,8 +148,21 @@ const DocumentRubricSettingForm = ({
 
   const isScoreValid = totalScore === 100;
 
-  const onSubmit: SubmitHandler<UpdatePartDocumentsRubricsFormOutput> = (data) => {
+  const onSubmit: SubmitHandler<UpdatePartDocumentsRubricsFormOutput> = async (data) => {
     if (!isScoreValid) {
+      return;
+    }
+
+    // 폼이 열려 있는 동안 다른 평가자가 평가를 제출했을 수 있어, 저장 직전에 최신 상태를 다시 확인한다.
+    const statuses = await queryClient.fetchQuery({
+      ...documentEvaluatorStatusesOption(applicantId),
+      staleTime: 0,
+    });
+    const isLocked = statuses.some(({ status }) => status === 'SUBMITTED');
+
+    if (isLocked) {
+      closeAsFalse();
+      toast.error(rubricSettingDisabledMessage);
       return;
     }
 
