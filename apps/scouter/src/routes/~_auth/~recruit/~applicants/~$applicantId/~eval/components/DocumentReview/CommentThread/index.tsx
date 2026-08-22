@@ -1,6 +1,6 @@
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
 import type { CommentType } from '@/apis/documents/schema';
@@ -33,6 +33,13 @@ export const CommentThread = ({ applicantId, isSelected, thread }: CommentThread
     parentCommentId: currentThreadId,
     sectionId,
   });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (isContentEmpty && textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+  }, [isContentEmpty]);
 
   return (
     <DetectOutsideClickArea onClickOutside={handleClose}>
@@ -55,6 +62,7 @@ export const CommentThread = ({ applicantId, isSelected, thread }: CommentThread
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={'댓글 추가'}
+              ref={textareaRef}
               rows={1}
               value={content}
               withHeightAutoResize={true}
