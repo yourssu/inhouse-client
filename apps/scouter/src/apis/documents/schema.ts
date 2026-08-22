@@ -64,7 +64,7 @@ export const UpdateApplicantDocumentEvaluationFormSchema = z.object({
     }),
   ),
   overallComment: z.string(),
-  result: z.enum(documentKoreanResults, { error: '상태평가를 선택해 주세요.' }),
+  result: z.enum(documentKoreanResults, { error: '평가 결과를 선택해 주세요.' }),
 });
 
 export const UpdateApplicantDocumentEvaluationRequestSchema = z.object({
