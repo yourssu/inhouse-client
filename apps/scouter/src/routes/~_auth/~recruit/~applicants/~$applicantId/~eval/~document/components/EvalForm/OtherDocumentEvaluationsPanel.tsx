@@ -126,8 +126,8 @@ const SubmittedOtherDocumentEvaluations = ({
               />
             ),
           )}
-          {unsubmittedEvaluators.map(({ name, status, userId }) => (
-            <UnsubmittedDocumentEvaluatorCard key={userId} name={name} status={status} />
+          {unsubmittedEvaluators.map(({ memberId, name, status }) => (
+            <UnsubmittedDocumentEvaluatorCard key={memberId} name={name} status={status} />
           ))}
         </div>
       )}

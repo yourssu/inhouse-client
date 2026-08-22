@@ -178,8 +178,8 @@ const SubmittedOtherInterviewEvaluations = ({
               key={evaluation.evaluatorId}
             />
           ))}
-          {unsubmittedEvaluators.map(({ name, status, userId }) => (
-            <UnsubmittedInterviewEvaluatorCard key={userId} name={name} status={status} />
+          {unsubmittedEvaluators.map(({ memberId, name, status }) => (
+            <UnsubmittedInterviewEvaluatorCard key={memberId} name={name} status={status} />
           ))}
         </div>
       )}

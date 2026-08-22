@@ -95,13 +95,13 @@ const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) 
         다른 평가자 점수
       </span>
       <div className="flex flex-col gap-1.5">
-        {peerScoreRows.map(({ name, score, status, userId }) => {
+        {peerScoreRows.map(({ memberId, name, score, status }) => {
           const evaluationStatusOption = interviewEvaluatorStatusOptions[status];
           const badgeLabel =
             status === 'SUBMITTED' ? `${score ?? '-'} / ${maxScore}` : evaluationStatusOption.label;
 
           return (
-            <div className="flex items-center justify-between gap-3" key={userId}>
+            <div className="flex items-center justify-between gap-3" key={memberId}>
               <span className="text-13 whitespace-nowrap">{name}</span>
               <Badge color={evaluationStatusOption.color} size="sm">
                 {badgeLabel}
@@ -137,10 +137,10 @@ const PeerItemScoresError = () => (
 );
 
 interface PeerScoreRow {
+  memberId: number;
   name: string;
   score: number | undefined;
   status: InterviewEvaluatorStatusValue;
-  userId: number;
 }
 
 const combinePeerScoreRows = ([statusesResult, scoreByEvaluatorIdResult, meResult]: [
@@ -149,13 +149,16 @@ const combinePeerScoreRows = ([statusesResult, scoreByEvaluatorIdResult, meResul
   { data: MeType },
 ]): Prettify<PeerScoreRow>[] =>
   statusesResult.data
-    .filter(({ userId }) => userId !== meResult.data.userId)
-    .map(({ name, status, userId }) => ({
+    .filter(({ memberId }) => memberId !== meResult.data.memberId)
+    .map(({ memberId, name, status, userId }) => ({
+      memberId,
       name,
-      // 미제출자의 점수는 마스킹될 수 있어서 제출 완료일 때만 읽어요.
+      // User 엔티티가 없는 평가자는 userId가 null이라 Map에서 점수를 조회할 수 없어요.
       // 제출 완료여도 statuses와 others가 서로 다른 시점에 갱신되면 잠시 비어 있을 수 있어서
       // score는 optional로 두고, 표시하는 쪽에서 '-'로 떨어뜨려요.
-      score: status === 'SUBMITTED' ? scoreByEvaluatorIdResult.data.get(userId) : undefined,
+      score:
+        userId != null && status === 'SUBMITTED'
+          ? scoreByEvaluatorIdResult.data.get(userId)
+          : undefined,
       status,
-      userId,
     }));

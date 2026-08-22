@@ -134,7 +134,7 @@ export const UpdateWithdrawnMemberRequestSchema = UpdateMemberCommonRequestSchem
 });
 
 export const LastMemberSyncTimeSchema = z.object({
-  lastUpdatedTime: z.iso.datetime().optional(), // 마지막 새로고침 시간
+  lastUpdatedTime: z.iso.datetime().nullish(),
 });
 
 export const MemberIncludeFromApplicantsResponseSchema = z.object({

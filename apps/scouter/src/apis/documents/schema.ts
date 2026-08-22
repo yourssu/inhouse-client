@@ -10,7 +10,9 @@ export const DocumentEvaluatorStatusValueSchema = z.enum([
 ]);
 
 export const DocumentEvaluatorStatusSchema = z.object({
-  userId: z.number(),
+  memberId: z.number(),
+  // User 엔티티가 없는 평가자는 userId가 null로 내려와요. 고유 식별자로는 memberId를 사용해요.
+  userId: z.number().nullable(),
   name: z.string(),
   status: DocumentEvaluatorStatusValueSchema,
 });

@@ -31,7 +31,9 @@ export const InterviewEvaluatorStatusValueSchema = z.enum([
 ]);
 
 export const InterviewEvaluatorStatusSchema = z.object({
-  userId: z.int(),
+  memberId: z.int(),
+  // User 엔티티가 없는 평가자는 userId가 null로 내려와요. 고유 식별자로는 memberId를 사용해요.
+  userId: z.int().nullable(),
   name: z.string(),
   status: InterviewEvaluatorStatusValueSchema,
 });
