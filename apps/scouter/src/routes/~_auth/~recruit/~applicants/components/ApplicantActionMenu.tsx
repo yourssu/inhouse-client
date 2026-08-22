@@ -33,8 +33,8 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   // 그 외 차단 상태는 isAssignmentEvaluationAccessDisabled가 담당하고, 클릭 시 에러 모달로 안내해요.
   const isAssignmentEvaluationDisabled = state === 'DOCUMENT_REJECTED';
   const isAssignmentEvaluationAccessDisabled = !isAssignmentEvalAccessAllowed(state);
-  const isInterviewEvaluationDisabled = !isInterviewEvalAccessAllowed(state);
   const isQuestionnaireDisabled = !isQuestionnaireAccessAllowed(state);
+  const isInterviewEvaluationDisabled = !isInterviewEvalAccessAllowed(state);
 
   const handleDocumentEvaluationClick = () => {
     navigate({
@@ -43,18 +43,17 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
     });
   };
 
-  const handleInterviewEvaluationClick = () => {
-    navigate({
-      params: { applicantId: String(applicantId) },
-      to: '/recruit/applicants/$applicantId/eval/interview',
-    });
-  };
-
   const handleQuestionnaireClick = () => {
     navigate({
       params: { applicantId: String(applicantId) },
       search: { partId, semester: applicationSemester },
       to: '/recruit/applicants/$applicantId/eval/questionnaire',
+    });
+  };
+  const handleInterviewEvaluationClick = () => {
+    navigate({
+      params: { applicantId: String(applicantId) },
+      to: '/recruit/applicants/$applicantId/eval/interview',
     });
   };
 
@@ -106,17 +105,17 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
         )}
         <Menu.ButtonItem
           className="disabled:cursor-not-allowed disabled:opacity-40"
-          disabled={isInterviewEvaluationDisabled}
-          onClick={handleInterviewEvaluationClick}
-        >
-          면접 평가
-        </Menu.ButtonItem>
-        <Menu.ButtonItem
-          className="disabled:cursor-not-allowed disabled:opacity-40"
           disabled={isQuestionnaireDisabled}
           onClick={handleQuestionnaireClick}
         >
           질문지 설계
+        </Menu.ButtonItem>
+        <Menu.ButtonItem
+          className="disabled:cursor-not-allowed disabled:opacity-40"
+          disabled={isInterviewEvaluationDisabled}
+          onClick={handleInterviewEvaluationClick}
+        >
+          면접 평가
         </Menu.ButtonItem>
       </Menu.Content>
     </Menu>
