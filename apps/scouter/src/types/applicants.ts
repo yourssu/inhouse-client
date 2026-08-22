@@ -1,7 +1,7 @@
 import type { ApplicantStateType } from '@/apis/applicants/schema';
 
 export const applicantStateKo = {
-  UNDER_REVIEW: '심사 진행 중',
+  UNDER_REVIEW: '서류 심사 중',
   DOCUMENT_ACCEPTED: '서류 합격',
   DOCUMENT_REJECTED: '서류 불합',
   ASSIGNMENT_ACCEPTED: '과제 합격',
