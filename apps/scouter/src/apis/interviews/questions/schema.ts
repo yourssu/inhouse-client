@@ -9,8 +9,8 @@ export const QuestionRequirementSchema = z.object({
 
 export const AssignedQuestionSchema = z.object({
   id: z.number().nullish(),
-  assignedInterviewerUserId: z.number().nullish(),
-  assignedInterviewerName: z.string().nullish(),
+  assignedMemberId: z.number().nullish(),
+  assignedMemberName: z.string().nullish(),
   sourceQuestionId: z.number().nullish(),
   content: z.string(),
   category: QuestionCategorySchema,
@@ -42,7 +42,7 @@ export const PartInterviewQuestionsParamsSchema = z.object({
 
 // 모든 카테고리의 질문에 질문자 배정이 필요해요.
 export const SaveAssignedQuestionRequestSchema = z.object({
-  assignedInterviewerUserId: z.number(),
+  assignedMemberId: z.number(),
   category: QuestionCategorySchema,
   sourceQuestionId: z.number().optional(),
   content: z.string().optional(),

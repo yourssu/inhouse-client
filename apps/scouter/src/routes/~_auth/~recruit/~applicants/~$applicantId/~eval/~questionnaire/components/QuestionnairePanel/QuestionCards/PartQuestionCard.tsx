@@ -50,7 +50,7 @@ export const PartQuestionCard = ({
       <InterviewerField
         activeMembers={activeMembers}
         control={control}
-        name={`PART.${index}.assignedInterviewerUserId`}
+        name={`PART.${index}.assignedMemberId`}
       />
     </QuestionCardFrame>
   );

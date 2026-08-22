@@ -57,7 +57,7 @@ export const CultureQuestionCard = ({
             activeMembers={activeMembers}
             control={control}
             isRequired={field.value === true}
-            name={`CULTURE.${index}.assignedInterviewerUserId`}
+            name={`CULTURE.${index}.assignedMemberId`}
           />
         </QuestionCardFrame>
       )}

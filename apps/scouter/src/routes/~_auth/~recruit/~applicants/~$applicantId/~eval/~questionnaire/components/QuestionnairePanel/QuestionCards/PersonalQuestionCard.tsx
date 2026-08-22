@@ -50,7 +50,7 @@ export const PersonalQuestionCard = ({
       <InterviewerField
         activeMembers={activeMembers}
         control={control}
-        name={`PERSONAL.${index}.assignedInterviewerUserId`}
+        name={`PERSONAL.${index}.assignedMemberId`}
       />
     </QuestionCardFrame>
   );

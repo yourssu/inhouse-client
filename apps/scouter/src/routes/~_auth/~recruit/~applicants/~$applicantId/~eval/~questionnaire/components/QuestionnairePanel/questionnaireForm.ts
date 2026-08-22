@@ -1,7 +1,7 @@
 import type { QuestionRequirement } from '@/apis/interviews/questions/schema';
 
 interface BaseQuestionFormValue {
-  assignedInterviewerUserId?: number;
+  assignedMemberId?: number;
   content: string;
 }
 

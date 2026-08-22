@@ -4746,10 +4746,10 @@
       "SaveAssignedQuestionRequest": {
         "type": "object",
         "properties": {
-          "assignedInterviewerUserId": {
+          "assignedMemberId": {
             "type": "integer",
             "format": "int64",
-            "description": "배정할 면접관 유저 ID"
+            "description": "배정할 면접관 멤버 ID"
           },
           "sourceQuestionId": {
             "type": "integer",
@@ -4778,7 +4778,7 @@
             }
           }
         },
-        "required": ["assignedInterviewerUserId", "category"]
+        "required": ["assignedMemberId", "category"]
       },
       "SaveAssignedQuestionsRequest": {
         "type": "object",
@@ -4800,14 +4800,14 @@
             "format": "int64",
             "description": "배정 질문 ID (초기 기본 질문인 경우 null)"
           },
-          "assignedInterviewerUserId": {
+          "assignedMemberId": {
             "type": "integer",
             "format": "int64",
-            "description": "Assigned interviewer user ID (null for initial default questions)"
+            "description": "Assigned member ID (null for initial default questions)"
           },
-          "assignedInterviewerName": {
+          "assignedMemberName": {
             "type": "string",
-            "description": "배정된 면접관 영어 닉네임"
+            "description": "배정된 면접관 영어 닉네임/이름"
           },
           "sourceQuestionId": {
             "type": "integer",
