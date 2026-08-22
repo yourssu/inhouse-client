@@ -2,14 +2,17 @@ import type { ReactNode } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuspenseQueries } from '@tanstack/react-query';
+import { Lottie } from '@toss/lottie';
 import {
   Badge,
   Button,
   Divider,
   Fieldset,
   MultilineTextField,
+  Result,
   Select,
 } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { type Control, Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { IoMdAlert } from 'react-icons/io';
@@ -150,22 +153,41 @@ export const MyInterviewEvaluationPanel = ({
     });
   };
 
+  const header = (
+    <header className="flex items-center justify-between gap-3">
+      <h2 className="text-xl font-semibold">내 평가</h2>
+      {isMyEvaluationSubmitted ? (
+        <Badge color="green" size="md">
+          제출 완료
+        </Badge>
+      ) : (
+        <InterviewRubricSettingButton
+          isLocked={isRubricLocked}
+          partId={partId}
+          semester={semester}
+        />
+      )}
+    </header>
+  );
+
+  if (!isRubricSet) {
+    return (
+      <div className="flex flex-[1_1_0] flex-col gap-4">
+        {header}
+        <div className="flex flex-[1_1_0] items-center justify-center">
+          <Result
+            description="상단의 배점 설정 버튼을 눌러서 진행할 수 있어요."
+            figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
+            title="문항별 배점 설정을 완료해주세요"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold">내 평가</h2>
-        {isMyEvaluationSubmitted ? (
-          <Badge color="green" size="md">
-            제출 완료
-          </Badge>
-        ) : (
-          <InterviewRubricSettingButton
-            isLocked={isRubricLocked}
-            partId={partId}
-            semester={semester}
-          />
-        )}
-      </header>
+      {header}
       {isSubmissionDisabled ? (
         <p className="bg-orange50 text-orange600 rounded-10 flex items-center gap-1.5 px-4 py-3 text-sm font-medium">
           <IoMdAlert aria-hidden className="size-5 shrink-0" />
@@ -180,7 +202,6 @@ export const MyInterviewEvaluationPanel = ({
                   fitMaxScore={fitMaxScore}
                   fitType={fitType}
                   groupErrorMessage={errors.groups?.[groupIndex]?.groupMaxScore?.message}
-                  isRubricSet={isRubricSet}
                   key={fitType}
                 >
                   {requirements.map((requirement, itemIndex) => (
@@ -205,17 +226,7 @@ export const MyInterviewEvaluationPanel = ({
             quantitativeScore={quantitativeScore}
           />
 
-          {!isRubricSet && (
-            <FieldErrorMessage>배점 설정 후 평가를 제출할 수 있어요.</FieldErrorMessage>
-          )}
-
-          <Button
-            className="w-full"
-            disabled={!isRubricSet}
-            loading={isPending}
-            size="md"
-            type="submit"
-          >
+          <Button className="w-full" loading={isPending} size="md" type="submit">
             {!isMyEvaluationSubmitted ? '내 평가 제출하기' : '내 평가 다시 제출하기'}
           </Button>
         </form>
@@ -229,7 +240,6 @@ interface EvaluationCardByFitProps {
   fitMaxScore: number;
   fitType: InterviewRubricGroupName;
   groupErrorMessage: string | undefined;
-  isRubricSet: boolean;
 }
 
 const EvaluationCardByFit = ({
@@ -237,7 +247,6 @@ const EvaluationCardByFit = ({
   fitMaxScore,
   fitType,
   groupErrorMessage,
-  isRubricSet,
 }: EvaluationCardByFitProps) => (
   <div className="border-greyOpacity200 bg-lightBackground rounded-10 flex flex-col gap-2 border py-3">
     <div className="flex items-center justify-between gap-2 px-4">
@@ -248,15 +257,11 @@ const EvaluationCardByFit = ({
         {`${fitMaxScore}점`}
       </Badge>
     </div>
-    {isRubricSet && (
-      <>
-        <Divider />
-        <div className="flex flex-col justify-between gap-2 px-4">
-          {groupErrorMessage != null && <FieldErrorMessage>{groupErrorMessage}</FieldErrorMessage>}
-          {children}
-        </div>
-      </>
-    )}
+    <Divider />
+    <div className="flex flex-col justify-between gap-2 px-4">
+      {groupErrorMessage != null && <FieldErrorMessage>{groupErrorMessage}</FieldErrorMessage>}
+      {children}
+    </div>
   </div>
 );
 
