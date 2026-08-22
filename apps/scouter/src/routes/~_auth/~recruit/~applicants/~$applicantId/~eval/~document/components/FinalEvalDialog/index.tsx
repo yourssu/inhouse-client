@@ -6,8 +6,8 @@ import { IoMdAlert } from 'react-icons/io';
 import { patchApplicant } from '@/apis/applicants';
 import { applicantByIdOption } from '@/apis/applicants/query';
 import {
+  documentEvaluatorStatusesOption,
   getApplicantDocumentsEvaluationsOption,
-  getApplicantDocumentsOthersEvaluationsOption,
 } from '@/apis/documents/query';
 import { partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -33,8 +33,8 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
   });
 
   const { data: applicant } = useSuspenseQuery(applicantByIdOption(applicantId));
-  const { data: othersEvaluations } = useSuspenseQuery(
-    getApplicantDocumentsOthersEvaluationsOption(applicantId),
+  const { data: evaluatorStatuses } = useSuspenseQuery(
+    documentEvaluatorStatusesOption(applicantId),
   );
   const { data: parts } = useSuspenseQuery(partsOption());
   const part = parts.find((p) => p.partName === applicant.part);
@@ -44,9 +44,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
     null,
   );
 
-  const unsubmittedEvaluators = othersEvaluations.filter(
-    (evaluator) => evaluator.items.length === 0,
-  );
+  const unsubmittedEvaluators = evaluatorStatuses.filter(({ status }) => status !== 'SUBMITTED');
 
   const onSubmit = async (finalState: 'DOCUMENT_ACCEPTED' | 'DOCUMENT_REJECTED') => {
     const { success } = await mutation.mutateWithToast({
@@ -82,7 +80,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
             </h3>
             <ul className="text-neutralSubtle flex flex-col text-sm" role="list">
               {unsubmittedEvaluators.map((evaluator) => (
-                <li key={evaluator.evaluatorId}>{evaluator.evaluatorName}</li>
+                <li key={evaluator.memberId}>{evaluator.name}</li>
               ))}
             </ul>
           </section>
