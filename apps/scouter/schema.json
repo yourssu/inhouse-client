@@ -29,7 +29,9 @@
   "paths": {
     "/semesters/{semester}/parts/{partId}/interviews/questions": {
       "get": {
-        "tags": ["면접 질문"],
+        "tags": [
+          "면접 질문"
+        ],
         "summary": "파트별 면접 질문 및 요구조건 조회",
         "description": "INTRO, OUTRO, CULTURE, PART 질문과 매핑된 요구조건을 조회합니다. CULTURE/PART 는 지정된 학기 기준으로 필터링됩니다. 학기는 '2026-1' 형식으로 전달합니다.",
         "operationId": "readAll",
@@ -69,7 +71,9 @@
         }
       },
       "put": {
-        "tags": ["면접 질문"],
+        "tags": [
+          "면접 질문"
+        ],
         "summary": "파트별 면접 공통 질문 전체 수정",
         "description": "id가 있으면 수정하고 없으면 생성하며, 누락된 기존 질문은 삭제합니다. 학기는 '2026-1' 형식으로 전달합니다.",
         "operationId": "upsertParts",
@@ -121,7 +125,9 @@
     },
     "/semesters/{semester}/interviews/questions": {
       "put": {
-        "tags": ["면접 질문"],
+        "tags": [
+          "면접 질문"
+        ],
         "summary": "전역·문화 면접 질문 수정/생성",
         "description": "INTRO, OUTRO 및 CULTURE 질문을 생성합니다. CULTURE 질문은 지정된 학기에 귀속되고, INTRO/OUTRO는 학기에 무관하게 공유됩니다. 학기는 '2026-1' 형식으로 전달합니다.",
         "operationId": "upsertGlobalAndCulture",
@@ -164,7 +170,9 @@
     },
     "/recruiter/schedule/part/{partId}": {
       "put": {
-        "tags": ["면접 일정"],
+        "tags": [
+          "면접 일정"
+        ],
         "summary": "파트 스케줄 수정 API",
         "description": "특정 파트의 스케줄을 전체 수정합니다.",
         "operationId": "updateByPart",
@@ -204,7 +212,9 @@
         }
       },
       "delete": {
-        "tags": ["면접 일정"],
+        "tags": [
+          "면접 일정"
+        ],
         "summary": "파트별 스케줄 삭제 API",
         "description": "특정 파트의 모든 면접 스케줄을 삭제합니다.",
         "operationId": "deleteByPart",
@@ -245,7 +255,9 @@
     },
     "/parts/{partId}/interviews/rubrics/{semester}": {
       "get": {
-        "tags": ["면접 평가 루브릭"],
+        "tags": [
+          "면접 평가 루브릭"
+        ],
         "summary": "학기별 면접 평가 루브릭 조회",
         "description": "파트와 학기에 해당하는 면접 평가 루브릭을 조회합니다. 아직 저장된 루브릭이 없으면 해당 파트·학기의 면접 요구조건을 바탕으로 배점 미설정(maxScore=0) 상태의 미저장 템플릿을 반환합니다.",
         "operationId": "readByPartIdAndSemester",
@@ -307,7 +319,9 @@
         }
       },
       "put": {
-        "tags": ["면접 평가 루브릭"],
+        "tags": [
+          "면접 평가 루브릭"
+        ],
         "summary": "면접 평가 항목(루브릭)의 배점을 설정합니다.",
         "description": "해당 루브릭에 해당하는 평가가 있다면 배점 수정이 불가능 합니다. 모든 항목의 maxScore 합계는 100이어야 합니다.",
         "operationId": "upsert",
@@ -414,7 +428,9 @@
     },
     "/parts/{partId}/interviews/requirements": {
       "get": {
-        "tags": ["면접 요구조건"],
+        "tags": [
+          "면접 요구조건"
+        ],
         "summary": "파트별 면접 요구조건 조회",
         "operationId": "readByPartId",
         "parameters": [
@@ -451,7 +467,9 @@
         }
       },
       "put": {
-        "tags": ["면접 요구조건"],
+        "tags": [
+          "면접 요구조건"
+        ],
         "summary": "파트별 면접 요구조건 수정",
         "operationId": "upsert_1",
         "parameters": [
@@ -494,7 +512,9 @@
     },
     "/parts/{partId}/documents/rubrics": {
       "get": {
-        "tags": ["서류 평가 문항"],
+        "tags": [
+          "서류 평가 문항"
+        ],
         "summary": "서류 평가 문항 조회",
         "operationId": "readByPartId_1",
         "parameters": [
@@ -525,7 +545,9 @@
         }
       },
       "put": {
-        "tags": ["서류 평가 문항"],
+        "tags": [
+          "서류 평가 문항"
+        ],
         "summary": "서류 평가 문항 수정",
         "description": "배점과 평가 지표만 수정합니다. 배점 합계는 100이어야 합니다.",
         "operationId": "updateRubrics",
@@ -563,7 +585,9 @@
     },
     "/parts/{partId}/documents/deadline": {
       "get": {
-        "tags": ["서류 평가 마감일"],
+        "tags": [
+          "서류 평가 마감일"
+        ],
         "summary": "마감일 조회",
         "operationId": "readByPartId_2",
         "parameters": [
@@ -591,7 +615,9 @@
         }
       },
       "put": {
-        "tags": ["서류 평가 마감일"],
+        "tags": [
+          "서류 평가 마감일"
+        ],
         "summary": "마감일 설정",
         "operationId": "upsert_2",
         "parameters": [
@@ -625,7 +651,9 @@
     },
     "/interviews/requirements/global": {
       "get": {
-        "tags": ["면접 요구조건"],
+        "tags": [
+          "면접 요구조건"
+        ],
         "summary": "전역 면접 요구조건 조회",
         "description": "특정 파트에 속하지 않고 모든 파트에 공통 적용되는 면접 요구조건을 조회합니다.",
         "operationId": "readGlobal",
@@ -654,7 +682,9 @@
         }
       },
       "put": {
-        "tags": ["면접 요구조건"],
+        "tags": [
+          "면접 요구조건"
+        ],
         "summary": "전역 면접 요구조건 수정",
         "description": "모든 파트에 공통 적용되는 면접 요구조건을 수정합니다. 잠긴(평가가 진행 중이거나 완료된) 루브릭을 가진 파트가 하나라도 있으면 수정할 수 없습니다.",
         "operationId": "upsertGlobal",
@@ -689,7 +719,9 @@
     },
     "/applicants/{applicantId}/interviews/questions": {
       "get": {
-        "tags": ["면접 질문"],
+        "tags": [
+          "면접 질문"
+        ],
         "summary": "지원자별 면접 질문 조회",
         "operationId": "read",
         "parameters": [
@@ -717,7 +749,9 @@
         }
       },
       "put": {
-        "tags": ["면접 질문"],
+        "tags": [
+          "면접 질문"
+        ],
         "summary": "지원자별 면접 질문 수정",
         "description": "요청 바디의 문항 목록으로 기존 지원자별 질문을 전체 치환합니다.",
         "operationId": "upsert_3",
@@ -758,7 +792,9 @@
     },
     "/applicants/{applicantId}/interviews/evaluations": {
       "get": {
-        "tags": ["면접 평가"],
+        "tags": [
+          "면접 평가"
+        ],
         "summary": "면접 평가 조회 (본인)",
         "description": "로그인한 면접관 본인의 임시저장/최종제출 면접 평가 내역을 조회합니다.",
         "operationId": "readMy",
@@ -809,7 +845,9 @@
         }
       },
       "put": {
-        "tags": ["면접 평가"],
+        "tags": [
+          "면접 평가"
+        ],
         "summary": "면접 평가 저장/수정",
         "description": "로그인한 면접관 본인의 평가 정보를 저장합니다. submit이 false이면 임시저장, true이면 최종 제출입니다. 제출 시 요청된 점수가 배점을 초과하면 안 됩니다.",
         "operationId": "save",
@@ -870,7 +908,9 @@
     },
     "/applicants/{applicantId}/documents/evaluations": {
       "get": {
-        "tags": ["서류 평가"],
+        "tags": [
+          "서류 평가"
+        ],
         "summary": "서류 평가 조회 (본인)",
         "operationId": "readMy_1",
         "parameters": [
@@ -898,7 +938,9 @@
         }
       },
       "put": {
-        "tags": ["서류 평가"],
+        "tags": [
+          "서류 평가"
+        ],
         "summary": "서류 평가 저장/수정",
         "operationId": "save_1",
         "parameters": [
@@ -932,7 +974,9 @@
     },
     "/api/mails/templates/{templateId}": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 템플릿 상세 조회",
         "description": "특정 메일 템플릿의 상세 내용을 조회합니다. (편집용)",
         "operationId": "readDetail",
@@ -962,7 +1006,9 @@
         }
       },
       "put": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 템플릿 수정",
         "description": "특정 메일 템플릿을 수정합니다. 전체 메일 템플릿의 내용을 보내야 합니다.\n\n**변수 규칙:**\n- 모든 변수 키는 `var-{UUID}` 형식이어야 합니다 (예: `var-550e8400-e29b-41d4-a716-446655440000`)",
         "operationId": "update",
@@ -1001,7 +1047,9 @@
         }
       },
       "delete": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 템플릿 삭제",
         "description": "특정 메일 템플릿을 삭제합니다. 해당 메일 템플릿이 없을 시 404를 반환합니다.",
         "operationId": "delete",
@@ -1030,7 +1078,9 @@
     },
     "/api/mails/reservation/{reservationId}": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "예약 메일 단건 조회",
         "description": "예약 ID에 해당하는 메일 예약 상세를 조회합니다. status: SCHEDULED, PENDING_SEND, SENT. 다른 사용자의 예약에는 접근할 수 없습니다.",
         "operationId": "getReservationDetail",
@@ -1079,7 +1129,9 @@
         }
       },
       "put": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "예약 메일 수정",
         "description": "기존 예약 메일의 발송 시각과 내용을 수정합니다. 요청 바디는 생성과 동일한 MailReserveRequest 형식을 사용하며, 전체를 교체합니다.",
         "operationId": "updateReservation",
@@ -1132,7 +1184,9 @@
         }
       },
       "delete": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "예약 메일 취소",
         "description": "아직 발송되지 않은 예약 메일을 취소합니다.",
         "operationId": "cancelReservation",
@@ -1177,7 +1231,9 @@
     },
     "/withdrawal": {
       "post": {
-        "tags": ["인증/인가"],
+        "tags": [
+          "인증/인가"
+        ],
         "summary": "회원 탈퇴",
         "operationId": "withdraw",
         "requestBody": {
@@ -1200,7 +1256,9 @@
     },
     "/semesters": {
       "get": {
-        "tags": ["학과/학기/단과대"],
+        "tags": [
+          "학과/학기/단과대"
+        ],
         "summary": "학기 전체 조회",
         "description": "생성된 전체 학기 정보를 조회합니다.",
         "operationId": "readAll_1",
@@ -1221,7 +1279,9 @@
         }
       },
       "post": {
-        "tags": ["학과/학기/단과대"],
+        "tags": [
+          "학과/학기/단과대"
+        ],
         "summary": "학기 생성",
         "description": "연도, 학기 조합으로 학기를 생성합니다.",
         "operationId": "create",
@@ -1245,7 +1305,9 @@
     },
     "/refresh-token": {
       "post": {
-        "tags": ["인증/인가"],
+        "tags": [
+          "인증/인가"
+        ],
         "summary": "토큰 재발급",
         "description": "Authorization 헤더는 무시되며, 바디의 refreshToken(순수 JWT)만 사용합니다.",
         "operationId": "refreshToken",
@@ -1286,7 +1348,9 @@
     },
     "/recruiter/schedule": {
       "get": {
-        "tags": ["면접 일정"],
+        "tags": [
+          "면접 일정"
+        ],
         "summary": "면접 스케줄 조회 API",
         "description": "면접 스케줄 조회 API 입니다. 추후 partID를 입력하지 않으면 전체 조회가 되도록 변경 예정",
         "operationId": "getSchedules",
@@ -1318,7 +1382,9 @@
         }
       },
       "post": {
-        "tags": ["면접 일정"],
+        "tags": [
+          "면접 일정"
+        ],
         "summary": "면접 스케줄 추가 API",
         "description": "면접 스케줄을 추가하는 API 입니다.",
         "operationId": "createSchedules",
@@ -1345,7 +1411,10 @@
     },
     "/oauth2/login/{oauth2Type}": {
       "post": {
-        "tags": ["OAUTH2", "인증/인가"],
+        "tags": [
+          "OAUTH2",
+          "인증/인가"
+        ],
         "summary": "로그인",
         "description": "/oauth2/{oauth2Type}에서 얻은 code를 이용해 로그인을 진행합니다. 등록된 멤버만 로그인할 수 있습니다.",
         "operationId": "login",
@@ -1356,7 +1425,9 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["GOOGLE"]
+              "enum": [
+                "GOOGLE"
+              ]
             }
           }
         ],
@@ -1397,7 +1468,10 @@
     },
     "/members/include-from-applicants": {
       "post": {
-        "tags": ["합격자 동기화 API", "유어슈 멤버"],
+        "tags": [
+          "합격자 동기화 API",
+          "유어슈 멤버"
+        ],
         "summary": "지원자 중 합격자 멤버 동기화",
         "description": "리크루팅 지원자 중 합격자를 멤버에 동기화 합니다.",
         "operationId": "includeFromApplicants",
@@ -1433,7 +1507,10 @@
     },
     "/members/include-from-applicants/{semesterString}": {
       "post": {
-        "tags": ["합격자 동기화 API", "유어슈 멤버"],
+        "tags": [
+          "합격자 동기화 API",
+          "유어슈 멤버"
+        ],
         "summary": "지정 학기 합격자 멤버 동기화",
         "description": "지정한 학기(semesterString, yy-term 예: 25-1)의 합격자만 멤버에 동기화합니다. 없으면 전체 동기화와 동일.",
         "operationId": "includeFromApplicants_1",
@@ -1483,7 +1560,9 @@
     },
     "/logout": {
       "post": {
-        "tags": ["인증/인가"],
+        "tags": [
+          "인증/인가"
+        ],
         "summary": "로그아웃",
         "operationId": "logout",
         "requestBody": {
@@ -1506,7 +1585,9 @@
     },
     "/internal/dev/member-privacy/privileged/self/enable": {
       "post": {
-        "tags": ["[DEV] 멤버 민감정보 권한 테스트"],
+        "tags": [
+          "[DEV] 멤버 민감정보 권한 테스트"
+        ],
         "summary": "나를 권한자로 복원 (테스트용)",
         "description": "비권한자로 전환한 상태를 해제하고, 다시 민감정보 열람 권한이 있는 상태로 돌립니다.",
         "operationId": "enablePrivilegeForSelf",
@@ -1524,7 +1605,9 @@
     },
     "/internal/dev/member-privacy/privileged/self/disable": {
       "post": {
-        "tags": ["[DEV] 멤버 민감정보 권한 테스트"],
+        "tags": [
+          "[DEV] 멤버 민감정보 권한 테스트"
+        ],
         "summary": "나를 비권한자로 전환 (테스트용)",
         "description": "이후 멤버 API 호출 시 내 계정은 민감정보가 마스킹된 응답을 받습니다. 스카우터 팀원만 호출 가능.",
         "operationId": "disablePrivilegeForSelf",
@@ -1542,7 +1625,9 @@
     },
     "/applicants": {
       "get": {
-        "tags": ["리크루팅 지원자"],
+        "tags": [
+          "리크루팅 지원자"
+        ],
         "summary": "지원자 목록 조회",
         "description": "지원자 목록을 검색, 필터링을 통해 얻습니다. 필터링에 필요한 정보는 각 api에서 얻어야 합니다.",
         "operationId": "readAll_2",
@@ -1631,7 +1716,9 @@
         }
       },
       "post": {
-        "tags": ["리크루팅 지원자"],
+        "tags": [
+          "리크루팅 지원자"
+        ],
         "summary": "지원자 추가 API",
         "operationId": "create_1",
         "requestBody": {
@@ -1660,7 +1747,9 @@
     },
     "/applicants/{applicantId}/interviews/memos": {
       "get": {
-        "tags": ["면접 질문 코멘트"],
+        "tags": [
+          "면접 질문 코멘트"
+        ],
         "summary": "면접 질문 메모 목록 조회",
         "description": "지원자의 할당된 질문별로 코멘트를 그룹화하여 조회합니다.",
         "operationId": "read_1",
@@ -1692,7 +1781,9 @@
         }
       },
       "post": {
-        "tags": ["면접 질문 코멘트"],
+        "tags": [
+          "면접 질문 코멘트"
+        ],
         "summary": "면접 질문 메모 작성",
         "operationId": "create_2",
         "parameters": [
@@ -1732,7 +1823,9 @@
     },
     "/applicants/{applicantId}/documents/comments": {
       "get": {
-        "tags": ["서류 코멘트"],
+        "tags": [
+          "서류 코멘트"
+        ],
         "summary": "인라인 코멘트 조회",
         "operationId": "readAllByApplicantId",
         "parameters": [
@@ -1763,7 +1856,9 @@
         }
       },
       "post": {
-        "tags": ["서류 코멘트"],
+        "tags": [
+          "서류 코멘트"
+        ],
         "summary": "인라인 코멘트 작성",
         "operationId": "create_3",
         "parameters": [
@@ -1803,7 +1898,10 @@
     },
     "/applicants/include-from-forms": {
       "post": {
-        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "tags": [
+          "지원자 동기화 API",
+          "리크루팅 지원자"
+        ],
         "summary": "구글폼 응답을 지원자 목록에 업데이트",
         "description": "현재 로그인 되어있는 사용자의 계정을 이용해 지원자의 구글폼 응답을 동기화 합니다.",
         "operationId": "includeFromForms",
@@ -1829,7 +1927,10 @@
     },
     "/applicants/include-from-forms/semesters/{semesterId}": {
       "post": {
-        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "tags": [
+          "지원자 동기화 API",
+          "리크루팅 지원자"
+        ],
         "operationId": "includeFromFormsBySemesterAndPart",
         "parameters": [
           {
@@ -1864,7 +1965,9 @@
     },
     "/api/mails/templates": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 템플릿 목록 조회",
         "description": "현재 등록된 전체 메일 템플릿을 조회합니다.",
         "operationId": "readAll_3",
@@ -1913,7 +2016,9 @@
         }
       },
       "post": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 템플릿 생성",
         "description": "제목과 양식을 지정해 새로운 메일 템플릿을 생성합니다.\n\n**변수 규칙:**\n- 모든 변수 키는 `var-{UUID}` 형식이어야 합니다 (예: `var-550e8400-e29b-41d4-a716-446655440000`)\n- 메일 본문에서 변수는 `{{var-{UUID}}}` 형식으로 사용합니다\n\n**변수 타입:**\n- **사용자 입력 변수**: PERSON, DATE, LINK, TEXT\n- **자동 채움 변수**: APPLICANT, PARTNAME",
         "operationId": "create_4",
@@ -1943,7 +2048,9 @@
     },
     "/api/mails/send": {
       "post": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 즉시 발송",
         "description": "메일을 즉시 발송합니다. DB에 저장하지 않고 바로 발송됩니다. 파일은 사전에 /api/mails/files/* API로 업로드/확정한 뒤, fileId 참조만 전달합니다.",
         "operationId": "sendMail",
@@ -1987,7 +2094,9 @@
     },
     "/api/mails/reservation": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "예약 메일 목록 조회",
         "description": "현재 사용자가 예약한 메일 목록을 조회합니다. status: SCHEDULED(예약됨), PENDING_SEND(발송 실패/재시도 대기), SENT(발송 완료)",
         "operationId": "getReservations",
@@ -2005,7 +2114,9 @@
         }
       },
       "post": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 전송 예약",
         "description": "application/json으로 요청합니다. 파일은 사전에 /api/mails/files/* API로 업로드/확정한 뒤, 예약 시 fileId 참조만 전달합니다.",
         "operationId": "reserveMail",
@@ -2039,7 +2150,9 @@
     },
     "/api/mails/reservation/{reservationId}/retry": {
       "post": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "예약 메일 재전송",
         "description": "예약 시간이 지났는데 발송 실패(PENDING_SEND)인 메일을 즉시 재전송 시도합니다. 이미 발송된 메일(SENT)이나 예약 시간 전에는 호출할 수 없습니다.",
         "operationId": "retryReservation",
@@ -2104,7 +2217,9 @@
     },
     "/api/mails/files/presign": {
       "post": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 파일 업로드용 presigned URL 발급",
         "operationId": "createPresignedUploadUrls",
         "requestBody": {
@@ -2133,7 +2248,9 @@
     },
     "/api/mails/files/confirm": {
       "post": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "업로드 완료 파일 등록",
         "operationId": "confirmUploads",
         "requestBody": {
@@ -2162,7 +2279,9 @@
     },
     "/admin/recruiting/requirements/team-fit": {
       "post": {
-        "tags": ["admin-requirement-controller"],
+        "tags": [
+          "admin-requirement-controller"
+        ],
         "operationId": "saveTeamFit",
         "parameters": [
           {
@@ -2208,7 +2327,9 @@
     },
     "/admin/recruiting/requirements/other": {
       "post": {
-        "tags": ["admin-requirement-controller"],
+        "tags": [
+          "admin-requirement-controller"
+        ],
         "operationId": "saveOther",
         "parameters": [
           {
@@ -2254,7 +2375,9 @@
     },
     "/admin/recruiting/requirements/job-fit": {
       "post": {
-        "tags": ["admin-requirement-controller"],
+        "tags": [
+          "admin-requirement-controller"
+        ],
         "operationId": "saveJobFit",
         "parameters": [
           {
@@ -2300,7 +2423,9 @@
     },
     "/admin/recruiting/requirements/culture-fit": {
       "post": {
-        "tags": ["admin-requirement-controller"],
+        "tags": [
+          "admin-requirement-controller"
+        ],
         "operationId": "saveCultureFit",
         "parameters": [
           {
@@ -2337,7 +2462,9 @@
     },
     "/admin/recruiting/questions/global": {
       "post": {
-        "tags": ["admin-question-controller"],
+        "tags": [
+          "admin-question-controller"
+        ],
         "operationId": "saveGlobalQuestions",
         "parameters": [
           {
@@ -2376,7 +2503,9 @@
     },
     "/admin/recruiting/parts/{partId}/assignments/toggle": {
       "post": {
-        "tags": ["admin-part-controller"],
+        "tags": [
+          "admin-part-controller"
+        ],
         "operationId": "toggleAssignment",
         "parameters": [
           {
@@ -2399,7 +2528,9 @@
     },
     "/admin/recruiting/deadlines/interviews": {
       "post": {
-        "tags": ["admin-deadline-controller"],
+        "tags": [
+          "admin-deadline-controller"
+        ],
         "operationId": "updateInterviewDeadline",
         "parameters": [
           {
@@ -2445,7 +2576,9 @@
     },
     "/admin/recruiting/deadlines/documents": {
       "post": {
-        "tags": ["admin-deadline-controller"],
+        "tags": [
+          "admin-deadline-controller"
+        ],
         "operationId": "updateDocumentDeadline",
         "parameters": [
           {
@@ -2483,7 +2616,9 @@
     },
     "/recruiter/schedule/{scheduleId}/location": {
       "patch": {
-        "tags": ["면접 일정"],
+        "tags": [
+          "면접 일정"
+        ],
         "summary": "면접 장소 변경 API",
         "description": "스케줄 ID를 기준으로 면접 장소 대분류와 세부장소를 수정합니다.",
         "operationId": "updateLocation",
@@ -2522,7 +2657,9 @@
     },
     "/parts/{partId}/interviews/{semester}/deadline": {
       "get": {
-        "tags": ["면접 평가 루브릭"],
+        "tags": [
+          "면접 평가 루브릭"
+        ],
         "summary": "면접 평가 마감일 조회",
         "operationId": "readDeadline",
         "parameters": [
@@ -2573,7 +2710,9 @@
         }
       },
       "patch": {
-        "tags": ["면접 평가 루브릭"],
+        "tags": [
+          "면접 평가 루브릭"
+        ],
         "summary": "면접 평가 루브릭 마감일 수정",
         "operationId": "updateDeadline",
         "parameters": [
@@ -2646,7 +2785,9 @@
     },
     "/members/withdrawn/{memberId}": {
       "patch": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "탈퇴 멤버 정보 수정",
         "description": "변경되지 않은 정보는 보내면 안됩니다.",
         "operationId": "updateWithdrawnById",
@@ -2693,7 +2834,9 @@
     },
     "/members/inactive/{memberId}": {
       "patch": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "비액티브 멤버 정보 수정",
         "description": "한 요청에는 (1) 회원 공통 프로필 필드만 또는 (2) 비액티브 전용 필드만 보낸다. 비액티브 전용은 조회 응답과 동일한 키(복귀 예정 학기 문자열, 사유, 문자 회신, 활동학기 라벨, 학기 수 등)를 사용한다. 활동 기간(activePeriod)·비액티브 기간(inactivePeriod) 객체와 activeSemesterCountLabel·inactiveSemesterCountLabel은 조회 전용이며 본문에 넣으면 Member-007이다. 복귀 예정 학기 변경 시 서버가 비액티브 기간 종료 학기를 도메인 규칙에 맞게 조정할 수 있다.",
         "operationId": "updateInactiveById",
@@ -2740,7 +2883,9 @@
     },
     "/members/graduated/{memberId}": {
       "patch": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "졸업 멤버 정보 수정",
         "description": "한 요청에는 (1) 회원 공통 프로필만 또는 (2) isAdvisorDesired만 보낸다. 활동 기간(activePeriod)은 조회 전용이며 본문에 넣으면 Member-007이다.",
         "operationId": "updateGraduatedById",
@@ -2787,7 +2932,9 @@
     },
     "/members/completed/{memberId}": {
       "patch": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "수료 멤버 정보 수정",
         "description": "변경되지 않은 정보는 보내면 안됩니다.",
         "operationId": "updateCompletedById",
@@ -2834,7 +2981,9 @@
     },
     "/members/active/{memberId}": {
       "patch": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "액티브 멤버 정보 수정",
         "description": "변경되지 않은 정보는 보내면 안됩니다.",
         "operationId": "updateActiveById",
@@ -2881,7 +3030,9 @@
     },
     "/internal/dev/parts/{partId}/documents/rubrics/reset-max-scores": {
       "patch": {
-        "tags": ["[DEV] 서류 평가 문항 배점 초기화"],
+        "tags": [
+          "[DEV] 서류 평가 문항 배점 초기화"
+        ],
         "summary": "서류 평가 문항 배점 초기화 (QA용)",
         "description": "해당 파트의 모든 서류 평가 문항 배점을 0으로 초기화합니다. 해당 문항을 참조하는 서류 평가가 남아있으면 초기화할 수 없습니다. 스카우터 팀원만 호출 가능.",
         "operationId": "resetMaxScoresToZero",
@@ -2920,7 +3071,9 @@
     },
     "/applicants/{applicantId}": {
       "get": {
-        "tags": ["리크루팅 지원자"],
+        "tags": [
+          "리크루팅 지원자"
+        ],
         "summary": "지원자 단일 조회",
         "description": "지원자 목록 조회에서 얻은 applicantId를 이용해 지원자의 세부정보를 확인합니다.",
         "operationId": "readById",
@@ -2949,7 +3102,9 @@
         }
       },
       "delete": {
-        "tags": ["리크루팅 지원자"],
+        "tags": [
+          "리크루팅 지원자"
+        ],
         "summary": "지원자 삭제",
         "description": "지원자 목록 조회에서 얻은 applicantId를 이용해 지원자를 삭제합니다.",
         "operationId": "deleteById",
@@ -2972,7 +3127,9 @@
         }
       },
       "patch": {
-        "tags": ["리크루팅 지원자"],
+        "tags": [
+          "리크루팅 지원자"
+        ],
         "summary": "지원자 정보 수정",
         "description": "변경할 지원자 정보의 값을 보냅니다. 변경되지 않은 값은 보내면 안 됩니다.",
         "operationId": "updateById",
@@ -3007,7 +3164,9 @@
     },
     "/applicants/{applicantId}/documents/comments/{commentId}": {
       "delete": {
-        "tags": ["서류 코멘트"],
+        "tags": [
+          "서류 코멘트"
+        ],
         "summary": "인라인 코멘트 삭제",
         "description": "본인이 작성한 코멘트만 삭제 가능합니다.",
         "operationId": "deleteById_1",
@@ -3039,7 +3198,9 @@
         }
       },
       "patch": {
-        "tags": ["서류 코멘트"],
+        "tags": [
+          "서류 코멘트"
+        ],
         "summary": "인라인 코멘트 수정",
         "description": "본인이 작성한 코멘트만 수정 가능합니다.",
         "operationId": "update_1",
@@ -3089,7 +3250,9 @@
     },
     "/validate-token": {
       "get": {
-        "tags": ["인증/인가"],
+        "tags": [
+          "인증/인가"
+        ],
         "summary": "AccessToken 유효성 검사",
         "operationId": "validateToken",
         "responses": {
@@ -3109,7 +3272,9 @@
     },
     "/semesters/now": {
       "get": {
-        "tags": ["학과/학기/단과대"],
+        "tags": [
+          "학과/학기/단과대"
+        ],
         "summary": "현재 학기 조회",
         "description": "현재 학기에 해당하는 정보를 조회합니다.",
         "operationId": "readByDate",
@@ -3129,7 +3294,9 @@
     },
     "/recruiter/schedule/auto/{partId}": {
       "get": {
-        "tags": ["면접 일정"],
+        "tags": [
+          "면접 일정"
+        ],
         "summary": "면접 스케줄 자동 생성 API",
         "description": "\n            백트래킹 알고리즘을 사용하여 면접 스케줄을 자동 생성합니다.\n            - 같은 파트의 같은 시간에는 중복 배정하지 않습니다.\n            - 모든 지원자를 배정할 수 없는 경우 400 에러를 반환합니다.\n            - 지원자가 많을 경우 응답 시간이 길어질 수 있습니다.\n            - **주의**: 저장은 되지 않으며, 미리보기 용도입니다.\n        ",
         "operationId": "getAutoSchedules",
@@ -3174,7 +3341,9 @@
     },
     "/parts": {
       "get": {
-        "tags": ["구분/파트"],
+        "tags": [
+          "구분/파트"
+        ],
         "summary": "파트(팀) 목록 조회",
         "description": "Head lead, Finance 등 파트 목록을 조회합니다. 파트별 세부 정보(과제 유무 등)도 함께 제공됩니다.",
         "operationId": "readAll_4",
@@ -3197,7 +3366,10 @@
     },
     "/oauth2/{oauth2Type}": {
       "get": {
-        "tags": ["OAUTH2", "인증/인가"],
+        "tags": [
+          "OAUTH2",
+          "인증/인가"
+        ],
         "summary": "OAuth2 로그인 페이지 리다이렉트",
         "description": "여기에서는 리다이렉트가 되지 않습니다. Authorize 이용.",
         "operationId": "redirectAuthCodeRequestUrl",
@@ -3208,7 +3380,9 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["GOOGLE"]
+              "enum": [
+                "GOOGLE"
+              ]
             }
           }
         ],
@@ -3223,7 +3397,10 @@
     },
     "/oauth2/google-refresh-token-status": {
       "get": {
-        "tags": ["OAUTH2", "인증/인가"],
+        "tags": [
+          "OAUTH2",
+          "인증/인가"
+        ],
         "summary": "Google refresh token 유효 여부 조회",
         "description": "현재 사용자의 Google OAuth2 refresh token이 유효한지 검사합니다. 무효일 때는 401을 반환하며, 다른 인증 실패(401)와 동일하게 재로그인 유도 처리하면 됩니다. 메일 예약, 구글 폼/드라이브 동기화 등 Google API 연동 기능에서 공통으로 사용할 수 있습니다.",
         "operationId": "getGoogleRefreshTokenStatus",
@@ -3253,7 +3430,9 @@
     },
     "/members/withdrawn": {
       "get": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "탈퇴 멤버 목록 조회/검색",
         "description": "응답 필드: memberId, parts(구분·파트), role, name, nickname(영어(한글발음)), state, withdrawnDate, note. 이메일·연락처·전공·학번·생년월일·가입일은 포함하지 않음. HR·스카우터가 아니면 isSensitiveMasked true이며 탈퇴일자·비고는 null.",
         "operationId": "readAllWithdrawn",
@@ -3294,7 +3473,9 @@
     },
     "/members/states": {
       "get": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "멤버 상태 목록 조회",
         "description": "액티브, 비액티브, 수료, 졸업, 탈퇴 등 상태를 조회합니다.",
         "operationId": "readAllMemberStates",
@@ -3317,7 +3498,9 @@
     },
     "/members/roles": {
       "get": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "멤버 역할 목록 조회",
         "description": "Lead, Vice Lead, Member 등 역할을 조회합니다.",
         "operationId": "readAllMemberRoles",
@@ -3340,7 +3523,9 @@
     },
     "/members/me": {
       "get": {
-        "tags": ["내 정보"],
+        "tags": [
+          "내 정보"
+        ],
         "summary": "내 정보 조회",
         "description": "액세스 토큰으로 현재 로그인한 사용자의 멤버 정보와 프로필 이미지를 조회합니다.",
         "operationId": "getMe",
@@ -3370,7 +3555,10 @@
     },
     "/members/lastUpdatedTime": {
       "get": {
-        "tags": ["합격자 동기화 API", "유어슈 멤버"],
+        "tags": [
+          "합격자 동기화 API",
+          "유어슈 멤버"
+        ],
         "summary": "마지막 동기화 시간 조회",
         "description": "유어슈 멤버의 마지막 동기화 시간을 조회합니다.",
         "operationId": "lastSyncTime",
@@ -3390,7 +3578,9 @@
     },
     "/members/inactive": {
       "get": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "비액티브 멤버 목록 조회/검색",
         "description": "응답은 기간 히스토리(activePeriod/inactivePeriod)와 UI 표기용 학기 수 라벨(activeSemesterCountLabel/inactiveSemesterCountLabel)을 함께 제공한다. 학기 수를 확정할 수 없으면 라벨은 null이다. HR·스카우터가 아니면 isSensitiveMasked true, 연락처·생년월일·학번·복귀예정·사유·문자회신·비고·학기 수 라벨 등 null.",
         "operationId": "readAllInActive",
@@ -3431,7 +3621,9 @@
     },
     "/members/graduated": {
       "get": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "졸업 멤버 목록 조회/검색",
         "description": "HR·스카우터가 아니면 isSensitiveMasked true, 민감 필드 및 졸업 기간(activePeriod) null.",
         "operationId": "readAllGraduated",
@@ -3472,7 +3664,9 @@
     },
     "/members/completed": {
       "get": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "수료 멤버 목록 조회/검색",
         "description": "응답 필드: memberId, parts(구분·파트), role, name, nickname(영어(한글발음)), state, email, phoneNumber, department, studentId, birthDate, joinDate, completionSemester(수료 학기), note. HR·스카우터가 아니면 isSensitiveMasked true이며 연락처·생년월일·학번·비고·completionSemester는 null.",
         "operationId": "readAllCompleted",
@@ -3513,7 +3707,9 @@
     },
     "/members/active": {
       "get": {
-        "tags": ["유어슈 멤버"],
+        "tags": [
+          "유어슈 멤버"
+        ],
         "summary": "액티브 멤버 목록 조회/검색",
         "description": "HR·스카우터 개발자가 아니면 isSensitiveMasked가 true이고, 연락처·생년월일·학번·회비·비고 등 민감 필드는 null로 내려갑니다.",
         "operationId": "readAllActive",
@@ -3554,7 +3750,9 @@
     },
     "/divisions": {
       "get": {
-        "tags": ["구분/파트"],
+        "tags": [
+          "구분/파트"
+        ],
         "summary": "멤버 구분 목록 조회",
         "description": "운영, 개발, 디자인 등 각 구분의 목록을 조회합니다.",
         "operationId": "readAll_5",
@@ -3577,7 +3775,9 @@
     },
     "/departments": {
       "get": {
-        "tags": ["학과/학기/단과대"],
+        "tags": [
+          "학과/학기/단과대"
+        ],
         "summary": "전체 학과 조회",
         "description": "전체 학과 정보를 조회합니다.",
         "operationId": "readAll_6",
@@ -3600,7 +3800,9 @@
     },
     "/colleges": {
       "get": {
-        "tags": ["학과/학기/단과대"],
+        "tags": [
+          "학과/학기/단과대"
+        ],
         "summary": "전체 단과대 조회",
         "description": "전체 단과대의 정보를 조회합니다.",
         "operationId": "readAll_7",
@@ -3623,7 +3825,9 @@
     },
     "/colleges/{collegeId}/departments": {
       "get": {
-        "tags": ["학과/학기/단과대"],
+        "tags": [
+          "학과/학기/단과대"
+        ],
         "summary": "단과대 소속 학과 조회",
         "description": "특정 단과대에 소속된 전체 학과 정보를 조회합니다.",
         "operationId": "readAllByCollegeId",
@@ -3657,7 +3861,9 @@
     },
     "/applicants/{applicantId}/interviews/evaluations/status": {
       "get": {
-        "tags": ["면접 평가"],
+        "tags": [
+          "면접 평가"
+        ],
         "summary": "면접 평가자 상태 목록 조회",
         "description": "해당 지원자에게 할당된 면접관들의 평가 작성 진행 상태를 조회합니다.",
         "operationId": "readStatuses",
@@ -3719,7 +3925,9 @@
     },
     "/applicants/{applicantId}/interviews/evaluations/others": {
       "get": {
-        "tags": ["면접 평가"],
+        "tags": [
+          "면접 평가"
+        ],
         "summary": "다른 평가자 면접 평가 조회",
         "description": "다른 면접관들의 평가 내역을 조회합니다. 본인이 평가를 완료(최종 제출)한 경우에만 타인 평가가 조회 가능합니다.",
         "operationId": "readOthers",
@@ -3781,7 +3989,9 @@
     },
     "/applicants/{applicantId}/documents/evaluations/status": {
       "get": {
-        "tags": ["서류 평가"],
+        "tags": [
+          "서류 평가"
+        ],
         "summary": "서류 평가자 상태 목록 조회",
         "operationId": "readStatuses_1",
         "parameters": [
@@ -3814,7 +4024,9 @@
     },
     "/applicants/{applicantId}/documents/evaluations/others": {
       "get": {
-        "tags": ["서류 평가"],
+        "tags": [
+          "서류 평가"
+        ],
         "summary": "다른 평가자 서류 평가 조회",
         "operationId": "readOthers_1",
         "parameters": [
@@ -3847,7 +4059,9 @@
     },
     "/applicants/{applicantId}/documents/evaluation-view": {
       "get": {
-        "tags": ["서류 평가"],
+        "tags": [
+          "서류 평가"
+        ],
         "summary": "서류 평가 화면 통합 조회",
         "operationId": "readEvaluationView",
         "parameters": [
@@ -3877,7 +4091,9 @@
     },
     "/applicants/{applicantId}/answers": {
       "get": {
-        "tags": ["리크루팅 지원자"],
+        "tags": [
+          "리크루팅 지원자"
+        ],
         "summary": "지원자 서류 응답 조회",
         "description": "지원자 필드로 매핑되지 않고 저장된 폼의 질문/응답 목록을 조회합니다.",
         "operationId": "readAnswersById",
@@ -3911,7 +4127,9 @@
     },
     "/applicants/states": {
       "get": {
-        "tags": ["리크루팅 지원자"],
+        "tags": [
+          "리크루팅 지원자"
+        ],
         "summary": "지원자 상태 목록 조회",
         "description": "전체 지원자의 가능한 상태 목록을 확인합니다. 현재 지원자와는 관련이 없습니다.",
         "operationId": "readAllMemberStates_1",
@@ -3930,7 +4148,6 @@
                   "UNDER_REVIEW",
                   "DOCUMENT_ACCEPTED",
                   "DOCUMENT_REJECTED",
-                  "INTERVIEW_ACCEPTED",
                   "INTERVIEW_REJECTED",
                   "INCUBATING_REJECTED",
                   "FINAL_ACCEPTED"
@@ -3943,7 +4160,10 @@
     },
     "/applicants/lastUpdatedTime": {
       "get": {
-        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "tags": [
+          "지원자 동기화 API",
+          "리크루팅 지원자"
+        ],
         "summary": "마지막 동기화 시간 조회",
         "operationId": "lastSyncTime_1",
         "responses": {
@@ -3962,7 +4182,9 @@
     },
     "/api/mails/reservation/status": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "예약 메일 발송 상태 조회",
         "description": "현재 사용자의 미발송 예약 목록과 발송 실패 사유를 조회합니다. failureErrorCode가 OAuth-Token-Refresh-Fail이면 재로그인 후 다음 스케줄 실행 시 자동 발송됩니다.",
         "operationId": "getReservationStatus",
@@ -3982,7 +4204,9 @@
     },
     "/api/mails/reservation/groups": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 그룹 목록 조회",
         "description": "메일 예약 그룹 메타데이터(예약자 포함)와 각 그룹에 속한 메일 목록(예약 ID, 수신자 이메일, 렌더링된 제목)을 조회합니다. 1 예약 요청 = 1 그룹, 수신자 수만큼 메일이 존재합니다.",
         "operationId": "getMailGroups",
@@ -4002,7 +4226,9 @@
     },
     "/api/mails/images": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 이미지 조회 (302 Redirect)",
         "description": "S3에 업로드된 이미지의 공개 URL로 302 리다이렉트합니다.\n\n**공개 엔드포인트:**\n- 인증 없이 접근 가능합니다.\n\n**사용 방법:**\n- `<img src=\"/api/mails/images?cid=xxx\">` 형태로 HTML에서 직접 사용 가능합니다.",
         "operationId": "redirectToImage",
@@ -4026,7 +4252,9 @@
     },
     "/api/mails/files": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "내 메일 파일 목록 조회",
         "operationId": "readFiles",
         "parameters": [
@@ -4036,7 +4264,10 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["INLINE", "ATTACHMENT"]
+              "enum": [
+                "INLINE",
+                "ATTACHMENT"
+              ]
             }
           }
         ],
@@ -4056,7 +4287,9 @@
     },
     "/api/mails/files/download-url": {
       "get": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 파일 다운로드용 presigned URL 발급",
         "operationId": "createPresignedDownloadUrl",
         "parameters": [
@@ -4085,7 +4318,9 @@
     },
     "/semesters/{semesterId}": {
       "delete": {
-        "tags": ["학과/학기/단과대"],
+        "tags": [
+          "학과/학기/단과대"
+        ],
         "summary": "학기 삭제",
         "description": "특정 학기 정보를 삭제합니다.",
         "operationId": "deleteById_2",
@@ -4110,7 +4345,9 @@
     },
     "/internal/dev/parts/{partId}/interviews/rubrics/{semester}": {
       "delete": {
-        "tags": ["[DEV] 면접 루브릭 초기화"],
+        "tags": [
+          "[DEV] 면접 루브릭 초기화"
+        ],
         "summary": "면접 루브릭 초기화 (QA용)",
         "description": "해당 파트·학기의 면접 루브릭을 삭제합니다. 삭제 후에는 면접 요구조건 기반의 미저장 템플릿으로 다시 조회됩니다. 해당 루브릭 항목을 참조하는 면접 평가가 남아있으면 초기화할 수 없습니다. 스카우터 팀원만 호출 가능.",
         "operationId": "resetByPartIdAndSemester",
@@ -4160,7 +4397,9 @@
     },
     "/internal/dev/applicants/{applicantId}/evaluations": {
       "delete": {
-        "tags": ["[DEV] 지원자 평가 데이터 삭제"],
+        "tags": [
+          "[DEV] 지원자 평가 데이터 삭제"
+        ],
         "summary": "서류/면접 평가 데이터 전체 삭제 (QA용)",
         "description": "해당 지원자의 서류 평가, 면접 평가, 최종 평가 데이터를 모두 삭제합니다. 스카우터 팀원만 호출 가능.",
         "operationId": "deleteAllEvaluations",
@@ -4191,7 +4430,9 @@
     },
     "/internal/dev/applicants/{applicantId}/evaluations/interviews": {
       "delete": {
-        "tags": ["[DEV] 지원자 평가 데이터 삭제"],
+        "tags": [
+          "[DEV] 지원자 평가 데이터 삭제"
+        ],
         "summary": "면접 평가 데이터 삭제 (QA용)",
         "description": "해당 지원자의 면접 평가 및 최종 평가 데이터를 삭제합니다. 스카우터 팀원만 호출 가능.",
         "operationId": "deleteInterviewEvaluations",
@@ -4222,7 +4463,9 @@
     },
     "/internal/dev/applicants/{applicantId}/evaluations/documents": {
       "delete": {
-        "tags": ["[DEV] 지원자 평가 데이터 삭제"],
+        "tags": [
+          "[DEV] 지원자 평가 데이터 삭제"
+        ],
         "summary": "서류 평가 데이터 삭제 (QA용)",
         "description": "해당 지원자의 서류 평가 데이터를 삭제합니다. 스카우터 팀원만 호출 가능.",
         "operationId": "deleteDocumentEvaluations",
@@ -4253,7 +4496,9 @@
     },
     "/applicants/{applicantId}/interviews/memos/{commentId}": {
       "delete": {
-        "tags": ["면접 질문 코멘트"],
+        "tags": [
+          "면접 질문 코멘트"
+        ],
         "summary": "면접 질문 코멘트 삭제",
         "description": "본인이 작성한 코멘트만 삭제 가능합니다.",
         "operationId": "deleteById_3",
@@ -4287,7 +4532,9 @@
     },
     "/api/mails/reservation/groups/{groupId}": {
       "delete": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "메일 그룹 삭제",
         "description": "그룹 ID로 메일 예약 그룹을 삭제합니다. 그룹에 속한 모든 예약과 메일이 함께 삭제됩니다. 본인이 보낸 그룹이거나 스카우터 팀원만 삭제할 수 있습니다.",
         "operationId": "deleteMailGroup",
@@ -4332,7 +4579,9 @@
     },
     "/api/mails/files/{fileId}": {
       "delete": {
-        "tags": ["메일"],
+        "tags": [
+          "메일"
+        ],
         "summary": "내 메일 파일 삭제",
         "operationId": "deleteFile",
         "parameters": [
@@ -4380,7 +4629,11 @@
             }
           }
         },
-        "required": ["content", "requirementIds", "sortOrder"]
+        "required": [
+          "content",
+          "requirementIds",
+          "sortOrder"
+        ]
       },
       "UpdatePartQuestionsRequest": {
         "type": "object",
@@ -4392,7 +4645,9 @@
             }
           }
         },
-        "required": ["questions"]
+        "required": [
+          "questions"
+        ]
       },
       "QuestionRequirementDto": {
         "type": "object",
@@ -4405,7 +4660,10 @@
             "type": "string"
           }
         },
-        "required": ["content", "id"]
+        "required": [
+          "content",
+          "id"
+        ]
       },
       "ReadQuestionResponse": {
         "type": "object",
@@ -4420,7 +4678,12 @@
           },
           "category": {
             "type": "string",
-            "enum": ["INTRO", "OUTRO", "CULTURE", "PART"]
+            "enum": [
+              "INTRO",
+              "OUTRO",
+              "CULTURE",
+              "PART"
+            ]
           },
           "content": {
             "type": "string"
@@ -4436,7 +4699,13 @@
             }
           }
         },
-        "required": ["category", "content", "id", "requirements", "sortOrder"]
+        "required": [
+          "category",
+          "content",
+          "id",
+          "requirements",
+          "sortOrder"
+        ]
       },
       "CreateQuestionsRequest": {
         "type": "object",
@@ -4460,7 +4729,11 @@
             }
           }
         },
-        "required": ["culture", "intro", "outro"]
+        "required": [
+          "culture",
+          "intro",
+          "outro"
+        ]
       },
       "Item": {
         "type": "object",
@@ -4485,7 +4758,11 @@
             }
           }
         },
-        "required": ["content", "requirementIds", "sortOrder"]
+        "required": [
+          "content",
+          "requirementIds",
+          "sortOrder"
+        ]
       },
       "CreateScheduleCommand": {
         "type": "object",
@@ -4508,13 +4785,24 @@
           },
           "locationType": {
             "type": "string",
-            "enum": ["CLUB_ROOM", "CLASS_ROOM", "ONLINE", "ETC"]
+            "enum": [
+              "CLUB_ROOM",
+              "CLASS_ROOM",
+              "ONLINE",
+              "ETC"
+            ]
           },
           "locationDetail": {
             "type": "string"
           }
         },
-        "required": ["applicantId", "endTime", "locationType", "partId", "startTime"]
+        "required": [
+          "applicantId",
+          "endTime",
+          "locationType",
+          "partId",
+          "startTime"
+        ]
       },
       "GroupRequest": {
         "type": "object",
@@ -4523,7 +4811,11 @@
           "group": {
             "type": "string",
             "description": "평가 그룹",
-            "enum": ["JOB_FIT", "CULTURE_FIT", "TEAM_FIT"],
+            "enum": [
+              "JOB_FIT",
+              "CULTURE_FIT",
+              "TEAM_FIT"
+            ],
             "example": "CULTURE_FIT",
             "minLength": 1,
             "pattern": "^(JOB|CULTURE|TEAM)_FIT$"
@@ -4537,7 +4829,10 @@
             "minItems": 1
           }
         },
-        "required": ["group", "items"]
+        "required": [
+          "group",
+          "items"
+        ]
       },
       "InterviewRubricUpdateRequest": {
         "type": "object",
@@ -4558,7 +4853,10 @@
             "minItems": 1
           }
         },
-        "required": ["deadline", "groups"]
+        "required": [
+          "deadline",
+          "groups"
+        ]
       },
       "ItemRequest": {
         "type": "object",
@@ -4578,7 +4876,10 @@
             "minimum": 1
           }
         },
-        "required": ["itemId", "maxScore"]
+        "required": [
+          "itemId",
+          "maxScore"
+        ]
       },
       "GroupResponse": {
         "type": "object",
@@ -4587,7 +4888,11 @@
           "group": {
             "type": "string",
             "description": "평가 그룹",
-            "enum": ["JOB_FIT", "CULTURE_FIT", "TEAM_FIT"],
+            "enum": [
+              "JOB_FIT",
+              "CULTURE_FIT",
+              "TEAM_FIT"
+            ],
             "example": "CULTURE_FIT"
           },
           "groupMaxScore": {
@@ -4604,7 +4909,11 @@
             }
           }
         },
-        "required": ["group", "groupMaxScore", "items"]
+        "required": [
+          "group",
+          "groupMaxScore",
+          "items"
+        ]
       },
       "InterviewRubricResponse": {
         "type": "object",
@@ -4646,7 +4955,14 @@
             }
           }
         },
-        "required": ["deadline", "groups", "id", "isLocked", "partId", "semester"]
+        "required": [
+          "deadline",
+          "groups",
+          "id",
+          "isLocked",
+          "partId",
+          "semester"
+        ]
       },
       "ItemResponse": {
         "type": "object",
@@ -4670,7 +4986,11 @@
             "example": 10
           }
         },
-        "required": ["itemId", "maxScore", "title"]
+        "required": [
+          "itemId",
+          "maxScore",
+          "title"
+        ]
       },
       "UpdateInterviewRequirementItemRequest": {
         "type": "object",
@@ -4683,7 +5003,9 @@
             "type": "string"
           }
         },
-        "required": ["content"]
+        "required": [
+          "content"
+        ]
       },
       "UpdateInterviewRequirementRequest": {
         "type": "object",
@@ -4713,7 +5035,12 @@
             }
           }
         },
-        "required": ["culture", "job", "other", "team"]
+        "required": [
+          "culture",
+          "job",
+          "other",
+          "team"
+        ]
       },
       "UpdateRubricRequest": {
         "type": "object",
@@ -4731,7 +5058,11 @@
             "type": "string"
           }
         },
-        "required": ["criterionDetail", "maxScore", "sectionId"]
+        "required": [
+          "criterionDetail",
+          "maxScore",
+          "sectionId"
+        ]
       },
       "UpdateDeadlineRequest": {
         "type": "object",
@@ -4741,15 +5072,17 @@
             "format": "date-time"
           }
         },
-        "required": ["deadline"]
+        "required": [
+          "deadline"
+        ]
       },
       "SaveAssignedQuestionRequest": {
         "type": "object",
         "properties": {
-          "assignedInterviewerUserId": {
+          "assignedMemberId": {
             "type": "integer",
             "format": "int64",
-            "description": "배정할 면접관 유저 ID"
+            "description": "배정할 면접관 멤버 ID"
           },
           "sourceQuestionId": {
             "type": "integer",
@@ -4763,14 +5096,23 @@
           "category": {
             "type": "string",
             "description": "질문 카테고리",
-            "enum": ["INTRO", "OUTRO", "CULTURE", "PART", "PERSONAL"]
+            "enum": [
+              "INTRO",
+              "OUTRO",
+              "CULTURE",
+              "PART",
+              "PERSONAL"
+            ]
           },
           "isSelected": {
             "type": "boolean",
             "description": "질문 선택 여부"
           },
           "requirementIds": {
-            "type": ["array", "null"],
+            "type": [
+              "array",
+              "null"
+            ],
             "description": "질문 요구조건 ID 목록 (PERSONAL 혹은 PART 질문 수정 시 필요. null 전달 시 기존 요구조건 유지)",
             "items": {
               "type": "integer",
@@ -4778,7 +5120,10 @@
             }
           }
         },
-        "required": ["assignedInterviewerUserId", "category"]
+        "required": [
+          "assignedMemberId",
+          "category"
+        ]
       },
       "SaveAssignedQuestionsRequest": {
         "type": "object",
@@ -4790,7 +5135,9 @@
             }
           }
         },
-        "required": ["questions"]
+        "required": [
+          "questions"
+        ]
       },
       "ReadAssignedQuestionResponse": {
         "type": "object",
@@ -4800,14 +5147,14 @@
             "format": "int64",
             "description": "배정 질문 ID (초기 기본 질문인 경우 null)"
           },
-          "assignedInterviewerUserId": {
+          "assignedMemberId": {
             "type": "integer",
             "format": "int64",
-            "description": "Assigned interviewer user ID (null for initial default questions)"
+            "description": "Assigned member ID (null for initial default questions)"
           },
-          "assignedInterviewerName": {
+          "assignedMemberName": {
             "type": "string",
-            "description": "배정된 면접관 영어 닉네임"
+            "description": "배정된 면접관 영어 닉네임/이름"
           },
           "sourceQuestionId": {
             "type": "integer",
@@ -4821,7 +5168,13 @@
           "category": {
             "type": "string",
             "description": "질문 카테고리",
-            "enum": ["INTRO", "OUTRO", "CULTURE", "PART", "PERSONAL"]
+            "enum": [
+              "INTRO",
+              "OUTRO",
+              "CULTURE",
+              "PART",
+              "PERSONAL"
+            ]
           },
           "isSelected": {
             "type": "boolean",
@@ -4835,7 +5188,11 @@
             }
           }
         },
-        "required": ["category", "content", "requirements"]
+        "required": [
+          "category",
+          "content",
+          "requirements"
+        ]
       },
       "ReadAssignedQuestionsResponse": {
         "type": "object",
@@ -4847,7 +5204,9 @@
             }
           }
         },
-        "required": ["questions"]
+        "required": [
+          "questions"
+        ]
       },
       "ReadQuestionRequirementResponse": {
         "type": "object",
@@ -4860,7 +5219,10 @@
             "type": "string"
           }
         },
-        "required": ["content", "id"]
+        "required": [
+          "content",
+          "id"
+        ]
       },
       "SaveInterviewEvaluationItemRequest": {
         "type": "object",
@@ -4880,7 +5242,10 @@
             "minimum": 1
           }
         },
-        "required": ["itemId", "score"]
+        "required": [
+          "itemId",
+          "score"
+        ]
       },
       "SaveInterviewEvaluationRequest": {
         "type": "object",
@@ -4902,7 +5267,11 @@
           "result": {
             "type": "string",
             "description": "면접 평가 결과",
-            "enum": ["PENDING", "FINAL_PASS", "INTERVIEW_FAIL"],
+            "enum": [
+              "PENDING",
+              "FINAL_PASS",
+              "INTERVIEW_FAIL"
+            ],
             "example": "FINAL_PASS"
           },
           "submit": {
@@ -4911,7 +5280,12 @@
             "example": true
           }
         },
-        "required": ["items", "overallComment", "result", "submit"]
+        "required": [
+          "items",
+          "overallComment",
+          "result",
+          "submit"
+        ]
       },
       "SaveDocumentEvaluationItemRequest": {
         "type": "object",
@@ -4928,7 +5302,11 @@
             "type": "string"
           }
         },
-        "required": ["memo", "score", "sectionId"]
+        "required": [
+          "memo",
+          "score",
+          "sectionId"
+        ]
       },
       "SaveDocumentEvaluationRequest": {
         "type": "object",
@@ -4944,13 +5322,22 @@
           },
           "result": {
             "type": "string",
-            "enum": ["PENDING", "DOCUMENT_PASS", "DOCUMENT_FAIL"]
+            "enum": [
+              "PENDING",
+              "DOCUMENT_PASS",
+              "DOCUMENT_FAIL"
+            ]
           },
           "submit": {
             "type": "boolean"
           }
         },
-        "required": ["items", "overallComment", "result", "submit"]
+        "required": [
+          "items",
+          "overallComment",
+          "result",
+          "submit"
+        ]
       },
       "AttachmentReferenceRequest": {
         "type": "object",
@@ -4963,7 +5350,9 @@
             "example": 11
           }
         },
-        "required": ["fileId"]
+        "required": [
+          "fileId"
+        ]
       },
       "CreateMailTemplateRequest": {
         "type": "object",
@@ -5002,7 +5391,13 @@
             }
           }
         },
-        "required": ["attachmentReferences", "bodyHtml", "subject", "title", "variables"]
+        "required": [
+          "attachmentReferences",
+          "bodyHtml",
+          "subject",
+          "title",
+          "variables"
+        ]
       },
       "TemplateVariableRequest": {
         "type": "object",
@@ -5017,7 +5412,14 @@
           "type": {
             "type": "string",
             "description": "변수 타입. PERSON, DATE, LINK, TEXT는 사용자 입력 변수. APPLICANT, PARTNAME은 자동 채움 변수",
-            "enum": ["PERSON", "DATE", "LINK", "TEXT", "APPLICANT", "PARTNAME"],
+            "enum": [
+              "PERSON",
+              "DATE",
+              "LINK",
+              "TEXT",
+              "APPLICANT",
+              "PARTNAME"
+            ],
             "example": "TEXT"
           },
           "displayName": {
@@ -5036,7 +5438,12 @@
             "example": "applicant.name"
           }
         },
-        "required": ["displayName", "key", "perRecipient", "type"]
+        "required": [
+          "displayName",
+          "key",
+          "perRecipient",
+          "type"
+        ]
       },
       "CreateMailTemplateResponse": {
         "type": "object",
@@ -5053,7 +5460,11 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "title", "updatedAt"]
+        "required": [
+          "id",
+          "title",
+          "updatedAt"
+        ]
       },
       "MailReserveRequest": {
         "type": "object",
@@ -5100,7 +5511,12 @@
             }
           }
         },
-        "required": ["recipients", "reservationTime", "sharedBindings", "templateId"]
+        "required": [
+          "recipients",
+          "reservationTime",
+          "sharedBindings",
+          "templateId"
+        ]
       },
       "RecipientRequest": {
         "type": "object",
@@ -5124,7 +5540,10 @@
             "description": "수신자별 바인딩 (perRecipient=true 변수)"
           }
         },
-        "required": ["bindings", "email"]
+        "required": [
+          "bindings",
+          "email"
+        ]
       },
       "ExceptionResponse": {
         "type": "object",
@@ -5144,7 +5563,12 @@
             "type": "string"
           }
         },
-        "required": ["errorCode", "message", "status", "timestamp"]
+        "required": [
+          "errorCode",
+          "message",
+          "status",
+          "timestamp"
+        ]
       },
       "WithdrawalRequest": {
         "type": "object",
@@ -5154,7 +5578,9 @@
             "minLength": 1
           }
         },
-        "required": ["refreshToken"]
+        "required": [
+          "refreshToken"
+        ]
       },
       "CreateSemesterRequest": {
         "type": "object",
@@ -5168,7 +5594,10 @@
             "format": "int32"
           }
         },
-        "required": ["term", "year"]
+        "required": [
+          "term",
+          "year"
+        ]
       },
       "TokenRefreshRequest": {
         "type": "object",
@@ -5178,7 +5607,9 @@
             "minLength": 1
           }
         },
-        "required": ["refreshToken"]
+        "required": [
+          "refreshToken"
+        ]
       },
       "TokenRefreshResponse": {
         "type": "object",
@@ -5193,7 +5624,11 @@
             "type": "string"
           }
         },
-        "required": ["accessToken", "refreshToken", "tokenType"]
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "tokenType"
+        ]
       },
       "CreateScheduleRequest": {
         "type": "object",
@@ -5228,7 +5663,13 @@
             "type": "string"
           }
         },
-        "required": ["applicantId", "endTime", "locationType", "partId", "startTime"]
+        "required": [
+          "applicantId",
+          "endTime",
+          "locationType",
+          "partId",
+          "startTime"
+        ]
       },
       "OAuth2LoginRequest": {
         "type": "object",
@@ -5241,7 +5682,9 @@
             "type": "string"
           }
         },
-        "required": ["authorizationCode"]
+        "required": [
+          "authorizationCode"
+        ]
       },
       "LoginResponse": {
         "type": "object",
@@ -5261,7 +5704,11 @@
             "description": "리프레시 토큰"
           }
         },
-        "required": ["accessToken", "refreshToken", "tokenType"]
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "tokenType"
+        ]
       },
       "MemberSyncResponse": {
         "type": "object",
@@ -5269,7 +5716,9 @@
           "failureMessages": {
             "type": "array",
             "description": "동기화 실패 메시지 목록",
-            "example": ["email 중복: test@example.com"],
+            "example": [
+              "email 중복: test@example.com"
+            ],
             "items": {
               "type": "string"
             }
@@ -5281,7 +5730,10 @@
             "example": 12
           }
         },
-        "required": ["createdCount", "failureMessages"]
+        "required": [
+          "createdCount",
+          "failureMessages"
+        ]
       },
       "LogoutRequest": {
         "type": "object",
@@ -5291,7 +5743,9 @@
             "minLength": 1
           }
         },
-        "required": ["refreshToken"]
+        "required": [
+          "refreshToken"
+        ]
       },
       "CreateApplicantRequest": {
         "type": "object",
@@ -5306,9 +5760,17 @@
           },
           "state": {
             "type": "string",
-            "description": "UNDER_REVIEW | DOCUMENT_ACCEPTED | DOCUMENT_REJECTED | ASSIGNMENT_ACCEPTED | ASSIGNMENT_REJECTED | INTERVIEW_ACCEPTED | INTERVIEW_REJECTED | INCUBATING_REJECTED | FINAL_ACCEPTED",
-            "example": "UNDER_REVIEW",
-            "minLength": 1
+            "enum": [
+              "UNDER_REVIEW",
+              "DOCUMENT_ACCEPTED",
+              "DOCUMENT_REJECTED",
+              "ASSIGNMENT_ACCEPTED",
+              "ASSIGNMENT_REJECTED",
+              "INTERVIEW_REJECTED",
+              "INCUBATING_REJECTED",
+              "FINAL_ACCEPTED"
+            ],
+            "example": "UNDER_REVIEW"
           },
           "applicationDate": {
             "type": "string",
@@ -5386,7 +5848,10 @@
             "minLength": 1
           }
         },
-        "required": ["content", "sectionId"]
+        "required": [
+          "content",
+          "sectionId"
+        ]
       },
       "CreateDocumentCommentRequest": {
         "type": "object",
@@ -5404,7 +5869,10 @@
             "format": "int64"
           }
         },
-        "required": ["content", "sectionId"]
+        "required": [
+          "content",
+          "sectionId"
+        ]
       },
       "ApplicantSyncResponse": {
         "type": "object",
@@ -5422,7 +5890,10 @@
             }
           }
         },
-        "required": ["failures", "successes"]
+        "required": [
+          "failures",
+          "successes"
+        ]
       },
       "MailSendRequest": {
         "type": "object",
@@ -5431,7 +5902,9 @@
           "receiverEmailAddresses": {
             "type": "array",
             "description": "수신자 이메일 주소 목록",
-            "example": ["user@example.com"],
+            "example": [
+              "user@example.com"
+            ],
             "items": {
               "type": "string"
             }
@@ -5449,7 +5922,10 @@
           "bodyFormat": {
             "type": "string",
             "description": "본문 형식",
-            "enum": ["HTML", "PLAIN_TEXT"],
+            "enum": [
+              "HTML",
+              "PLAIN_TEXT"
+            ],
             "example": "HTML"
           },
           "attachmentReferences": {
@@ -5484,10 +5960,17 @@
           "usage": {
             "type": "string",
             "description": "파일 용도",
-            "enum": ["INLINE", "ATTACHMENT"]
+            "enum": [
+              "INLINE",
+              "ATTACHMENT"
+            ]
           }
         },
-        "required": ["contentType", "fileName", "usage"]
+        "required": [
+          "contentType",
+          "fileName",
+          "usage"
+        ]
       },
       "MailFilePresignRequest": {
         "type": "object",
@@ -5500,7 +5983,9 @@
             }
           }
         },
-        "required": ["files"]
+        "required": [
+          "files"
+        ]
       },
       "MailFilePresignResponse": {
         "type": "object",
@@ -5512,7 +5997,9 @@
             }
           }
         },
-        "required": ["uploads"]
+        "required": [
+          "uploads"
+        ]
       },
       "PresignedUpload": {
         "type": "object",
@@ -5531,7 +6018,12 @@
             "type": "string"
           }
         },
-        "required": ["cid", "contentType", "expiresAt", "putUrl"]
+        "required": [
+          "cid",
+          "contentType",
+          "expiresAt",
+          "putUrl"
+        ]
       },
       "File": {
         "type": "object",
@@ -5554,10 +6046,18 @@
           "usage": {
             "type": "string",
             "description": "파일 용도",
-            "enum": ["INLINE", "ATTACHMENT"]
+            "enum": [
+              "INLINE",
+              "ATTACHMENT"
+            ]
           }
         },
-        "required": ["cid", "contentType", "fileName", "usage"]
+        "required": [
+          "cid",
+          "contentType",
+          "fileName",
+          "usage"
+        ]
       },
       "MailFileConfirmRequest": {
         "type": "object",
@@ -5569,7 +6069,9 @@
             }
           }
         },
-        "required": ["files"]
+        "required": [
+          "files"
+        ]
       },
       "MailFileConfirmResponse": {
         "type": "object",
@@ -5581,7 +6083,9 @@
             }
           }
         },
-        "required": ["files"]
+        "required": [
+          "files"
+        ]
       },
       "MailFileSummary": {
         "type": "object",
@@ -5592,7 +6096,10 @@
           },
           "usage": {
             "type": "string",
-            "enum": ["INLINE", "ATTACHMENT"]
+            "enum": [
+              "INLINE",
+              "ATTACHMENT"
+            ]
           },
           "fileName": {
             "type": "string"
@@ -5611,7 +6118,14 @@
             "format": "date-time"
           }
         },
-        "required": ["cid", "contentType", "fileId", "fileName", "usage", "used"]
+        "required": [
+          "cid",
+          "contentType",
+          "fileId",
+          "fileName",
+          "usage",
+          "used"
+        ]
       },
       "RequirementItemParam": {
         "type": "object",
@@ -5624,7 +6138,9 @@
             "type": "string"
           }
         },
-        "required": ["content"]
+        "required": [
+          "content"
+        ]
       },
       "RequirementsForm": {
         "type": "object",
@@ -5636,7 +6152,9 @@
             }
           }
         },
-        "required": ["items"]
+        "required": [
+          "items"
+        ]
       },
       "UpdateScheduleLocationRequest": {
         "type": "object",
@@ -5651,7 +6169,9 @@
             "type": "string"
           }
         },
-        "required": ["locationType"]
+        "required": [
+          "locationType"
+        ]
       },
       "InterviewRubricDeadlineUpdateRequest": {
         "type": "object",
@@ -5664,7 +6184,9 @@
             "example": "2026-08-01T09:00:00Z"
           }
         },
-        "required": ["deadline"]
+        "required": [
+          "deadline"
+        ]
       },
       "UpdateWithdrawnMemberRequest": {
         "type": "object",
@@ -5672,7 +6194,10 @@
           "partIds": {
             "type": "array",
             "description": "파트 ID 목록",
-            "example": [1, 2],
+            "example": [
+              1,
+              2
+            ],
             "items": {
               "type": "integer",
               "format": "int64"
@@ -5765,7 +6290,10 @@
           "partIds": {
             "type": "array",
             "description": "파트 ID 목록",
-            "example": [1, 2],
+            "example": [
+              1,
+              2
+            ],
             "items": {
               "type": "integer",
               "format": "int64"
@@ -5873,7 +6401,10 @@
           "partIds": {
             "type": "array",
             "description": "파트 ID 목록",
-            "example": [1, 2],
+            "example": [
+              1,
+              2
+            ],
             "items": {
               "type": "integer",
               "format": "int64"
@@ -5948,7 +6479,10 @@
           "partIds": {
             "type": "array",
             "description": "파트 ID 목록",
-            "example": [1, 2],
+            "example": [
+              1,
+              2
+            ],
             "items": {
               "type": "integer",
               "format": "int64"
@@ -6023,7 +6557,10 @@
           "partIds": {
             "type": "array",
             "description": "파트 ID 목록",
-            "example": [1, 2],
+            "example": [
+              1,
+              2
+            ],
             "items": {
               "type": "integer",
               "format": "int64"
@@ -6115,7 +6652,16 @@
           },
           "state": {
             "type": "string",
-            "description": "UNDER_REVIEW | DOCUMENT_ACCEPTED | DOCUMENT_REJECTED | ASSIGNMENT_ACCEPTED | ASSIGNMENT_REJECTED | INTERVIEW_ACCEPTED | INTERVIEW_REJECTED | INCUBATING_REJECTED | FINAL_ACCEPTED",
+            "enum": [
+              "UNDER_REVIEW",
+              "DOCUMENT_ACCEPTED",
+              "DOCUMENT_REJECTED",
+              "ASSIGNMENT_ACCEPTED",
+              "ASSIGNMENT_REJECTED",
+              "INTERVIEW_REJECTED",
+              "INCUBATING_REJECTED",
+              "FINAL_ACCEPTED"
+            ],
             "example": "UNDER_REVIEW"
           },
           "applicationDate": {
@@ -6164,7 +6710,9 @@
             "minLength": 1
           }
         },
-        "required": ["content"]
+        "required": [
+          "content"
+        ]
       },
       "ReadDocumentCommentAuthorResponse": {
         "type": "object",
@@ -6187,7 +6735,11 @@
             "example": "Backend"
           }
         },
-        "required": ["nickname", "part", "userId"]
+        "required": [
+          "nickname",
+          "part",
+          "userId"
+        ]
       },
       "ReadDocumentCommentResponse": {
         "type": "object",
@@ -6218,7 +6770,14 @@
             "format": "date-time"
           }
         },
-        "required": ["author", "commentId", "content", "createdAt", "isEdited", "sectionId"]
+        "required": [
+          "author",
+          "commentId",
+          "content",
+          "createdAt",
+          "isEdited",
+          "sectionId"
+        ]
       },
       "ValidateTokenResponse": {
         "type": "object",
@@ -6227,7 +6786,9 @@
             "type": "boolean"
           }
         },
-        "required": ["validated"]
+        "required": [
+          "validated"
+        ]
       },
       "ReadSemesterResponse": {
         "type": "object",
@@ -6245,7 +6806,11 @@
             "format": "int32"
           }
         },
-        "required": ["semesterId", "term", "year"]
+        "required": [
+          "semesterId",
+          "term",
+          "year"
+        ]
       },
       "ReadScheduleResponse": {
         "type": "object",
@@ -6279,7 +6844,15 @@
             "type": "string"
           }
         },
-        "required": ["applicantId", "endTime", "id", "locationType", "name", "part", "startTime"]
+        "required": [
+          "applicantId",
+          "endTime",
+          "id",
+          "locationType",
+          "name",
+          "part",
+          "startTime"
+        ]
       },
       "AutoScheduleRequest": {
         "type": "object",
@@ -6298,7 +6871,11 @@
             "example": 60
           }
         },
-        "required": ["duration", "size", "strategy"]
+        "required": [
+          "duration",
+          "size",
+          "strategy"
+        ]
       },
       "AutoScheduleResponse": {
         "type": "object",
@@ -6322,7 +6899,13 @@
             "format": "date-time"
           }
         },
-        "required": ["applicantId", "applicantName", "endTime", "part", "startTime"]
+        "required": [
+          "applicantId",
+          "applicantName",
+          "endTime",
+          "part",
+          "startTime"
+        ]
       },
       "ReadPartsResponse": {
         "type": "object",
@@ -6338,7 +6921,11 @@
             "type": "boolean"
           }
         },
-        "required": ["hasAssignment", "partId", "partName"]
+        "required": [
+          "hasAssignment",
+          "partId",
+          "partName"
+        ]
       },
       "InterviewRubricDeadlineResponse": {
         "type": "object",
@@ -6351,7 +6938,9 @@
             "example": "2026-08-01T09:00:00Z"
           }
         },
-        "required": ["deadline"]
+        "required": [
+          "deadline"
+        ]
       },
       "ReadInterviewRequirementItemResponse": {
         "type": "object",
@@ -6364,7 +6953,9 @@
             "type": "string"
           }
         },
-        "required": ["content"]
+        "required": [
+          "content"
+        ]
       },
       "ReadInterviewRequirementResponse": {
         "type": "object",
@@ -6394,7 +6985,12 @@
             }
           }
         },
-        "required": ["culture", "job", "other", "team"]
+        "required": [
+          "culture",
+          "job",
+          "other",
+          "team"
+        ]
       },
       "ReadRubricResponse": {
         "type": "object",
@@ -6414,7 +7010,12 @@
             "type": "string"
           }
         },
-        "required": ["criterionDetail", "maxScore", "question", "sectionId"]
+        "required": [
+          "criterionDetail",
+          "maxScore",
+          "question",
+          "sectionId"
+        ]
       },
       "ReadDeadlineResponse": {
         "type": "object",
@@ -6446,7 +7047,10 @@
             "example": false
           }
         },
-        "required": ["isSensitiveMasked", "members"]
+        "required": [
+          "isSensitiveMasked",
+          "members"
+        ]
       },
       "ReadDivisionAndPartInMemberResponse": {
         "type": "object",
@@ -6462,7 +7066,10 @@
             "example": "백엔드"
           }
         },
-        "required": ["division", "part"]
+        "required": [
+          "division",
+          "part"
+        ]
       },
       "ReadWithdrawnMemberListItemResponse": {
         "type": "object",
@@ -6512,7 +7119,14 @@
             "example": "개인 사정"
           }
         },
-        "required": ["memberId", "name", "nickname", "parts", "role", "state"]
+        "required": [
+          "memberId",
+          "name",
+          "nickname",
+          "parts",
+          "role",
+          "state"
+        ]
       },
       "MeResponse": {
         "type": "object",
@@ -6661,7 +7275,10 @@
             "example": false
           }
         },
-        "required": ["isSensitiveMasked", "members"]
+        "required": [
+          "isSensitiveMasked",
+          "members"
+        ]
       },
       "ReadInactiveMemberListItemResponse": {
         "type": "object",
@@ -6813,7 +7430,10 @@
             "example": "24-2"
           }
         },
-        "required": ["endSemester", "startSemester"]
+        "required": [
+          "endSemester",
+          "startSemester"
+        ]
       },
       "MemberListResponseReadGraduatedMemberListItemResponse": {
         "type": "object",
@@ -6836,7 +7456,10 @@
             "example": false
           }
         },
-        "required": ["isSensitiveMasked", "members"]
+        "required": [
+          "isSensitiveMasked",
+          "members"
+        ]
       },
       "ReadGraduatedMemberListItemResponse": {
         "type": "object",
@@ -6955,7 +7578,10 @@
             "example": false
           }
         },
-        "required": ["isSensitiveMasked", "members"]
+        "required": [
+          "isSensitiveMasked",
+          "members"
+        ]
       },
       "ReadCompletedMemberListItemResponse": {
         "type": "object",
@@ -7069,7 +7695,10 @@
             "example": false
           }
         },
-        "required": ["isSensitiveMasked", "members"]
+        "required": [
+          "isSensitiveMasked",
+          "members"
+        ]
       },
       "ReadActiveMemberListItemResponse": {
         "type": "object",
@@ -7161,7 +7790,11 @@
             "example": "메모"
           },
           "userId": {
-            "type": ["integer", "Long", "null"],
+            "type": [
+              "integer",
+              "Long",
+              "null"
+            ],
             "format": "int64",
             "description": "로그인 user id",
             "example": 12
@@ -7190,7 +7823,10 @@
             "type": "string"
           }
         },
-        "required": ["divisionId", "divisionName"]
+        "required": [
+          "divisionId",
+          "divisionName"
+        ]
       },
       "ReadDepartmentsResponse": {
         "type": "object",
@@ -7203,7 +7839,10 @@
             "type": "string"
           }
         },
-        "required": ["departmentId", "departmentName"]
+        "required": [
+          "departmentId",
+          "departmentName"
+        ]
       },
       "ReadCollegeResponse": {
         "type": "object",
@@ -7216,7 +7855,10 @@
             "type": "string"
           }
         },
-        "required": ["collegeId", "collegeName"]
+        "required": [
+          "collegeId",
+          "collegeName"
+        ]
       },
       "ReadApplicantResponse": {
         "type": "object",
@@ -7235,7 +7877,17 @@
             "type": "string"
           },
           "state": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "UNDER_REVIEW",
+              "DOCUMENT_ACCEPTED",
+              "DOCUMENT_REJECTED",
+              "ASSIGNMENT_ACCEPTED",
+              "ASSIGNMENT_REJECTED",
+              "INTERVIEW_REJECTED",
+              "INCUBATING_REJECTED",
+              "FINAL_ACCEPTED"
+            ]
           },
           "applicationDate": {
             "type": "string",
@@ -7318,7 +7970,10 @@
             }
           }
         },
-        "required": ["comments", "sectionId"]
+        "required": [
+          "comments",
+          "sectionId"
+        ]
       },
       "ReadInterviewCommentResponse": {
         "type": "object",
@@ -7352,7 +8007,13 @@
             "example": "2026-08-19T03:00:00Z"
           }
         },
-        "required": ["author", "commentId", "content", "createdAt", "sectionId"]
+        "required": [
+          "author",
+          "commentId",
+          "content",
+          "createdAt",
+          "sectionId"
+        ]
       },
       "ReadInterviewEvaluationGroupResponse": {
         "type": "object",
@@ -7361,7 +8022,11 @@
           "group": {
             "type": "string",
             "description": "평가 그룹",
-            "enum": ["CULTURE_FIT", "TEAM_FIT", "JOB_FIT"],
+            "enum": [
+              "CULTURE_FIT",
+              "TEAM_FIT",
+              "JOB_FIT"
+            ],
             "example": "CULTURE_FIT"
           },
           "items": {
@@ -7372,7 +8037,10 @@
             }
           }
         },
-        "required": ["group", "items"]
+        "required": [
+          "group",
+          "items"
+        ]
       },
       "ReadInterviewEvaluationItemResponse": {
         "type": "object",
@@ -7402,7 +8070,12 @@
             "example": 8
           }
         },
-        "required": ["itemId", "itemTitle", "maxScore", "score"]
+        "required": [
+          "itemId",
+          "itemTitle",
+          "maxScore",
+          "score"
+        ]
       },
       "ReadInterviewEvaluationResponse": {
         "type": "object",
@@ -7427,26 +8100,49 @@
             "example": "질문에 대한 답변이 구조적이고 문화 적합성이 높습니다."
           },
           "result": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "면접 평가 결과",
-            "enum": ["PENDING", "FINAL_PASS", "INTERVIEW_FAIL"],
+            "enum": [
+              "PENDING",
+              "FINAL_PASS",
+              "INTERVIEW_FAIL"
+            ],
             "example": "FINAL_PASS"
           },
           "submittedAt": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date-time",
             "description": "최종 제출 시각",
             "example": "2026-08-01T09:30:00"
           }
         },
-        "required": ["groups", "overallComment", "totalScore"]
+        "required": [
+          "groups",
+          "overallComment",
+          "totalScore"
+        ]
       },
       "ReadEvaluatorStatusResponse": {
         "type": "object",
         "description": "지원자에 대한 면접 평가자별 작성 진행 상태",
         "properties": {
+          "memberId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "평가자 회원 ID",
+            "example": 10
+          },
           "userId": {
-            "type": ["integer", "null"],
+            "type": [
+              "integer",
+              "null"
+            ],
             "format": "int64",
             "description": "평가자 사용자 ID (User 엔티티가 없는 경우 null)",
             "example": 23
@@ -7459,11 +8155,19 @@
           "status": {
             "type": "string",
             "description": "평가 작성 상태",
-            "enum": ["NOT_STARTED", "IN_PROGRESS", "SUBMITTED"],
+            "enum": [
+              "NOT_STARTED",
+              "IN_PROGRESS",
+              "SUBMITTED"
+            ],
             "example": "SUBMITTED"
           }
         },
-        "required": ["name", "status"]
+        "required": [
+          "memberId",
+          "name",
+          "status"
+        ]
       },
       "ReadOtherInterviewEvaluationItemResponse": {
         "type": "object",
@@ -7482,7 +8186,10 @@
             "example": 8
           }
         },
-        "required": ["itemId", "score"]
+        "required": [
+          "itemId",
+          "score"
+        ]
       },
       "ReadOtherInterviewEvaluationResponse": {
         "type": "object",
@@ -7508,7 +8215,11 @@
           "result": {
             "type": "string",
             "description": "면접 평가 결과",
-            "enum": ["PENDING", "FINAL_PASS", "INTERVIEW_FAIL"],
+            "enum": [
+              "PENDING",
+              "FINAL_PASS",
+              "INTERVIEW_FAIL"
+            ],
             "example": "FINAL_PASS"
           },
           "overallComment": {
@@ -7555,7 +8266,13 @@
             "type": "string"
           }
         },
-        "required": ["maxScore", "memo", "question", "score", "sectionId"]
+        "required": [
+          "maxScore",
+          "memo",
+          "question",
+          "score",
+          "sectionId"
+        ]
       },
       "ReadDocumentEvaluationResponse": {
         "type": "object",
@@ -7575,14 +8292,23 @@
           },
           "result": {
             "type": "string",
-            "enum": ["PENDING", "DOCUMENT_PASS", "DOCUMENT_FAIL"]
+            "enum": [
+              "PENDING",
+              "DOCUMENT_PASS",
+              "DOCUMENT_FAIL"
+            ]
           },
           "submittedAt": {
             "type": "string",
             "format": "date-time"
           }
         },
-        "required": ["items", "overallComment", "result", "totalScore"]
+        "required": [
+          "items",
+          "overallComment",
+          "result",
+          "totalScore"
+        ]
       },
       "ReadOtherDocumentEvaluationItemResponse": {
         "type": "object",
@@ -7599,7 +8325,11 @@
             "type": "string"
           }
         },
-        "required": ["memo", "score", "sectionId"]
+        "required": [
+          "memo",
+          "score",
+          "sectionId"
+        ]
       },
       "ReadOtherDocumentEvaluationResponse": {
         "type": "object",
@@ -7617,7 +8347,11 @@
           },
           "result": {
             "type": "string",
-            "enum": ["PENDING", "DOCUMENT_PASS", "DOCUMENT_FAIL"]
+            "enum": [
+              "PENDING",
+              "DOCUMENT_PASS",
+              "DOCUMENT_FAIL"
+            ]
           },
           "overallComment": {
             "type": "string"
@@ -7652,7 +8386,10 @@
             "type": "string"
           }
         },
-        "required": ["answer", "question"]
+        "required": [
+          "answer",
+          "question"
+        ]
       },
       "ReadEvaluationViewResponse": {
         "type": "object",
@@ -7685,7 +8422,13 @@
             }
           }
         },
-        "required": ["answers", "comments", "evaluatorStatuses", "myEvaluation", "others"]
+        "required": [
+          "answers",
+          "comments",
+          "evaluatorStatuses",
+          "myEvaluation",
+          "others"
+        ]
       },
       "LastApplicantSyncTimeResponse": {
         "type": "object",
@@ -7722,7 +8465,13 @@
             "format": "int32"
           }
         },
-        "required": ["content", "page", "size", "totalElements", "totalPages"]
+        "required": [
+          "content",
+          "page",
+          "size",
+          "totalElements",
+          "totalPages"
+        ]
       },
       "ReadMailTemplateSummaryResponse": {
         "type": "object",
@@ -7739,7 +8488,11 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "title", "updatedAt"]
+        "required": [
+          "id",
+          "title",
+          "updatedAt"
+        ]
       },
       "AttachmentReference": {
         "type": "object",
@@ -7766,7 +8519,11 @@
             "example": "mail-files/attachment/uuid-guide.pdf"
           }
         },
-        "required": ["contentType", "fileName", "storageKey"]
+        "required": [
+          "contentType",
+          "fileName",
+          "storageKey"
+        ]
       },
       "DetailVariable": {
         "type": "object",
@@ -7780,7 +8537,14 @@
           "type": {
             "type": "string",
             "description": "변수 타입. PERSON, DATE, LINK, TEXT는 사용자 입력 변수. APPLICANT, PARTNAME은 자동 채움 변수",
-            "enum": ["PERSON", "DATE", "LINK", "TEXT", "APPLICANT", "PARTNAME"],
+            "enum": [
+              "PERSON",
+              "DATE",
+              "LINK",
+              "TEXT",
+              "APPLICANT",
+              "PARTNAME"
+            ],
             "example": "TEXT"
           },
           "displayName": {
@@ -7799,7 +8563,12 @@
             "example": "applicant.name"
           }
         },
-        "required": ["displayName", "key", "perRecipient", "type"]
+        "required": [
+          "displayName",
+          "key",
+          "perRecipient",
+          "type"
+        ]
       },
       "ReadMailTemplateDetailResponse": {
         "type": "object",
@@ -7870,7 +8639,11 @@
           "status": {
             "type": "string",
             "description": "예약 상태",
-            "enum": ["SCHEDULED", "PENDING_SEND", "SENT"],
+            "enum": [
+              "SCHEDULED",
+              "PENDING_SEND",
+              "SENT"
+            ],
             "example": "SCHEDULED"
           },
           "senderEmailAddress": {
@@ -7912,7 +8685,9 @@
             }
           }
         },
-        "required": ["items"]
+        "required": [
+          "items"
+        ]
       },
       "MailReservationDetailResponse": {
         "type": "object",
@@ -7928,7 +8703,11 @@
           "status": {
             "type": "string",
             "description": "예약 상태",
-            "enum": ["SCHEDULED", "PENDING_SEND", "SENT"],
+            "enum": [
+              "SCHEDULED",
+              "PENDING_SEND",
+              "SENT"
+            ],
             "example": "SCHEDULED"
           },
           "senderEmailAddress": {
@@ -8003,7 +8782,10 @@
             "format": "date-time"
           }
         },
-        "required": ["reservationId", "reservationTime"]
+        "required": [
+          "reservationId",
+          "reservationTime"
+        ]
       },
       "MailReservationStatusResponse": {
         "type": "object",
@@ -8015,7 +8797,9 @@
             }
           }
         },
-        "required": ["items"]
+        "required": [
+          "items"
+        ]
       },
       "MailGroupItem": {
         "type": "object",
@@ -8044,7 +8828,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["SCHEDULED", "PENDING_SEND", "SENDING", "SENT"]
+            "enum": [
+              "SCHEDULED",
+              "PENDING_SEND",
+              "SENDING",
+              "SENT"
+            ]
           },
           "createdAt": {
             "type": "string",
@@ -8058,7 +8847,13 @@
             }
           }
         },
-        "required": ["createdAt", "groupId", "mails", "reservationTime", "status"]
+        "required": [
+          "createdAt",
+          "groupId",
+          "mails",
+          "reservationTime",
+          "status"
+        ]
       },
       "MailGroupListResponse": {
         "type": "object",
@@ -8070,7 +8865,9 @@
             }
           }
         },
-        "required": ["groups"]
+        "required": [
+          "groups"
+        ]
       },
       "MailItem": {
         "type": "object",
@@ -8091,7 +8888,11 @@
             "example": "[유어슈] 홍길동님 서류 결과 안내"
           }
         },
-        "required": ["mailSubject", "receiverEmail", "reservationId"]
+        "required": [
+          "mailSubject",
+          "receiverEmail",
+          "reservationId"
+        ]
       },
       "MailFileListResponse": {
         "type": "object",
@@ -8103,7 +8904,9 @@
             }
           }
         },
-        "required": ["files"]
+        "required": [
+          "files"
+        ]
       },
       "MailFileDownloadResponse": {
         "type": "object",
@@ -8118,7 +8921,10 @@
             "description": "URL 만료 시각"
           }
         },
-        "required": ["expiresAt", "getUrl"]
+        "required": [
+          "expiresAt",
+          "getUrl"
+        ]
       },
       "DeleteByPartResponse": {
         "type": "object",
@@ -8128,7 +8934,9 @@
             "format": "int32"
           }
         },
-        "required": ["deletedCount"]
+        "required": [
+          "deletedCount"
+        ]
       }
     },
     "securitySchemes": {

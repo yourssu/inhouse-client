@@ -77,8 +77,8 @@ export const FinalInterviewEvaluationDialog = ({
               <span>아직 평가를 제출하지 않은 평가자가 있어요.</span>
             </h3>
             <ul className="text-neutralSubtle flex flex-col text-sm" role="list">
-              {unsubmittedEvaluators.map(({ name, userId }) => (
-                <li key={userId}>{name}</li>
+              {unsubmittedEvaluators.map(({ name, memberId }) => (
+                <li key={memberId}>{name}</li>
               ))}
             </ul>
           </section>
