@@ -250,6 +250,7 @@ export const EvalForm = () => {
                   render={({ field, fieldState }) => (
                     <Select
                       className="w-fit"
+                      disabled={isDocumentEvaluationDisabled}
                       invalid={fieldState.invalid}
                       items={documentKoreanResults}
                       onValueChange={field.onChange}
