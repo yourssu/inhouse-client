@@ -29,7 +29,7 @@ export const DocumentAnswer = ({
       )}
       onClick={onClick}
     >
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-baseline justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="bg-violet50 text-violet600 rounded-6 flex size-7 shrink-0 items-center justify-center self-start text-sm font-semibold">
             {questionNumber}
