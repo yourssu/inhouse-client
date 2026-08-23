@@ -169,6 +169,7 @@ export const Combobox = <TValue extends string>({
           >
             {value.map((item) => (
               <ComboboxChip
+                disabled={disabled}
                 item={item}
                 key={item}
                 onRemove={(v) => {

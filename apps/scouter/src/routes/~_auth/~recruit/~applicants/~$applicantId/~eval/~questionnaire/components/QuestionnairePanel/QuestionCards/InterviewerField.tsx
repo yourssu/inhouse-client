@@ -13,6 +13,7 @@ type InterviewerFieldName = `${QuestionCategory}.${number}.assignedMemberId`;
 interface InterviewerFieldProps {
   activeMembers: ActiveMemberType[];
   control: Control<QuestionnaireFormValues>;
+  disabled: boolean;
   isRequired?: boolean;
   name: InterviewerFieldName;
 }
@@ -20,6 +21,7 @@ interface InterviewerFieldProps {
 export const InterviewerField = ({
   activeMembers,
   control,
+  disabled,
   isRequired = true,
   name,
 }: InterviewerFieldProps) => {
@@ -31,6 +33,7 @@ export const InterviewerField = ({
         render={({ field, fieldState }) => (
           <InterviewerSelect
             activeMembers={activeMembers}
+            disabled={disabled}
             errorMessage={fieldState.error?.message}
             onChange={field.onChange}
             ref={field.ref}
@@ -45,6 +48,7 @@ export const InterviewerField = ({
 
 interface InterviewerSelectProps {
   activeMembers: ActiveMemberType[];
+  disabled: boolean;
   errorMessage?: string;
   onChange: (memberId: number) => void;
   ref?: React.Ref<HTMLButtonElement>;
@@ -53,6 +57,7 @@ interface InterviewerSelectProps {
 
 const InterviewerSelect = ({
   activeMembers,
+  disabled,
   errorMessage,
   onChange,
   ref,
@@ -73,6 +78,7 @@ const InterviewerSelect = ({
     >
       <Select
         className="w-full"
+        disabled={disabled}
         invalid={!!errorMessage}
         items={nicknames}
         onValueChange={(nickname) => {

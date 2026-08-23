@@ -15,6 +15,7 @@ interface EditableQuestionFieldsProps {
   category: 'PART' | 'PERSONAL';
   control: Control<QuestionnaireFormValues>;
   deleteButton: ReactNode;
+  disabled: boolean;
   index: number;
   requirements: InterviewRequirements;
 }
@@ -23,6 +24,7 @@ export const EditableQuestionFields = ({
   category,
   control,
   deleteButton,
+  disabled,
   index,
   requirements,
 }: EditableQuestionFieldsProps) => {
@@ -40,6 +42,7 @@ export const EditableQuestionFields = ({
                   aria-invalid={fieldState.invalid}
                   aria-label="질문"
                   className="min-h-20"
+                  disabled={disabled}
                   invalid={fieldState.invalid}
                   placeholder="질문을 입력하세요"
                   withHeightAutoResize
@@ -71,6 +74,7 @@ export const EditableQuestionFields = ({
           render={({ field, fieldState }) => (
             <>
               <RequirementPicker
+                disabled={disabled}
                 invalid={fieldState.invalid}
                 onChange={field.onChange}
                 ref={field.ref}

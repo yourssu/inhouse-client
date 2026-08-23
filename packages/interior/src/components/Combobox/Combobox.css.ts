@@ -134,8 +134,11 @@ export const chipCloseButton = style({
   outline: 'none',
   transition: 'background-color 0.2s ease',
   selectors: {
-    '&:hover': {
+    '&:not(:disabled):hover': {
       backgroundColor: vars.color.palette.greyOpacity200,
+    },
+    '&:disabled': {
+      cursor: 'not-allowed',
     },
   },
 });
