@@ -39,7 +39,7 @@ export const InterviewRubricSettingButton = ({
     if (isLocked) {
       return openRubricSettingDialog({
         title: '배점 변경 불가',
-        content: '한 명 이상의 평가자가 평가를 제출하여 배점을 변경할 수 없어요.',
+        content: '파트 내 지원자에 대한 면접 평가가 시작돼서 배점을 변경할 수 없어요.',
         primaryButtonText: '확인',
       });
     }
