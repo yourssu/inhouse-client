@@ -5,6 +5,7 @@ import type { InterviewRequirements } from '@/apis/interviews/requirements/schem
 import { teamJobOtherRequirementGroupConfigs } from './requirementOptions';
 
 interface RequirementPickerProps {
+  disabled: boolean;
   invalid?: boolean;
   onChange: (requirementIds: number[]) => void;
   ref?: React.Ref<HTMLInputElement>;
@@ -13,6 +14,7 @@ interface RequirementPickerProps {
 }
 
 export const RequirementPicker = ({
+  disabled,
   invalid = false,
   onChange,
   ref,
@@ -41,7 +43,7 @@ export const RequirementPicker = ({
   return (
     <Combobox
       className={invalid ? 'border-red600!' : undefined}
-      disabled={items.length === 0}
+      disabled={disabled || items.length === 0}
       items={items}
       label="요구조건"
       onValueChange={(items) => {

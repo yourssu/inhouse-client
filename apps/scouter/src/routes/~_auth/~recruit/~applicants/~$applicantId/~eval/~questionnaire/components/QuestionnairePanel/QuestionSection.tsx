@@ -6,6 +6,7 @@ import { MdAdd, MdKeyboardArrowDown } from 'react-icons/md';
 
 interface QuestionSectionProps<TQuestion extends { id: Key }> {
   description: string;
+  disabled: boolean;
   onAddQuestion?: () => void;
   onOpenChange: (isOpen: boolean) => void;
   open: boolean;
@@ -16,6 +17,7 @@ interface QuestionSectionProps<TQuestion extends { id: Key }> {
 
 export const QuestionSection = <TQuestion extends { id: Key }>({
   description,
+  disabled,
   onAddQuestion,
   onOpenChange,
   open,
@@ -65,6 +67,7 @@ export const QuestionSection = <TQuestion extends { id: Key }>({
           {onAddQuestion !== undefined && (
             <Button
               className="w-full"
+              disabled={disabled}
               onClick={onAddQuestion}
               size="sm"
               type="button"

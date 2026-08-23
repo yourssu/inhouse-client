@@ -14,6 +14,7 @@ interface RequiredQuestionCardProps {
   activeMembers: ActiveMemberType[];
   category: RequiredQuestionCategory;
   control: Control<QuestionnaireFormValues>;
+  disabled: boolean;
   index: number;
   question: SourceQuestionFormValue;
 }
@@ -22,6 +23,7 @@ export const RequiredQuestionCard = ({
   activeMembers,
   category,
   control,
+  disabled,
   index,
   question,
 }: RequiredQuestionCardProps) => {
@@ -36,6 +38,7 @@ export const RequiredQuestionCard = ({
       <InterviewerField
         activeMembers={activeMembers}
         control={control}
+        disabled={disabled}
         name={`${category}.${index}.assignedMemberId`}
       />
     </QuestionCardFrame>
