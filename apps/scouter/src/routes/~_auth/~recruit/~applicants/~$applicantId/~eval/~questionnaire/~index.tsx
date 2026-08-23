@@ -55,7 +55,7 @@ const QuestionnairePage = () => {
             fallback={<QuestionnairePanelSkeleton />}
             title="질문지를 불러오지 못했어요"
           >
-            <div className="flex min-h-0 flex-1 overflow-y-auto">
+            <div className="min-h-0 flex-1 overflow-y-auto">
               <QuestionnairePanel
                 applicantId={Number(applicantId)}
                 partId={applicant.partId}
