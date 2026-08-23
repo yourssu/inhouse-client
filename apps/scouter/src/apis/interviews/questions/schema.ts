@@ -44,7 +44,7 @@ export const PartInterviewQuestionsParamsSchema = z.object({
 export const SaveAssignedQuestionRequestSchema = z.object({
   assignedMemberId: z.number(),
   category: QuestionCategorySchema,
-  sourceQuestionId: z.number().optional(),
+  sourceQuestionId: z.number().nullish(),
   content: z.string().optional(),
   isSelected: z.boolean().optional(),
   requirementIds: z.array(z.number()).nullish(),

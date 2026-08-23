@@ -18,10 +18,14 @@ export interface PartPersonalQuestionFormValue extends BaseQuestionFormValue {
   requirementIds: number[];
 }
 
+export interface PartQuestionFormValue extends PartPersonalQuestionFormValue {
+  sourceQuestionId?: number;
+}
+
 export interface QuestionnaireFormValues {
   CULTURE: CultureQuestionFormValue[];
   INTRO: SourceQuestionFormValue[];
   OUTRO: SourceQuestionFormValue[];
-  PART: PartPersonalQuestionFormValue[];
+  PART: PartQuestionFormValue[];
   PERSONAL: PartPersonalQuestionFormValue[];
 }
