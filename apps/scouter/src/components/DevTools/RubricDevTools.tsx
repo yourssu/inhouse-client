@@ -40,7 +40,7 @@ export const RubricDevTools = () => {
     }
 
     void openDevToolConfirmation({
-      confirmText: '배점 초기화',
+      confirmText: '초기화',
       description:
         '선택한 파트의 서류 평가 항목에 설정된 모든 최대 배점을 0점으로 초기화할까요? 평가 데이터가 남아 있으면 실행되지 않아요.',
       mutationFn: () => resetPartDocumentRubricMaxScores(selectedPart.partId),
@@ -69,7 +69,7 @@ export const RubricDevTools = () => {
     };
 
     void openDevToolConfirmation({
-      confirmText: '배점 초기화',
+      confirmText: '초기화',
       description:
         '선택한 파트와 학기의 면접 평가 배점 설정을 초기화할까요? 요구 조건은 유지되고 다음 조회에서는 배점이 설정되지 않은 평가표가 표시돼요. 평가 데이터가 남아 있으면 실행되지 않아요.',
       mutationFn: () => deletePartInterviewRubric(params),
