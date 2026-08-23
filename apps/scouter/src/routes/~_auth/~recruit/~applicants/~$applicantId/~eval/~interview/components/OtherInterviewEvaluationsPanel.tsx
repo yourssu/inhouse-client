@@ -178,12 +178,8 @@ const SubmittedOtherInterviewEvaluations = ({
               key={evaluation.evaluatorId}
             />
           ))}
-          {unsubmittedEvaluators.map(({ memberId, name, nickname, status }) => (
-            <UnsubmittedInterviewEvaluatorCard
-              key={memberId}
-              name={nickname ?? name}
-              status={status}
-            />
+          {unsubmittedEvaluators.map(({ memberId, nickname, status }) => (
+            <UnsubmittedInterviewEvaluatorCard key={memberId} name={nickname} status={status} />
           ))}
         </div>
       )}
@@ -250,9 +246,7 @@ const OtherInterviewEvaluationCollapsible = ({
         className="hover:bg-greyOpacity50 focus-visible:outline-violet500 flex w-full cursor-pointer items-center justify-between gap-3 bg-transparent px-4 py-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
         type="button"
       >
-        <span className="min-w-0 truncate font-semibold">
-          {evaluation.evaluatorNickname ?? evaluation.evaluatorName}
-        </span>
+        <span className="min-w-0 truncate font-semibold">{evaluation.evaluatorNickname}</span>
         <span className="flex shrink-0 items-center gap-2">
           <span className="text-sm tabular-nums">{evaluation.totalScore} / 100</span>
           <Badge color={resultOption.color} size="sm">
