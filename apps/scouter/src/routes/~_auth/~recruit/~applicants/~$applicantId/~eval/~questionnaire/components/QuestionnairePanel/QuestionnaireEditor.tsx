@@ -1,4 +1,5 @@
-import { Badge, Button } from '@yourssu-inhouse/interior';
+import { useQueryClient } from '@tanstack/react-query';
+import { Badge, Button, useToast } from '@yourssu-inhouse/interior';
 import { useRef, useState } from 'react';
 import {
   FieldArray,
@@ -17,6 +18,7 @@ import type {
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
+import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
 import { saveAssignedQuestionsMutationOptions } from '@/apis/interviews/questions/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { Paper } from '@/components/Paper';
@@ -32,6 +34,8 @@ import { RequiredQuestionCard } from './QuestionCards/RequiredQuestionCard';
 import { QuestionSection } from './QuestionSection';
 import { teamJobRequirementCategories } from './Requirements/requirementOptions';
 import { RequirementsSection } from './Requirements/RequirementsSection';
+
+const questionnaireDisabledMessage = '면접 평가가 제출되어 질문지를 수정할 수 없어요.';
 
 interface QuestionnaireEditorProps {
   activeMembers: ActiveMemberType[];
@@ -49,6 +53,8 @@ export const QuestionnaireEditor = ({
   requirements,
 }: QuestionnaireEditorProps) => {
   const openAlertDialog = useAlertDialog();
+  const queryClient = useQueryClient();
+  const toast = useToast();
   const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
     Record<QuestionCategory, boolean>
   >({
@@ -84,6 +90,18 @@ export const QuestionnaireEditor = ({
 
   const onSubmit: SubmitHandler<QuestionnaireFormValues> = async (values) => {
     if (isQuestionnaireDisabled) {
+      return;
+    }
+
+    // 폼을 편집하는 동안 다른 평가자가 평가를 제출했을 수 있어, 저장 직전에 최신 상태를 다시 확인해요.
+    const evaluatorStatuses = await queryClient.fetchQuery({
+      ...interviewEvaluatorStatusesOption(applicantId),
+      staleTime: 0,
+    });
+    const isLocked = evaluatorStatuses.some(({ status }) => status === 'SUBMITTED');
+
+    if (isLocked) {
+      toast.error(questionnaireDisabledMessage);
       return;
     }
 
@@ -151,7 +169,7 @@ export const QuestionnaireEditor = ({
           id="questionnaire-disabled-description"
         >
           <IoMdAlert aria-hidden className="size-5 shrink-0" />
-          <span>면접 평가가 제출되어 질문지를 수정할 수 없어요.</span>
+          <span>{questionnaireDisabledMessage}</span>
         </p>
       )}
 
@@ -416,6 +434,7 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
           assignedMemberId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
+          sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
       case 'PERSONAL':
@@ -451,6 +470,7 @@ const toSaveAssignedQuestions = (
     category: 'PART' as const,
     content: question.content.trim(),
     requirementIds: question.requirementIds,
+    sourceQuestionId: question.sourceQuestionId ?? null,
   })),
   ...values.PERSONAL.map((question) => ({
     assignedMemberId: question.assignedMemberId!,

@@ -15,7 +15,6 @@ import {
   getApplicantDocumentsEvaluationsOption,
   getPartDocumentsRubricsOption,
 } from '@/apis/documents/query';
-import { UpdatePartDocumentsRubricsFormSchema } from '@/apis/documents/schema';
 import { partsOption } from '@/apis/parts/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
@@ -23,7 +22,13 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
-const rubricSettingDisabledMessage = '파트 내 지원자에 대한 서류 평가가 시작돼서 배점을 변경할 수 없어요.'
+import {
+  DOCUMENT_RUBRIC_TOTAL_SCORE,
+  UpdatePartDocumentsRubricsFormSchema,
+} from './formValidationSchema';
+
+const rubricSettingDisabledMessage =
+  '파트 내 지원자에 대한 서류 평가가 시작돼서 배점을 변경할 수 없어요.';
 
 interface DocumentRubricSettingButtonProps {
   applicant: ApplicantType;
@@ -146,14 +151,14 @@ const DocumentRubricSettingForm = ({
     return acc + (Number.isNaN(val) ? 0 : val);
   }, 0);
 
-  const isScoreValid = totalScore === 100;
+  const isScoreValid = totalScore === DOCUMENT_RUBRIC_TOTAL_SCORE;
+
+  const footerErrorMessage = rubrics
+    .map((_, idx) => errors.rubrics?.[idx]?.maxScore?.message)
+    .find((message) => message != null);
 
   const onSubmit: SubmitHandler<UpdatePartDocumentsRubricsFormOutput> = async (data) => {
-    if (!isScoreValid) {
-      return;
-    }
-
-    // 폼이 열려 있는 동안 다른 평가자가 평가를 제출했을 수 있어, 저장 직전에 최신 상태를 다시 확인한다.
+    // 폼이 열려 있는 동안 다른 평가자가 평가를 제출했을 수 있어, 저장 직전에 최신 상태를 다시 확인해요.
     const statuses = await queryClient.fetchQuery({
       ...documentEvaluatorStatusesOption(applicantId),
       staleTime: 0,
@@ -218,10 +223,7 @@ const DocumentRubricSettingForm = ({
       </Dialog.Content>
 
       <div className="flex items-center justify-between gap-3 px-6 pt-2 pb-5">
-        <div className="text-13 text-red600 min-w-0 font-semibold">
-          {!isScoreValid && '배점 합계가 100점일 때만 저장할 수 있습니다.'}
-          {isScoreValid && errors.rubrics?.message && String(errors.rubrics.message)}
-        </div>
+        <div className="text-13 text-red600 min-w-0 font-semibold">{footerErrorMessage}</div>
         <div className="flex gap-2">
           <Dialog.Button onClick={closeAsFalse} type="button" variant="secondary">
             취소
@@ -246,7 +248,7 @@ interface TotalDocumentScoreProps {
 }
 
 const TotalDocumentScore = ({ totalScore }: TotalDocumentScoreProps) => {
-  const isCompleted = totalScore === 100;
+  const isCompleted = totalScore === DOCUMENT_RUBRIC_TOTAL_SCORE;
   return (
     <div
       className={cn(
@@ -254,7 +256,7 @@ const TotalDocumentScore = ({ totalScore }: TotalDocumentScoreProps) => {
         isCompleted ? 'bg-tealOpacity100 text-teal600' : 'bg-redOpacity100 text-red600',
       )}
     >
-      현재 합계 {totalScore}/100
+      현재 합계 {totalScore}/{DOCUMENT_RUBRIC_TOTAL_SCORE}
     </div>
   );
 };
