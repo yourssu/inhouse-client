@@ -416,6 +416,7 @@ const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): Questionna
           assignedMemberId,
           content: question.content,
           requirementIds: question.requirements.map(({ id }) => id),
+          sourceQuestionId: question.sourceQuestionId ?? undefined,
         });
         break;
       case 'PERSONAL':
@@ -451,6 +452,7 @@ const toSaveAssignedQuestions = (
     category: 'PART' as const,
     content: question.content.trim(),
     requirementIds: question.requirementIds,
+    sourceQuestionId: question.sourceQuestionId ?? null,
   })),
   ...values.PERSONAL.map((question) => ({
     assignedMemberId: question.assignedMemberId!,
