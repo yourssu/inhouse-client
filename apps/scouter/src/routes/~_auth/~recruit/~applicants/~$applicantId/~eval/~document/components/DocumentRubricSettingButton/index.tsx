@@ -23,7 +23,8 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
-const rubricSettingDisabledMessage = '파트 내 지원자에 대한 서류 평가가 시작돼서 배점을 변경할 수 없어요.'
+const rubricSettingDisabledMessage =
+  '파트 내 지원자에 대한 서류 평가가 시작돼서 배점을 변경할 수 없어요.';
 
 interface DocumentRubricSettingButtonProps {
   applicant: ApplicantType;
