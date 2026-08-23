@@ -148,16 +148,6 @@ export const PartDocumentsDeadlineSchema = z.object({
   deadline: z.iso.datetime(),
 });
 
-export const UpdatePartDocumentsRubricsFormSchema = z.object({
-  rubrics: z.array(
-    z.object({
-      sectionId: z.number(),
-      maxScore: z.string().min(1).regex(/^\d+$/).transform(Number),
-      criterionDetail: z.string(),
-    }),
-  ),
-});
-
 export const UpdatePartDocumentsRubricsRequestSchema = z.array(
   z.object({
     sectionId: z.number(),
@@ -167,9 +157,6 @@ export const UpdatePartDocumentsRubricsRequestSchema = z.array(
 );
 
 export type PartDocumentRubricsType = z.infer<typeof PartDocumentsRubricsSchema>;
-export type UpdatePartDocumentsRubricsFormType = z.infer<
-  typeof UpdatePartDocumentsRubricsFormSchema
->;
 export type UpdatePartDocumentRubricsRequestType = z.infer<
   typeof UpdatePartDocumentsRubricsRequestSchema
 >;
