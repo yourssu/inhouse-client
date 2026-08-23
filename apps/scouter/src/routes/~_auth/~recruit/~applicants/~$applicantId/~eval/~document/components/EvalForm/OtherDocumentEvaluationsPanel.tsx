@@ -116,9 +116,9 @@ const SubmittedOtherDocumentEvaluations = ({
       ) : (
         <div className="flex flex-col gap-3">
           {othersEvaluations.map(
-            ({ evaluatorId, evaluatorName, totalScore, overallComment, result }) => (
+            ({ evaluatorId, evaluatorNickname, totalScore, overallComment, result }) => (
               <OtherDocumentEvaluationCollapsible
-                evaluatorName={evaluatorName}
+                evaluatorName={evaluatorNickname}
                 key={evaluatorId}
                 overallComment={overallComment}
                 result={result}
@@ -126,8 +126,8 @@ const SubmittedOtherDocumentEvaluations = ({
               />
             ),
           )}
-          {unsubmittedEvaluators.map(({ memberId, name, status }) => (
-            <UnsubmittedDocumentEvaluatorCard key={memberId} name={name} status={status} />
+          {unsubmittedEvaluators.map(({ memberId, nickname, status }) => (
+            <UnsubmittedDocumentEvaluatorCard key={memberId} name={nickname} status={status} />
           ))}
         </div>
       )}
