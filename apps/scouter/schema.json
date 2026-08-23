@@ -8152,6 +8152,11 @@
             "description": "평가자 이름",
             "example": "홍길동"
           },
+          "nickname": {
+            "type": "string",
+            "description": "평가자 닉네임",
+            "example": "gildong(길동)"
+          },
           "status": {
             "type": "string",
             "description": "평가 작성 상태",
@@ -8166,6 +8171,7 @@
         "required": [
           "memberId",
           "name",
+          "nickname",
           "status"
         ]
       },
@@ -8206,6 +8212,11 @@
             "description": "평가자 이름",
             "example": "홍길동"
           },
+          "evaluatorNickname": {
+            "type": "string",
+            "description": "평가자 닉네임",
+            "example": "gildong(길동)"
+          },
           "totalScore": {
             "type": "integer",
             "format": "int32",
@@ -8238,6 +8249,7 @@
         "required": [
           "evaluatorId",
           "evaluatorName",
+          "evaluatorNickname",
           "items",
           "overallComment",
           "result",
@@ -8333,13 +8345,23 @@
       },
       "ReadOtherDocumentEvaluationResponse": {
         "type": "object",
+        "description": "다른 평가자의 서류 평가 조회 응답",
         "properties": {
           "evaluatorId": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "평가자 사용자 ID",
+            "example": 23
           },
           "evaluatorName": {
-            "type": "string"
+            "type": "string",
+            "description": "평가자 이름",
+            "example": "홍길동"
+          },
+          "evaluatorNickname": {
+            "type": "string",
+            "description": "평가자 닉네임",
+            "example": "gildong(길동)"
           },
           "totalScore": {
             "type": "integer",
@@ -8366,6 +8388,7 @@
         "required": [
           "evaluatorId",
           "evaluatorName",
+          "evaluatorNickname",
           "items",
           "overallComment",
           "result",

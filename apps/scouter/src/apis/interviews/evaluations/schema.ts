@@ -35,6 +35,7 @@ export const InterviewEvaluatorStatusSchema = z.object({
   // User 엔티티가 없는 평가자는 userId가 null로 내려와요. 고유 식별자로는 memberId를 사용해요.
   userId: z.int().nullable(),
   name: z.string(),
+  nickname: z.string().nullish(),
   status: InterviewEvaluatorStatusValueSchema,
 });
 
@@ -48,6 +49,7 @@ export const OtherInterviewEvaluationItemSchema = z.object({
 export const OtherInterviewEvaluationSchema = z.object({
   evaluatorId: z.int(),
   evaluatorName: z.string(),
+  evaluatorNickname: z.string().nullish(),
   totalScore: z.int32(),
   result: InterviewEvaluationResultSchema,
   overallComment: z.string(),
