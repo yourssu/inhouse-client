@@ -152,14 +152,10 @@ const DocumentRubricSettingForm = ({
   }, 0);
 
   const isScoreValid = totalScore === DOCUMENT_RUBRIC_TOTAL_SCORE;
-  const firstFieldErrorMessage = rubrics
+
+  const footerErrorMessage = rubrics
     .map((_, idx) => errors.rubrics?.[idx]?.maxScore?.message)
     .find((message) => message != null);
-  const arrayLevelErrorMessage = errors.rubrics?.message
-    ? String(errors.rubrics.message)
-    : undefined;
-
-  const footerErrorMessage = firstFieldErrorMessage ?? arrayLevelErrorMessage;
 
   const onSubmit: SubmitHandler<UpdatePartDocumentsRubricsFormOutput> = async (data) => {
     // 폼이 열려 있는 동안 다른 평가자가 평가를 제출했을 수 있어, 저장 직전에 최신 상태를 다시 확인해요.
