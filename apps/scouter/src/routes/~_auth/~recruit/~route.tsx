@@ -5,6 +5,8 @@ import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons
 import { partsOption } from '@/apis/parts/query';
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
 import { AdaptiveLogo } from '@/components/AdaptiveLogo';
+import { DevTools } from '@/components/DevTools';
+import { STAGE } from '@/config';
 
 const RouteComponent = () => {
   return (
@@ -35,6 +37,7 @@ const RouteComponent = () => {
         logo={<AdaptiveLogo className="h-5" />}
       />
       <Outlet />
+      {STAGE === 'dev' && <DevTools />}
     </>
   );
 };
