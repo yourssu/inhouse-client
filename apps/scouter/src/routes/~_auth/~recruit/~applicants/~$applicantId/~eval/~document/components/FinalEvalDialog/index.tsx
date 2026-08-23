@@ -80,7 +80,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
             </h3>
             <ul className="text-neutralSubtle flex flex-col text-sm" role="list">
               {unsubmittedEvaluators.map((evaluator) => (
-                <li key={evaluator.memberId}>{evaluator.name}</li>
+                <li key={evaluator.memberId}>{evaluator.nickname}</li>
               ))}
             </ul>
           </section>
