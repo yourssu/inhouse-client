@@ -1,8 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button, Dialog, Divider } from '@yourssu-inhouse/interior';
-import { Suspense } from 'react';
-import { Controller, type FieldErrors, type SubmitHandler, useForm } from 'react-hook-form';
+import { Suspense, useEffect } from 'react';
+import {
+  Controller,
+  type FieldErrors,
+  type SubmitHandler,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 
 import type { InterviewRubricGroup } from '@/apis/interviews/rubrics/schema';
 import type {
@@ -72,6 +78,12 @@ interface InterviewRubricSettingFormProps {
   semester: string;
 }
 
+/** footer에 보여줄 오류 하나와, 그 오류가 어느 범위에서 났는지 보여줘요. */
+interface RubricFormError {
+  message: string;
+  scope: 'group' | 'item' | 'total';
+}
+
 const InterviewRubricSettingForm = ({
   closeAsTrue,
   partId,
@@ -85,14 +97,29 @@ const InterviewRubricSettingForm = ({
 
   const {
     control,
-    formState: { errors },
+    formState: { errors, isSubmitted },
     handleSubmit,
+    trigger,
   } = useForm({
     resolver: zodResolver(UpdateInterviewRubricFormSchema),
     values: toFormValues(orderedGroups),
   });
 
-  const errorMessage = findFirstErrorMessage(errors, orderedGroups);
+  const watchedGroups = useWatch({ control, name: 'groups' });
+
+  /**
+   * 합계 검증은 `superRefine`으로 얹은 규칙이라, 오류가 방금 고친 입력칸이 아니라
+   * 그룹 총점이나 `groups` 전체에 붙어요. RHF는 바뀐 입력칸의 오류만 다시 계산하니
+   * 낡은 문구가 남지 않도록 폼 전체를 다시 검증해요.
+   */
+  useEffect(() => {
+    if (isSubmitted) {
+      trigger();
+    }
+  }, [isSubmitted, trigger, watchedGroups]);
+
+  const formError = findFirstError(errors, orderedGroups);
+  const isTotalScoreMismatch = formError?.scope === 'total';
 
   const { invalidate: invalidateRubric } = useQueryInvalidation(
     interviewRubricQueryKeys.part({ partId, semester }),
@@ -147,7 +174,7 @@ const InterviewRubricSettingForm = ({
                     <InterviewScoreInput
                       ariaLabel={`${interviewRubricFitTypeKo[group]} 총점`}
                       disabled={rubric.isLocked}
-                      invalid={fieldState.invalid}
+                      invalid={fieldState.invalid || isTotalScoreMismatch}
                       maxScore={100}
                       onBlur={field.onBlur}
                       onChange={field.onChange}
@@ -187,7 +214,7 @@ const InterviewRubricSettingForm = ({
 
       <div className="flex items-center justify-between gap-3 px-6 pb-5">
         <div className="min-w-0">
-          {errorMessage != null && <FieldErrorMessage>{errorMessage}</FieldErrorMessage>}
+          {formError != null && <FieldErrorMessage>{formError.message}</FieldErrorMessage>}
         </div>
         <Dialog.Button
           className="min-w-24 shrink-0"
@@ -218,30 +245,49 @@ const InterviewRubricSettingFormSkeleton = () => (
 
 /**
  * 카드마다 에러를 붙이면 입력할 때마다 열 높이가 출렁여서, footer에 한 번에 하나만 보여줘요.
+ * 에러 메시지 노출 순서: 항목 -> 그룹 총점 -> 모든 fit 총점의 합.
  */
-const findFirstErrorMessage = (
+const findFirstError = (
   errors: FieldErrors<UpdateInterviewRubricFormInput>,
   groups: InterviewRubricGroup[],
-) => {
+): RubricFormError | undefined => {
   const groupErrors = errors.groups;
 
   if (groupErrors == null) {
     return undefined;
   }
 
-  const itemMessages = groups.flatMap(({ items }, groupIndex) =>
-    items.flatMap(({ title }, itemIndex) => {
-      const message = groupErrors[groupIndex]?.items?.[itemIndex]?.maxScore?.message;
-      return message == null ? [] : `${title} · ${message}`;
-    }),
-  );
+  const itemMessage = groups
+    .flatMap(({ items }, groupIndex) =>
+      items.flatMap(({ title }, itemIndex) => {
+        const message = groupErrors[groupIndex]?.items?.[itemIndex]?.maxScore?.message;
+        return message == null ? [] : `${title} · ${message}`;
+      }),
+    )
+    .at(0);
 
-  const groupMessages = groups.flatMap(({ group }, groupIndex) => {
-    const message = groupErrors[groupIndex]?.groupMaxScore?.message;
-    return message == null ? [] : `${interviewRubricFitTypeKo[group]} · ${message}`;
-  });
+  if (itemMessage != null) {
+    return { scope: 'item', message: itemMessage };
+  }
 
-  return itemMessages[0] ?? groupMessages[0] ?? groupErrors.message;
+  const groupMessage = groups
+    .flatMap(({ group }, groupIndex) => {
+      const message = groupErrors[groupIndex]?.groupMaxScore?.message;
+      return message == null ? [] : `${interviewRubricFitTypeKo[group]} · ${message}`;
+    })
+    .at(0);
+
+  if (groupMessage != null) {
+    return { scope: 'group', message: groupMessage };
+  }
+
+  /**
+   * `groups` 자체(배열 필드)에 붙는 총합 오류는 RHF가 인덱스별 오류와 구분하려고
+   * `groupErrors.message`가 아니라 `groupErrors.root.message`에 넣어요.
+   */
+  const totalMessage = groupErrors.root?.message;
+
+  return totalMessage == null ? undefined : { scope: 'total', message: totalMessage };
 };
 
 const toFormValues = (groups: InterviewRubricGroup[]): UpdateInterviewRubricFormInput => ({
