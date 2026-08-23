@@ -67,7 +67,6 @@ export const DevToolConfirmationDialog = ({
             </div>
           ))}
         </dl>
-        <p className="text-red600 text-sm font-medium">이 작업은 되돌릴 수 없어요.</p>
       </Dialog.Content>
       <Dialog.ButtonGroup>
         <Dialog.Button disabled={isPending} onClick={closeAsFalse} variant="secondary">

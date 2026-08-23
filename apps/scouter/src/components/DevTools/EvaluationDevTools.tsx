@@ -125,7 +125,7 @@ export const EvaluationDevTools = () => {
           disabledReason="지원자를 선택하면 실행할 수 있어요."
           onClick={() =>
             openDeleteConfirmation({
-              confirmText: '서류 평가 삭제',
+              confirmText: '삭제',
               description: '선택한 지원자의 서류 평가 데이터를 삭제할까요?',
               includeInterview: false,
               mutationFn: deleteApplicantDocumentEvaluations,
@@ -142,7 +142,7 @@ export const EvaluationDevTools = () => {
           disabledReason="지원자를 선택하면 실행할 수 있어요."
           onClick={() =>
             openDeleteConfirmation({
-              confirmText: '면접·최종 평가 삭제',
+              confirmText: '삭제',
               description: '선택한 지원자의 면접 평가와 최종 평가 데이터를 삭제할까요?',
               includeInterview: true,
               mutationFn: deleteApplicantInterviewEvaluations,
@@ -159,7 +159,7 @@ export const EvaluationDevTools = () => {
           disabledReason="지원자를 선택하면 실행할 수 있어요."
           onClick={() =>
             openDeleteConfirmation({
-              confirmText: '전체 평가 삭제',
+              confirmText: '삭제',
               description: '선택한 지원자의 모든 평가 데이터를 삭제할까요?',
               includeInterview: true,
               mutationFn: deleteApplicantEvaluations,
