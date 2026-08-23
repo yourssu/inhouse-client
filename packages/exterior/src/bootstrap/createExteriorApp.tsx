@@ -2,6 +2,7 @@ import type { QueryClient, QueryClientConfig } from '@tanstack/react-query';
 
 import { type AnyRouter, RouterProvider } from '@tanstack/react-router';
 import { initializeTheme } from '@yourssu-inhouse/interior';
+import { overlay } from 'overlay-kit';
 import { type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -46,7 +47,7 @@ export interface CreateExteriorAppOptions<TRouter> {
   wrapRouter?: (node: ReactNode) => ReactNode;
 }
 
-export const createExteriorApp = <TRouter extends AnyRouter,>({
+export const createExteriorApp = <TRouter extends AnyRouter>({
   queryClientConfig,
   createRouter,
   beforeRender,
@@ -72,6 +73,15 @@ export const createExteriorApp = <TRouter extends AnyRouter,>({
   const mount = async () => {
     initializeTheme();
     await beforeRender?.();
+
+    // overlay 는 OverlayProvider 아래 RouterProvider 와 형제라 라우트가 바뀌어도 살아남아요.
+    // pathChanged 로 search param 만 바뀌는 navigation 은 제외해요.
+    // unmountAll 은 openAsync 의 Promise 를 resolve 하지 않아요.
+    router.subscribe('onResolved', ({ pathChanged }) => {
+      if (pathChanged) {
+        overlay.unmountAll();
+      }
+    });
 
     const container = rootElement ?? document.getElementById(rootElementId);
 
