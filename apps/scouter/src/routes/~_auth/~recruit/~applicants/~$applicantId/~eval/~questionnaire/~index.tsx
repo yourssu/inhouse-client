@@ -9,7 +9,10 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { applicantDocumentCommentsOption } from '@/apis/documents/query';
-import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
+import {
+  interviewEvaluatorStatusesOption,
+  myInterviewEvaluationOption,
+} from '@/apis/interviews/evaluations/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { InterviewRequirementsParamsSchema } from '@/apis/interviews/requirements/schema';
@@ -159,6 +162,7 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     context.queryClient.prefetchQuery(meOption());
     context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
     context.queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
+    context.queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
 
     if (deps.partId !== undefined) {
       context.queryClient.prefetchQuery(activeMembersOption({ partId: deps.partId }));

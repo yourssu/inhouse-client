@@ -1,10 +1,15 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
 
-import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
+import {
+  interviewEvaluatorStatusesOption,
+  myInterviewEvaluationOption,
+} from '@/apis/interviews/evaluations/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { activeMembersOption } from '@/apis/members/query';
 import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnairePanel/QuestionnaireEditor';
+
+import { isQuestionnaireLocked } from './questionnaireLock';
 
 interface QuestionnairePanelProps {
   applicantId: number;
@@ -18,17 +23,18 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
     { data: requirements },
     { data: activeMembersResponse },
     { data: evaluatorStatuses },
+    { data: myEvaluation },
   ] = useSuspenseQueries({
     queries: [
       assignedQuestionsOption(applicantId),
       interviewRequirementsOption({ partId, semester }),
       activeMembersOption({ partId }),
       interviewEvaluatorStatusesOption(applicantId),
+      myInterviewEvaluationOption(applicantId),
     ],
   });
 
-  /* 평가자 중 한 명이라도 제출 상태라면 질문지 편집을 막는다. */
-  const isQuestionnaireDisabled = evaluatorStatuses.some(({ status }) => status === 'SUBMITTED');
+  const isQuestionnaireDisabled = isQuestionnaireLocked({ evaluatorStatuses, myEvaluation });
 
   return (
     <QuestionnaireEditor
