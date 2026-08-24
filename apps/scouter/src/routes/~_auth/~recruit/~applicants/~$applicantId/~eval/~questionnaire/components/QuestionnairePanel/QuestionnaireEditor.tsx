@@ -43,12 +43,15 @@ import { teamJobRequirementCategories } from './Requirements/requirementOptions'
 import { RequirementsSection } from './Requirements/RequirementsSection';
 
 const questionnaireDisabledMessage = '면접 평가가 제출되어 질문지를 수정할 수 없어요.';
+const sharedQuestionDisabledMessage =
+  '파트의 면접 평가가 진행되어 컬처핏·파트 공통 질문을 수정할 수 없어요.';
 
 interface QuestionnaireEditorProps {
   activeMembers: ActiveMemberType[];
   applicantId: number;
   assignedQuestions: AssignedQuestions;
   isQuestionnaireDisabled: boolean;
+  isSharedQuestionDisabled: boolean;
   requirements: InterviewRequirements;
 }
 
@@ -57,6 +60,7 @@ export const QuestionnaireEditor = ({
   applicantId,
   assignedQuestions,
   isQuestionnaireDisabled,
+  isSharedQuestionDisabled,
   requirements,
 }: QuestionnaireEditorProps) => {
   const openAlertDialog = useAlertDialog();
@@ -95,6 +99,18 @@ export const QuestionnaireEditor = ({
     ...saveAssignedQuestionsMutationOptions,
     successText: '질문지를 저장했어요.',
   });
+  const disabledDescription = isQuestionnaireDisabled
+    ? {
+        id: 'questionnaire-disabled-description',
+        message: questionnaireDisabledMessage,
+      }
+    : isSharedQuestionDisabled
+      ? {
+          id: 'shared-question-disabled-description',
+          message: sharedQuestionDisabledMessage,
+        }
+      : undefined;
+  const isSharedQuestionEditingDisabled = isQuestionnaireDisabled || isSharedQuestionDisabled;
 
   const onSubmit: SubmitHandler<QuestionnaireFormValues> = async (values) => {
     if (isQuestionnaireDisabled) {
@@ -182,13 +198,13 @@ export const QuestionnaireEditor = ({
         />
       </header>
 
-      {isQuestionnaireDisabled && (
+      {disabledDescription !== undefined && (
         <p
           className="bg-orange50 text-orange600 rounded-10 flex items-center gap-1.5 px-4 py-3 text-sm font-medium"
-          id="questionnaire-disabled-description"
+          id={disabledDescription.id}
         >
           <IoMdAlert aria-hidden className="size-5 shrink-0" />
-          <span>{questionnaireDisabledMessage}</span>
+          <span>{disabledDescription.message}</span>
         </p>
       )}
 
@@ -196,9 +212,7 @@ export const QuestionnaireEditor = ({
         <RequirementsSection requirements={requirements} />
 
         <form
-          aria-describedby={
-            isQuestionnaireDisabled ? 'questionnaire-disabled-description' : undefined
-          }
+          aria-describedby={disabledDescription?.id}
           className="flex flex-col gap-4"
           onSubmit={(event) => {
             if (isQuestionnaireDisabled) {
@@ -240,7 +254,7 @@ export const QuestionnaireEditor = ({
             render={({ fields }) => (
               <QuestionSection
                 description="면접에서 사용할 질문을 2개 이상 선택해요."
-                disabled={isQuestionnaireDisabled}
+                disabled={isSharedQuestionEditingDisabled}
                 onOpenChange={(isOpen) => handleQuestionSectionOpenChange('CULTURE', isOpen)}
                 open={questionSectionOpenByCategory.CULTURE}
                 questions={fields}
@@ -248,8 +262,9 @@ export const QuestionnaireEditor = ({
                   <CultureQuestionCard
                     activeMembers={activeMembers}
                     control={control}
-                    disabled={isQuestionnaireDisabled}
                     index={index}
+                    isInterviewerDisabled={isQuestionnaireDisabled}
+                    isSelectionDisabled={isSharedQuestionEditingDisabled}
                     question={question}
                   />
                 )}
@@ -264,7 +279,7 @@ export const QuestionnaireEditor = ({
             render={({ append, fields, remove }) => (
               <QuestionSection
                 description="같은 파트 지원자에게 공통으로 사용하는 질문이에요."
-                disabled={isQuestionnaireDisabled}
+                disabled={isSharedQuestionEditingDisabled}
                 onAddQuestion={() =>
                   append({
                     assignedMemberId: undefined,
@@ -279,8 +294,9 @@ export const QuestionnaireEditor = ({
                   <PartQuestionCard
                     activeMembers={activeMembers}
                     control={control}
-                    disabled={isQuestionnaireDisabled}
                     index={index}
+                    isInterviewerDisabled={isQuestionnaireDisabled}
+                    isQuestionEditingDisabled={isSharedQuestionEditingDisabled}
                     onDelete={async () => {
                       const isConfirmed = await openAlertDialog({
                         title: '파트 공통 질문을 삭제할까요?',

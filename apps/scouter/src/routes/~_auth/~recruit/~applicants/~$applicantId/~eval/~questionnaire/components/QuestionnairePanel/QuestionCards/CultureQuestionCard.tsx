@@ -11,16 +11,18 @@ import { QuestionCardFrame } from './QuestionCardFrame';
 interface CultureQuestionCardProps {
   activeMembers: ActiveMemberType[];
   control: Control<QuestionnaireFormValues>;
-  disabled: boolean;
   index: number;
+  isInterviewerDisabled: boolean;
+  isSelectionDisabled: boolean;
   question: CultureQuestionFormValue;
 }
 
 export const CultureQuestionCard = ({
   activeMembers,
   control,
-  disabled,
   index,
+  isInterviewerDisabled,
+  isSelectionDisabled,
   question,
 }: CultureQuestionCardProps) => {
   return (
@@ -29,7 +31,7 @@ export const CultureQuestionCard = ({
       name={`CULTURE.${index}.isSelected`}
       render={({ field }) => (
         <QuestionCardFrame
-          onClick={disabled ? undefined : () => field.onChange(field.value !== true)}
+          onClick={isSelectionDisabled ? undefined : () => field.onChange(field.value !== true)}
         >
           <div className="flex items-start gap-2">
             <div className="min-w-0 flex-1">
@@ -39,7 +41,7 @@ export const CultureQuestionCard = ({
             <div onClick={(event) => event.stopPropagation()}>
               <Checkbox
                 checked={field.value === true}
-                disabled={disabled}
+                disabled={isSelectionDisabled}
                 label="선택"
                 onCheckedChange={field.onChange}
               />
@@ -61,7 +63,7 @@ export const CultureQuestionCard = ({
           <InterviewerField
             activeMembers={activeMembers}
             control={control}
-            disabled={disabled}
+            disabled={isInterviewerDisabled}
             isRequired={field.value === true}
             name={`CULTURE.${index}.assignedMemberId`}
           />

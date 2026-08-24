@@ -16,6 +16,7 @@ import {
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
 import { InterviewRequirementsParamsSchema } from '@/apis/interviews/requirements/schema';
+import { interviewRubricOption } from '@/apis/interviews/rubrics/query';
 import { activeMembersOption, meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { QuestionnairePanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnairePanel';
@@ -171,6 +172,9 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     if (deps.partId !== undefined && deps.semester !== undefined) {
       context.queryClient.prefetchQuery(
         interviewRequirementsOption({ partId: deps.partId, semester: deps.semester }),
+      );
+      context.queryClient.prefetchQuery(
+        interviewRubricOption({ partId: deps.partId, semester: deps.semester }),
       );
     }
   },

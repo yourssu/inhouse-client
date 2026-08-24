@@ -15,8 +15,9 @@ import { QuestionCardFrame } from './QuestionCardFrame';
 interface PartQuestionCardProps {
   activeMembers: ActiveMemberType[];
   control: Control<QuestionnaireFormValues>;
-  disabled: boolean;
   index: number;
+  isInterviewerDisabled: boolean;
+  isQuestionEditingDisabled: boolean;
   onDelete: () => Promise<void>;
   requirements: InterviewRequirements;
 }
@@ -24,8 +25,9 @@ interface PartQuestionCardProps {
 export const PartQuestionCard = ({
   activeMembers,
   control,
-  disabled,
   index,
+  isInterviewerDisabled,
+  isQuestionEditingDisabled,
   onDelete,
   requirements,
 }: PartQuestionCardProps) => {
@@ -37,7 +39,7 @@ export const PartQuestionCard = ({
         deleteButton={
           <IconButton
             aria-label="파트 공통 질문 삭제"
-            disabled={disabled}
+            disabled={isQuestionEditingDisabled}
             onClick={onDelete}
             size="xs"
             tooltipContent="질문 삭제"
@@ -46,7 +48,7 @@ export const PartQuestionCard = ({
             <MdDeleteOutline aria-hidden className="size-4" />
           </IconButton>
         }
-        disabled={disabled}
+        disabled={isQuestionEditingDisabled}
         index={index}
         requirements={requirements}
       />
@@ -54,7 +56,7 @@ export const PartQuestionCard = ({
       <InterviewerField
         activeMembers={activeMembers}
         control={control}
-        disabled={disabled}
+        disabled={isInterviewerDisabled}
         name={`PART.${index}.assignedMemberId`}
       />
     </QuestionCardFrame>
