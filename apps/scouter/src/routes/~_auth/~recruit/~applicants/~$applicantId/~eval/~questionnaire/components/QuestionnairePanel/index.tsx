@@ -6,6 +6,7 @@ import {
 } from '@/apis/interviews/evaluations/query';
 import { assignedQuestionsOption } from '@/apis/interviews/questions/query';
 import { interviewRequirementsOption } from '@/apis/interviews/requirements/query';
+import { interviewRubricOption } from '@/apis/interviews/rubrics/query';
 import { activeMembersOption } from '@/apis/members/query';
 import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnairePanel/QuestionnaireEditor';
 
@@ -24,6 +25,7 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
     { data: activeMembersResponse },
     { data: evaluatorStatuses },
     { data: myEvaluation },
+    { data: rubric },
   ] = useSuspenseQueries({
     queries: [
       assignedQuestionsOption(applicantId),
@@ -31,6 +33,7 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
       activeMembersOption({ partId }),
       interviewEvaluatorStatusesOption(applicantId),
       myInterviewEvaluationOption(applicantId),
+      interviewRubricOption({ partId, semester }),
     ],
   });
 
@@ -42,6 +45,7 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
       applicantId={applicantId}
       assignedQuestions={assignedQuestions}
       isQuestionnaireDisabled={isQuestionnaireDisabled}
+      isSharedQuestionDisabled={rubric.isLocked}
       requirements={requirements}
     />
   );
