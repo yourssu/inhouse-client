@@ -18,7 +18,10 @@ import type {
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
-import { interviewEvaluatorStatusesOption } from '@/apis/interviews/evaluations/query';
+import {
+  interviewEvaluatorStatusesOption,
+  myInterviewEvaluationOption,
+} from '@/apis/interviews/evaluations/query';
 import { saveAssignedQuestionsMutationOptions } from '@/apis/interviews/questions/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { Paper } from '@/components/Paper';
@@ -31,6 +34,7 @@ import { CultureQuestionCard } from './QuestionCards/CultureQuestionCard';
 import { PartQuestionCard } from './QuestionCards/PartQuestionCard';
 import { PersonalQuestionCard } from './QuestionCards/PersonalQuestionCard';
 import { RequiredQuestionCard } from './QuestionCards/RequiredQuestionCard';
+import { isQuestionnaireLocked } from './questionnaireLock';
 import { QuestionSection } from './QuestionSection';
 import { teamJobRequirementCategories } from './Requirements/requirementOptions';
 import { RequirementsSection } from './Requirements/RequirementsSection';
@@ -93,12 +97,18 @@ export const QuestionnaireEditor = ({
       return;
     }
 
-    // 폼을 편집하는 동안 다른 평가자가 평가를 제출했을 수 있어, 저장 직전에 최신 상태를 다시 확인해요.
-    const evaluatorStatuses = await queryClient.fetchQuery({
-      ...interviewEvaluatorStatusesOption(applicantId),
-      staleTime: 0,
-    });
-    const isLocked = evaluatorStatuses.some(({ status }) => status === 'SUBMITTED');
+    // 폼을 편집하는 동안 평가가 제출됐을 수 있어, 저장 직전에 최신 상태를 다시 확인해요.
+    const [evaluatorStatuses, myEvaluation] = await Promise.all([
+      queryClient.fetchQuery({
+        ...interviewEvaluatorStatusesOption(applicantId),
+        staleTime: 0,
+      }),
+      queryClient.fetchQuery({
+        ...myInterviewEvaluationOption(applicantId),
+        staleTime: 0,
+      }),
+    ]);
+    const isLocked = isQuestionnaireLocked({ evaluatorStatuses, myEvaluation });
 
     if (isLocked) {
       toast.error(questionnaireDisabledMessage);
