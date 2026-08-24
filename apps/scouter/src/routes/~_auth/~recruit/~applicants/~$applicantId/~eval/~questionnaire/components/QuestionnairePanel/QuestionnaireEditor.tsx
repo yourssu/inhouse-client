@@ -22,7 +22,10 @@ import {
   interviewEvaluatorStatusesOption,
   myInterviewEvaluationOption,
 } from '@/apis/interviews/evaluations/query';
-import { saveAssignedQuestionsMutationOptions } from '@/apis/interviews/questions/query';
+import {
+  assignedQuestionsOption,
+  saveAssignedQuestionsMutationOptions,
+} from '@/apis/interviews/questions/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { Paper } from '@/components/Paper';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
@@ -73,6 +76,7 @@ export const QuestionnaireEditor = ({
     control,
     formState: { errors, isDirty },
     handleSubmit,
+    reset,
   } = useForm<QuestionnaireFormValues>({
     mode: 'onChange',
     validate: ({ eventType, formValues }) => {
@@ -111,6 +115,11 @@ export const QuestionnaireEditor = ({
     const isLocked = isQuestionnaireLocked({ evaluatorStatuses, myEvaluation });
 
     if (isLocked) {
+      const latestAssignedQuestions = await queryClient.fetchQuery({
+        ...assignedQuestionsOption(applicantId),
+        staleTime: 0,
+      });
+      reset(toQuestionnaireFormValues(latestAssignedQuestions));
       toast.error(questionnaireDisabledMessage);
       return;
     }
