@@ -1,22 +1,38 @@
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useAuth } from '@yourssu-inhouse/auth';
 import { Button, Divider, Popover, useToast } from '@yourssu-inhouse/interior';
-import { MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowForwardIos, MdPerson } from 'react-icons/md';
+
+import { meOption } from '@/apis/me';
+
+// 프로필 이미지가 없거나 로딩 중일 때 보여줄 기본 아바타.
+const ProfileAvatar = ({ src, alt }: { alt: string; src?: string }) => {
+  if (src) {
+    return (
+      <img alt={alt} className="size-full object-cover" referrerPolicy="no-referrer" src={src} />
+    );
+  }
+  return (
+    <div className="text-neutralSubtle flex size-full items-center justify-center">
+      <MdPerson className="size-5" />
+    </div>
+  );
+};
 
 export const ProfileButton = () => {
   const toast = useToast();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { api, logout } = useAuth();
+  const { data: me } = useQuery(meOption(api));
+
+  const profileImageUrl = me?.profileImageUrl || undefined;
 
   return (
     <Popover>
       <Popover.Trigger asChild>
         <button className="bg-grey100 size-8 cursor-pointer overflow-hidden rounded-full">
-          <img
-            alt="프로필 사진"
-            referrerPolicy="no-referrer"
-            src="https://lh3.googleusercontent.com/a/ACg8ocKAe_sLlHOkrZ0nEIIFjIj-7G4P4uUyTv1JeIGnVJa6TfpcjA=s100"
-          />
+          <ProfileAvatar alt="프로필 사진" src={profileImageUrl} />
         </button>
       </Popover.Trigger>
       <Popover.Content
@@ -27,15 +43,11 @@ export const ProfileButton = () => {
       >
         <div className="flex items-center px-5 py-5">
           <div className="size-9 overflow-hidden rounded-full">
-            <img
-              alt="프로필 사진"
-              // TODO: /me 계약 정리 후 실제 프로필로 교체해요.
-              src="https://lh3.googleusercontent.com/a/ACg8ocKAe_sLlHOkrZ0nEIIFjIj-7G4P4uUyTv1JeIGnVJa6TfpcjA=s100"
-            />
+            <ProfileAvatar alt="프로필 사진" src={profileImageUrl} />
           </div>
           <div className="ml-3">
-            <p className="text-15 font-semibold">Feca</p>
-            <p className="text-neutralSubtle text-13">user.urssu@gmail.com</p>
+            <p className="text-15 font-semibold">{me?.nickname ?? ''}</p>
+            <p className="text-neutralSubtle text-13">{me?.email ?? ''}</p>
           </div>
         </div>
         <Divider />
