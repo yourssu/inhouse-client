@@ -22,7 +22,6 @@ import { useLoading } from 'react-simplikit';
 import { applicantByIdOption } from '@/apis/applicants/query';
 import { putApplicantDocumentEvaluations } from '@/apis/documents';
 import {
-  documentEvaluatorStatusesOption,
   getApplicantDocumentsEvaluationsOption,
   getApplicantDocumentsOthersEvaluationsOption,
   getPartDocumentsRubricsOption,
@@ -67,19 +66,15 @@ export const EvalForm = () => {
       data: { rubrics },
     },
     { data: othersEvaluations },
-    { data: statuses },
   ] = useSuspenseQueries({
     queries: [
       getApplicantDocumentsEvaluationsOption(Number(applicantId)),
       getPartDocumentsRubricsOption(part.partId),
       getApplicantDocumentsOthersEvaluationsOption(Number(applicantId)),
-      documentEvaluatorStatusesOption(Number(applicantId)),
     ],
   });
 
   const isMyEvaluationSubmitted = evaluations.submittedAt != null;
-
-  const isRubricLocked = statuses.some(({ status }) => status === 'SUBMITTED');
 
   const {
     handleSubmit,
@@ -145,7 +140,7 @@ export const EvalForm = () => {
           제출 완료
         </Badge>
       ) : (
-        <DocumentRubricSettingButton applicant={applicant} isLocked={isRubricLocked} />
+        <DocumentRubricSettingButton applicant={applicant} />
       )}
     </header>
   );
