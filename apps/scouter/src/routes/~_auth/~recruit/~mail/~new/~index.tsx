@@ -1,24 +1,33 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button } from '@yourssu-inhouse/interior';
+import { Result } from '@yourssu-inhouse/interior';
+import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
 import { Suspense, useState } from 'react';
+import { useLoading } from 'react-simplikit';
 import { z } from 'zod';
 
-import type { VariableTypeName } from '@/apis/mails/schema';
 import type { MailTemplateDetail } from '@/apis/mails/schema';
+import type { VariableTypeName } from '@/apis/mails/schema';
 import type {
   VariableTab,
   VariableValueType,
 } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/type';
 
 import { applicantsOption } from '@/apis/applicants/query';
-import { mailTemplateDetailOption } from '@/apis/mails/query';
+import {
+  mailsQueryKeys,
+  mailTemplateDetailOption,
+  mailTemplatesInfiniteOption,
+} from '@/apis/mails/query';
 import { activeMembersOption, meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
 import { useTemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
 import { useSearchState } from '@/hooks/useSearchState';
+import { LoadTemplateDialog } from '@/routes/~_auth/~recruit/~mail/~new/components/LoadTemplateDialog';
 import { MailEditPaper } from '@/routes/~_auth/~recruit/~mail/~new/components/MailEditPaper';
 import { MailPreview } from '@/routes/~_auth/~recruit/~mail/~new/components/MailPreview';
 import { RecipientSelectionPaper } from '@/routes/~_auth/~recruit/~mail/~new/components/RecipientSelectionPaper';
@@ -33,9 +42,31 @@ import {
 } from '@/routes/~_auth/~recruit/~mail/~new/context';
 import { useMailValidation } from '@/routes/~_auth/~recruit/~mail/~new/hooks/useMailValidation';
 
-const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail }) => {
+const useLoadTemplate = () => {
+  const queryClient = useQueryClient();
+  const [loading, startLoading] = useLoading();
+
+  const openLoadTemplateDialog = async (): Promise<MailTemplateDetail | null> => {
+    await startLoading(queryClient.fetchInfiniteQuery(mailTemplatesInfiniteOption()));
+    return overlay.openAsync<MailTemplateDetail | null>(({ close, isOpen }) => (
+      <LoadTemplateDialog onClose={close} open={isOpen} />
+    ));
+  };
+
+  return { loading, openLoadTemplateDialog };
+};
+
+const MailContent = ({
+  initialTemplate,
+  loadTemplateLoading,
+  onLoadTemplate,
+}: {
+  initialTemplate: MailTemplateDetail;
+  loadTemplateLoading: boolean;
+  onLoadTemplate: () => void;
+}) => {
   const { mailSelection } = useMailSelectionContext();
-  const [formData, setFormData] = useTemplateFormData(initialTemplate);
+  const [formData] = useTemplateFormData(initialTemplate);
 
   const { data: parts } = useSuspenseQuery(partsOption());
   const { data: activeMembersRes } = useSuspenseQuery(activeMembersOption());
@@ -59,7 +90,6 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
     setVariableValues((prev) => ({ ...prev, [key]: value }));
   };
 
-  const [mainTab, setMainTab] = useState<'메일' | '변수'>('메일');
   const [variableTab, setVariableTab] = useState<VariableTab>('전체');
 
   const handleVariableClick = (type: VariableTypeName) => {
@@ -72,7 +102,6 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
       PARTNAME: '전체',
     } as const satisfies Record<VariableTypeName, VariableTab>;
 
-    setMainTab('변수');
     setVariableTab(map[type]);
   };
 
@@ -101,8 +130,8 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
         close={close}
         formData={formData}
         isOpen={isOpen}
-        partName={mailSelection.partName}
         receivers={receivers}
+        templateId={mailSelection.templateId ?? initialTemplate.id}
         variableValues={variableValues}
       />
     ));
@@ -111,6 +140,7 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
   return (
     <VariableContext.Provider value={{ setVariableValue, variableValues }}>
       <PageLayout.Content
+        maxWidth="full"
         right={
           <div className="flex items-center gap-4">
             {warningMessage && <WarningCallout message={warningMessage} />}
@@ -132,8 +162,17 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
         title="메일 발송"
       >
         <Suspense>
-          <div className="flex h-full flex-col gap-3">
-            <div className="pr-153">
+          <div className="flex h-full gap-3">
+            <div className="flex flex-[10_1_0]">
+              <MailPreview
+                applicants={receivers}
+                formData={formData}
+                loadTemplateLoading={loadTemplateLoading}
+                onLoadTemplate={onLoadTemplate}
+                onVariableClick={handleVariableClick}
+              />
+            </div>
+            <div className="flex max-w-150 flex-[9_1_0] flex-col gap-3">
               <RecipientSelectionPaper
                 applicants={applicants}
                 bccMembers={bccMembers}
@@ -142,25 +181,13 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
                 setBccMembers={setBccMembers}
                 setReceivers={setReceivers}
               />
-            </div>
-            <div className="flex flex-[1_1_0] gap-3">
-              <div className="flex flex-[10_1_0]">
+              <div className="flex min-h-0 flex-[1_1_0]">
                 <MailEditPaper
                   applicants={receivers}
                   formData={formData}
-                  mainTab={mainTab}
                   members={activeMembers}
-                  onMainTabChange={setMainTab}
                   onVariableTabChange={setVariableTab}
-                  setFormData={setFormData}
                   variableTab={variableTab}
-                />
-              </div>
-              <div className="flex max-w-150 flex-[9_1_0]">
-                <MailPreview
-                  applicants={receivers}
-                  formData={formData}
-                  onVariableClick={handleVariableClick}
                 />
               </div>
             </div>
@@ -171,14 +198,55 @@ const MailContent = ({ initialTemplate }: { initialTemplate?: MailTemplateDetail
   );
 };
 
-const ResolvedMailContent = ({ tid }: { tid: number }) => {
+const ResolvedMailContent = ({
+  tid,
+  loadTemplateLoading,
+  onLoadTemplate,
+}: {
+  loadTemplateLoading: boolean;
+  onLoadTemplate: () => void;
+  tid: number;
+}) => {
   const { data: initialTemplate } = useSuspenseQuery(mailTemplateDetailOption(tid));
-  return <MailContent initialTemplate={initialTemplate} />;
+  // 템플릿이 갱신되면(updatedAt 변경) MailContent를 리마운트해 formData가 최신 내용으로 초기화되게 한다.
+  return (
+    <MailContent
+      initialTemplate={initialTemplate}
+      key={initialTemplate.updatedAt}
+      loadTemplateLoading={loadTemplateLoading}
+      onLoadTemplate={onLoadTemplate}
+    />
+  );
+};
+
+const EmptyMailContent = ({
+  loadTemplateLoading,
+  onLoadTemplate,
+}: {
+  loadTemplateLoading: boolean;
+  onLoadTemplate: () => void;
+}) => {
+  return (
+    <PageLayout.Content maxWidth="full" title="메일 발송">
+      <div className="flex h-full flex-col items-center justify-center gap-6 pb-16">
+        <Result
+          description="메일 발송은 템플릿을 기준으로 진행돼요."
+          figure={<Lottie className="size-30" delay={0.2} json={lotties.empty} />}
+          title="템플릿을 불러와 주세요"
+        />
+        <Button loading={loadTemplateLoading} onClick={onLoadTemplate} size="lg" variant="primary">
+          템플릿 불러오기
+        </Button>
+      </div>
+    </PageLayout.Content>
+  );
 };
 
 const RouteComponent = () => {
-  const [search] = useSearchState({ from: '/_auth/recruit/mail/new/' });
+  const queryClient = useQueryClient();
+  const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/new/' });
   const { data: me } = useSuspenseQuery(meOption());
+  const { loading: isLoadTemplateLoading, openLoadTemplateDialog } = useLoadTemplate();
 
   const initialPartName = me.parts?.[0]?.part ?? null;
 
@@ -187,12 +255,32 @@ const RouteComponent = () => {
     templateId: search.tid ?? null,
   });
 
+  const handleLoadTemplate = async () => {
+    const template = await openLoadTemplateDialog();
+    if (template) {
+      // 같은 템플릿을 다시 불러올 때 tid가 안 바뀌어도 최신 내용으로 갱신되도록 상세 쿼리를 무효화한다.
+      await queryClient.invalidateQueries({ queryKey: mailsQueryKeys.templateDetail(template.id) });
+      setSearch((prev) => ({ ...prev, tid: template.id }));
+      setMailSelection((prev) => ({ ...prev, templateId: template.id }));
+    }
+  };
+
+  const templateId = search.tid;
+
   return (
     <MailSelectionContext.Provider value={{ mailSelection, setMailSelection }}>
-      {search.tid ? (
-        <ResolvedMailContent key={mailSelection.partName ?? 'all'} tid={search.tid} />
+      {templateId ? (
+        <ResolvedMailContent
+          key={`${mailSelection.partName ?? 'all'}-${templateId}`}
+          loadTemplateLoading={isLoadTemplateLoading}
+          onLoadTemplate={handleLoadTemplate}
+          tid={templateId}
+        />
       ) : (
-        <MailContent key={mailSelection.partName ?? 'all'} />
+        <EmptyMailContent
+          loadTemplateLoading={isLoadTemplateLoading}
+          onLoadTemplate={handleLoadTemplate}
+        />
       )}
     </MailSelectionContext.Provider>
   );

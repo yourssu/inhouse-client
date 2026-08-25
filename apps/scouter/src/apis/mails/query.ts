@@ -13,6 +13,11 @@ import {
 
 const qk = pluginQueryKey('scouter');
 
+export const mailsQueryKeys = {
+  templates: () => qk.for('mails', 'templates'),
+  templateDetail: (templateId: number) => qk.for('mails', 'templates', templateId),
+};
+
 export const mailTemplatesInfiniteOption = (params: Omit<GetMailTemplatesParams, 'page'> = {}) =>
   infiniteQueryOptions({
     getNextPageParam: (lastPage: MailTemplatesResponse) => {

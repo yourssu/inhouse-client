@@ -13,12 +13,14 @@ import { parseBodyHtml, toVariable } from '@/components/TemplateEditorDialog/uti
 export interface TemplateFormData {
   attachments: AttachmentReference[];
   content: string;
+  subject: string;
   title: string;
   variables: VariableItem[];
 }
 
 const defaultFormData: TemplateFormData = {
   title: '',
+  subject: '',
   content: '',
   variables: [
     { name: '파트명', id: uuidv4(), type: 'PARTNAME', isDefault: true },
@@ -28,6 +30,7 @@ const defaultFormData: TemplateFormData = {
       type: 'APPLICANT',
       isDefault: true,
       isDifferentPerPerson: true,
+      attributeKey: 'applicant.name',
     },
   ],
   attachments: [],
@@ -47,10 +50,11 @@ export const transformDetailToFormData = (initialData: MailTemplateDetail): Temp
     return [...defaults, ...others];
   };
 
-  const { attachmentReferences, bodyHtml, title, variables } = initialData;
+  const { attachmentReferences, bodyHtml, subject, title, variables } = initialData;
   const initialVariables = replaceDefaultVariablesAsInitial(variables);
   return {
     title,
+    subject,
     content: parseBodyHtml(bodyHtml, initialVariables),
     variables: initialVariables,
     attachments: attachmentReferences,

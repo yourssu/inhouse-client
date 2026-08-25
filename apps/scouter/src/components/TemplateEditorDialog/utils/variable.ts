@@ -13,6 +13,7 @@ export const toVariable = (detail: DetailVariable): VariableItem => ({
   type: detail.type,
   isDefault: isDefaultVariable(detail.type),
   isDifferentPerPerson: detail.perRecipient,
+  attributeKey: detail.attributeKey,
 });
 
 export const parseBodyHtml = (html: string, variables: VariableItem[]) => {
@@ -27,16 +28,31 @@ export const parseBodyHtml = (html: string, variables: VariableItem[]) => {
   });
 };
 
+// subject·body(직렬화된 {{var-...}} 형식)에서 실제로 참조된 변수 키(var-uuid)를 추출한다.
+// 서버가 "사용되지 않는 변수" 선언을 거절하므로 제출 시 variables를 이 집합으로 필터링한다.
+export const extractUsedVariableKeys = (...texts: string[]): Set<string> => {
+  const keys = new Set<string>();
+  for (const text of texts) {
+    text.replace(/{{(var-[a-zA-Z0-9-]+)}}/g, (_, key: string) => {
+      keys.add(key);
+      return _;
+    });
+  }
+  return keys;
+};
+
 export const toDetailVariable = ({
   id,
   name,
   type,
   isDifferentPerPerson,
+  attributeKey,
 }: VariableItem): DetailVariable => ({
   key: `var-${id}`,
   displayName: name,
   type,
   perRecipient: isDifferentPerPerson ?? false,
+  attributeKey,
 });
 
 export const serializeBodyHtml = (html: string) => {
@@ -52,6 +68,68 @@ export const serializeBodyHtml = (html: string) => {
   });
 
   return doc.body.innerHTML;
+};
+
+// subject는 plain text에 {{var-...}}로 변수를 표현한다.
+// tiptap이 내보낸 HTML에서 칩 span을 {{var-...}}로 되돌리고, textContent로 디코딩해 plain text로 직렬화한다.
+export const serializeSubject = (html: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  doc.body.querySelectorAll('span[data-type="inlineVariable"]').forEach((variable) => {
+    const id = variable.getAttribute('id');
+    if (id) {
+      variable.replaceWith(`{{var-${id}}}`);
+    }
+  });
+  return doc.body.textContent ?? '';
+};
+
+export const renderSubject = (
+  subject: string,
+  variables: VariableItem[],
+  variableValues: Record<string, any>,
+  options: { partName?: string; recipientName?: string } = {},
+) => {
+  return subject.replace(/{{var-([a-zA-Z0-9-]+)}}/g, (match, id) => {
+    const variable = variables.find((v) => v.id === id);
+    if (!variable) {
+      return match;
+    }
+
+    if (variable.isDefault) {
+      if (variable.type === 'APPLICANT') {
+        return options.recipientName ?? match;
+      }
+      if (variable.type === 'PARTNAME') {
+        return options.partName ?? match;
+      }
+    }
+
+    const key =
+      variable.isDifferentPerPerson && options.recipientName
+        ? `${id}_${options.recipientName}`
+        : id;
+    const value = variableValues[key];
+
+    if (value instanceof Date) {
+      return format(value, 'yyyy년 MM월 dd일');
+    }
+    if (variable.type === 'LINK' && value && typeof value === 'object') {
+      return (value as { url?: string }).url ?? match;
+    }
+    return value ? String(value) : match;
+  });
+};
+
+// 미리보기에서 subject의 {{var-...}}를 본문과 동일한 변수 칩 HTML로 렌더링한다.
+// 해결된 값은 값으로, 미설정 변수는 "채우기: 이름" 칩으로 표시한다.
+export const renderSubjectHtml = (
+  subject: string,
+  variables: VariableItem[],
+  variableValues: Record<string, any>,
+  options: { partName?: string; recipientName?: string } = {},
+) => {
+  return renderBodyHtml(parseBodyHtml(subject, variables), variables, variableValues, options);
 };
 
 export const renderBodyHtml = (

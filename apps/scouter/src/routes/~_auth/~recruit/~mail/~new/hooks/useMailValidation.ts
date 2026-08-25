@@ -42,15 +42,15 @@ export const useMailValidation = ({
       return !val;
     });
 
-  const isTitleEmpty = !formData.title.trim();
+  const isSubjectEmpty = !formData.subject.trim();
   const isContentEmpty =
     !formData.content.trim() ||
     formData.content === '<p></p>' ||
     formData.content === '<div></div>';
-  const isSendDisabled = isTitleEmpty || isContentEmpty || isAnyVariableUnset;
+  const isSendDisabled = isSubjectEmpty || isContentEmpty || isAnyVariableUnset;
 
   const warningMessage = (() => {
-    if (isTitleEmpty || isContentEmpty) {
+    if (isSubjectEmpty || isContentEmpty) {
       return '발송하려면 메일 제목과 내용을 작성해 주세요.';
     }
     if (isAnyVariableUnset) {
@@ -63,7 +63,7 @@ export const useMailValidation = ({
     isAnyVariableUnset,
     isContentEmpty,
     isSendDisabled,
-    isTitleEmpty,
+    isSubjectEmpty,
     warningMessage,
   };
 };

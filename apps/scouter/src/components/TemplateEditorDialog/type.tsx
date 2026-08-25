@@ -7,6 +7,7 @@ export type VariablePannelStep = 'create' | 'list' | 'select';
 export type SelectableVariableType = Exclude<VariableTypeName, 'APPLICANT' | 'PARTNAME'>;
 
 export interface VariableItem {
+  attributeKey?: string;
   id: string;
   isDefault?: boolean;
   isDifferentPerPerson?: boolean;

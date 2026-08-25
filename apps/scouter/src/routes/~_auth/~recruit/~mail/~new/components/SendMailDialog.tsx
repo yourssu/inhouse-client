@@ -11,13 +11,12 @@ import { SwitchCase, useLoading } from 'react-simplikit';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
-import type { PartNameType } from '@/apis/parts/schema';
 import type { TemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 import type { VariableValueType } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/type';
 
 import { postMailReservation } from '@/apis/mails';
-import { buildMailPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
+import { buildReservationPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
 import { handleError } from '@/utils/error';
 
 interface SendMailDialogProps {
@@ -25,8 +24,8 @@ interface SendMailDialogProps {
   close: () => void;
   formData: TemplateFormData;
   isOpen: boolean;
-  partName: Exclude<PartNameType, 'Head lead'> | null;
   receivers: ApplicantType[];
+  templateId: number;
   variableValues: Record<VariableItem['id'], VariableValueType>;
 }
 
@@ -37,7 +36,7 @@ export const SendMailDialog = ({
   receivers,
   bccMembers,
   variableValues,
-  partName,
+  templateId,
 }: SendMailDialogProps) => {
   const [type, setType] = useState<'now' | 'reserve'>('reserve');
   const [date, setDate] = useState<Date | null>(null);
@@ -61,24 +60,18 @@ export const SendMailDialog = ({
       return set(date, { hours, minutes, seconds: 0, milliseconds: 0 }).toISOString();
     })();
 
-    const bccEmailAddresses = bccMembers.map((m) => m.email);
-
     const result = await startLoading(
-      Promise.all(
-        receivers.map((receiver) =>
-          mutation.mutateAsync({
-            ...buildMailPayload({
-              formData,
-              variableValues,
-              partName,
-              recipientName: receiver.name,
-            }),
-            bccEmailAddresses,
-            receiverEmailAddresses: [receiver.email],
+      mutation
+        .mutateAsync(
+          buildReservationPayload({
+            templateId,
             reservationTime,
+            receivers,
+            bccMembers,
+            variables: formData.variables,
+            variableValues,
           }),
-        ),
-      )
+        )
         .then(() => ({
           success: true,
           message: '메일을 발송했어요.',

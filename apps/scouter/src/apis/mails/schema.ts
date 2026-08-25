@@ -61,10 +61,15 @@ export const DetailVariableSchema = z.object({
   type: z.enum(variableTypeNames),
   displayName: z.string(),
   perRecipient: z.boolean(),
+  // 스펙상 required가 아니라 서버가 null을 내려줄 수 있어 nullish로 받고 undefined로 정규화한다.
+  attributeKey: z
+    .string()
+    .nullish()
+    .transform((v) => v ?? undefined),
 });
 
 export const AttachmentReferenceSchema = z.object({
-  fileId: z.number(),
+  fileId: z.number().optional(),
   fileName: z.string(),
   contentType: z.string(),
   storageKey: z.string(),
@@ -73,6 +78,7 @@ export const AttachmentReferenceSchema = z.object({
 export const MailTemplateDetailSchema = z.object({
   id: z.number(),
   title: z.string(),
+  subject: z.string(),
   bodyHtml: z.string(),
   variables: z.array(DetailVariableSchema),
   attachmentReferences: z.array(AttachmentReferenceSchema),
@@ -83,24 +89,38 @@ export const AttachmentReferenceRequestSchema = z.object({
   fileId: z.number(),
 });
 
-export const MailReserveRequestSchema = z.object({
-  receiverEmailAddresses: z.array(z.email()),
-  ccEmailAddresses: z.array(z.email()).optional(),
-  bccEmailAddresses: z.array(z.email()).optional(),
-  mailSubject: z.string(),
-  mailBody: z.string(),
-  bodyFormat: z.enum(['HTML', 'PLAIN_TEXT']),
-  reservationTime: z.iso.datetime(),
+export const CreateMailTemplateRequestSchema = z.object({
+  title: z.string().min(1),
+  subject: z.string().min(1),
+  bodyHtml: z.string(),
+  variables: z.array(DetailVariableSchema),
   attachmentReferences: z.array(AttachmentReferenceRequestSchema),
 });
 
-export const MailSendRequestSchema = MailReserveRequestSchema.omit({
-  reservationTime: true,
-  ccEmailAddresses: true,
-  bccEmailAddresses: true,
+export const RecipientRequestSchema = z.object({
+  email: z.email(),
+  applicantId: z.number().optional(),
+  bindings: z.record(z.string(), z.string()),
 });
 
-export const mailReservationStatus = ['SCHEDULED', 'PENDING_SEND', 'SENT'] as const;
+export const MailReserveRequestSchema = z.object({
+  templateId: z.number(),
+  reservationTime: z.iso.datetime(),
+  recipients: z.array(RecipientRequestSchema),
+  sharedBindings: z.record(z.string(), z.string()),
+  ccEmailAddresses: z.array(z.email()).optional(),
+  bccEmailAddresses: z.array(z.email()).optional(),
+});
+
+export const MailSendRequestSchema = z.object({
+  receiverEmailAddresses: z.array(z.email()),
+  mailSubject: z.string(),
+  mailBody: z.string(),
+  bodyFormat: z.enum(['HTML', 'PLAIN_TEXT']),
+  attachmentReferences: z.array(AttachmentReferenceRequestSchema),
+});
+
+export const mailReservationStatus = ['SCHEDULED', 'PENDING_SEND', 'SENDING', 'SENT'] as const;
 
 export const MailReservationItemSchema = z.object({
   reservationId: z.number(),
@@ -118,7 +138,6 @@ export const MailReservationListResponseSchema = z.object({
 
 export const MailReservationStatusItemSchema = z.object({
   reservationId: z.number(),
-  mailId: z.number(),
   reservationTime: z.iso.datetime(),
   failureErrorCode: z.string().optional(),
   failedAt: z.iso.datetime().optional(),
@@ -164,6 +183,8 @@ export type MailTemplatesResponse = z.infer<typeof MailTemplatesResponseSchema>;
 export type MailReserveRequest = z.infer<typeof MailReserveRequestSchema>;
 export type MailSendRequest = z.infer<typeof MailSendRequestSchema>;
 export type AttachmentReferenceRequest = z.infer<typeof AttachmentReferenceRequestSchema>;
+export type CreateMailTemplateRequest = z.infer<typeof CreateMailTemplateRequestSchema>;
+export type RecipientRequest = z.infer<typeof RecipientRequestSchema>;
 export type MailReservationStatusType = (typeof mailReservationStatus)[number];
 export type MailReservationItem = z.infer<typeof MailReservationItemSchema>;
 export type MailReservationListResponse = z.infer<typeof MailReservationListResponseSchema>;

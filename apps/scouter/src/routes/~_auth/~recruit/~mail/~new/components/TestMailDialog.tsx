@@ -12,7 +12,7 @@ import type { VariableValueType } from '@/routes/~_auth/~recruit/~mail/~new/comp
 import { postMailSend } from '@/apis/mails';
 import { meOption } from '@/apis/members/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { buildMailPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
+import { buildTestSendPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
 
 interface TestMailDialogProps {
   close: () => void;
@@ -45,10 +45,14 @@ export const TestMailDialog = ({
     }
 
     const res = await startLoading(
-      mutateWithToast({
-        ...buildMailPayload({ formData, variableValues, partName }),
-        receiverEmailAddresses: [email],
-      }),
+      mutateWithToast(
+        buildTestSendPayload({
+          formData,
+          variableValues,
+          partName,
+          toEmail: email,
+        }),
+      ),
     );
 
     if (res.success) {

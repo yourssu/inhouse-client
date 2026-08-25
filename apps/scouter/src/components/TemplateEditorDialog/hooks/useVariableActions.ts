@@ -8,12 +8,18 @@ import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 
 interface UseVariableActionsProps {
-  content: string;
-  editor: Editor | null;
+  editors: Editor[];
+  getActiveEditor: () => Editor | null;
+  isVariableUsed: (id: string) => boolean;
   setVariables: Dispatch<SetStateAction<VariableItem[]>>;
 }
 
-export const useVariableActions = ({ editor, content, setVariables }: UseVariableActionsProps) => {
+export const useVariableActions = ({
+  editors,
+  getActiveEditor,
+  isVariableUsed,
+  setVariables,
+}: UseVariableActionsProps) => {
   const openAlertDialog = useAlertDialog();
 
   const addVariable = (variable: Omit<VariableItem, 'id'>) => {
@@ -21,35 +27,38 @@ export const useVariableActions = ({ editor, content, setVariables }: UseVariabl
     setVariables((prev) => [...prev, newVariable]);
   };
 
-  const removeInlineVariablesInEditor = (id: string) => {
-    editor?.commands.command(({ tr, state, dispatch }) => {
-      const { doc } = state;
-      const rangesToDelete: { from: number; to: number }[] = [];
+  // 변수가 삭제되면 본문·제목 등 변수를 포함할 수 있는 모든 에디터에서 해당 칩을 제거한다.
+  const removeInlineVariablesInEditors = (id: string) => {
+    for (const editor of editors) {
+      editor.commands.command(({ tr, state, dispatch }) => {
+        const { doc } = state;
+        const rangesToDelete: { from: number; to: number }[] = [];
 
-      doc.descendants((node, pos) => {
-        if (node.type.name === 'inlineVariable' && node.attrs.id === id) {
-          rangesToDelete.push({ from: pos, to: pos + node.nodeSize });
+        doc.descendants((node, pos) => {
+          if (node.type.name === 'inlineVariable' && node.attrs.id === id) {
+            rangesToDelete.push({ from: pos, to: pos + node.nodeSize });
+          }
+        });
+
+        if (rangesToDelete.length > 0 && dispatch) {
+          for (let i = rangesToDelete.length - 1; i >= 0; i--) {
+            const { from, to } = rangesToDelete[i];
+            tr.delete(from, to);
+          }
+          dispatch(tr);
+          return true;
         }
+        return false;
       });
-
-      if (rangesToDelete.length > 0 && dispatch) {
-        for (let i = rangesToDelete.length - 1; i >= 0; i--) {
-          const { from, to } = rangesToDelete[i];
-          tr.delete(from, to);
-        }
-        dispatch(tr);
-        return true;
-      }
-      return false;
-    });
+    }
   };
 
   const removeVariable = async (id: string) => {
-    if (!editor) {
+    if (editors.length === 0) {
       return;
     }
 
-    if (!content.includes(id)) {
+    if (!isVariableUsed(id)) {
       setVariables((prev) => prev.filter((v) => v.id !== id));
       return;
     }
@@ -65,10 +74,12 @@ export const useVariableActions = ({ editor, content, setVariables }: UseVariabl
     }
 
     setVariables((prev) => prev.filter((v) => v.id !== id));
-    return removeInlineVariablesInEditor(id);
+    return removeInlineVariablesInEditors(id);
   };
 
+  // 변수 칩은 포커스된 에디터(본문 또는 제목)에 삽입한다.
   const insertVariable = (variable: VariableItem) => {
+    const editor = getActiveEditor();
     editor
       ?.chain()
       .focus()

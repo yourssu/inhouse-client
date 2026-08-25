@@ -1801,6 +1801,42 @@
         }
       }
     },
+    "/applicants/webhook": {
+      "post": {
+        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "summary": "구글폼 제출 웹훅 수신",
+        "description": "Google Apps Script가 폼 제출 시점에 직접 호출한다. JWT 대신 X-Applicant-Webhook-Secret 헤더의 공유 시크릿으로 인증한다.",
+        "operationId": "receiveWebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantWebhookRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "headers": {
+              "Location": {
+                "description": "/applicants",
+                "style": "simple"
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicantSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/applicants/include-from-forms": {
       "post": {
         "tags": ["지원자 동기화 API", "리크루팅 지원자"],
@@ -5412,6 +5448,49 @@
           }
         },
         "required": ["content", "sectionId"]
+      },
+      "ApplicantWebhookItemRequest": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "answer": {
+            "type": "string"
+          },
+          "isDescriptive": {
+            "type": "boolean"
+          }
+        },
+        "required": ["answer", "isDescriptive", "question"]
+      },
+      "ApplicantWebhookRequest": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "responseId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "respondentEmail": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicantWebhookItemRequest"
+            }
+          }
+        },
+        "required": ["createTime", "formId", "items", "responseId"]
       },
       "ApplicantSyncResponse": {
         "type": "object",
