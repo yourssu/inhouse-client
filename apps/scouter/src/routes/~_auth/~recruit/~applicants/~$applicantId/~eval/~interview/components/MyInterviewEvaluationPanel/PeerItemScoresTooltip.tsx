@@ -95,14 +95,14 @@ const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) 
         다른 평가자 점수
       </span>
       <div className="flex flex-col gap-1.5">
-        {peerScoreRows.map(({ memberId, name, score, status }) => {
+        {peerScoreRows.map(({ memberId, nickname, score, status }) => {
           const evaluationStatusOption = interviewEvaluatorStatusOptions[status];
           const badgeLabel =
             status === 'SUBMITTED' ? `${score ?? '-'} / ${maxScore}` : evaluationStatusOption.label;
 
           return (
             <div className="flex items-center justify-between gap-3" key={memberId}>
-              <span className="text-13 whitespace-nowrap">{name}</span>
+              <span className="text-13 whitespace-nowrap">{nickname}</span>
               <Badge color={evaluationStatusOption.color} size="sm">
                 {badgeLabel}
               </Badge>
@@ -138,7 +138,7 @@ const PeerItemScoresError = () => (
 
 interface PeerScoreRow {
   memberId: number;
-  name: string;
+  nickname: string;
   score: number | undefined;
   status: InterviewEvaluatorStatusValue;
 }
@@ -150,9 +150,9 @@ const combinePeerScoreRows = ([statusesResult, scoreByEvaluatorIdResult, meResul
 ]): Prettify<PeerScoreRow>[] =>
   statusesResult.data
     .filter(({ memberId }) => memberId !== meResult.data.memberId)
-    .map(({ memberId, name, status, userId }) => ({
+    .map(({ memberId, nickname, status, userId }) => ({
       memberId,
-      name,
+      nickname,
       // User 엔티티가 없는 평가자는 userId가 null이라 Map에서 점수를 조회할 수 없어요.
       // 제출 완료여도 statuses와 others가 서로 다른 시점에 갱신되면 잠시 비어 있을 수 있어서
       // score는 optional로 두고, 표시하는 쪽에서 '-'로 떨어뜨려요.
