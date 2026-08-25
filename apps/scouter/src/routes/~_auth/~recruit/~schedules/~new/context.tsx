@@ -23,7 +23,7 @@ interface ScheduleCreationContextActions {
   enterCreationMode: () => void;
   exitCreationMode: () => void;
   removeDraftSchedule: (applicantId: number) => void;
-  selectPart: (partId: null | number) => void;
+  selectPart: (partId: null | number, initialDrafts?: DraftScheduleType[]) => void;
   selectSemester: (semesterId: null | number, semester: null | string) => void;
   setActiveApplicant: (applicantId: null | number) => void;
   toggleApplicant: (applicantId: number) => void;
@@ -73,15 +73,18 @@ export const ScheduleCreationProvider = ({ children }: PropsWithChildren) => {
     });
   }, [semester]);
 
-  const selectPart = useCallback((partId: null | number) => {
-    setState((prev) => ({
-      ...prev,
-      selectedPartId: partId,
-      selectedApplicantIds: [],
-      activeApplicantId: null,
-      draftSchedules: [],
-    }));
-  }, []);
+  const selectPart = useCallback(
+    (partId: null | number, initialDrafts: DraftScheduleType[] = []) => {
+      setState((prev) => ({
+        ...prev,
+        selectedPartId: partId,
+        selectedApplicantIds: [],
+        activeApplicantId: null,
+        draftSchedules: initialDrafts,
+      }));
+    },
+    [],
+  );
 
   const selectSemester = useCallback((semesterId: null | number, semester: null | string) => {
     setState((prev) => ({

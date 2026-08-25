@@ -6,7 +6,9 @@ import { MdCheck } from 'react-icons/md';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { PartType } from '@/apis/parts/schema';
+import type { InterviewScheduleType } from '@/apis/schedule/schema';
 import type { SemesterType } from '@/apis/semesters/schema';
+import type { DraftScheduleType } from '@/types/schedule';
 
 import { SemesterSelect } from '@/components/SemesterSelect';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
@@ -17,6 +19,7 @@ import { formatRecruitingSemester } from '@/utils/semester';
 interface ApplicantSelectionPanelProps {
   allApplicants: ApplicantType[];
   applicants: ApplicantType[];
+  existingSchedules: InterviewScheduleType[];
   onApplicantSelect?: (applicant: ApplicantType) => void;
   parts: PartType[];
 }
@@ -24,6 +27,7 @@ interface ApplicantSelectionPanelProps {
 export const ApplicantSelectionPanel = ({
   allApplicants,
   applicants,
+  existingSchedules,
   onApplicantSelect,
   parts,
 }: ApplicantSelectionPanelProps) => {
@@ -51,10 +55,26 @@ export const ApplicantSelectionPanel = ({
     const partName = Object.entries(partNameKo).find(([, ko]) => ko === partNameKoValue)?.[0];
     const part = parts.find((p) => p.partName === partName);
     if (part) {
-      selectPart(part.partId);
-
       // 해당 파트의 첫 번째 지원자를 자동 선택
       const partApplicants = allApplicants.filter((a) => a.part === part.partName);
+      const partApplicantIds = new Set(partApplicants.map((a) => a.applicantId));
+
+      // 선택한 파트의 기존 일정을 초안으로 불러온다.
+      // 단, 현재 지원자 풀(UNDER_REVIEW)에 없는 지원자의 일정은 제외한다.
+      const initialDrafts: DraftScheduleType[] = existingSchedules
+        .filter((s) => s.part === part.partName && partApplicantIds.has(s.applicantId))
+        .map((s) => ({
+          applicantId: s.applicantId,
+          applicantName: s.name,
+          startTime: new Date(s.startTime),
+          endTime: new Date(s.endTime),
+          locationType: s.locationType,
+          locationDetail: s.locationDetail ?? null,
+          partId: part.partId,
+        }));
+
+      selectPart(part.partId, initialDrafts);
+
       if (partApplicants.length > 0) {
         setActiveApplicant(partApplicants[0].applicantId);
         onApplicantSelect?.(partApplicants[0]);
