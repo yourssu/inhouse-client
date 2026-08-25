@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { type LinkProps } from '@tanstack/react-router';
+import { useToast } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
 import { useStorageState } from 'react-simplikit';
 
@@ -19,9 +20,12 @@ export interface TabSectionProps {
 }
 
 export const TabSection = ({ items, logo }: TabSectionProps) => {
+  const toast = useToast();
   const [isCollapsed] = useStorageState<boolean>(TAB_SECTION_COLLAPSED_STORAGE_KEY, {
     defaultValue: false,
   });
+
+  const showNotReadyToast = () => toast.default('아직 준비중인 기능이에요');
 
   return (
     <motion.div
@@ -38,11 +42,19 @@ export const TabSection = ({ items, logo }: TabSectionProps) => {
 
         <div className="mb-7 px-4">
           <div className="bg-greyOpacity50 text-13 text-neutralSubtle flex items-center rounded-lg font-medium">
-            <button className="h-9 w-full cursor-pointer rounded-lg text-center hover:underline">
+            <button
+              className="h-9 w-full cursor-pointer rounded-lg text-center hover:underline"
+              onClick={showNotReadyToast}
+              type="button"
+            >
               가이드
             </button>
             <span className="text-grey300 font-normal">|</span>
-            <button className="h-9 w-full cursor-pointer rounded-lg text-center hover:underline">
+            <button
+              className="h-9 w-full cursor-pointer rounded-lg text-center hover:underline"
+              onClick={showNotReadyToast}
+              type="button"
+            >
               의견 보내기
             </button>
           </div>
