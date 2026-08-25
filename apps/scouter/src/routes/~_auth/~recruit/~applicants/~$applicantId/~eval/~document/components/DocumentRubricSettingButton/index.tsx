@@ -104,7 +104,9 @@ const DocumentRubricSettingForm = ({
 
   const part = parts.find((p) => p.partName === applicant.part) ?? parts[0];
 
-  const { data: rubrics } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
+  const {
+    data: { rubrics },
+  } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
   const queryClient = useQueryClient();
   const toast = useToast();

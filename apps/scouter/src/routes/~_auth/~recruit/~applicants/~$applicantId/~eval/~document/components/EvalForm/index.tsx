@@ -63,7 +63,9 @@ export const EvalForm = () => {
 
   const [
     { data: evaluations },
-    { data: rubrics },
+    {
+      data: { rubrics },
+    },
     { data: othersEvaluations },
     { data: statuses },
   ] = useSuspenseQueries({
