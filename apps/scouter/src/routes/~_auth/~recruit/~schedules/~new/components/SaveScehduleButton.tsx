@@ -13,6 +13,7 @@ import type { PartType } from '@/apis/parts/schema';
 import type { DraftScheduleType } from '@/types/schedule';
 
 import { deleteInterviewSchedulesByPart, postInterviewSchedules } from '@/apis/schedule';
+import { interviewSchedulesQueryKey } from '@/apis/schedule/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
@@ -39,7 +40,7 @@ const SaveDialogContent = ({
   const { mutateAsync: mutatePostSchedules } = useMutation({
     mutationFn: postInterviewSchedules,
   });
-  const { invalidate: invalidateSchedules } = useQueryInvalidation(['interview', 'schedules']);
+  const { invalidate: invalidateSchedules } = useQueryInvalidation(interviewSchedulesQueryKey);
 
   const onSubmit = async () => {
     try {
