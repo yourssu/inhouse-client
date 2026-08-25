@@ -133,3 +133,9 @@ export const getMailReservationGroups = async (): Promise<MailReservationGroupsR
   const res = await api.get('api/mails/reservation/groups').json();
   return MailReservationGroupsResponseSchema.parse(res);
 };
+
+// 메일 예약 그룹 취소: groupId로 그룹과 그에 속한 예약·메일을 모두 삭제한다.
+// 본인이 보낸 그룹이거나 스카우터 팀원만 호출 가능(서버가 403/404로 제어).
+export const deleteMailReservationGroup = async (groupId: number) => {
+  await api.delete(`api/mails/reservation/groups/${groupId}`);
+};

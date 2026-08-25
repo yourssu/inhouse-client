@@ -61,8 +61,8 @@ export const TestMailDialog = ({
   };
 
   return (
-    <Dialog closeableWithOutside onClose={close} open={isOpen}>
-      <Dialog.Header onClickCloseButton={close}>
+    <Dialog onClose={close} open={isOpen}>
+      <Dialog.Header>
         <Dialog.Title>테스트 메일 발송하기</Dialog.Title>
       </Dialog.Header>
 
@@ -94,11 +94,11 @@ export const TestMailDialog = ({
       </Dialog.Content>
 
       <Dialog.ButtonGroup>
-        <Dialog.Button onClick={close} variant="secondary">
+        <Dialog.Button disabled={loading} onClick={close} variant="secondary">
           취소
         </Dialog.Button>
         <Dialog.Button disabled={!email} loading={loading} onClick={handleSend} variant="primary">
-          발송
+          발송하기
         </Dialog.Button>
       </Dialog.ButtonGroup>
     </Dialog>

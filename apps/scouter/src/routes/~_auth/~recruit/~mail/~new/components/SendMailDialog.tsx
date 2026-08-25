@@ -90,12 +90,12 @@ export const SendMailDialog = ({
   };
 
   return (
-    <Dialog closeableWithOutside onClose={close} open={isOpen}>
-      <Dialog.Header onClickCloseButton={close}>
+    <Dialog onClose={close} open={isOpen}>
+      <Dialog.Header>
         <Dialog.Title>발송하기</Dialog.Title>
       </Dialog.Header>
 
-      <Dialog.Content className="w-[600px]">
+      <Dialog.Content className="w-150">
         <SegmentedControl
           className="mb-2.5 w-full"
           items={['예약 발송하기', '즉시 발송하기']}
@@ -149,7 +149,7 @@ export const SendMailDialog = ({
       </Dialog.Content>
 
       <Dialog.ButtonGroup>
-        <Dialog.Button onClick={close} variant="secondary">
+        <Dialog.Button disabled={loading} onClick={close} variant="secondary">
           취소
         </Dialog.Button>
         <Dialog.Button

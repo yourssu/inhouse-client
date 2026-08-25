@@ -1,7 +1,6 @@
 import { type Editor } from '@tiptap/react';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { Dialog } from '@yourssu-inhouse/interior';
-import { TextField } from '@yourssu-inhouse/interior';
 import { josa } from 'es-hangul';
 import { useEffect, useRef, useState } from 'react';
 import { useLoading } from 'react-simplikit';
@@ -15,6 +14,7 @@ import {
 } from '@/apis/mails';
 import { mailsQueryKeys } from '@/apis/mails/query';
 import { MailEditor } from '@/components/MailEditor';
+import { TitleEditor } from '@/components/MailEditor/components/TitleEditor';
 import { VariablePannel } from '@/components/TemplateEditorDialog/components/VariablePannel';
 import { VariableContext } from '@/components/TemplateEditorDialog/context';
 import { useTemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
@@ -154,20 +154,16 @@ export const TemplateEditorDialog = ({
               }}
             >
               <Dialog.Header onClickCloseButton={handleQuit}>
-                <div className="flex w-full items-center gap-2">
-                  <TextField
-                    className="w-40"
-                    onChange={(e) => setters.title(e.target.value)}
-                    placeholder="템플릿명"
-                    size="md"
-                    value={formData.title}
-                    variant="outline"
-                  />
-                  <MailEditor.Title
+                <div className="flex w-full flex-col gap-3 pt-1.5">
+                  <TitleEditor
                     autoFocus
-                    className="flex-1"
-                    placeholder="메일 제목을 입력해주세요"
+                    className="text-neutralSubtle text-base font-semibold"
+                    content={formData.title}
+                    onHTMLChange={setters.title}
+                    placeholder="템플릿 이름을 입력해주세요"
+                    plain
                   />
+                  <MailEditor.Title placeholder="메일 제목을 입력해주세요" />
                 </div>
               </Dialog.Header>
               <Dialog.Content className="flex w-180 max-w-full flex-col gap-6 pt-0 pb-2">

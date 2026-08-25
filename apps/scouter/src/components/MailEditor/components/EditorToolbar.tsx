@@ -69,7 +69,7 @@ export const EditorToolbar = ({ editor }: EditorToolbarProps) => {
   return (
     <div className="flex items-center gap-0.5">
       <Select
-        className="text-neutralSubtle min-w-17 text-sm"
+        className="text-neutralSubtle min-h-7 min-w-17 text-sm"
         items={fontSizes}
         onValueChange={(val) => {
           if (val) {

@@ -53,7 +53,7 @@ export const VariableList = ({
   };
 
   return (
-    <div className="flex items-start gap-4">
+    <div className="flex items-start gap-6">
       <div className="flex w-40 shrink-0 flex-col gap-1">
         {availableTabs.map((tab) => (
           <TabButton

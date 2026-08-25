@@ -17,6 +17,7 @@ import type { MailStatusNameType } from '@/types/mails';
 import { mailReservationGroupsOption } from '@/apis/mails/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
+import { MailGroupCancelButton } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailGroupCancelButton';
 import { MailReceiversText } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailReceiversText';
 import { MailStatusBadge } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailStatusBadge';
 import { mailStatusNameMap, mailStatusNames } from '@/types/mails';
@@ -94,7 +95,7 @@ export const MailListTable = () => {
                       </IconButton>
                     </Menu.Trigger>
                     <Menu.Content align="end">
-                      <Menu.ButtonItem>Todo: 백엔드 mailid 개선 완료 시 구현 예정</Menu.ButtonItem>
+                      <MailGroupCancelButton groupId={item.groupId} />
                     </Menu.Content>
                   </Menu>
                 </Table.Cell>

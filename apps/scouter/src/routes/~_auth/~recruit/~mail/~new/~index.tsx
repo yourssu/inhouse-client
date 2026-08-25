@@ -1,13 +1,9 @@
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { Lottie } from '@toss/lottie';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button } from '@yourssu-inhouse/interior';
-import { Result } from '@yourssu-inhouse/interior';
-import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
 import { Suspense, useState } from 'react';
-import { useLoading } from 'react-simplikit';
 import { z } from 'zod';
 
 import type { MailTemplateDetail } from '@/apis/mails/schema';
@@ -18,16 +14,11 @@ import type {
 } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/type';
 
 import { applicantsOption } from '@/apis/applicants/query';
-import {
-  mailsQueryKeys,
-  mailTemplateDetailOption,
-  mailTemplatesInfiniteOption,
-} from '@/apis/mails/query';
+import { mailsQueryKeys, mailTemplateDetailOption } from '@/apis/mails/query';
 import { activeMembersOption, meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
 import { useTemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
 import { useSearchState } from '@/hooks/useSearchState';
-import { LoadTemplateDialog } from '@/routes/~_auth/~recruit/~mail/~new/components/LoadTemplateDialog';
 import { MailEditPaper } from '@/routes/~_auth/~recruit/~mail/~new/components/MailEditPaper';
 import { MailPreview } from '@/routes/~_auth/~recruit/~mail/~new/components/MailPreview';
 import { RecipientSelectionPaper } from '@/routes/~_auth/~recruit/~mail/~new/components/RecipientSelectionPaper';
@@ -41,20 +32,7 @@ import {
   useMailSelectionContext,
 } from '@/routes/~_auth/~recruit/~mail/~new/context';
 import { useMailValidation } from '@/routes/~_auth/~recruit/~mail/~new/hooks/useMailValidation';
-
-const useLoadTemplate = () => {
-  const queryClient = useQueryClient();
-  const [loading, startLoading] = useLoading();
-
-  const openLoadTemplateDialog = async (): Promise<MailTemplateDetail | null> => {
-    await startLoading(queryClient.fetchInfiniteQuery(mailTemplatesInfiniteOption()));
-    return overlay.openAsync<MailTemplateDetail | null>(({ close, isOpen }) => (
-      <LoadTemplateDialog onClose={close} open={isOpen} />
-    ));
-  };
-
-  return { loading, openLoadTemplateDialog };
-};
+import { useLoadTemplate } from '@/routes/~_auth/~recruit/~mail/hooks/useLoadTemplate';
 
 const MailContent = ({
   initialTemplate,
@@ -219,29 +197,6 @@ const ResolvedMailContent = ({
   );
 };
 
-const EmptyMailContent = ({
-  loadTemplateLoading,
-  onLoadTemplate,
-}: {
-  loadTemplateLoading: boolean;
-  onLoadTemplate: () => void;
-}) => {
-  return (
-    <PageLayout.Content maxWidth="full" title="메일 발송">
-      <div className="flex h-full flex-col items-center justify-center gap-6 pb-16">
-        <Result
-          description="메일 발송은 템플릿을 기준으로 진행돼요."
-          figure={<Lottie className="size-30" delay={0.2} json={lotties.empty} />}
-          title="템플릿을 불러와 주세요"
-        />
-        <Button loading={loadTemplateLoading} onClick={onLoadTemplate} size="lg" variant="primary">
-          템플릿 불러오기
-        </Button>
-      </div>
-    </PageLayout.Content>
-  );
-};
-
 const RouteComponent = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/new/' });
@@ -256,7 +211,7 @@ const RouteComponent = () => {
   });
 
   const handleLoadTemplate = async () => {
-    const template = await openLoadTemplateDialog();
+    const template = await openLoadTemplateDialog({ currentTemplateId: search.tid });
     if (template) {
       // 같은 템플릿을 다시 불러올 때 tid가 안 바뀌어도 최신 내용으로 갱신되도록 상세 쿼리를 무효화한다.
       await queryClient.invalidateQueries({ queryKey: mailsQueryKeys.templateDetail(template.id) });
@@ -266,22 +221,19 @@ const RouteComponent = () => {
   };
 
   const templateId = search.tid;
+  // beforeLoad가 tid 없는 접근을 /recruit/mail로 리다이렉트하므로 여기엔 항상 tid가 있다.
+  if (!templateId) {
+    return null;
+  }
 
   return (
     <MailSelectionContext.Provider value={{ mailSelection, setMailSelection }}>
-      {templateId ? (
-        <ResolvedMailContent
-          key={`${mailSelection.partName ?? 'all'}-${templateId}`}
-          loadTemplateLoading={isLoadTemplateLoading}
-          onLoadTemplate={handleLoadTemplate}
-          tid={templateId}
-        />
-      ) : (
-        <EmptyMailContent
-          loadTemplateLoading={isLoadTemplateLoading}
-          onLoadTemplate={handleLoadTemplate}
-        />
-      )}
+      <ResolvedMailContent
+        key={`${mailSelection.partName ?? 'all'}-${templateId}`}
+        loadTemplateLoading={isLoadTemplateLoading}
+        onLoadTemplate={handleLoadTemplate}
+        tid={templateId}
+      />
     </MailSelectionContext.Provider>
   );
 };
@@ -290,6 +242,12 @@ export const Route = createFileRoute('/_auth/recruit/mail/new/')({
   validateSearch: z.object({
     tid: z.number().optional(),
   }),
+  beforeLoad: ({ search }) => {
+    // tid 없이 /recruit/mail/new로 직접 접근한 경우 메일 목록으로 되돌린다.
+    if (!search.tid) {
+      throw redirect({ to: '/recruit/mail' });
+    }
+  },
   component: () => (
     <Suspense>
       <RouteComponent />

@@ -26,6 +26,8 @@ interface TitleEditorProps {
   onEditorChange?: (editor: Editor | null) => void;
   onHTMLChange?: (subject: string) => void;
   placeholder?: string;
+  // plain 모드: 변수 칩/슬래시 명령 없이 단일 줄 텍스트만 입력받는다(템플릿명 등).
+  plain?: boolean;
   variables?: VariableItem[];
 }
 
@@ -37,6 +39,7 @@ export const TitleEditor = ({
   placeholder,
   variables = [],
   className,
+  plain = false,
 }: TitleEditorProps) => {
   const slashItems = useMemo(
     () => () =>
@@ -73,10 +76,15 @@ export const TitleEditor = ({
           emptyEditorClass:
             'before:content-[attr(data-placeholder)] before:float-left before:h-0 before:pointer-none before:text-grey400',
         }),
-        SlashCommandExtension.configure({
-          items: slashItems,
-        }),
-        InlineVariableExtension,
+        // plain 모드(템플릿명)에서는 변수 칩/슬래시 명령을 끈다.
+        ...(plain
+          ? []
+          : [
+              SlashCommandExtension.configure({
+                items: slashItems,
+              }),
+              InlineVariableExtension,
+            ]),
       ],
       content: parseBodyHtml(content, variables),
       onUpdate: ({ editor }) => {
@@ -118,14 +126,17 @@ export const TitleEditor = ({
 
   // Todo: editor 선언 위치를 상위레벨로 올리면 effect 필요없어짐
   useEffect(() => {
+    if (plain) {
+      return;
+    }
     const storage = getEditorStorage<SlashCommandStorage>(editor, slashCommandName);
     storage.items = slashItems;
-  }, [editor, slashItems]);
+  }, [editor, slashItems, plain]);
 
   return (
     <div className={cn('relative', className)} data-title-editor>
       <EditorContent editor={editor} />
-      <VariableSlashMenu editor={editor} variables={variables} />
+      {!plain && <VariableSlashMenu editor={editor} variables={variables} />}
     </div>
   );
 };

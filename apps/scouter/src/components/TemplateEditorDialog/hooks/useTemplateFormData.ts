@@ -41,7 +41,17 @@ export const transformDetailToFormData = (initialData: MailTemplateDetail): Temp
     const initialVariables = variables.map(toVariable);
     const defaults = defaultFormData.variables.map((defaultVar) => {
       const match = initialVariables.find((v) => v.type === defaultVar.type && v.isDefault);
-      return match ?? defaultVar;
+      if (!match) {
+        return defaultVar;
+      }
+      // id·name은 불러온 템플릿 것을 유지(본문의 {{var-id}} 참조·표시명 보존).
+      // isDifferentPerPerson·attributeKey는 기본 변수 고유값으로 정규화한다.
+      // 예: 지원자(APPLICANT)는 수신자마다 값이 다르므로 항상 사람마다 다르게 취급.
+      return {
+        ...match,
+        isDifferentPerPerson: defaultVar.isDifferentPerPerson,
+        attributeKey: defaultVar.attributeKey,
+      };
     });
 
     const defaultIds = defaults.map((v) => v.id);
