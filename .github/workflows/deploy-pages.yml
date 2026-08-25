@@ -79,6 +79,8 @@ jobs:
         run: printf '%s\n' "$ENV_FILE" > apps/shell/.env.production.local
 
       - name: build
+        env:
+          VITE_SCOUTER_MIXPANEL_TOKEN: ${{ vars.SCOUTER_MIXPANEL_TOKEN }}
         run: pnpm exec turbo build --filter=@yourssu-inhouse/${{ matrix.target.app }}
 
       - name: strip standalone preview (remotes only)
