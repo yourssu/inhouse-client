@@ -17,6 +17,6 @@ export default defineConfig({
   sourcemap: true,
   clean: !process.argv.includes('--watch'),
   deps: {
-    neverBundle: ['msw', '@tanstack/react-router'],
+    neverBundle: ['msw', '@tanstack/react-router', 'react'],
   },
 });

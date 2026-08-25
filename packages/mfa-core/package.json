@@ -25,6 +25,7 @@
   "devDependencies": {
     "@tanstack/react-router": "catalog:",
     "@types/node": "^24.13.0",
+    "@types/react": "^19.2.14",
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
@@ -37,6 +38,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-router": "^1.170.11",
-    "msw": "^2.14.6"
+    "msw": "^2.14.6",
+    "react": "^19.2.6"
   }
 }

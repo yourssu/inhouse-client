@@ -14,7 +14,6 @@ export const SHARED_DEPS = {
   '@yourssu-inhouse/exterior': { singleton: true },
   '@yourssu-inhouse/exterior/layout': { singleton: true },
   'react-simplikit': { singleton: true },
-  'overlay-kit': { singleton: true },
   motion: { singleton: true },
   zod: { singleton: true },
   'es-toolkit': { singleton: true },
@@ -24,7 +23,6 @@ export const buildFederationShared = (): FederationSharedConfig => ({ ...SHARED_
 
 export const SINGLETON_CONTEXT_PACKAGES = [
   'react-simplikit',
-  'overlay-kit',
   'motion',
   '@yourssu-inhouse/interior',
   '@yourssu-inhouse/exterior',

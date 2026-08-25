@@ -443,7 +443,7 @@ importers:
         specifier: ^12.28.1
         version: 12.40.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       overlay-kit:
-        specifier: ^1.8.6
+        specifier: ^1.9.0
         version: 1.9.0(react@19.2.7)
       react:
         specifier: 'catalog:'
@@ -608,9 +608,6 @@ importers:
       motion:
         specifier: ^12.40.0
         version: 12.40.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      overlay-kit:
-        specifier: ^1.9.0
-        version: 1.9.0(react@19.2.7)
       react:
         specifier: 'catalog:'
         version: 19.2.7
@@ -833,9 +830,6 @@ importers:
       msw:
         specifier: ^2.14.6
         version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
-      overlay-kit:
-        specifier: ^1.9.0
-        version: 1.9.0(react@19.2.7)
       prettier:
         specifier: ^3.8.3
         version: 3.8.4
@@ -1110,6 +1104,9 @@ importers:
       '@types/node':
         specifier: ^24.13.0
         version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -3390,6 +3387,7 @@ packages:
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
     engines: {node: '>=12.0.0'}
+    deprecated: v4 is no longer maintained, upgrade to v5
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
