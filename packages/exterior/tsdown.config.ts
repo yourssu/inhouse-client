@@ -21,7 +21,6 @@ export default defineConfig({
       '@tanstack/history',
       'motion',
       'motion/react',
-      'overlay-kit',
     ],
     dts: {
       neverBundle: ['@tanstack/react-router', '@tanstack/router-core', '@tanstack/history', 'msw'],

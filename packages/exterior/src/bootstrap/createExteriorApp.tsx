@@ -46,7 +46,7 @@ export interface CreateExteriorAppOptions<TRouter> {
   wrapRouter?: (node: ReactNode) => ReactNode;
 }
 
-export const createExteriorApp = <TRouter extends AnyRouter,>({
+export const createExteriorApp = <TRouter extends AnyRouter>({
   queryClientConfig,
   createRouter,
   beforeRender,

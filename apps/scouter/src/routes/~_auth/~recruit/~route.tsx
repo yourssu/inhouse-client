@@ -1,6 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
+import { useUnmountOverlaysOnRouteChange } from '@yourssu-inhouse/mfa-core';
+import { overlay, OverlayProvider } from 'overlay-kit';
 import { useEffect } from 'react';
 import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons/fc';
 
@@ -31,8 +33,10 @@ const RouteComponent = () => {
     setScouterUserProperties(me);
   }, [me]);
 
+  useUnmountOverlaysOnRouteChange(overlay.unmountAll);
+
   return (
-    <>
+    <OverlayProvider>
       <PageLayout.TabSection
         items={[
           {
@@ -60,7 +64,7 @@ const RouteComponent = () => {
       />
       <Outlet />
       {STAGE === 'dev' && <DevTools />}
-    </>
+    </OverlayProvider>
   );
 };
 

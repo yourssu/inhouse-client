@@ -58,7 +58,7 @@
     "ky": "^2.0.2",
     "mixpanel-browser": "^2.82.1",
     "motion": "^12.28.1",
-    "overlay-kit": "^1.8.6",
+    "overlay-kit": "^1.9.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-dropzone": "^15.0.0",

@@ -1,12 +1,16 @@
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
+import { useUnmountOverlaysOnRouteChange } from '@yourssu-inhouse/mfa-core';
+import { overlay, OverlayProvider } from 'overlay-kit';
 import { FcConferenceCall } from 'react-icons/fc';
 
 import { AdaptiveLogo } from '@/components/AdaptiveLogo';
 
-export const Route = createFileRoute('/_auth/members')({
-  component: () => (
-    <>
+const RouteComponent = () => {
+  useUnmountOverlaysOnRouteChange(overlay.unmountAll);
+
+  return (
+    <OverlayProvider>
       <PageLayout.TabSection
         items={[
           {
@@ -18,8 +22,12 @@ export const Route = createFileRoute('/_auth/members')({
         logo={<AdaptiveLogo className="h-5" />}
       />
       <Outlet />
-    </>
-  ),
+    </OverlayProvider>
+  );
+};
+
+export const Route = createFileRoute('/_auth/members')({
+  component: RouteComponent,
   head: () => ({
     meta: [{ title: '유어슈 인하우스 | 멤버' }],
   }),
