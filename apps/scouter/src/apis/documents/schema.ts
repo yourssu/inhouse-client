@@ -144,7 +144,10 @@ export const PartDocumentRubricSchema = z.object({
   maxScore: z.number(),
   criterionDetail: z.string(),
 });
-export const PartDocumentsRubricsSchema = z.array(PartDocumentRubricSchema);
+export const PartDocumentsRubricsSchema = z.object({
+  isLocked: z.boolean(),
+  rubrics: z.array(PartDocumentRubricSchema),
+});
 
 export const PartDocumentsDeadlineSchema = z.object({
   deadline: z.iso.datetime(),

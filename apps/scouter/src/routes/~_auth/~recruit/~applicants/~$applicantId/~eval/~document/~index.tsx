@@ -45,7 +45,9 @@ const RouteComponent = () => {
   });
 
   const part = parts.find((p) => p.partName === applicant.part) ?? parts[0];
-  const { data: rubrics } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
+  const {
+    data: { rubrics },
+  } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
   const isScoringComplete = rubrics.reduce((sum, rubric) => sum + rubric.maxScore, 0) === 100;
   const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(applicant.state);

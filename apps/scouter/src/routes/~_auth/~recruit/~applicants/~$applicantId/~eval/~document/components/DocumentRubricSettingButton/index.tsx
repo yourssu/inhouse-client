@@ -32,20 +32,23 @@ const rubricSettingDisabledMessage =
 
 interface DocumentRubricSettingButtonProps {
   applicant: ApplicantType;
-  isLocked: boolean;
 }
 
-export const DocumentRubricSettingButton = ({
-  applicant,
-  isLocked,
-}: DocumentRubricSettingButtonProps) => {
-  const { state, applicantId } = applicant;
+export const DocumentRubricSettingButton = ({ applicant }: DocumentRubricSettingButtonProps) => {
+  const { state, applicantId, partId } = applicant;
 
+  const queryClient = useQueryClient();
   const openRubricSettingDialog = useAlertDialog();
 
   const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(state);
 
-  const handleDialogTrigger = () => {
+  const handleDialogTrigger = async () => {
+    // 버튼을 누르는 시점 기준 최신 잠금 여부를 확인해요.
+    const { isLocked } = await queryClient.fetchQuery({
+      ...getPartDocumentsRubricsOption(partId),
+      staleTime: 0,
+    });
+
     if (isLocked) {
       return openRubricSettingDialog({
         title: '배점 변경 불가',
@@ -74,7 +77,7 @@ export const DocumentRubricSettingButton = ({
   return (
     <Button
       disabled={isDocumentEvaluationDisabled}
-      onClick={handleDialogTrigger}
+      onClick={() => void handleDialogTrigger()}
       size="sm"
       type="button"
       variant="subPrimary"
@@ -104,7 +107,9 @@ const DocumentRubricSettingForm = ({
 
   const part = parts.find((p) => p.partName === applicant.part) ?? parts[0];
 
-  const { data: rubrics } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
+  const {
+    data: { rubrics },
+  } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
   const queryClient = useQueryClient();
   const toast = useToast();
