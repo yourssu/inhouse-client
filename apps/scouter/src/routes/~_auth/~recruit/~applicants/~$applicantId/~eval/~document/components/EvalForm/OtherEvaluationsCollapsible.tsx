@@ -34,7 +34,7 @@ export const OtherEvaluationsCollapsible = ({
           </div>
         ) : (
           <div className="flex flex-col gap-4 py-2">
-            {othersEvaluations.map(({ evaluatorId, evaluatorName, items }) => {
+            {othersEvaluations.map(({ evaluatorId, evaluatorNickname, items }) => {
               const item = items.find(({ sectionId }) => sectionId === rubric.sectionId);
 
               if (!item) {
@@ -44,7 +44,7 @@ export const OtherEvaluationsCollapsible = ({
               return (
                 <div className="flex flex-col gap-2" key={evaluatorId}>
                   <div className="text-14 flex items-center justify-between">
-                    <span className="font-semibold">{evaluatorName}</span>
+                    <span className="font-semibold">{evaluatorNickname}</span>
                     <span className="text-neutralMuted">
                       {isEvaluationDone ? `${item.score} / ${rubric.maxScore}` : '비공개'}
                     </span>
