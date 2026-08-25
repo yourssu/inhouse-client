@@ -1,5 +1,12 @@
 import mixpanel from 'mixpanel-browser';
 
+import type { MeType } from '@/apis/members/schema';
+
+type ScouterAnalyticsUser = Pick<
+  MeType,
+  'email' | 'name' | 'nickname' | 'parts' | 'role' | 'state'
+>;
+
 const mixpanelToken = import.meta.env.VITE_SCOUTER_MIXPANEL_TOKEN?.trim();
 
 export const initScouterAnalytics = () => {
@@ -23,6 +30,28 @@ export const identifyScouterUser = (userId: number) => {
   }
 
   mixpanel.identify(String(userId));
+};
+
+export const setScouterUserProperties = ({
+  email,
+  name,
+  nickname,
+  parts,
+  role,
+  state,
+}: ScouterAnalyticsUser) => {
+  if (!mixpanelToken) {
+    return;
+  }
+
+  mixpanel.people.set({
+    $email: email,
+    $name: nickname,
+    name,
+    parts: parts.map(({ part }) => part),
+    role,
+    state,
+  });
 };
 
 export const resetScouterAnalytics = () => {

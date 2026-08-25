@@ -4,7 +4,11 @@ import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { useEffect } from 'react';
 import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons/fc';
 
-import { identifyScouterUser, resetScouterAnalytics } from '@/analytics/client';
+import {
+  identifyScouterUser,
+  resetScouterAnalytics,
+  setScouterUserProperties,
+} from '@/analytics/client';
 import { meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
@@ -21,6 +25,11 @@ const RouteComponent = () => {
 
     return resetScouterAnalytics;
   }, [me.userId]);
+
+  /* 사용자 정보가 갱신되어도 identity를 초기화하지 않고 People Property만 최신 값으로 동기화한다. */
+  useEffect(() => {
+    setScouterUserProperties(me);
+  }, [me]);
 
   return (
     <>
