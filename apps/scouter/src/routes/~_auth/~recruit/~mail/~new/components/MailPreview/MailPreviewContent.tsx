@@ -1,3 +1,4 @@
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useEffect, useRef } from 'react';
 
 import type { VariableTypeName } from '@/apis/mails/schema';
@@ -40,11 +41,16 @@ const useRawHTMLRenderer = (html: string, onVariableClick?: (type: string) => vo
 };
 
 interface MailPreviewContentProps {
+  className?: string;
   html: string;
   onVariableClick?: (type: VariableTypeName) => void;
 }
 
-export const MailPreviewContent = ({ html, onVariableClick }: MailPreviewContentProps) => {
+export const MailPreviewContent = ({
+  className,
+  html,
+  onVariableClick,
+}: MailPreviewContentProps) => {
   const ref = useRawHTMLRenderer(html, onVariableClick as any);
-  return <div className="mail-preview-content text-15" ref={ref} />;
+  return <div className={cn('mail-preview-content text-15', className)} ref={ref} />;
 };

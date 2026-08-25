@@ -5,6 +5,7 @@ import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { AttachmentUploadButton } from '@/components/MailEditor/components/AttachmentUploadButton';
 import { ContentEditor } from '@/components/MailEditor/components/ContentEditor';
 import { EditorToolbar } from '@/components/MailEditor/components/EditorToolbar';
+import { TitleEditor } from '@/components/MailEditor/components/TitleEditor';
 import {
   MailEditorContext,
   type MailEditorContextValue,
@@ -38,15 +39,14 @@ const MailEditorTitle = ({
   const { state, actions } = useMailEditorContext();
 
   return (
-    <input
+    <TitleEditor
       autoFocus={autoFocus}
-      className={cn(
-        'placeholder:text-grey400 w-full text-lg font-semibold focus:outline-none',
-        className,
-      )}
-      onChange={(e) => actions.setTitle(e.target.value)}
+      className={cn('text-lg font-semibold', className)}
+      content={state.title}
+      onEditorChange={actions.setTitleEditor}
+      onHTMLChange={actions.setTitle}
       placeholder={placeholder}
-      value={state.title}
+      variables={state.variables}
     />
   );
 };

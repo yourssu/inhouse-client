@@ -3,7 +3,10 @@ import ky from 'ky';
 
 import { api } from '@/apis/api';
 import {
+  type AttachmentReference,
+  type AttachmentReferenceRequest,
   type BaseMailFileType,
+  type CreateMailTemplateRequest,
   MailFileConfirmResponseSchema,
   MailFilePresignResponseSchema,
   type MailFileUsageType,
@@ -15,7 +18,6 @@ import {
   MailReservationStatusResponseSchema,
   type MailReserveRequest,
   type MailSendRequest,
-  type MailTemplateDetail,
   MailTemplateDetailSchema,
   MailTemplatesResponseSchema,
   type SignedMailFileType,
@@ -27,11 +29,6 @@ export type GetMailTemplatesParams = {
   size?: number;
   sort?: string; // NOTE: 값이 어떻게 정의되어 있는지 물어봐야 함
 };
-
-export type CreateMailTemplateRequest = Omit<
-  MailTemplateDetail,
-  'id' | 'inlineImageReferences' | 'updatedAt'
->;
 
 export const getMailTemplates = async (params: GetMailTemplatesParams) => {
   const res = await api.get('api/mails/templates', { searchParams: omitBy(params, isNil) }).json();
@@ -87,6 +84,15 @@ export const toMailImageUrl = ({ cid }: { cid: string }) => {
   return `${config.s3ImageURL}/${encodeURIComponent(cid)}`;
 };
 
+// AttachmentReference(응답)의 fileId는 스펙상 optional이지만 요청에는 필수다.
+// fileId가 있는 첨부파일만 요청 형식으로 변환한다.
+export const toAttachmentReferenceRequests = (
+  attachments: AttachmentReference[],
+): AttachmentReferenceRequest[] =>
+  attachments
+    .filter((a): a is AttachmentReference & { fileId: number } => a.fileId != null)
+    .map(({ fileId }) => ({ fileId }));
+
 export const createMailTemplate = async (data: CreateMailTemplateRequest) => {
   await api.post('api/mails/templates', { json: data });
 };
@@ -126,4 +132,10 @@ export const getMailReservationStatus = async (): Promise<MailReservationStatusR
 export const getMailReservationGroups = async (): Promise<MailReservationGroupsResponse> => {
   const res = await api.get('api/mails/reservation/groups').json();
   return MailReservationGroupsResponseSchema.parse(res);
+};
+
+// 메일 예약 그룹 취소: groupId로 그룹과 그에 속한 예약·메일을 모두 삭제한다.
+// 본인이 보낸 그룹이거나 스카우터 팀원만 호출 가능(서버가 403/404로 제어).
+export const deleteMailReservationGroup = async (groupId: number) => {
+  await api.delete(`api/mails/reservation/groups/${groupId}`);
 };

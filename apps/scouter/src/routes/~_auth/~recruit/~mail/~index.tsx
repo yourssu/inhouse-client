@@ -13,17 +13,22 @@ import { Paper } from '@/components/Paper';
 import { useSearchState } from '@/hooks/useSearchState';
 import { MailListTable } from '@/routes/~_auth/~recruit/~mail/components/MailListTable';
 import { MailStatusGrid } from '@/routes/~_auth/~recruit/~mail/components/MailStatusGrid';
+import { useLoadTemplate } from '@/routes/~_auth/~recruit/~mail/hooks/useLoadTemplate';
 
 const RouteComponent = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/' });
+  const { loading: isLoadTemplateLoading, openLoadTemplateDialog } = useLoadTemplate();
   const setters = {
     status: useSetStateSelector(setSearch, 'status'),
     page: useSetStateSelector(setSearch, 'page'),
   };
 
-  const handleCreateMail = () => {
-    navigate({ to: '/recruit/mail/new' });
+  const handleCreateMail = async () => {
+    const template = await openLoadTemplateDialog({ requireConfirm: false });
+    if (template) {
+      navigate({ search: { tid: template.id }, to: '/recruit/mail/new' });
+    }
   };
 
   return (
@@ -32,6 +37,7 @@ const RouteComponent = () => {
         <Button
           className="p-2 pr-2.5"
           left={<MdAdd className="size-4.5" />}
+          loading={isLoadTemplateLoading}
           onClick={handleCreateMail}
           size="lg"
         >

@@ -50,6 +50,7 @@ export const Button = ({
   right,
   children,
   className,
+  disabled,
   loading = false,
   ref: outerRef,
   ...props
@@ -71,7 +72,7 @@ export const Button = ({
   return (
     <button
       className={clsx(buttonStyle, className)}
-      disabled={loading || props.disabled}
+      disabled={loading || disabled}
       ref={(node) => {
         buttonRef(node);
         setOuterRef(node);

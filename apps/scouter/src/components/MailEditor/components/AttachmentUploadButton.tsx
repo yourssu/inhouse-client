@@ -74,7 +74,11 @@ export const AttachmentUploadButton = ({
               {attachment.fileName}
               <IconButton
                 className="-mr-0.5 shrink-0"
-                onClick={() => onRemove?.(attachment.fileId)}
+                onClick={() => {
+                  if (attachment.fileId != null) {
+                    onRemove?.(attachment.fileId);
+                  }
+                }}
                 size="xxs"
                 variant="inline"
               >

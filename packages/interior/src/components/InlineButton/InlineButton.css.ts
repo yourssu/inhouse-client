@@ -5,7 +5,7 @@ export const root = style({
   display: 'inline-block',
   cursor: 'pointer',
   borderRadius: vars.radius[6],
-  padding: 6,
+  padding: '1px 6px',
   transition: 'background-color 0.2s ease',
   backgroundColor: 'transparent',
   border: 'none',

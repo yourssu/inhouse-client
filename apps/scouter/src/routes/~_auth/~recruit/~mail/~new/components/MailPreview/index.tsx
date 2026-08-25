@@ -11,13 +11,21 @@ import { MailPreviewPaper } from '@/routes/~_auth/~recruit/~mail/~new/components
 interface MailPreviewProps {
   applicants: ApplicantType[];
   formData: TemplateFormData;
+  loadTemplateLoading: boolean;
+  onLoadTemplate: () => void;
   onVariableClick?: (type: VariableTypeName) => void;
 }
 
-export const MailPreview = ({ formData, applicants, onVariableClick }: MailPreviewProps) => {
+export const MailPreview = ({
+  formData,
+  applicants,
+  loadTemplateLoading,
+  onLoadTemplate,
+  onVariableClick,
+}: MailPreviewProps) => {
   const applicantNames = applicants.map((a) => a.name);
 
-  const hasContent = Boolean(formData.title.trim() || formData.content.trim());
+  const hasContent = Boolean(formData.subject.trim() || formData.content.trim());
   const hasApplicants = applicantNames.length > 0;
   const isValidToPreview = hasContent && hasApplicants;
 
@@ -29,6 +37,8 @@ export const MailPreview = ({ formData, applicants, onVariableClick }: MailPrevi
         <MailPreviewPaper
           applicantNames={applicantNames}
           formData={formData}
+          loadTemplateLoading={loadTemplateLoading}
+          onLoadTemplate={onLoadTemplate}
           onVariableClick={onVariableClick}
         />
       ) : (

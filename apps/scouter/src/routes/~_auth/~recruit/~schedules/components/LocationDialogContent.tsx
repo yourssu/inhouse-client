@@ -3,7 +3,6 @@ import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Dialog, Select, TextField, useToast } from '@yourssu-inhouse/interior';
 import { differenceInMinutes } from 'date-fns';
 import { josa } from 'es-hangul';
-import { assert } from 'es-toolkit';
 import { useState } from 'react';
 import { BiSolidCalendarCheck } from 'react-icons/bi';
 import { MdPerson } from 'react-icons/md';
@@ -52,15 +51,20 @@ export const LocationDialogContent = ({
       return;
     }
 
-    const target = schedules.find(({ id }) => id === schedule.id);
-    assert(target != null, `일정을 찾을 수 없어요: id(${schedule.id})`);
+    const trimmedDetail = locationDetail.trim();
+    const target = {
+      startTime: schedule.startTime,
+      endTime: schedule.endTime,
+      locationType,
+      locationDetail: trimmedDetail === '' ? null : trimmedDetail,
+    };
+    const otherSchedules = schedules.filter(({ id }) => id !== schedule.id);
 
-    if (findLocationConflict(schedules, target)) {
+    if (findLocationConflict(otherSchedules, target)) {
       toast.error(`이미 같은 시간에 ${josa(locationType, '을/를')} 사용하는 일정이 있어요`);
       return;
     }
 
-    const trimmedDetail = locationDetail.trim();
     const { success } = await mutateWithToast({
       scheduleId: schedule.id,
       locationType,

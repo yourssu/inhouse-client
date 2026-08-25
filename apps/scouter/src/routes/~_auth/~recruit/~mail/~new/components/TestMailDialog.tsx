@@ -12,7 +12,7 @@ import type { VariableValueType } from '@/routes/~_auth/~recruit/~mail/~new/comp
 import { postMailSend } from '@/apis/mails';
 import { meOption } from '@/apis/members/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
-import { buildMailPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
+import { buildTestSendPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
 
 interface TestMailDialogProps {
   close: () => void;
@@ -45,10 +45,14 @@ export const TestMailDialog = ({
     }
 
     const res = await startLoading(
-      mutateWithToast({
-        ...buildMailPayload({ formData, variableValues, partName }),
-        receiverEmailAddresses: [email],
-      }),
+      mutateWithToast(
+        buildTestSendPayload({
+          formData,
+          variableValues,
+          partName,
+          toEmail: email,
+        }),
+      ),
     );
 
     if (res.success) {
@@ -57,8 +61,8 @@ export const TestMailDialog = ({
   };
 
   return (
-    <Dialog closeableWithOutside onClose={close} open={isOpen}>
-      <Dialog.Header onClickCloseButton={close}>
+    <Dialog onClose={close} open={isOpen}>
+      <Dialog.Header>
         <Dialog.Title>테스트 메일 발송하기</Dialog.Title>
       </Dialog.Header>
 
@@ -90,11 +94,11 @@ export const TestMailDialog = ({
       </Dialog.Content>
 
       <Dialog.ButtonGroup>
-        <Dialog.Button onClick={close} variant="secondary">
+        <Dialog.Button disabled={loading} onClick={close} variant="secondary">
           취소
         </Dialog.Button>
         <Dialog.Button disabled={!email} loading={loading} onClick={handleSend} variant="primary">
-          발송
+          발송하기
         </Dialog.Button>
       </Dialog.ButtonGroup>
     </Dialog>

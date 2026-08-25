@@ -4,6 +4,7 @@ import type { MailReservationStatusType, VariableTypeName } from '@/apis/mails/s
 
 export const mailStatusNameMap = {
   SCHEDULED: '예약됨',
+  SENDING: '발송 중',
   SENT: '발송 완료',
   PENDING_SEND: '발송 실패',
 } as const satisfies Record<MailReservationStatusType, string>;

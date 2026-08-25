@@ -10,6 +10,7 @@ interface MailEditorState {
   content: string;
   editor: Editor | null;
   title: string;
+  titleEditor: Editor | null;
   variables: VariableItem[];
 }
 
@@ -18,6 +19,7 @@ interface MailEditorActions {
   setContent: (html: string) => void;
   setEditor: (editor: Editor | null) => void;
   setTitle: (title: string) => void;
+  setTitleEditor: (editor: Editor | null) => void;
 }
 
 export interface MailEditorContextValue {

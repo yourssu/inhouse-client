@@ -1,9 +1,11 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
 import { SegmentedControl } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { min, parseISO } from 'date-fns';
 import { useMemo, useState } from 'react';
 
+import { interviewSchedulesOption } from '@/apis/schedule/query';
 import { ApplicantSelectionPanel } from '@/routes/~_auth/~recruit/~schedules/~new/components/ScheduleCreationView/ApplicantSelectionPanel';
 import { DraggableWeeklyCalendar } from '@/routes/~_auth/~recruit/~schedules/~new/components/ScheduleCreationView/DraggableWeeklyCalendar';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
@@ -21,6 +23,10 @@ export const ScheduleCreationView = () => {
   const { selectedPartId, selectedSemesterId, activeApplicantId } = useScheduleCreationContext();
 
   const { parts, allApplicants, applicants } = useScheduleApplicants();
+  const { data: existingSchedules = [] } = useSuspenseQuery({
+    ...interviewSchedulesOption(),
+    staleTime: 1000 * 60 * 10,
+  });
 
   const showCalendar = selectedSemesterId !== null && selectedPartId !== null;
 
@@ -59,6 +65,7 @@ export const ScheduleCreationView = () => {
           <ApplicantSelectionPanel
             allApplicants={allApplicants}
             applicants={applicants}
+            existingSchedules={existingSchedules}
             onApplicantSelect={handleApplicantSelect}
             parts={parts}
           />

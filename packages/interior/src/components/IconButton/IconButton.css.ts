@@ -34,37 +34,37 @@ export const button = recipe({
   variants: {
     size: {
       xxs: {
-        width: 20,
+        minWidth: 20,
         height: vars.uniformHeight.xxs,
         borderRadius: vars.radius[2],
       },
       xs: {
-        width: 24,
+        minWidth: 24,
         height: vars.uniformHeight.xs,
         borderRadius: vars.radius[2],
       },
       sm: {
-        width: 28,
+        minWidth: 28,
         height: vars.uniformHeight.sm,
         borderRadius: vars.radius[2],
       },
       md: {
-        width: 32,
+        minWidth: 32,
         height: vars.uniformHeight.md,
         borderRadius: vars.radius[6],
       },
       lg: {
-        width: 38,
+        minWidth: 38,
         height: vars.uniformHeight.lg,
         borderRadius: vars.radius[8],
       },
       xl: {
-        width: 48,
+        minWidth: 48,
         height: vars.uniformHeight.xl,
         borderRadius: vars.radius[12],
       },
       xxl: {
-        width: 68,
+        minWidth: 68,
         height: vars.uniformHeight.xxl,
         borderRadius: vars.radius[16],
       },

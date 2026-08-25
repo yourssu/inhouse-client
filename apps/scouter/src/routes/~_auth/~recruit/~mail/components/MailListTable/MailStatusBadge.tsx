@@ -18,6 +18,7 @@ export const MailStatusBadge = ({ status }: MailStatusBadgeProps) => {
 
 const mailStatusColorMap = {
   SCHEDULED: 'yellow',
+  SENDING: 'blue',
   SENT: 'green',
   PENDING_SEND: 'red',
 } as const;
