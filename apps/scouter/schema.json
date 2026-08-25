@@ -514,10 +514,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReadRubricResponse"
-                  }
+                  "$ref": "#/components/schemas/ReadRubricResponse"
                 }
               }
             }
@@ -1390,6 +1387,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "Auth-005 (이미 일반 회원가입 또는 다른 소셜 계정이 사용 중인 이메일입니다)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
           }
         },
         "security": []
@@ -1538,6 +1545,98 @@
             "content": {}
           }
         }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": ["인증/인가"],
+        "summary": "일반 회원가입",
+        "description": "이메일/비밀번호로 회원가입합니다. 등록된 멤버만 가입할 수 있습니다.",
+        "operationId": "signup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "회원가입 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Member-005 (등록된 멤버가 아닙니다)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Auth-005 (이미 가입된 이메일입니다)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["인증/인가"],
+        "summary": "일반 로그인",
+        "description": "이메일/비밀번호로 로그인합니다. 등록된 멤버만 로그인할 수 있습니다.",
+        "operationId": "login_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "로그인 성공 — 토큰 반환",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Auth-006 (이메일 또는 비밀번호가 올바르지 않습니다) / Member-005 (등록된 멤버가 아닙니다)",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": []
       }
     },
     "/applicants": {
@@ -1797,6 +1896,42 @@
               }
             },
             "content": {}
+          }
+        }
+      }
+    },
+    "/applicants/webhook": {
+      "post": {
+        "tags": ["지원자 동기화 API", "리크루팅 지원자"],
+        "summary": "구글폼 제출 웹훅 수신",
+        "description": "Google Apps Script가 폼 제출 시점에 직접 호출한다. JWT 대신 X-Applicant-Webhook-Secret 헤더의 공유 시크릿으로 인증한다.",
+        "operationId": "receiveWebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantWebhookRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "CREATED",
+            "headers": {
+              "Location": {
+                "description": "/applicants",
+                "style": "simple"
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicantSyncResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -5292,6 +5427,57 @@
         },
         "required": ["refreshToken"]
       },
+      "SignupRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "SignupResponse": {
+        "type": "object",
+        "description": "회원가입 응답",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "유저 ID"
+          },
+          "email": {
+            "type": "string",
+            "description": "이메일"
+          },
+          "name": {
+            "type": "string",
+            "description": "이름"
+          }
+        },
+        "required": ["email", "id", "name"]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password"]
+      },
       "CreateApplicantRequest": {
         "type": "object",
         "properties": {
@@ -5412,6 +5598,49 @@
           }
         },
         "required": ["content", "sectionId"]
+      },
+      "ApplicantWebhookItemRequest": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "answer": {
+            "type": "string"
+          },
+          "isDescriptive": {
+            "type": "boolean"
+          }
+        },
+        "required": ["answer", "isDescriptive", "question"]
+      },
+      "ApplicantWebhookRequest": {
+        "type": "object",
+        "properties": {
+          "formId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "responseId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "respondentEmail": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicantWebhookItemRequest"
+            }
+          }
+        },
+        "required": ["createTime", "formId", "items", "responseId"]
       },
       "ApplicantSyncResponse": {
         "type": "object",
@@ -6413,6 +6642,21 @@
         "required": ["culture", "job", "other", "team"]
       },
       "ReadRubricResponse": {
+        "type": "object",
+        "properties": {
+          "isLocked": {
+            "type": "boolean"
+          },
+          "rubrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RubricResponse"
+            }
+          }
+        },
+        "required": ["isLocked", "rubrics"]
+      },
+      "RubricResponse": {
         "type": "object",
         "properties": {
           "sectionId": {
