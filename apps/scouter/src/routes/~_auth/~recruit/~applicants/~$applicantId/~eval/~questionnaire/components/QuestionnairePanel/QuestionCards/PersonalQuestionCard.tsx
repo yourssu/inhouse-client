@@ -53,6 +53,7 @@ export const PersonalQuestionCard = ({
 
       <InterviewerField
         activeMembers={activeMembers}
+        category="PERSONAL"
         control={control}
         disabled={disabled}
         name={`PERSONAL.${index}.assignedMemberId`}

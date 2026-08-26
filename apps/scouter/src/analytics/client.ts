@@ -9,6 +9,8 @@ type ScouterAnalyticsUser = Pick<
   'email' | 'name' | 'nickname' | 'parts' | 'role' | 'state'
 >;
 
+type ScouterEventPropertyValue = boolean | number | readonly string[] | string;
+
 const mixpanelToken = import.meta.env.VITE_SCOUTER_MIXPANEL_TOKEN?.trim();
 const scouterBasePath = '/recruit';
 /** Scouter 페이지의 라우팅이 완료됐을 때 발생해요. */
@@ -76,7 +78,7 @@ export const setScouterUserProperties = ({
 
 export const trackScouterEvent = (
   eventName: string,
-  properties: Record<string, boolean | number | string>,
+  properties: Record<string, ScouterEventPropertyValue>,
 ) => {
   if (!mixpanelToken) {
     return;

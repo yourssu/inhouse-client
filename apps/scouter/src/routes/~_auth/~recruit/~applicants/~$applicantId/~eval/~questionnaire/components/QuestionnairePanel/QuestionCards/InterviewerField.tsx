@@ -8,10 +8,13 @@ import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 
 import type { QuestionnaireFormValues } from '../questionnaireForm';
 
+import { useQuestionnaireAnalytics } from '../../../analytics';
+
 type InterviewerFieldName = `${QuestionCategory}.${number}.assignedMemberId`;
 
 interface InterviewerFieldProps {
   activeMembers: ActiveMemberType[];
+  category: QuestionCategory;
   control: Control<QuestionnaireFormValues>;
   disabled: boolean;
   isRequired?: boolean;
@@ -20,11 +23,14 @@ interface InterviewerFieldProps {
 
 export const InterviewerField = ({
   activeMembers,
+  category,
   control,
   disabled,
   isRequired = true,
   name,
 }: InterviewerFieldProps) => {
+  const trackQuestionnaireEvent = useQuestionnaireAnalytics();
+
   return (
     <div onClick={(event) => event.stopPropagation()}>
       <Controller
@@ -35,7 +41,17 @@ export const InterviewerField = ({
             activeMembers={activeMembers}
             disabled={disabled}
             errorMessage={fieldState.error?.message}
-            onChange={field.onChange}
+            onChange={(memberId) => {
+              if (field.value === memberId) {
+                return;
+              }
+
+              field.onChange(memberId);
+              trackQuestionnaireEvent('questionnaire_questioner_changed', {
+                assigned_member_id: memberId,
+                question_category: category,
+              });
+            }}
             ref={field.ref}
             value={field.value}
           />
