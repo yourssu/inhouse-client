@@ -1,20 +1,11 @@
-name: deploy-pages
+name: deploy-pages-prod
 
-# main 머지 → dev 자동 배포. prod 는 workflow_dispatch(env=prod) 로 수동.
+# 수동 실행 전용: GitHub Actions UI 에서 브랜치를 고르면 해당 브랜치 기준으로 prod 에 전체 배포해요.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
-    inputs:
-      env:
-        description: deploy target env
-        required: true
-        default: dev
-        type: choice
-        options: [dev, prod]
 
 concurrency:
-  group: deploy-pages-${{ github.event_name == 'workflow_dispatch' && inputs.env || 'dev' }}
+  group: deploy-pages-prod
   cancel-in-progress: false
 
 jobs:
@@ -27,20 +18,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v6
-      - id: resolve-env
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "env=${{ inputs.env }}" >> "$GITHUB_OUTPUT"
-            echo "base=" >> "$GITHUB_OUTPUT"
-          else
-            echo "env=dev" >> "$GITHUB_OUTPUT"
-            BEFORE="${{ github.event.before }}"
-            if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$BEFORE" ]; then
-              echo "base=" >> "$GITHUB_OUTPUT"
-            else
-              echo "base=$BEFORE" >> "$GITHUB_OUTPUT"
-            fi
-          fi
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -48,10 +25,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - id: gen
         run: |
-          ARGS="--env=${{ steps.resolve-env.outputs.env }}"
-          BASE="${{ steps.resolve-env.outputs.base }}"
-          if [ -n "$BASE" ]; then ARGS="$ARGS --base=$BASE"; fi
-          matrix=$(pnpm tsx scripts/deploy-targets.ts $ARGS)
+          matrix=$(pnpm tsx scripts/deploy-targets.ts --env=prod)
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   deploy:
@@ -72,11 +46,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: write shell remote URLs to .env.production.local
-        if: ${{ matrix.target.isShell }}
+      - name: write build env to .env.production.local
+        if: ${{ matrix.target.envFile != '' }}
         env:
           ENV_FILE: ${{ matrix.target.envFile }}
-        run: printf '%s\n' "$ENV_FILE" > apps/shell/.env.production.local
+        run: printf '%s\n' "$ENV_FILE" > apps/${{ matrix.target.app }}/.env.production.local
 
       - name: build
         env:
