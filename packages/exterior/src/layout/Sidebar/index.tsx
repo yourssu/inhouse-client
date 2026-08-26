@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { type LinkProps } from '@tanstack/react-router';
-import { IconButton, type ThemeType, useTheme } from '@yourssu-inhouse/interior';
+import { IconButton, type ThemeType, useTheme, useToast } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
 import { IoMdMoon } from 'react-icons/io';
 import { MdKeyboardDoubleArrowLeft, MdSunny } from 'react-icons/md';
@@ -23,6 +23,7 @@ export interface SidebarProps {
 
 export const Sidebar = ({ menu = [], profile }: SidebarProps) => {
   const { theme, toggle } = useTheme();
+  const toast = useToast();
   const [isCollapsed, setIsCollapsed] = useStorageState<boolean>(
     TAB_SECTION_COLLAPSED_STORAGE_KEY,
     {
@@ -51,15 +52,33 @@ export const Sidebar = ({ menu = [], profile }: SidebarProps) => {
               <MdKeyboardDoubleArrowLeft />
             </motion.div>
           </IconButton>
-          {menu.map((item) => (
-            <SidebarLinkButton
-              key={`${item.label}-${String(item.to)}`}
-              label={item.label}
-              to={item.to}
-            >
-              {item.icon}
-            </SidebarLinkButton>
-          ))}
+          {menu.map((item) => {
+            const blocked = item.to === '/members';
+            const button = (
+              <SidebarLinkButton
+                disabled={blocked}
+                key={`${item.label}-${String(item.to)}`}
+                label={item.label}
+                to={item.to}
+              >
+                {item.icon}
+              </SidebarLinkButton>
+            );
+
+            if (blocked) {
+              return (
+                <div
+                  key={`${item.label}-${String(item.to)}`}
+                  onClick={() => {
+                    toast.default('아직 준비중인 서비스에요');
+                  }}
+                >
+                  {button}
+                </div>
+              );
+            }
+            return button;
+          })}
         </div>
         <div className="flex flex-col items-center gap-4">
           <IconButton
