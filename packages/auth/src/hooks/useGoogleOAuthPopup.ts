@@ -4,8 +4,23 @@ import { useCallback, useRef } from 'react';
 type OAuthCode = string | undefined;
 type ResolverFn = (value: OAuthCode | PromiseLike<OAuthCode>) => void;
 
+const getTrustedOAuthURL = (url: string, apiBaseURL: string): string => {
+  try {
+    const oauthURL = new URL(url);
+    const apiURL = new URL(apiBaseURL);
+
+    if (oauthURL.protocol !== 'https:' || oauthURL.origin !== apiURL.origin) {
+      throw new Error('OAuth URL must use HTTPS and match the configured API origin.');
+    }
+
+    return oauthURL.href;
+  } catch (error) {
+    throw new Error('Invalid OAuth URL configuration.', { cause: error });
+  }
+};
+
 export const useGoogleOAuthPopup = () => {
-  const pollingRef = useRef<number | undefined>(undefined);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const resolverRef = useRef<ResolverFn | undefined>(undefined);
 
   const isPopupOnInitialPage = (url: string, popup: Window) => {
@@ -69,17 +84,19 @@ export const useGoogleOAuthPopup = () => {
   );
 
   const open = useCallback(
-    (url: string, width: number, height: number) => {
+    (url: string, apiBaseURL: string, width: number, height: number) => {
+      const trustedOAuthURL = getTrustedOAuthURL(url, apiBaseURL);
       const left = window.screen.width / 2 - width / 2;
       const top = window.screen.height / 2 - height / 2;
 
-      const popup = window.open(
-        url,
+      const popup = window.open.call(
+        window,
+        trustedOAuthURL,
         'Google에 로그인',
         `width=${width},height=${height},left=${left},top=${top}`,
       );
 
-      startPolling(url, popup);
+      startPolling(trustedOAuthURL, popup);
 
       return new Promise<OAuthCode>((resolve) => {
         resolverRef.current = resolve;

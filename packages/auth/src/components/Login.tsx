@@ -29,7 +29,7 @@ export const Login = ({ onSuccess, onError, children }: LoginProps) => {
   const login = useCallback(async () => {
     setIsLoading(true);
     try {
-      const code = await open(config.googleOAuthURL, POPUP_WIDTH, POPUP_HEIGHT);
+      const code = await open(config.googleOAuthURL, config.apiBaseURL, POPUP_WIDTH, POPUP_HEIGHT);
       if (!code) {
         return;
       }
@@ -40,7 +40,7 @@ export const Login = ({ onSuccess, onError, children }: LoginProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [config.googleOAuthURL, loginWithCode, onSuccess, onError, open]);
+  }, [config.apiBaseURL, config.googleOAuthURL, loginWithCode, onSuccess, onError, open]);
 
   return <>{children({ isLoading, login })}</>;
 };
