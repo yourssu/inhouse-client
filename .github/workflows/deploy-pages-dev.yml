@@ -48,6 +48,7 @@ jobs:
   deploy:
     needs: targets
     if: ${{ needs.targets.outputs.matrix != '[]' }}
+    environment: dev
     runs-on: ubuntu-latest
     strategy:
       matrix:
