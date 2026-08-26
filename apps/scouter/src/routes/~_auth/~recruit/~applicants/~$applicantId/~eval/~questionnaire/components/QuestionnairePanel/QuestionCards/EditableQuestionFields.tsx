@@ -9,6 +9,7 @@ import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 
 import type { QuestionnaireFormValues } from '../questionnaireForm';
 
+import { useQuestionnaireAnalytics } from '../../../analytics';
 import { RequirementPicker } from '../Requirements/RequirementPicker';
 
 interface EditableQuestionFieldsProps {
@@ -28,6 +29,8 @@ export const EditableQuestionFields = ({
   index,
   requirements,
 }: EditableQuestionFieldsProps) => {
+  const trackQuestionnaireEvent = useQuestionnaireAnalytics();
+
   return (
     <>
       <div className="flex items-start gap-2">
@@ -76,7 +79,24 @@ export const EditableQuestionFields = ({
               <RequirementPicker
                 disabled={disabled}
                 invalid={fieldState.invalid}
-                onChange={field.onChange}
+                onChange={(requirementIds) => {
+                  const currentRequirementIdSet = new Set(field.value);
+                  const hasSameRequirementIds =
+                    requirementIds.length === field.value.length &&
+                    requirementIds.every((requirementId) =>
+                      currentRequirementIdSet.has(requirementId),
+                    );
+
+                  if (hasSameRequirementIds) {
+                    return;
+                  }
+
+                  field.onChange(requirementIds);
+                  trackQuestionnaireEvent('questionnaire_requirement_mapping_changed', {
+                    question_category: category,
+                    selected_requirement_count: requirementIds.length,
+                  });
+                }}
                 ref={field.ref}
                 requirements={requirements}
                 selectedRequirementIds={field.value}

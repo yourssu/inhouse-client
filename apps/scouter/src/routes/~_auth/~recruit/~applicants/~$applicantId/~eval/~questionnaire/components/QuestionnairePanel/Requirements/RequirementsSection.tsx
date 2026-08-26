@@ -4,6 +4,7 @@ import { MdKeyboardArrowDown } from 'react-icons/md';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 
+import { useQuestionnaireAnalytics } from '../../../analytics';
 import { requirementGroupConfigs } from './requirementOptions';
 
 interface RequirementsSectionProps {
@@ -18,6 +19,7 @@ interface RequirementGroupProps {
 }
 
 export const RequirementsSection = ({ requirements }: RequirementsSectionProps) => {
+  const trackQuestionnaireEvent = useQuestionnaireAnalytics();
   const requirementCount = requirementGroupConfigs.reduce(
     (count, config) => count + requirements[config.key].length,
     0,
@@ -25,7 +27,16 @@ export const RequirementsSection = ({ requirements }: RequirementsSectionProps) 
 
   return (
     <section aria-labelledby="requirements-heading">
-      <Collapsible.Root className="flex flex-col gap-2">
+      <Collapsible.Root
+        className="flex flex-col gap-2"
+        onOpenChange={(isOpen) => {
+          if (isOpen) {
+            trackQuestionnaireEvent('questionnaire_requirements_open', {
+              requirement_count: requirementCount,
+            });
+          }
+        }}
+      >
         <h3 id="requirements-heading">
           <Collapsible.Trigger asChild>
             <button
