@@ -6,7 +6,7 @@ import { routeTree } from './routeTree.gen';
 export const plugin: RemotePlugin = defineRemotePlugin({
   cssEntry: './src/styles/runtime.css',
   lifecycle: {
-    init: initScouterAnalytics,
+    init: ({ router }) => initScouterAnalytics(router),
     mocks: async () => [],
   },
   name: 'scouter',
