@@ -14,6 +14,7 @@ export interface SelectProps<TValue extends string> {
   invalid?: boolean;
   items: Readonly<TValue[]>;
   label?: React.ReactNode;
+  onOpenChange?: (open: boolean) => void;
   onValueChange: (value: TValue) => void;
   placeholder: string;
   ref?: React.Ref<HTMLButtonElement>;
@@ -24,6 +25,7 @@ export interface SelectProps<TValue extends string> {
 
 export const Select = <TValue extends string>({
   items,
+  onOpenChange,
   onValueChange,
   value,
   className,
@@ -44,7 +46,11 @@ export const Select = <TValue extends string>({
   */
   return (
     <Fieldset help={description} label={label}>
-      <SelectPrimitive.Root onValueChange={onValueChange} value={value ?? ''}>
+      <SelectPrimitive.Root
+        onOpenChange={onOpenChange}
+        onValueChange={onValueChange}
+        value={value ?? ''}
+      >
         <SelectPrimitive.Trigger asChild disabled={disabled}>
           <button
             className={clsx(

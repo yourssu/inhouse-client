@@ -12,6 +12,8 @@ import {
 import { partsOption } from '@/apis/parts/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
+import { useDocumentAnalytics } from '../../analytics';
+
 interface FinalEvalDialogProps {
   applicantId: number;
   close: () => void;
@@ -20,6 +22,7 @@ interface FinalEvalDialogProps {
 
 export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogProps) => {
   const queryClient = useQueryClient();
+  const trackDocumentEvent = useDocumentAnalytics();
 
   const mutation = useToastedMutation({
     mutationFn: patchApplicant,
@@ -45,13 +48,19 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
   );
 
   const unsubmittedEvaluators = evaluatorStatuses.filter(({ status }) => status !== 'SUBMITTED');
+  const submittedEvaluatorCount = evaluatorStatuses.length - unsubmittedEvaluators.length;
 
-  const onSubmit = async (finalState: 'DOCUMENT_ACCEPTED' | 'DOCUMENT_REJECTED') => {
+  const onSubmit = async (nextApplicantState: 'DOCUMENT_ACCEPTED' | 'DOCUMENT_REJECTED') => {
     const { success } = await mutation.mutateWithToast({
       applicantId,
-      data: { state: finalState },
+      data: { state: nextApplicantState },
     });
     if (success) {
+      trackDocumentEvent('applicant_final_decision_complete', {
+        decision_result: nextApplicantState,
+        submitted_evaluator_count: submittedEvaluatorCount,
+        unresolved_evaluator_count: unsubmittedEvaluators.length,
+      });
       close();
     }
   };

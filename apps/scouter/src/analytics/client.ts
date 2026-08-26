@@ -54,6 +54,17 @@ export const setScouterUserProperties = ({
   });
 };
 
+export const trackScouterEvent = (
+  eventName: string,
+  properties: Record<string, boolean | number | string>,
+) => {
+  if (!mixpanelToken) {
+    return;
+  }
+
+  mixpanel.track(eventName, properties);
+};
+
 export const resetScouterAnalytics = () => {
   if (!mixpanelToken) {
     return;

@@ -5,9 +5,10 @@ import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button, Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
-import { Suspense } from 'react';
+import { Suspense, useCallback } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
+import { trackScouterEvent } from '@/analytics/client';
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import {
   applicantDocumentCommentsOption,
@@ -25,6 +26,10 @@ import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$appl
 import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DocumentReview';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
+import type { DocumentAnalyticsCommonProperties, TrackDocumentEvent } from './analytics';
+
+import { DocumentAnalyticsContext } from './analytics';
+
 const RouteComponent = () => {
   const { applicantId } = Route.useParams();
 
@@ -34,6 +39,7 @@ const RouteComponent = () => {
     { data: comments },
     { data: evaluations },
     { data: parts },
+    { data: evaluatorStatuses },
   ] = useSuspenseQueries({
     queries: [
       applicantByIdOption(Number(applicantId)),
@@ -41,6 +47,7 @@ const RouteComponent = () => {
       applicantDocumentCommentsOption(Number(applicantId)),
       getApplicantDocumentsEvaluationsOption(Number(applicantId)),
       partsOption(),
+      documentEvaluatorStatusesOption(Number(applicantId)),
     ],
   });
 
@@ -51,60 +58,102 @@ const RouteComponent = () => {
 
   const isScoringComplete = rubrics.reduce((sum, rubric) => sum + rubric.maxScore, 0) === 100;
   const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(applicant.state);
+  const unsubmittedEvaluatorCount = evaluatorStatuses.filter(
+    ({ status }) => status !== 'SUBMITTED',
+  ).length;
+  const trackDocumentEvent = useCallback<TrackDocumentEvent>(
+    (eventName, properties) => {
+      const commonProperties: DocumentAnalyticsCommonProperties = {
+        applicant_id: applicant.applicantId,
+        applicant_state: applicant.state,
+        application_semester: applicant.applicationSemester,
+        assignment_required: part.hasAssignment,
+        event_schema_version: 'v1',
+        my_evaluation_status: evaluations.submittedAt == null ? 'not_submitted' : 'submitted',
+        part_id: applicant.partId,
+      };
+
+      trackScouterEvent(eventName, { ...commonProperties, ...properties });
+    },
+    [
+      applicant.applicantId,
+      applicant.applicationSemester,
+      applicant.partId,
+      applicant.state,
+      evaluations.submittedAt,
+      part.hasAssignment,
+    ],
+  );
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="서류 평가" />
 
-      <main className="flex min-h-0 flex-[1_1_0] gap-4 pt-7">
-        <ErrorBoundary
-          fallback={
-            <Paper className="flex size-full items-center justify-center">
-              <Result
-                description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
-                figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
-                title="연동된 서류 응답이 없어요"
-              />
+      <DocumentAnalyticsContext.Provider value={trackDocumentEvent}>
+        <main className="flex min-h-0 flex-[1_1_0] gap-4 pt-7">
+          <ErrorBoundary
+            fallback={
+              <Paper className="flex size-full items-center justify-center">
+                <Result
+                  description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
+                  figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
+                  title="연동된 서류 응답이 없어요"
+                />
+              </Paper>
+            }
+          >
+            <DocumentReview
+              answers={answers}
+              applicantId={applicant.applicantId}
+              comments={comments}
+              onCommentAddClick={() => trackDocumentEvent('document_comment_add_click', {})}
+              onCommentCreated={({ parentCommentId, sectionId }) =>
+                trackDocumentEvent('document_comment_created', {
+                  comment_type: parentCommentId === null ? 'comment' : 'reply',
+                  question_id: sectionId,
+                })
+              }
+            />
+            <Paper className="relative min-h-0 w-100 overflow-hidden p-4">
+              <div className="flex min-h-0 w-full flex-col overflow-y-auto">
+                <EvalForm />
+                {isScoringComplete && (
+                  <>
+                    <Divider className="my-6" />
+                    <div className="flex flex-col gap-5">
+                      <OtherDocumentEvaluationsPanel
+                        applicantId={applicant.applicantId}
+                        documentAverageScore={applicant.documentAverageScore}
+                      />
+                      <Divider />
+                      <Button
+                        disabled={evaluations.items.length === 0 || isDocumentEvaluationDisabled}
+                        onClick={() => {
+                          trackDocumentEvent('document_final_decision_click', {
+                            unsubmitted_evaluator_count: unsubmittedEvaluatorCount,
+                          });
+                          overlay.open(({ isOpen, close }) => {
+                            return (
+                              <FinalEvalDialog
+                                applicantId={applicant.applicantId}
+                                close={close}
+                                isOpen={isOpen}
+                              />
+                            );
+                          });
+                        }}
+                        size="lg"
+                      >
+                        최종 서류 평가
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
             </Paper>
-          }
-        >
-          <DocumentReview answers={answers} applicantId={Number(applicantId)} comments={comments} />
-          <Paper className="relative min-h-0 w-100 overflow-hidden p-4">
-            <div className="flex min-h-0 w-full flex-col overflow-y-auto">
-              <EvalForm />
-              {isScoringComplete && (
-                <>
-                  <Divider className="my-6" />
-                  <div className="flex flex-col gap-5">
-                    <OtherDocumentEvaluationsPanel
-                      applicantId={Number(applicantId)}
-                      documentAverageScore={applicant.documentAverageScore}
-                    />
-                    <Divider />
-                    <Button
-                      disabled={evaluations.items.length === 0 || isDocumentEvaluationDisabled}
-                      onClick={() => {
-                        overlay.open(({ isOpen, close }) => {
-                          return (
-                            <FinalEvalDialog
-                              applicantId={Number(applicantId)}
-                              close={close}
-                              isOpen={isOpen}
-                            />
-                          );
-                        });
-                      }}
-                      size="lg"
-                    >
-                      최종 서류 평가
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
-          </Paper>
-        </ErrorBoundary>
-      </main>
+          </ErrorBoundary>
+        </main>
+      </DocumentAnalyticsContext.Provider>
     </PageLayout.Content>
   );
 };

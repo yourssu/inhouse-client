@@ -19,6 +19,8 @@ import {
 } from '@/apis/documents/query';
 import { DocumentAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/DocumentAverageScoreSummary';
 
+import { useDocumentAnalytics } from '../../analytics';
+
 interface OtherDocumentEvaluationsPanelProps {
   applicantId: number;
   documentAverageScore?: null | number;
@@ -147,11 +149,17 @@ const OtherDocumentEvaluationCollapsible = ({
   totalScore: number;
 }) => {
   const [open, setOpen] = useState(false);
+  const trackDocumentEvent = useDocumentAnalytics();
 
   return (
     <Collapsible.Root
       className="border-greyOpacity200 rounded-10 overflow-clip border"
-      onOpenChange={setOpen}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (nextOpen) {
+          trackDocumentEvent('document_peer_evaluator_view', {});
+        }
+      }}
       open={open}
     >
       <Collapsible.Trigger
