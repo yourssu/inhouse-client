@@ -24,15 +24,15 @@ import { createQueryClient } from './createQueryClient';
   - children: AppProviders 안, RouterProvider 와 나란히 렌더되는 슬롯(예: shell 의 unavailable UI,
     preview 의 PreviewBanner).
 */
-interface CreateExteriorAppRenderContext<TRouter> {
+interface CreateExteriorAppContext<TRouter> {
   queryClient: QueryClient;
   router: TRouter;
 }
 
 export interface CreateExteriorAppOptions<TRouter> {
   appProvidersProps?: Omit<AppProvidersProps, 'children' | 'queryClient'>;
-  beforeRender?: () => Promise<void> | void;
-  children?: ((context: CreateExteriorAppRenderContext<TRouter>) => ReactNode) | ReactNode;
+  beforeRender?: (context: CreateExteriorAppContext<TRouter>) => Promise<void> | void;
+  children?: ((context: CreateExteriorAppContext<TRouter>) => ReactNode) | ReactNode;
   /**
     queryClient 를 받아 router 를 만드는 빌더. createExteriorApp 은 dist 로 router
     타입을 펼칠 수 없으므로, caller 가 concrete routeTree 로 createRouter 를 직접
@@ -71,7 +71,7 @@ export const createExteriorApp = <TRouter extends AnyRouter>({
 
   const mount = async () => {
     initializeTheme();
-    await beforeRender?.();
+    await beforeRender?.({ queryClient, router });
 
     const container = rootElement ?? document.getElementById(rootElementId);
 

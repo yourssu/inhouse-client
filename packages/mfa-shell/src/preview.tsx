@@ -39,8 +39,8 @@ export const createRemotePreviewApp = <TRouteTree extends AppRouteTree>(
 ) => {
   const app = createExteriorApp({
     appProvidersProps: options.appProvidersProps,
-    beforeRender: async () => {
-      await runPluginInits([options.plugin], 'preview');
+    beforeRender: async ({ router }) => {
+      await runPluginInits([options.plugin], { mode: 'preview', router });
       await setupPluginMocks([options.plugin], 'preview');
     },
     children: (): ReactNode => <PreviewBanner />,
