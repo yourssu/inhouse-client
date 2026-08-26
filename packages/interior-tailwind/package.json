@@ -19,7 +19,7 @@
     "@yourssu-inhouse/interior-vars": "workspace:*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.6.0",
-    "tailwind-variants": "^3.2.2"
+    "tailwind-variants": "^3.3.1"
   },
   "peerDependencies": {
     "tailwindcss": "^4.0.0"
@@ -29,8 +29,8 @@
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
-    "prettier": "^3.8.3",
-    "tailwindcss": "^4.3.0",
+    "prettier": "^3.9.6",
+    "tailwindcss": "^4.3.3",
     "typescript": "catalog:"
   }
 }

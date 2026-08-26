@@ -34,7 +34,7 @@
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
     "ky": "^2.0.2",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.6",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:",

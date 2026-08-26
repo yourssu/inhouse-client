@@ -27,7 +27,7 @@
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
-    "prettier": "^3.8.3",
+    "prettier": "^3.9.6",
     "typescript": "catalog:"
   }
 }
