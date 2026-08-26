@@ -11,16 +11,16 @@
 import { Route as rootRouteImport } from './routes/~__root'
 import { Route as AuthRouteImport } from './routes/~_auth'
 import { Route as AuthRecruitRouteRouteImport } from './routes/~_auth/~recruit/~route'
-import { Route as AuthRecruitApplicantsIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~index'
-import { Route as AuthRecruitMailIndexRouteImport } from './routes/~_auth/~recruit/~mail/~index'
-import { Route as AuthRecruitSchedulesIndexRouteImport } from './routes/~_auth/~recruit/~schedules/~index'
 import { Route as AuthRecruitTemplatesIndexRouteImport } from './routes/~_auth/~recruit/~templates/~index'
+import { Route as AuthRecruitSchedulesIndexRouteImport } from './routes/~_auth/~recruit/~schedules/~index'
+import { Route as AuthRecruitMailIndexRouteImport } from './routes/~_auth/~recruit/~mail/~index'
+import { Route as AuthRecruitApplicantsIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~index'
 import { Route as AuthRecruitApplicantsApplicantIdEvalRouteRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~route'
-import { Route as AuthRecruitMailNewIndexRouteImport } from './routes/~_auth/~recruit/~mail/~new/~index'
 import { Route as AuthRecruitSchedulesNewIndexRouteImport } from './routes/~_auth/~recruit/~schedules/~new/~index'
-import { Route as AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/~index'
-import { Route as AuthRecruitApplicantsApplicantIdEvalInterviewIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/~index'
+import { Route as AuthRecruitMailNewIndexRouteImport } from './routes/~_auth/~recruit/~mail/~new/~index'
 import { Route as AuthRecruitApplicantsApplicantIdEvalQuestionnaireIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/~index'
+import { Route as AuthRecruitApplicantsApplicantIdEvalInterviewIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/~index'
+import { Route as AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport } from './routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/~index'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -31,10 +31,16 @@ const AuthRecruitRouteRoute = AuthRecruitRouteRouteImport.update({
   path: '/recruit',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthRecruitApplicantsIndexRoute =
-  AuthRecruitApplicantsIndexRouteImport.update({
-    id: '/applicants/',
-    path: '/applicants/',
+const AuthRecruitTemplatesIndexRoute =
+  AuthRecruitTemplatesIndexRouteImport.update({
+    id: '/templates/',
+    path: '/templates/',
+    getParentRoute: () => AuthRecruitRouteRoute,
+  } as any)
+const AuthRecruitSchedulesIndexRoute =
+  AuthRecruitSchedulesIndexRouteImport.update({
+    id: '/schedules/',
+    path: '/schedules/',
     getParentRoute: () => AuthRecruitRouteRoute,
   } as any)
 const AuthRecruitMailIndexRoute = AuthRecruitMailIndexRouteImport.update({
@@ -42,16 +48,10 @@ const AuthRecruitMailIndexRoute = AuthRecruitMailIndexRouteImport.update({
   path: '/mail/',
   getParentRoute: () => AuthRecruitRouteRoute,
 } as any)
-const AuthRecruitSchedulesIndexRoute =
-  AuthRecruitSchedulesIndexRouteImport.update({
-    id: '/schedules/',
-    path: '/schedules/',
-    getParentRoute: () => AuthRecruitRouteRoute,
-  } as any)
-const AuthRecruitTemplatesIndexRoute =
-  AuthRecruitTemplatesIndexRouteImport.update({
-    id: '/templates/',
-    path: '/templates/',
+const AuthRecruitApplicantsIndexRoute =
+  AuthRecruitApplicantsIndexRouteImport.update({
+    id: '/applicants/',
+    path: '/applicants/',
     getParentRoute: () => AuthRecruitRouteRoute,
   } as any)
 const AuthRecruitApplicantsApplicantIdEvalRouteRoute =
@@ -60,21 +60,21 @@ const AuthRecruitApplicantsApplicantIdEvalRouteRoute =
     path: '/applicants/$applicantId/eval',
     getParentRoute: () => AuthRecruitRouteRoute,
   } as any)
-const AuthRecruitMailNewIndexRoute = AuthRecruitMailNewIndexRouteImport.update({
-  id: '/mail/new/',
-  path: '/mail/new/',
-  getParentRoute: () => AuthRecruitRouteRoute,
-} as any)
 const AuthRecruitSchedulesNewIndexRoute =
   AuthRecruitSchedulesNewIndexRouteImport.update({
     id: '/schedules/new/',
     path: '/schedules/new/',
     getParentRoute: () => AuthRecruitRouteRoute,
   } as any)
-const AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute =
-  AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport.update({
-    id: '/document/',
-    path: '/document/',
+const AuthRecruitMailNewIndexRoute = AuthRecruitMailNewIndexRouteImport.update({
+  id: '/mail/new/',
+  path: '/mail/new/',
+  getParentRoute: () => AuthRecruitRouteRoute,
+} as any)
+const AuthRecruitApplicantsApplicantIdEvalQuestionnaireIndexRoute =
+  AuthRecruitApplicantsApplicantIdEvalQuestionnaireIndexRouteImport.update({
+    id: '/questionnaire/',
+    path: '/questionnaire/',
     getParentRoute: () => AuthRecruitApplicantsApplicantIdEvalRouteRoute,
   } as any)
 const AuthRecruitApplicantsApplicantIdEvalInterviewIndexRoute =
@@ -83,10 +83,10 @@ const AuthRecruitApplicantsApplicantIdEvalInterviewIndexRoute =
     path: '/interview/',
     getParentRoute: () => AuthRecruitApplicantsApplicantIdEvalRouteRoute,
   } as any)
-const AuthRecruitApplicantsApplicantIdEvalQuestionnaireIndexRoute =
-  AuthRecruitApplicantsApplicantIdEvalQuestionnaireIndexRouteImport.update({
-    id: '/questionnaire/',
-    path: '/questionnaire/',
+const AuthRecruitApplicantsApplicantIdEvalDocumentIndexRoute =
+  AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport.update({
+    id: '/document/',
+    path: '/document/',
     getParentRoute: () => AuthRecruitApplicantsApplicantIdEvalRouteRoute,
   } as any)
 
@@ -198,18 +198,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRecruitRouteRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/recruit/applicants/': {
-      id: '/_auth/recruit/applicants/'
-      path: '/applicants'
-      fullPath: '/recruit/applicants/'
-      preLoaderRoute: typeof AuthRecruitApplicantsIndexRouteImport
-      parentRoute: typeof AuthRecruitRouteRoute
-    }
-    '/_auth/recruit/mail/': {
-      id: '/_auth/recruit/mail/'
-      path: '/mail'
-      fullPath: '/recruit/mail/'
-      preLoaderRoute: typeof AuthRecruitMailIndexRouteImport
+    '/_auth/recruit/templates/': {
+      id: '/_auth/recruit/templates/'
+      path: '/templates'
+      fullPath: '/recruit/templates/'
+      preLoaderRoute: typeof AuthRecruitTemplatesIndexRouteImport
       parentRoute: typeof AuthRecruitRouteRoute
     }
     '/_auth/recruit/schedules/': {
@@ -219,11 +212,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRecruitSchedulesIndexRouteImport
       parentRoute: typeof AuthRecruitRouteRoute
     }
-    '/_auth/recruit/templates/': {
-      id: '/_auth/recruit/templates/'
-      path: '/templates'
-      fullPath: '/recruit/templates/'
-      preLoaderRoute: typeof AuthRecruitTemplatesIndexRouteImport
+    '/_auth/recruit/mail/': {
+      id: '/_auth/recruit/mail/'
+      path: '/mail'
+      fullPath: '/recruit/mail/'
+      preLoaderRoute: typeof AuthRecruitMailIndexRouteImport
+      parentRoute: typeof AuthRecruitRouteRoute
+    }
+    '/_auth/recruit/applicants/': {
+      id: '/_auth/recruit/applicants/'
+      path: '/applicants'
+      fullPath: '/recruit/applicants/'
+      preLoaderRoute: typeof AuthRecruitApplicantsIndexRouteImport
       parentRoute: typeof AuthRecruitRouteRoute
     }
     '/_auth/recruit/applicants/$applicantId/eval': {
@@ -233,13 +233,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalRouteRouteImport
       parentRoute: typeof AuthRecruitRouteRoute
     }
-    '/_auth/recruit/mail/new/': {
-      id: '/_auth/recruit/mail/new/'
-      path: '/mail/new'
-      fullPath: '/recruit/mail/new/'
-      preLoaderRoute: typeof AuthRecruitMailNewIndexRouteImport
-      parentRoute: typeof AuthRecruitRouteRoute
-    }
     '/_auth/recruit/schedules/new/': {
       id: '/_auth/recruit/schedules/new/'
       path: '/schedules/new'
@@ -247,11 +240,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRecruitSchedulesNewIndexRouteImport
       parentRoute: typeof AuthRecruitRouteRoute
     }
-    '/_auth/recruit/applicants/$applicantId/eval/document/': {
-      id: '/_auth/recruit/applicants/$applicantId/eval/document/'
-      path: '/document'
-      fullPath: '/recruit/applicants/$applicantId/eval/document/'
-      preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport
+    '/_auth/recruit/mail/new/': {
+      id: '/_auth/recruit/mail/new/'
+      path: '/mail/new'
+      fullPath: '/recruit/mail/new/'
+      preLoaderRoute: typeof AuthRecruitMailNewIndexRouteImport
+      parentRoute: typeof AuthRecruitRouteRoute
+    }
+    '/_auth/recruit/applicants/$applicantId/eval/questionnaire/': {
+      id: '/_auth/recruit/applicants/$applicantId/eval/questionnaire/'
+      path: '/questionnaire'
+      fullPath: '/recruit/applicants/$applicantId/eval/questionnaire/'
+      preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalQuestionnaireIndexRouteImport
       parentRoute: typeof AuthRecruitApplicantsApplicantIdEvalRouteRoute
     }
     '/_auth/recruit/applicants/$applicantId/eval/interview/': {
@@ -261,11 +261,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalInterviewIndexRouteImport
       parentRoute: typeof AuthRecruitApplicantsApplicantIdEvalRouteRoute
     }
-    '/_auth/recruit/applicants/$applicantId/eval/questionnaire/': {
-      id: '/_auth/recruit/applicants/$applicantId/eval/questionnaire/'
-      path: '/questionnaire'
-      fullPath: '/recruit/applicants/$applicantId/eval/questionnaire/'
-      preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalQuestionnaireIndexRouteImport
+    '/_auth/recruit/applicants/$applicantId/eval/document/': {
+      id: '/_auth/recruit/applicants/$applicantId/eval/document/'
+      path: '/document'
+      fullPath: '/recruit/applicants/$applicantId/eval/document/'
+      preLoaderRoute: typeof AuthRecruitApplicantsApplicantIdEvalDocumentIndexRouteImport
       parentRoute: typeof AuthRecruitApplicantsApplicantIdEvalRouteRoute
     }
   }
