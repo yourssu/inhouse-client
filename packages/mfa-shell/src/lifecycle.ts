@@ -1,8 +1,8 @@
+import type { RemotePlugin } from '@yourssu-inhouse/mfa-core';
 import type { RequestHandler } from 'msw';
 
-import type { ExteriorAppMode, RemotePlugin } from './types';
+type ExteriorAppMode = 'preview' | 'shell';
 
-// NOTE: 로컬 dev 환경이거나, 배포 환경에서 MSW를 키도록 환경 변수를 셋업한 경우에만 MSW를 켜요.
 const isMSWEnabled = (): boolean => {
   const env = (import.meta as any).env ?? {};
   return Boolean(env.DEV) || env.VITE_USE_MSW === 'true';

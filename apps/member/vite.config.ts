@@ -17,7 +17,7 @@ if (!remote) {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    mfaVitePlugin.remote({ id: 'member', remote }),
+    mfaVitePlugin.remote({ remote }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
@@ -29,7 +29,7 @@ export default defineConfig({
   ],
   server: {
     cors: true,
-    port: 5175,
+    port: remote.port,
     fs: {
       // NOTE: Window에서 ~ 라우팅이 예약어인 이슈가 있어 우회합니다.
       strict: false,

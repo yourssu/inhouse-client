@@ -10,6 +10,10 @@
     ".": {
       "types": "./src/index.ts",
       "import": "./dist/index.mjs"
+    },
+    "./retry-plugin": {
+      "types": "./src/retryPlugin.ts",
+      "import": "./dist/retryPlugin.mjs"
     }
   },
   "scripts": {
@@ -22,6 +26,7 @@
     "fix:format": "prettier --write ."
   },
   "dependencies": {
+    "@module-federation/retry-plugin": "^2.9.0",
     "@yourssu-inhouse/mfa-core": "workspace:*"
   },
   "devDependencies": {

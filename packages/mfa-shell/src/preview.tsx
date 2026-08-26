@@ -1,3 +1,4 @@
+import type { RemotePlugin } from '@yourssu-inhouse/mfa-core';
 import type { ReactNode } from 'react';
 
 import {
@@ -11,9 +12,9 @@ import {
   createExteriorApp,
   type CreateExteriorAppOptions,
 } from '@yourssu-inhouse/exterior';
-import { type RemotePlugin, runPluginInits, setupPluginMocks } from '@yourssu-inhouse/mfa-core';
 
 import { PreviewAuthNotice, PreviewBanner } from './components/PreviewBanner';
+import { runPluginInits, setupPluginMocks } from './lifecycle';
 
 type SharedPreviewOptions = Pick<
   CreateExteriorAppOptions<unknown>,

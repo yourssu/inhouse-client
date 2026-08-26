@@ -6,9 +6,8 @@ import { defineConfig } from 'tsdown';
   불필요), runtime import 는 dist/index.mjs 를 써요(Node ESM 이 확장자 없는 내부 import 를
   못 찾는 문제를 피하려고 빌드 산출물을 제공해요).
 
-  react/react-dom/msw/@tanstack/react-router 는 peer·singleton 이므로 번들링하지 않고
-  external 로 둬요. mfa-core 본체는 DOM/react 타입을 직접 참조하지 않아 node context 에서도
-  안전해요.
+  msw/@tanstack/react-router 는 peer·singleton 이므로 번들링하지 않고 external 로 둬요.
+  mfa-core 본체는 DOM/React runtime 을 참조하지 않아 node context 에서도 안전해요.
 */
 export default defineConfig({
   entry: ['./src/index.ts'],
@@ -17,6 +16,6 @@ export default defineConfig({
   sourcemap: true,
   clean: !process.argv.includes('--watch'),
   deps: {
-    neverBundle: ['msw', '@tanstack/react-router', 'react'],
+    neverBundle: ['msw', '@tanstack/react-router'],
   },
 });

@@ -6,17 +6,13 @@ import {
   type RouteRegistry,
 } from '@yourssu-inhouse/mfa-core';
 
-const graftedPlugins = new Set<string>();
-
-export const isPluginGrafted = (name: string): boolean => graftedPlugins.has(name);
-
 export const graftPlugin = (
   hostEntry: AnyRoute,
   plugin: RemotePlugin,
   registry: RouteRegistry,
-): void => {
-  if (graftedPlugins.has(plugin.name)) {
-    return;
+): boolean => {
+  if (registry.hasPlugin(plugin.name)) {
+    return false;
   }
 
   registry.assertPlugin(plugin);
@@ -31,9 +27,5 @@ export const graftPlugin = (
   hostEntry.addChildren([...((hostEntry.children ?? []) as AnyRoute[]), ...children]);
 
   registry.register(plugin);
-  graftedPlugins.add(plugin.name);
-};
-
-export const resetGraftState = (): void => {
-  graftedPlugins.clear();
+  return true;
 };

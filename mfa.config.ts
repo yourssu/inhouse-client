@@ -1,8 +1,9 @@
-import type { MfaConfig } from '@yourssu-inhouse/mfa-core';
+import type { MfaConfig } from '@yourssu-inhouse/mfa-vite';
 
 export const mfaConfig: MfaConfig = {
   remotes: [
     {
+      cssEntry: './src/styles/runtime.css',
       id: 'scouter',
       port: 5174,
     },

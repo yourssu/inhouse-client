@@ -11,7 +11,7 @@
       "expectations": [
         "workspace-packages.md, project-architecture.md, routing-url-state.md, server-data.md와 UI·상태 작업에 필요한 reference를 선택한다.",
         "API 응답을 json()으로 읽은 뒤 Zod array schema로 parse한 값을 반환한다.",
-        "queryOptions와 pluginQueryKey('scouter') 기반 domain key API를 사용하고 결과를 바꾸는 필터를 query key에 포함한다.",
+        "queryOptions와 createQueryKeyNamespace('scouter') 기반 domain key API를 사용하고 결과를 바꾸는 필터를 query key에 포함한다.",
         "validateSearch와 기존 useSearchState를 사용해 공유할 필터를 URL의 단일 원천으로 둔다.",
         "routeTree.gen.ts를 직접 수정하지 않고 build가 만든 diff만 source route 변경과 대조한다.",
         "@yourssu-inhouse/scouter의 type, lint, format, build 결과와 실행하지 못한 행동 검증을 구분해 보고한다.",
@@ -99,18 +99,18 @@
         "remote id·port는 mfa.config에, shell build 의존성은 turbo.json에 선언한다.",
         "Vite federation remotes·exposes·shared 설정이나 shell runtime spec 목록을 수기로 복제하지 않는다.",
         "defineRemotePlugin과 createRemotePreviewApp을 사용하고 remote /_auth는 Outlet 통과 라우트로 둔다.",
-        "mock은 plugin lifecycle에 제공하고 remote utility를 plugin runtime CSS asset으로 따로 노출하지 않는다.",
+        "mock은 plugin lifecycle에 제공하고 shell에 합칠 보조 CSS는 plugin manifest가 아니라 mfa.config의 cssEntry에 선언한다.",
         "ledger, shell, 관련 MF package의 자동 검증과 preview·shell 조합 확인을 보고한다."
       ]
     },
     {
       "id": 8,
-      "prompt": "메일 템플릿 생성·수정·삭제 뒤 목록 캐시가 갱신되지 않는 문제를 고쳐줘. 현재 query options는 pluginQueryKey를 쓰지만 mutation 쪽에는 raw ['mails', 'templates'] key가 보여. query와 mutation이 같은 namespaced key...",
+      "prompt": "메일 템플릿 생성·수정·삭제 뒤 목록 캐시가 갱신되지 않는 문제를 고쳐줘. 현재 query options는 createQueryKeyNamespace를 쓰지만 mutation 쪽에는 raw ['mails', 'templates'] key가 보여. query와 mutation이 같은 namespaced key...",
       "expected_output": "mails query 모듈이 재사용 가능한 namespaced key API를 공개하고 모든 mutation invalidation이 같은 prefix를 사용한다.",
       "files": [],
       "expectations": [
         "server-data.md, module-federation.md, quality.md를 선택한다.",
-        "pluginQueryKey('scouter')는 mails query 모듈의 한 경계에서 생성한다.",
+        "createQueryKeyNamespace('scouter')는 mails query 모듈의 한 경계에서 생성한다.",
         "list·infinite list options와 mutation invalidation이 공개된 domain key API를 공유한다.",
         "컴포넌트에 raw key나 plugin name 조합을 남기지 않는다.",
         "생성·수정·삭제 뒤 관련 cache 갱신과 scouter 자동 검증 결과를 보고한다."

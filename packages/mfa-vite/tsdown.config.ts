@@ -6,12 +6,17 @@ import { defineConfig } from 'tsdown';
   방지). @module-federation/vite·vite·mfa-core 는 external 로 둬요.
 */
 export default defineConfig({
-  entry: ['./src/index.ts'],
+  entry: ['./src/index.ts', './src/retryPlugin.ts'],
   format: ['esm'],
   dts: false,
   sourcemap: true,
   clean: !process.argv.includes('--watch'),
   deps: {
-    neverBundle: ['@module-federation/vite', 'vite', '@yourssu-inhouse/mfa-core'],
+    neverBundle: [
+      '@module-federation/retry-plugin',
+      '@module-federation/vite',
+      'vite',
+      '@yourssu-inhouse/mfa-core',
+    ],
   },
 });

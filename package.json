@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.0",
-    "@yourssu-inhouse/mfa-core": "workspace:*",
     "@yourssu-inhouse/mfa-vite": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "prettier": "^3.9.6",

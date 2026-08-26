@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import type { PartInterviewQuestionsParams } from '@/apis/interviews/questions/schema';
 
@@ -9,7 +9,7 @@ import {
   saveAssignedQuestions,
 } from '@/apis/interviews/questions';
 
-const qk = pluginQueryKey('scouter');
+const qk = createQueryKeyNamespace('scouter');
 
 export const interviewQuestionsQueryKeys = {
   all: () => qk.for('interviews', 'questions'),
