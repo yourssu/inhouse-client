@@ -37,10 +37,8 @@ export const useSearchState = <
   const setSearchParamsWrapper: Dispatch<SetStateAction<TDeserialized>> = (nextInit) => {
     navigate({
       to: trimPathRight(routePath),
-      search: (prev) =>
-        serialize(
-          typeof nextInit === 'function' ? nextInit(deserialize(prev as Search<TFrom>)) : nextInit,
-        ),
+      search: (prev: Search<TFrom>) =>
+        serialize(typeof nextInit === 'function' ? nextInit(deserialize(prev)) : nextInit),
     });
   };
 
