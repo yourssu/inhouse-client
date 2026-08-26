@@ -25,15 +25,15 @@
     "@yourssu-inhouse/mfa-core": "workspace:*"
   },
   "devDependencies": {
-    "@module-federation/vite": "^1.16.12",
+    "@module-federation/vite": "^1.20.8",
     "@types/node": "^24.13.0",
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
-    "prettier": "^3.8.3",
-    "tsdown": "^0.22.2",
+    "prettier": "^3.9.6",
+    "tsdown": "^0.22.14",
     "typescript": "catalog:",
-    "vite": "^8.0.12"
+    "vite": "^8.2.2"
   },
   "peerDependencies": {
     "@module-federation/vite": "^1.16.12",
