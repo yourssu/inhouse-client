@@ -15,3 +15,6 @@ catalog:
   '@tanstack/react-router': '^1.170.32'
   '@tanstack/router-plugin': '^1.168.35'
   zod: '^4.4.3'
+
+patchedDependencies:
+  '@tailwindcss/vite@4.3.3': patches/@tailwindcss__vite@4.3.3.patch
