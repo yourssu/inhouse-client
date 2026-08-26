@@ -10,12 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/~__root'
 import { Route as AuthRouteImport } from './routes/~_auth'
-import { Route as SigninIndexRouteImport } from './routes/~signin/~index'
 import { Route as AuthIndexRouteImport } from './routes/~_auth/~index'
+import { Route as SigninIndexRouteImport } from './routes/~signin/~index'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRoute,
 } as any)
 const SigninIndexRoute = SigninIndexRouteImport.update({
   id: '/signin/',
@@ -24,11 +29,6 @@ const SigninIndexRoute = SigninIndexRouteImport.update({
 } as any).lazy(() =>
   import('./routes/~signin/~index.lazy').then((d) => d.Route),
 )
-const AuthIndexRoute = AuthIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
@@ -66,19 +66,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/signin/': {
-      id: '/signin/'
-      path: '/signin'
-      fullPath: '/signin/'
-      preLoaderRoute: typeof SigninIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth/': {
       id: '/_auth/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/signin/': {
+      id: '/signin/'
+      path: '/signin'
+      fullPath: '/signin/'
+      preLoaderRoute: typeof SigninIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

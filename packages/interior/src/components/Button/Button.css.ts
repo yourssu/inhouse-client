@@ -61,7 +61,7 @@ export const button = recipe({
           },
         },
       },
-    danger: {
+      danger: {
         backgroundColor: vars.color.palette.red500,
         color: '#ffffff',
         selectors: {
