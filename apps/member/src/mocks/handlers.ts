@@ -2,6 +2,7 @@ import { disassemble } from 'es-hangul';
 import { http, HttpResponse } from 'msw';
 
 import { type Member, type MemberState, type PartName } from '@/apis/members/schema';
+import { config } from '@/config';
 
 // 1. Calculate current semester dynamically based on rules:
 // - XX-1: March 1st ~ August 31st (month 2 to 7)
@@ -366,7 +367,7 @@ export const mockMembers: Member[] = mockMembersRaw.map((member) => {
 
 export const handlers = [
   // 1. GET /parts
-  http.get('/api/parts', () => {
+  http.get(`${config.apiBaseURL}/parts`, () => {
     return HttpResponse.json([
       'Head Lead',
       'Finance',
@@ -383,20 +384,20 @@ export const handlers = [
   }),
 
   // 2-1. GET /semesters
-  http.get('/api/semesters', () => {
+  http.get(`${config.apiBaseURL}/semesters`, () => {
     const currentSemester = calculateCurrentSemester();
     const semesters = generateSemesters(currentSemester);
     return HttpResponse.json(semesters);
   }),
 
   // 2-2. GET /semesters/current
-  http.get('/api/semesters/current', () => {
+  http.get(`${config.apiBaseURL}/semesters/current`, () => {
     const currentSemester = calculateCurrentSemester();
     return HttpResponse.json(currentSemester);
   }),
 
   // 3. GET /members
-  http.get('/api/members', ({ request }) => {
+  http.get(`${config.apiBaseURL}/members`, ({ request }) => {
     const url = new URL(request.url);
     const pageParam = url.searchParams.get('page');
     const pageSizeParam = url.searchParams.get('pageSize');
@@ -448,7 +449,7 @@ export const handlers = [
   }),
 
   // 4. GET /members/:memberId
-  http.get('/api/members/:memberId', ({ params }) => {
+  http.get(`${config.apiBaseURL}/members/:memberId`, ({ params }) => {
     const memberId = parseInt(params.memberId as string, 10);
     const member = mockMembers.find((m) => m.memberId === memberId);
     if (!member) {
