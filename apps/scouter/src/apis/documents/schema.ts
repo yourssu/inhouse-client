@@ -55,6 +55,8 @@ export const ApplicantDocumentEvaluationsResponseSchema = z.object({
 });
 
 export const documentKoreanResults = ['보류', '서류 합격', '서류 불합격'] as const;
+export const DOCUMENT_EVALUATION_SCORE_MINIMUM_ERROR = '점수는 1점 이상이어야 해요.';
+export const DOCUMENT_EVALUATION_RESULT_REQUIRED_ERROR = '평가 결과를 선택해 주세요.';
 export const UpdateApplicantDocumentEvaluationFormSchema = z.object({
   items: z.array(
     z.object({
@@ -63,12 +65,12 @@ export const UpdateApplicantDocumentEvaluationFormSchema = z.object({
         .string()
         .regex(/^\d+$/, '점수를 입력해 주세요.')
         .transform(Number)
-        .refine((score) => score >= 1, '점수는 1점 이상이어야 해요.'),
+        .refine((score) => score >= 1, DOCUMENT_EVALUATION_SCORE_MINIMUM_ERROR),
       memo: z.string(),
     }),
   ),
   overallComment: z.string(),
-  result: z.enum(documentKoreanResults, { error: '평가 결과를 선택해 주세요.' }),
+  result: z.enum(documentKoreanResults, { error: DOCUMENT_EVALUATION_RESULT_REQUIRED_ERROR }),
 });
 
 export const UpdateApplicantDocumentEvaluationRequestSchema = z.object({

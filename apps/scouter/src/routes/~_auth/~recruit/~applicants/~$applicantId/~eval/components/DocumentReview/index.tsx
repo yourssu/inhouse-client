@@ -5,6 +5,8 @@ import type { CommentType } from '@/apis/documents/schema';
 
 import { Paper } from '@/components/Paper';
 
+import type { CommentCreatedMetadata } from './useWriteComment';
+
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
 import { DocumentAnswer } from './DocumentAnswer';
@@ -14,9 +16,17 @@ interface DocumentReviewProps {
   answers: ApplicantDocumentAnswersType;
   applicantId: number;
   comments: readonly CommentType[];
+  onCommentAddClick?: () => void;
+  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
-export const DocumentReview = ({ applicantId, answers, comments }: DocumentReviewProps) => {
+export const DocumentReview = ({
+  applicantId,
+  answers,
+  comments,
+  onCommentAddClick,
+  onCommentCreated,
+}: DocumentReviewProps) => {
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
   const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
@@ -31,6 +41,7 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
   };
 
   const handleAddComment = (sectionId: number) => {
+    onCommentAddClick?.();
     setSelectedSectionId(sectionId);
     setOpenCommentSectionId(sectionId);
   };
@@ -102,6 +113,7 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
                     <CommentField
                       applicantId={applicantId}
                       onClose={() => setOpenCommentSectionId(null)}
+                      onCommentCreated={onCommentCreated}
                       parentCommentId={null}
                       sectionId={sectionId}
                     />
@@ -111,6 +123,7 @@ export const DocumentReview = ({ applicantId, answers, comments }: DocumentRevie
                       applicantId={applicantId}
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
+                      onCommentCreated={onCommentCreated}
                       thread={thread}
                     />
                   ))}

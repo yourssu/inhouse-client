@@ -5,6 +5,8 @@ import { BsArrowUpCircleFill } from 'react-icons/bs';
 
 import type { CommentType } from '@/apis/documents/schema';
 
+import type { CommentCreatedMetadata } from '../useWriteComment';
+
 import { DetectOutsideClickArea } from '../DetectOutsideClickArea';
 import { useWriteComment } from '../useWriteComment';
 import { Comment } from './Comment';
@@ -12,10 +14,16 @@ import { Comment } from './Comment';
 interface CommentThreadProps {
   applicantId: number;
   isSelected: boolean;
+  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
   thread: CommentType[];
 }
 
-export const CommentThread = ({ applicantId, isSelected, thread }: CommentThreadProps) => {
+export const CommentThread = ({
+  applicantId,
+  isSelected,
+  onCommentCreated,
+  thread,
+}: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
   const [isReplying, setIsReplying] = useState(false);
 
@@ -30,6 +38,7 @@ export const CommentThread = ({ applicantId, isSelected, thread }: CommentThread
   } = useWriteComment({
     applicantId,
     onClose: () => setIsReplying(false),
+    onCommentCreated,
     parentCommentId: currentThreadId,
     sectionId,
   });
