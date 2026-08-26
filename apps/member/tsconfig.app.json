@@ -1,7 +1,6 @@
 {
   "extends": "@yourssu-inhouse/typescript-config/base",
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "paths": {
       "@/*": ["./src/*"]
     }
