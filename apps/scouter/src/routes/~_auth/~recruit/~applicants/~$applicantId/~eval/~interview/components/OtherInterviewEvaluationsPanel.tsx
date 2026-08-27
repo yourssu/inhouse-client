@@ -208,7 +208,7 @@ const FinalInterviewEvaluationButton = ({
   disabled,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationButtonProps) => {
-  const { trackInterviewEvent } = useInterviewAnalytics();
+  const trackInterviewEvent = useInterviewAnalytics();
 
   const handleClick = () => {
     trackInterviewEvent('interview_final_decision_click', {});
@@ -238,13 +238,12 @@ const OtherInterviewEvaluationCollapsible = ({
   evaluation,
 }: OtherInterviewEvaluationCollapsibleProps) => {
   const [open, setOpen] = useState(false);
-  const { markPeerEvaluationViewed, trackInterviewEvent } = useInterviewAnalytics();
+  const trackInterviewEvent = useInterviewAnalytics();
   const resultOption = interviewEvaluationResultOptions[evaluation.result];
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (nextOpen) {
-      markPeerEvaluationViewed();
       trackInterviewEvent('interview_peer_evaluator_view', {
         peer_evaluator_id: evaluation.evaluatorId,
       });

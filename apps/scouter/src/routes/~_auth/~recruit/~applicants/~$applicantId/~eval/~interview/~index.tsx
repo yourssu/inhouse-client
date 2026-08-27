@@ -2,7 +2,7 @@ import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Divider } from '@yourssu-inhouse/interior';
-import { Suspense, useCallback, useMemo, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 
 import type { ApplicantStateType } from '@/apis/applicants/schema';
@@ -68,7 +68,6 @@ const RouteComponent = () => {
   });
 
   const [selectedQuestionId, setSelectedQuestionId] = useState<number>(INTRO_SCRIPT.id);
-  const [hasViewedPeerEvaluation, setHasViewedPeerEvaluation] = useState(false);
 
   const selectedQuestion = assignedQuestions.find(({ id }) => id === selectedQuestionId);
   const selectedScript = FIXED_SCRIPTS[selectedQuestionId] ?? null;
@@ -94,23 +93,11 @@ const RouteComponent = () => {
     },
     [applicant.applicantId, applicant.applicationSemester, applicant.partId, applicant.state],
   );
-  const markPeerEvaluationViewed = useCallback(() => {
-    setHasViewedPeerEvaluation(true);
-  }, []);
-  const interviewAnalytics = useMemo(
-    () => ({
-      hasViewedPeerEvaluation,
-      markPeerEvaluationViewed,
-      trackInterviewEvent,
-    }),
-    [hasViewedPeerEvaluation, markPeerEvaluationViewed, trackInterviewEvent],
-  );
-
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="면접 평가" />
 
-      <InterviewAnalyticsContext.Provider value={interviewAnalytics}>
+      <InterviewAnalyticsContext.Provider value={trackInterviewEvent}>
         <main className="flex min-h-0 flex-[1_1_0] items-start gap-4 pt-7">
           <InterviewTab className="min-h-0 w-fit self-stretch" tabs={INTERVIEW_TABS}>
             {({ tab }) => (

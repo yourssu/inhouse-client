@@ -11,7 +11,7 @@ export interface InterviewAnalyticsEventProperties {
   /** 내 평가 제출 또는 다시 제출 API가 성공했을 때 발생해요. */
   interview_evaluation_submit: NoEventProperties;
   /** 내 평가 제출 또는 다시 제출 버튼을 클릭했을 때 발생해요. */
-  interview_evaluation_submit_click: { peer_viewed_before_edit: boolean };
+  interview_evaluation_submit_click: NoEventProperties;
   /** 최종 면접 결과 결정 버튼을 클릭해 모달을 열었을 때 발생해요. */
   interview_final_decision_click: NoEventProperties;
   /** 다른 평가자 목록에서 특정 평가자의 상세 평가를 열었을 때 발생해요. */
@@ -54,20 +54,14 @@ export type TrackInterviewEvent = <EventName extends keyof InterviewAnalyticsEve
   properties: InterviewAnalyticsEventProperties[EventName],
 ) => void;
 
-interface InterviewAnalyticsContextValue {
-  hasViewedPeerEvaluation: boolean;
-  markPeerEvaluationViewed: () => void;
-  trackInterviewEvent: TrackInterviewEvent;
-}
-
-export const InterviewAnalyticsContext = createContext<InterviewAnalyticsContextValue | null>(null);
+export const InterviewAnalyticsContext = createContext<null | TrackInterviewEvent>(null);
 
 export const useInterviewAnalytics = () => {
-  const interviewAnalytics = useContext(InterviewAnalyticsContext);
+  const trackInterviewEvent = useContext(InterviewAnalyticsContext);
 
-  if (!interviewAnalytics) {
+  if (!trackInterviewEvent) {
     throw new Error('InterviewAnalyticsContext.Provider 안에서 사용해야 해요.');
   }
 
-  return interviewAnalytics;
+  return trackInterviewEvent;
 };

@@ -31,7 +31,7 @@ export const InterviewQuestionList = ({
   questions,
   selectedQuestionId,
 }: InterviewQuestionListProps) => {
-  const { trackInterviewEvent } = useInterviewAnalytics();
+  const trackInterviewEvent = useInterviewAnalytics();
   const questionsByCategory = groupBy(questions, (question) => question.category);
   const questionSections = CATEGORY_ORDER.map((category) => ({
     category,

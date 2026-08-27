@@ -72,7 +72,7 @@ export const MyInterviewEvaluationPanel = ({
   semester,
   submissionDisabledReason,
 }: MyInterviewEvaluationPanelProps) => {
-  const { hasViewedPeerEvaluation, trackInterviewEvent } = useInterviewAnalytics();
+  const trackInterviewEvent = useInterviewAnalytics();
   const [
     {
       data: { isRubricLocked, orderedRubricGroups },
@@ -232,11 +232,7 @@ export const MyInterviewEvaluationPanel = ({
           <Button
             className="w-full"
             loading={isPending}
-            onClick={() =>
-              trackInterviewEvent('interview_evaluation_submit_click', {
-                peer_viewed_before_edit: hasViewedPeerEvaluation,
-              })
-            }
+            onClick={() => trackInterviewEvent('interview_evaluation_submit_click', {})}
             size="md"
             type="submit"
           >

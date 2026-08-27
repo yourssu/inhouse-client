@@ -19,7 +19,7 @@ export const MemoField = ({ applicantId, sectionId }: MemoFieldProps) => {
   const trimmedContent = content.trim();
   const isContentEmpty = trimmedContent === '';
   const { invalidate: invalidateMemos } = useQueryInvalidation(interviewMemosQueryKey(applicantId));
-  const { trackInterviewEvent } = useInterviewAnalytics();
+  const trackInterviewEvent = useInterviewAnalytics();
 
   const { isPending: isWritePending, mutateWithToast: writeMemoWithToast } = useToastedMutation({
     mutationFn: postApplicantInterviewMemo,

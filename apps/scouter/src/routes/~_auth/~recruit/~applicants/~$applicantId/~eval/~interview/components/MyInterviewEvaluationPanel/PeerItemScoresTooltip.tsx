@@ -68,7 +68,7 @@ interface PeerItemScoresProps {
 
 const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) => {
   const hasTrackedView = useRef(false);
-  const { markPeerEvaluationViewed, trackInterviewEvent } = useInterviewAnalytics();
+  const trackInterviewEvent = useInterviewAnalytics();
   const peerScoreRows = useSuspenseQueries({
     queries: [
       { ...interviewEvaluatorStatusesOption(applicantId), staleTime: 1000 * 60 },
@@ -93,10 +93,9 @@ const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) 
       return;
     }
 
-    markPeerEvaluationViewed();
     trackInterviewEvent('interview_question_peer_score_view', { evaluation_item_id: itemId });
     hasTrackedView.current = true;
-  }, [itemId, markPeerEvaluationViewed, trackInterviewEvent]);
+  }, [itemId, trackInterviewEvent]);
 
   if (peerScoreRows.length === 0) {
     return <span className="text-13 whitespace-nowrap">다른 평가자가 없어요.</span>;

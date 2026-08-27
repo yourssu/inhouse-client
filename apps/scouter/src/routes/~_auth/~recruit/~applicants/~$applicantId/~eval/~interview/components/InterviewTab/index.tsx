@@ -19,7 +19,7 @@ export const InterviewTab = <TTab extends string>({
   const id = useId();
   const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0] ?? null);
   const deferredActiveTab = useDeferredValue(activeTab);
-  const { trackInterviewEvent } = useInterviewAnalytics();
+  const trackInterviewEvent = useInterviewAnalytics();
 
   const handleTabClick = (nextTab: TTab) => {
     if (activeTab !== nextTab && nextTab === '지원서') {
