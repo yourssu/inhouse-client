@@ -4,6 +4,10 @@ import { startTransition } from 'react';
 
 import { useSearchState } from '@/hooks/useSearchState';
 import {
+  scheduleCalendarView,
+  useScheduleAnalytics,
+} from '@/routes/~_auth/~recruit/~schedules/analytics';
+import {
   MonthlyIndicator,
   WeeklyIndicator,
 } from '@/routes/~_auth/~recruit/~schedules/components/CalendarPaper/DateIndicator';
@@ -19,12 +23,22 @@ const Body = ({ children }: React.PropsWithChildren<unknown>) => {
 const DurationSegmentedControl = () => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/schedules/' });
   const setCalendarType = useSetStateSelector(setSearch, 'ct');
+  const trackScheduleEvent = useScheduleAnalytics();
 
   return (
     <SegmentedControl
       id="schedule-calendar"
       items={['월별', '주별']}
-      onValueChange={(value) => startTransition(() => setCalendarType(value))}
+      onValueChange={(value) => {
+        if (value === search.ct) {
+          return;
+        }
+
+        trackScheduleEvent('schedule_calendar_view_selected', {
+          calendar_view: scheduleCalendarView[value],
+        });
+        startTransition(() => setCalendarType(value));
+      }}
       value={search.ct}
     />
   );
