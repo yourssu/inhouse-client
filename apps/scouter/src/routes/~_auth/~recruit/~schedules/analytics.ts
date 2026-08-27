@@ -68,17 +68,12 @@ export interface ScheduleAnalyticsEventProperties {
     scheduled_applicant_count: number;
     target_applicant_count: number;
   };
-  /** 일정 생성 대상 학기 또는 파트가 실제로 변경됐을 때 발생해요. */
-  schedule_target_filter_changed:
-    | (ScheduleTargetProperties & {
-        already_scheduled_count: number;
-        filter_type: 'part';
-        target_applicant_count: number;
-      })
-    | {
-        filter_type: 'semester';
-        selected_semester: string;
-      };
+  /** 일정 생성 대상 파트가 실제로 변경됐을 때 발생해요. */
+  schedule_target_filter_changed: ScheduleTargetProperties & {
+    already_scheduled_count: number;
+    filter_type: 'part';
+    target_applicant_count: number;
+  };
 }
 
 export interface ScheduleAnalyticsCommonProperties {
