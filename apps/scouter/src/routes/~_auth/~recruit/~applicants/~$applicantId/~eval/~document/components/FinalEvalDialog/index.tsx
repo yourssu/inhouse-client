@@ -56,7 +56,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
       data: { state: nextApplicantState },
     });
     if (success) {
-      trackDocumentEvent('applicant_final_decision_complete', {
+      trackDocumentEvent('document_final_decision_complete', {
         decision_result: nextApplicantState,
         submitted_evaluator_count: submittedEvaluatorCount,
         unresolved_evaluator_count: unsubmittedEvaluators.length,
