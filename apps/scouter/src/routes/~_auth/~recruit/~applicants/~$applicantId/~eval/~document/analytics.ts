@@ -21,12 +21,6 @@ type PolicyErrorProperties =
     };
 
 export interface DocumentAnalyticsEventProperties {
-  /** 최종 서류 평가 API가 성공해 지원자의 최종 합격 또는 불합격 결과가 반영됐을 때 발생해요. */
-  applicant_final_decision_complete: {
-    decision_result: Extract<ApplicantStateType, 'DOCUMENT_ACCEPTED' | 'DOCUMENT_REJECTED'>;
-    submitted_evaluator_count: number;
-    unresolved_evaluator_count: number;
-  };
   /** 서류 문항에서 댓글 추가 버튼을 클릭했을 때 발생해요. */
   document_comment_add_click: NoEventProperties;
   /** 댓글 또는 답글 생성 API가 성공했을 때 발생해요. */
@@ -43,6 +37,12 @@ export interface DocumentAnalyticsEventProperties {
   /** 최종 서류 평가 버튼을 클릭해 결정 모달을 열었을 때 발생해요. */
   document_final_decision_click: {
     unsubmitted_evaluator_count: number;
+  };
+  /** 최종 서류 평가 API가 성공해 지원자의 최종 합격 또는 불합격 결과가 반영됐을 때 발생해요. */
+  document_final_decision_complete: {
+    decision_result: Extract<ApplicantStateType, 'DOCUMENT_ACCEPTED' | 'DOCUMENT_REJECTED'>;
+    submitted_evaluator_count: number;
+    unresolved_evaluator_count: number;
   };
   /** 다른 평가자의 평가 카드를 펼쳤을 때 발생해요. */
   document_peer_evaluator_view: NoEventProperties;
