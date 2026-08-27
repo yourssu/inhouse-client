@@ -2,7 +2,7 @@ import type { Prettify } from '@yourssu-inhouse/inhouse-utils/type';
 
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { Badge, HoverTooltip } from '@yourssu-inhouse/interior';
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdInfoOutline } from 'react-icons/md';
 
@@ -67,7 +67,6 @@ interface PeerItemScoresProps {
 }
 
 const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) => {
-  const hasTrackedView = useRef(false);
   const trackInterviewEvent = useInterviewAnalytics();
   const peerScoreRows = useSuspenseQueries({
     queries: [
@@ -89,12 +88,7 @@ const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) 
   });
 
   useEffect(() => {
-    if (hasTrackedView.current) {
-      return;
-    }
-
     trackInterviewEvent('interview_question_peer_score_view', { evaluation_item_id: itemId });
-    hasTrackedView.current = true;
   }, [itemId, trackInterviewEvent]);
 
   if (peerScoreRows.length === 0) {
