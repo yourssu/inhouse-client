@@ -7,6 +7,8 @@ import type {
   PartDocumentRubricType,
 } from '@/apis/documents/schema';
 
+import { useDocumentAnalytics } from '../../analytics';
+
 interface OtherEvaluationsCollapsibleProps {
   isEvaluationDone: boolean;
   othersEvaluations: ApplicantDocumentOthersEvaluationsType;
@@ -19,9 +21,22 @@ export const OtherEvaluationsCollapsible = ({
   isEvaluationDone,
 }: OtherEvaluationsCollapsibleProps) => {
   const [open, setOpen] = useState(false);
+  const trackDocumentEvent = useDocumentAnalytics();
 
   return (
-    <Collapsible.Root className="flex flex-col" onOpenChange={setOpen} open={open}>
+    <Collapsible.Root
+      className="flex flex-col"
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (nextOpen) {
+          trackDocumentEvent('document_question_peer_score_view', {
+            peer_submitted_count: othersEvaluations.length,
+            question_id: rubric.sectionId,
+          });
+        }
+      }}
+      open={open}
+    >
       <Collapsible.Trigger className="text-14 text-neutral flex cursor-pointer items-center justify-between px-4 py-1 font-semibold">
         다른 평가자 보기
         {open ? <MdRemove className="text-16" /> : <MdAdd className="text-16" />}

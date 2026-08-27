@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Scouter 분석 이벤트'
+  short_description: 'Scouter Mixpanel 이벤트를 현재 API 계약에 맞게 추가'
+  default_prompt: '$scouter-analytics-events를 사용해 이 화면의 Mixpanel 이벤트를 현재 API 계약에 맞게 추가해 주세요.'

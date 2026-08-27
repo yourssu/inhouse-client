@@ -1,5 +1,4 @@
-// const IS_DEV = import.meta.env.DEV;
-export const STAGE: 'dev' | 'prod' = 'dev';
+export const STAGE: 'dev' | 'prod' = import.meta.env.VITE_STAGE === 'prod' ? 'prod' : 'dev';
 
 export const config = {
   prod: {

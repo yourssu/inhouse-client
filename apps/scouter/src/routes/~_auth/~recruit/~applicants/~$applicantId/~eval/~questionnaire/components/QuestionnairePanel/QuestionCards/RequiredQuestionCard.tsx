@@ -37,6 +37,7 @@ export const RequiredQuestionCard = ({
 
       <InterviewerField
         activeMembers={activeMembers}
+        category={category}
         control={control}
         disabled={disabled}
         name={`${category}.${index}.assignedMemberId`}

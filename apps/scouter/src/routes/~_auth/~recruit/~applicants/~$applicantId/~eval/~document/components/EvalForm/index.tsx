@@ -15,7 +15,13 @@ import {
 import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { useState } from 'react';
-import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import {
+  Controller,
+  type SubmitErrorHandler,
+  type SubmitHandler,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 import { MdAdd, MdRemove } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
@@ -27,6 +33,8 @@ import {
   getPartDocumentsRubricsOption,
 } from '@/apis/documents/query';
 import {
+  DOCUMENT_EVALUATION_RESULT_REQUIRED_ERROR,
+  DOCUMENT_EVALUATION_SCORE_MINIMUM_ERROR,
   documentKoreanResults,
   type UpdateApplicantDocumentEvaluationFormInputType,
   UpdateApplicantDocumentEvaluationFormSchema,
@@ -41,11 +49,15 @@ import { OtherEvaluationsCollapsible } from '@/routes/~_auth/~recruit/~applicant
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
+import { useDocumentAnalytics } from '../../analytics';
+
 const documentResultMapping = {
   PENDING: '보류',
   DOCUMENT_PASS: '서류 합격',
   DOCUMENT_FAIL: '서류 불합격',
 } as const;
+
+const documentResultByKoreanResult = invert(documentResultMapping);
 
 export const EvalForm = () => {
   const { applicantId } = useParams({
@@ -75,6 +87,7 @@ export const EvalForm = () => {
   });
 
   const isMyEvaluationSubmitted = evaluations.submittedAt != null;
+  const trackDocumentEvent = useDocumentAnalytics();
 
   const {
     handleSubmit,
@@ -120,17 +133,46 @@ export const EvalForm = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<UpdateApplicantDocumentEvaluationFormType> = async (data) =>
-    await startLoading(
+  const onSubmit: SubmitHandler<UpdateApplicantDocumentEvaluationFormType> = async (data) => {
+    const result = await startLoading(
       mutation.mutateWithToast({
         applicantId: Number(applicantId),
         data: {
           ...data,
-          result: invert(documentResultMapping)[data.result],
+          result: documentResultByKoreanResult[data.result],
           submit: true,
         },
       }),
     );
+
+    if (result.success) {
+      trackDocumentEvent('document_evaluation_submit', {});
+    }
+  };
+
+  const onInvalid: SubmitErrorHandler<UpdateApplicantDocumentEvaluationFormInputType> = (
+    formErrors,
+  ) => {
+    const hasScoreBelowMinimum =
+      Array.isArray(formErrors.items) &&
+      formErrors.items.some(
+        (itemError) => itemError?.score?.message === DOCUMENT_EVALUATION_SCORE_MINIMUM_ERROR,
+      );
+
+    if (hasScoreBelowMinimum) {
+      trackDocumentEvent('policy_error_view', {
+        action_name: 'document_evaluation_submit',
+        reason_code: 'quantitative_score_below_minimum',
+      });
+    }
+
+    if (formErrors.result?.message === DOCUMENT_EVALUATION_RESULT_REQUIRED_ERROR) {
+      trackDocumentEvent('policy_error_view', {
+        action_name: 'document_evaluation_submit',
+        reason_code: 'status_evaluation_missing',
+      });
+    }
+  };
 
   const header = (
     <header className="flex items-center justify-between gap-3">
@@ -161,7 +203,7 @@ export const EvalForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
           {header}
@@ -203,7 +245,14 @@ export const EvalForm = () => {
 
                 <Divider className="my-1" />
 
-                <QualitativeEvaluationCollapsible defaultOpen={evaluations.items.length !== 0}>
+                <QualitativeEvaluationCollapsible
+                  defaultOpen={evaluations.items.length !== 0}
+                  onOpen={() =>
+                    trackDocumentEvent('document_evaluation_section_open', {
+                      section_type: 'qualitative',
+                    })
+                  }
+                >
                   <Controller
                     control={control}
                     name={`items.${idx}.memo`}
@@ -250,7 +299,21 @@ export const EvalForm = () => {
                       disabled={isDocumentEvaluationDisabled}
                       invalid={fieldState.invalid}
                       items={documentKoreanResults}
-                      onValueChange={field.onChange}
+                      onOpenChange={(open) => {
+                        if (open) {
+                          trackDocumentEvent('document_result_dropdown_open', {});
+                        }
+                      }}
+                      onValueChange={(value) => {
+                        if (value === field.value) {
+                          return;
+                        }
+
+                        trackDocumentEvent('document_result_selected', {
+                          evaluation_result: documentResultByKoreanResult[value],
+                        });
+                        field.onChange(value);
+                      }}
                       placeholder="평가 결과"
                       size="md"
                       value={field.value}
@@ -271,9 +334,13 @@ export const EvalForm = () => {
               name="overallComment"
               render={({ field }) => (
                 <MultilineTextField
-                  {...field}
                   disabled={isDocumentEvaluationDisabled}
+                  name={field.name}
+                  onBlur={field.onBlur}
+                  onChange={field.onChange}
                   placeholder="총평을 작성해주세요..."
+                  ref={field.ref}
+                  value={field.value}
                   withHeightAutoResize
                 />
               )}
@@ -282,12 +349,15 @@ export const EvalForm = () => {
         </div>
 
         <Button
-          disabled={(evaluations.items.length !== 0 && !isDirty) || isDocumentEvaluationDisabled}
+          disabled={(isMyEvaluationSubmitted && !isDirty) || isDocumentEvaluationDisabled}
           loading={loading}
+          onClick={() => {
+            trackDocumentEvent('document_evaluation_submit_click', {});
+          }}
           size="lg"
           type="submit"
         >
-          {evaluations.items.length === 0 ? '내 평가 제출하기' : '내 평가 수정하기'}
+          {isMyEvaluationSubmitted ? '내 평가 수정하기' : '내 평가 제출하기'}
         </Button>
       </div>
     </form>
@@ -297,14 +367,25 @@ export const EvalForm = () => {
 const QualitativeEvaluationCollapsible = ({
   children,
   defaultOpen = false,
+  onOpen,
 }: {
   children: React.ReactNode;
   defaultOpen?: boolean;
+  onOpen: () => void;
 }) => {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <Collapsible.Root className="flex flex-col" onOpenChange={setOpen} open={open}>
+    <Collapsible.Root
+      className="flex flex-col"
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (nextOpen) {
+          onOpen();
+        }
+      }}
+      open={open}
+    >
       <Collapsible.Trigger className="text-14 text-neutral flex cursor-pointer items-center justify-between px-4 py-1 font-semibold">
         정성평가
         {open ? <MdRemove className="text-16" /> : <MdAdd className="text-16" />}

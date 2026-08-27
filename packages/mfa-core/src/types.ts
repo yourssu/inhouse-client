@@ -1,4 +1,4 @@
-import type { AnyRoute } from '@tanstack/react-router';
+import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 import type { RequestHandler } from 'msw';
 
 export type ExteriorAppMode = 'preview' | 'shell';
@@ -8,6 +8,11 @@ interface PluginRuntimeContext {
   mode: ExteriorAppMode;
   /** plugin 식별자. */
   name: string;
+}
+
+interface PluginInitContext extends PluginRuntimeContext {
+  /** shell 또는 preview 가 생성한 단일 router 인스턴스. */
+  router: AnyRouter;
 }
 
 interface RemotePluginRoutes {
@@ -21,7 +26,7 @@ interface RemotePluginRoutes {
 
 interface RemotePluginLifecycle {
   /** auth/analytics/queryClient 같은 side effect. */
-  init?: (ctx: PluginRuntimeContext) => Promise<void> | void;
+  init?: (ctx: PluginInitContext) => Promise<void> | void;
   /** MSW RequestHandler 들을 반환해요. */
   mocks?: (ctx: PluginRuntimeContext) => Promise<RequestHandler[]>;
 }

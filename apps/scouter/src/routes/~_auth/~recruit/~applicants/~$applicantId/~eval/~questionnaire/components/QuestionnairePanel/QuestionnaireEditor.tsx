@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { useEffectOnce } from '@yourssu-inhouse/inhouse-react/hooks';
 import { Badge, Button, useToast } from '@yourssu-inhouse/interior';
 import { useRef, useState } from 'react';
 import {
@@ -31,8 +32,10 @@ import { Paper } from '@/components/Paper';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
+import type { QuestionnaireSaveErrorCode } from '../../analytics';
 import type { QuestionnaireFormValues } from './questionnaireForm';
 
+import { useQuestionnaireAnalytics } from '../../analytics';
 import { CultureQuestionCard } from './QuestionCards/CultureQuestionCard';
 import { PartQuestionCard } from './QuestionCards/PartQuestionCard';
 import { PersonalQuestionCard } from './QuestionCards/PersonalQuestionCard';
@@ -65,6 +68,7 @@ export const QuestionnaireEditor = ({
 }: QuestionnaireEditorProps) => {
   const openAlertDialog = useAlertDialog();
   const queryClient = useQueryClient();
+  const trackQuestionnaireEvent = useQuestionnaireAnalytics();
   const toast = useToast();
   const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
     Record<QuestionCategory, boolean>
@@ -111,6 +115,30 @@ export const QuestionnaireEditor = ({
         }
       : undefined;
   const isSharedQuestionEditingDisabled = isQuestionnaireDisabled || isSharedQuestionDisabled;
+  /** NOTE: RHF는 객체 형태의 폼 검증 결과를 errors.form.<key>에 저장하지만 공개 타입에는 반영하지 않아요. */
+  const formErrors = errors.form as QuestionnaireFormValidationErrors | undefined;
+  const formErrorMessages = [formErrors?.CULTURE?.message, formErrors?.PART?.message].filter(
+    (message) => message !== undefined,
+  );
+
+  useEffectOnce(() => {
+    if (isQuestionnaireDisabled) {
+      trackQuestionnaireEvent('questionnaire_lock_view', {
+        editable_scope: 'none',
+        lock_scope: 'all_current_questionnaire',
+        lock_trigger: 'applicant_evaluation_submitted',
+      });
+      return;
+    }
+
+    if (isSharedQuestionDisabled) {
+      trackQuestionnaireEvent('questionnaire_lock_view', {
+        editable_scope: 'questioner_and_personal_questions',
+        lock_scope: 'shared_questions',
+        lock_trigger: 'part_interview_started',
+      });
+    }
+  });
 
   const onSubmit: SubmitHandler<QuestionnaireFormValues> = async (values) => {
     if (isQuestionnaireDisabled) {
@@ -137,18 +165,83 @@ export const QuestionnaireEditor = ({
       });
       reset(toQuestionnaireFormValues(latestAssignedQuestions));
       toast.error(questionnaireDisabledMessage);
+      trackQuestionnaireEvent('questionnaire_save_error_view', {
+        error_codes: ['locked'],
+      });
       return;
     }
 
-    await mutateWithToast({
+    const saveResult = await mutateWithToast({
       applicantId,
       data: {
         questions: toSaveAssignedQuestions(values),
       },
     });
+
+    if (saveResult.success) {
+      const cultureSelectedCount = values.CULTURE.filter(
+        ({ isSelected }) => isSelected === true,
+      ).length;
+
+      trackQuestionnaireEvent('questionnaire_save_complete', {
+        culture_selected_count: cultureSelectedCount,
+        part_question_count: values.PART.length,
+        personal_question_count: values.PERSONAL.length,
+        question_count:
+          values.INTRO.length +
+          values.OUTRO.length +
+          cultureSelectedCount +
+          values.PART.length +
+          values.PERSONAL.length,
+      });
+    }
   };
 
   const onInvalid: SubmitErrorHandler<QuestionnaireFormValues> = (fieldErrors) => {
+    const errorCodes = new Set<QuestionnaireSaveErrorCode>();
+
+    questionCategories.forEach((category) => {
+      const categoryErrors = fieldErrors[category];
+
+      if (!Array.isArray(categoryErrors)) {
+        return;
+      }
+
+      categoryErrors.forEach((questionErrors) => {
+        if (questionErrors?.assignedMemberId !== undefined) {
+          errorCodes.add('questioner_missing');
+        }
+
+        if (questionErrors && 'content' in questionErrors && questionErrors.content !== undefined) {
+          errorCodes.add('question_content_missing');
+        }
+
+        if (
+          questionErrors &&
+          'requirementIds' in questionErrors &&
+          questionErrors.requirementIds !== undefined
+        ) {
+          errorCodes.add('question_requirement_missing');
+        }
+      });
+    });
+
+    const submittedFormErrors = fieldErrors.form as QuestionnaireFormValidationErrors | undefined;
+    const cultureFormError = submittedFormErrors?.CULTURE;
+    const requirementFormError = submittedFormErrors?.PART;
+
+    if (cultureFormError) {
+      errorCodes.add(cultureFormError.type);
+    }
+
+    if (requirementFormError) {
+      errorCodes.add(requirementFormError.type);
+    }
+
+    trackQuestionnaireEvent('questionnaire_save_error_view', {
+      error_codes: [...errorCodes],
+    });
+
     const invalidCategories = questionCategories.filter(
       (category) => fieldErrors[category] !== undefined,
     );
@@ -164,7 +257,7 @@ export const QuestionnaireEditor = ({
       return;
     }
 
-    if (fieldErrors.form?.message !== undefined) {
+    if (cultureFormError || requirementFormError) {
       // 오류 메시지 요소가 아직 렌더링되지 않았을 수 있으므로 다음 프레임에서 포커스를 설정해요.
       requestAnimationFrame(() => errorSummaryRef.current?.focus());
     }
@@ -280,13 +373,16 @@ export const QuestionnaireEditor = ({
               <QuestionSection
                 description="같은 파트 지원자에게 공통으로 사용하는 질문이에요."
                 disabled={isSharedQuestionEditingDisabled}
-                onAddQuestion={() =>
+                onAddQuestion={() => {
                   append({
                     assignedMemberId: undefined,
                     content: '',
                     requirementIds: [],
-                  })
-                }
+                  });
+                  trackQuestionnaireEvent('questionnaire_question_added', {
+                    question_category: 'PART',
+                  });
+                }}
                 onOpenChange={(isOpen) => handleQuestionSectionOpenChange('PART', isOpen)}
                 open={questionSectionOpenByCategory.PART}
                 questions={fields}
@@ -306,6 +402,9 @@ export const QuestionnaireEditor = ({
                       });
                       if (isConfirmed) {
                         remove(index);
+                        trackQuestionnaireEvent('questionnaire_question_deleted', {
+                          question_category: 'PART',
+                        });
                       }
                     }}
                     requirements={requirements}
@@ -323,13 +422,16 @@ export const QuestionnaireEditor = ({
               <QuestionSection
                 description="지원자에게만 묻는 개인 질문이에요."
                 disabled={isQuestionnaireDisabled}
-                onAddQuestion={() =>
+                onAddQuestion={() => {
                   append({
                     assignedMemberId: undefined,
                     content: '',
                     requirementIds: [],
-                  })
-                }
+                  });
+                  trackQuestionnaireEvent('questionnaire_question_added', {
+                    question_category: 'PERSONAL',
+                  });
+                }}
                 onOpenChange={(isOpen) => handleQuestionSectionOpenChange('PERSONAL', isOpen)}
                 open={questionSectionOpenByCategory.PERSONAL}
                 questions={fields}
@@ -339,7 +441,12 @@ export const QuestionnaireEditor = ({
                     control={control}
                     disabled={isQuestionnaireDisabled}
                     index={index}
-                    onDelete={async () => remove(index)}
+                    onDelete={async () => {
+                      remove(index);
+                      trackQuestionnaireEvent('questionnaire_question_deleted', {
+                        question_category: 'PERSONAL',
+                      });
+                    }}
                     requirements={requirements}
                   />
                 )}
@@ -373,9 +480,9 @@ export const QuestionnaireEditor = ({
             )}
           />
 
-          {errors.form?.message && (
+          {formErrorMessages.length > 0 && (
             <FieldErrorMessage ref={errorSummaryRef} tabIndex={-1}>
-              {errors.form.message}
+              {formErrorMessages.join('\n')}
             </FieldErrorMessage>
           )}
 
@@ -384,6 +491,7 @@ export const QuestionnaireEditor = ({
               className="w-full"
               disabled={isQuestionnaireDisabled || !isDirty}
               loading={isPending}
+              onClick={() => trackQuestionnaireEvent('questionnaire_save_click', {})}
               size="md"
               type="submit"
             >
@@ -409,12 +517,29 @@ interface ValidateQuestionnaireParams {
   requirements: InterviewRequirements;
 }
 
-const validateQuestionnaire = ({ questions, requirements }: ValidateQuestionnaireParams) => {
-  const validationMessages: string[] = [];
+interface QuestionnaireFormValidationErrors {
+  CULTURE?: {
+    message: string;
+    type: 'culture_min_not_met';
+  };
+  PART?: {
+    message: string;
+    type: 'required_requirement_unmapped';
+  };
+}
+
+const validateQuestionnaire = ({
+  questions,
+  requirements,
+}: ValidateQuestionnaireParams): QuestionnaireFormValidationErrors | true => {
+  const validationErrors: QuestionnaireFormValidationErrors = {};
   const cultureQuestions = questions.CULTURE;
 
   if (cultureQuestions.filter(({ isSelected }) => isSelected === true).length < 2) {
-    validationMessages.push('컬처핏 질문을 2개 이상 선택해 주세요.');
+    validationErrors.CULTURE = {
+      message: '컬처핏 질문을 2개 이상 선택해 주세요.',
+      type: 'culture_min_not_met',
+    };
   }
 
   const usedRequirementIds = new Set(
@@ -424,14 +549,15 @@ const validateQuestionnaire = ({ questions, requirements }: ValidateQuestionnair
     requirements[category].filter(({ id }) => id !== undefined && !usedRequirementIds.has(id)),
   );
   if (unusedRequirements.length > 0) {
-    validationMessages.push(
-      `Team fit과 Job fit 요구조건을 질문에 한 번 이상 사용해 주세요: ${unusedRequirements
+    validationErrors.PART = {
+      message: `Team fit과 Job fit 요구조건을 질문에 한 번 이상 사용해 주세요: ${unusedRequirements
         .map(({ content }) => content)
         .join(', ')}`,
-    );
+      type: 'required_requirement_unmapped',
+    };
   }
 
-  return validationMessages.length === 0 || validationMessages.join('\n');
+  return Object.keys(validationErrors).length === 0 ? true : validationErrors;
 };
 
 const toQuestionnaireFormValues = ({ questions }: AssignedQuestions): QuestionnaireFormValues => {

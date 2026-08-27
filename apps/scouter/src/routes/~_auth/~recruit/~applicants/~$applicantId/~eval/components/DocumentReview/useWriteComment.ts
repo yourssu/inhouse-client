@@ -5,9 +5,15 @@ import { postApplicantDocumentComment } from '@/apis/documents';
 import { commentsQueryKey } from '@/apis/documents/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
+export interface CommentCreatedMetadata {
+  parentCommentId: null | number;
+  sectionId: number;
+}
+
 interface UseWriteCommentParams {
   applicantId: number;
   onClose: () => void;
+  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
@@ -15,6 +21,7 @@ interface UseWriteCommentParams {
 export const useWriteComment = ({
   applicantId,
   onClose,
+  onCommentCreated,
   parentCommentId,
   sectionId,
 }: UseWriteCommentParams) => {
@@ -29,6 +36,7 @@ export const useWriteComment = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
       setContent('');
+      onCommentCreated?.({ parentCommentId, sectionId });
     },
   });
 

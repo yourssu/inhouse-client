@@ -21,7 +21,7 @@ export const useScheduleApplicants = (): UseScheduleApplicantsReturn => {
   const { data: parts } = useSuspenseQuery(partsOption());
   const { data: allApplicants } = useSuspenseQuery(
     applicantsOption({
-      semesterId: selectedSemesterId ?? undefined,
+      semesterId: selectedSemesterId,
       states: ['UNDER_REVIEW'],
     }),
   );

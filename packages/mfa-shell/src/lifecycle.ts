@@ -1,8 +1,15 @@
+import type { AnyRouter } from '@tanstack/react-router';
 import type { RemotePlugin } from '@yourssu-inhouse/mfa-core';
 import type { RequestHandler } from 'msw';
 
 type ExteriorAppMode = 'preview' | 'shell';
 
+interface RunPluginInitsContext {
+  mode: ExteriorAppMode;
+  router: AnyRouter;
+}
+
+// NOTE: 로컬 dev 환경이거나, 배포 환경에서 MSW를 키도록 환경 변수를 셋업한 경우에만 MSW를 켜요.
 const isMSWEnabled = (): boolean => {
   const env = (import.meta as any).env ?? {};
   return Boolean(env.DEV) || env.VITE_USE_MSW === 'true';
@@ -10,9 +17,11 @@ const isMSWEnabled = (): boolean => {
 
 export const runPluginInits = async (
   plugins: readonly RemotePlugin[],
-  mode: ExteriorAppMode,
+  context: RunPluginInitsContext,
 ): Promise<void> => {
-  await Promise.all(plugins.map((plugin) => plugin.lifecycle?.init?.({ mode, name: plugin.name })));
+  await Promise.all(
+    plugins.map((plugin) => plugin.lifecycle?.init?.({ ...context, name: plugin.name })),
+  );
 };
 
 export const setupPluginMocks = async (

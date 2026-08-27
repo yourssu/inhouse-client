@@ -5,7 +5,7 @@ import { routeTree } from './routeTree.gen';
 
 export const plugin: RemotePlugin = defineRemotePlugin({
   lifecycle: {
-    init: initScouterAnalytics,
+    init: ({ router }) => initScouterAnalytics(router),
     mocks: async () => [],
   },
   name: 'scouter',

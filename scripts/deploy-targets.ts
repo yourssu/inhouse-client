@@ -48,6 +48,9 @@ const shellTarget = (): DeployTarget => {
     envFileLines.push('VITE_USE_MSW=true');
   }
 
+  // NOTE: 빌드된 번들이 dev/prod API 엔드포인트를 선택하도록 STAGE 를 주입해요.
+  envFileLines.push(`VITE_STAGE=${env}`);
+
   return {
     app: 'shell',
     isShell: true,
@@ -62,7 +65,8 @@ const remoteTarget = (id: string): DeployTarget => ({
   isShell: false,
   project: projectName(id),
   dist: `apps/${id}/dist`,
-  envFile: '',
+  // NOTE: remote 도 동일하게 STAGE 를 주입해 dev/prod API 를 선택해요.
+  envFile: `VITE_STAGE=${env}`,
 });
 
 const allTargets = (): DeployTarget[] => [
@@ -78,7 +82,8 @@ const SHARED_PREFIXES = [
   'turbo.json',
   'scripts/',
   'tsconfig.json',
-  '.github/workflows/deploy-pages.yml',
+  '.github/workflows/deploy-pages-dev.yml',
+  '.github/workflows/deploy-pages-prod.yml',
 ];
 
 const changedApps = (base: string): string[] | 'all' => {

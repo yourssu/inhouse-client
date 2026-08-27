@@ -56,8 +56,8 @@ export const bootstrapShell = async (
 
   const app = createExteriorApp({
     appProvidersProps: options.appProvidersProps,
-    beforeRender: async () => {
-      await runPluginInits(plugins, 'shell');
+    beforeRender: async ({ router }) => {
+      await runPluginInits(plugins, { mode: 'shell', router });
       await setupPluginMocks(plugins, 'shell');
     },
     children: () =>

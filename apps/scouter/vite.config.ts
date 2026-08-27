@@ -17,7 +17,12 @@ if (!remote) {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    mfaVitePlugin.remote({ remote }),
+    mfaVitePlugin.remote({
+      federationOptions: {
+        dts: { tsConfigPath: './tsconfig.app.json' },
+      },
+      remote,
+    }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,

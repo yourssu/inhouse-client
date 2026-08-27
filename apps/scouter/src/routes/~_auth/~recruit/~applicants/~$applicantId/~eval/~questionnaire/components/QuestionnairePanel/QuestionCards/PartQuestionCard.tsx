@@ -55,6 +55,7 @@ export const PartQuestionCard = ({
 
       <InterviewerField
         activeMembers={activeMembers}
+        category="PART"
         control={control}
         disabled={isInterviewerDisabled}
         name={`PART.${index}.assignedMemberId`}

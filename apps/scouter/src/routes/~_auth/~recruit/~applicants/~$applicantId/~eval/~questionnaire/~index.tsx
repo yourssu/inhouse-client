@@ -4,9 +4,10 @@ import { QueryErrorResetBoundary, useSuspenseQueries } from '@tanstack/react-que
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button, Result } from '@yourssu-inhouse/interior';
-import { Suspense } from 'react';
+import { Suspense, useCallback } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
+import { trackScouterEvent } from '@/analytics/client';
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import { applicantDocumentCommentsOption } from '@/apis/documents/query';
 import {
@@ -28,6 +29,10 @@ import {
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/ApplicantPageHeader';
 import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DocumentReview';
 
+import type { QuestionnaireAnalyticsCommonProperties, TrackQuestionnaireEvent } from './analytics';
+
+import { QuestionnaireAnalyticsContext } from './analytics';
+
 const QuestionnairePage = () => {
   const { applicantId } = Route.useParams();
   const applicantIdNumber = Number(applicantId);
@@ -38,38 +43,70 @@ const QuestionnairePage = () => {
       applicantDocumentCommentsOption(applicantIdNumber),
     ],
   });
+  const trackQuestionnaireEvent = useCallback<TrackQuestionnaireEvent>(
+    (eventName, properties) => {
+      const commonProperties: QuestionnaireAnalyticsCommonProperties = {
+        applicant_id: applicant.applicantId,
+        applicant_state: applicant.state,
+        application_semester: applicant.applicationSemester,
+        event_schema_version: 'v1',
+        part_id: applicant.partId,
+      };
+
+      trackScouterEvent(eventName, { ...commonProperties, ...properties });
+    },
+    [applicant.applicantId, applicant.applicationSemester, applicant.partId, applicant.state],
+  );
 
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="질문지 설계" />
 
-      <main className="flex min-h-0 min-w-0 flex-[1_1_0] gap-4 pt-7">
-        <section aria-label="지원서 답변과 코멘트" className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <PanelBoundary
-            description="서류 답변과 코멘트를 다시 불러와 주세요."
-            fallback={<DocumentReferencePanelSkeleton />}
-            title="지원서 정보를 불러오지 못했어요"
+      <QuestionnaireAnalyticsContext.Provider value={trackQuestionnaireEvent}>
+        <main className="flex min-h-0 min-w-0 flex-[1_1_0] gap-4 pt-7">
+          <section
+            aria-label="지원서 답변과 코멘트"
+            className="flex min-h-0 min-w-0 flex-1 flex-col"
           >
-            <DocumentReview answers={answers} applicantId={applicantIdNumber} comments={comments} />
-          </PanelBoundary>
-        </section>
-
-        <aside aria-label="면접 질문지" className="flex min-h-0 w-100 shrink-0 flex-col">
-          <PanelBoundary
-            description="면접 질문지와 요구조건을 다시 불러와 주세요."
-            fallback={<QuestionnairePanelSkeleton />}
-            title="질문지를 불러오지 못했어요"
-          >
-            <div className="min-h-0 flex-1 overflow-y-auto">
-              <QuestionnairePanel
-                applicantId={Number(applicantId)}
-                partId={applicant.partId}
-                semester={applicant.applicationSemester}
+            <PanelBoundary
+              description="서류 답변과 코멘트를 다시 불러와 주세요."
+              fallback={<DocumentReferencePanelSkeleton />}
+              title="지원서 정보를 불러오지 못했어요"
+            >
+              <DocumentReview
+                answers={answers}
+                applicantId={applicantIdNumber}
+                comments={comments}
+                onCommentAddClick={() =>
+                  trackQuestionnaireEvent('questionnaire_comment_add_click', {})
+                }
+                onCommentCreated={({ parentCommentId, sectionId }) =>
+                  trackQuestionnaireEvent('questionnaire_comment_created', {
+                    comment_type: parentCommentId === null ? 'comment' : 'reply',
+                    question_id: sectionId,
+                  })
+                }
               />
-            </div>
-          </PanelBoundary>
-        </aside>
-      </main>
+            </PanelBoundary>
+          </section>
+
+          <aside aria-label="면접 질문지" className="flex min-h-0 w-100 shrink-0 flex-col">
+            <PanelBoundary
+              description="면접 질문지와 요구조건을 다시 불러와 주세요."
+              fallback={<QuestionnairePanelSkeleton />}
+              title="질문지를 불러오지 못했어요"
+            >
+              <div className="min-h-0 flex-1 overflow-y-auto">
+                <QuestionnairePanel
+                  applicantId={Number(applicantId)}
+                  partId={applicant.partId}
+                  semester={applicant.applicationSemester}
+                />
+              </div>
+            </PanelBoundary>
+          </aside>
+        </main>
+      </QuestionnaireAnalyticsContext.Provider>
     </PageLayout.Content>
   );
 };

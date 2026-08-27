@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { useUnmountOverlaysOnRouteChange } from '@yourssu-inhouse/exterior';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { overlay, OverlayProvider } from 'overlay-kit';
@@ -31,12 +31,14 @@ export const Route = createFileRoute('/_auth/members')({
   head: () => ({
     meta: [{ title: '유어슈 인하우스 | 멤버' }],
   }),
-  beforeLoad: ({ location }) => {
-    const href = trimPathRight(location.href);
-    if (href === '/members') {
-      throw redirect({
-        to: '/members/list',
-      });
-    }
+  // beforeLoad: ({ location }) => {
+  //   const href = trimPathRight(location.href);
+  //   if (href === '/members') {
+  //     throw redirect({
+  //       to: '/members/list',
+  //     });
+  //   },
+  beforeLoad: () => {
+    throw redirect({ to: '/' });
   },
 });

@@ -2,6 +2,7 @@ import z from 'zod/v4';
 
 /** 문항 배점의 합은 이 값과 같아야 저장할 수 있어요. */
 export const DOCUMENT_RUBRIC_TOTAL_SCORE = 100;
+export const DOCUMENT_RUBRIC_ITEM_MINIMUM_ERROR = '질문의 배점은 1점 이상이어야 해요.';
 
 /**
  * 폼 전용 스키마
@@ -17,7 +18,7 @@ export const UpdatePartDocumentsRubricsFormSchema = z.object({
         .string()
         .regex(/^\d+$/, '배점을 입력해 주세요.')
         .transform(Number)
-        .refine((score) => score >= 1, '질문의 배점은 1점 이상이어야 해요.'),
+        .refine((score) => score >= 1, DOCUMENT_RUBRIC_ITEM_MINIMUM_ERROR),
       criterionDetail: z.string(),
     }),
   ),

@@ -2,12 +2,15 @@ import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
+import type { CommentCreatedMetadata } from './useWriteComment';
+
 import { DetectOutsideClickArea } from './DetectOutsideClickArea';
 import { useWriteComment } from './useWriteComment';
 
 interface CommentFieldProps {
   applicantId: number;
   onClose: () => void;
+  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
@@ -15,6 +18,7 @@ interface CommentFieldProps {
 export const CommentField = ({
   applicantId,
   onClose,
+  onCommentCreated,
   parentCommentId,
   sectionId,
 }: CommentFieldProps) => {
@@ -29,6 +33,7 @@ export const CommentField = ({
   } = useWriteComment({
     applicantId,
     onClose,
+    onCommentCreated,
     parentCommentId,
     sectionId,
   });

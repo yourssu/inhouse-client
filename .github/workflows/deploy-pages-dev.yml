@@ -1,20 +1,13 @@
-name: deploy-pages
+name: deploy-pages-dev
 
-# main 머지 → dev 자동 배포. prod 는 workflow_dispatch(env=prod) 로 수동.
+# main push → dev 자동 배포. workflow_dispatch 로 수동 리런도 dev.
 on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      env:
-        description: deploy target env
-        required: true
-        default: dev
-        type: choice
-        options: [dev, prod]
 
 concurrency:
-  group: deploy-pages-${{ github.event_name == 'workflow_dispatch' && inputs.env || 'dev' }}
+  group: deploy-pages-dev
   cancel-in-progress: false
 
 jobs:
@@ -27,19 +20,17 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v6
-      - id: resolve-env
+      - id: resolve-base
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "env=${{ inputs.env }}" >> "$GITHUB_OUTPUT"
-            echo "base=" >> "$GITHUB_OUTPUT"
-          else
-            echo "env=dev" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "push" ]; then
             BEFORE="${{ github.event.before }}"
             if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$BEFORE" ]; then
               echo "base=" >> "$GITHUB_OUTPUT"
             else
               echo "base=$BEFORE" >> "$GITHUB_OUTPUT"
             fi
+          else
+            echo "base=" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/setup-node@v5
         with:
@@ -48,8 +39,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - id: gen
         run: |
-          ARGS="--env=${{ steps.resolve-env.outputs.env }}"
-          BASE="${{ steps.resolve-env.outputs.base }}"
+          ARGS="--env=dev"
+          BASE="${{ steps.resolve-base.outputs.base }}"
           if [ -n "$BASE" ]; then ARGS="$ARGS --base=$BASE"; fi
           matrix=$(pnpm tsx scripts/deploy-targets.ts $ARGS)
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
@@ -57,6 +48,7 @@ jobs:
   deploy:
     needs: targets
     if: ${{ needs.targets.outputs.matrix != '[]' }}
+    environment: dev
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -72,11 +64,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: write shell remote URLs to .env.production.local
-        if: ${{ matrix.target.isShell }}
+      - name: write build env to .env.production.local
+        if: ${{ matrix.target.envFile != '' }}
         env:
           ENV_FILE: ${{ matrix.target.envFile }}
-        run: printf '%s\n' "$ENV_FILE" > apps/shell/.env.production.local
+        run: printf '%s\n' "$ENV_FILE" > apps/${{ matrix.target.app }}/.env.production.local
 
       - name: build
         env:

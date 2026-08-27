@@ -3,7 +3,13 @@ import { useQueryClient, useSuspenseQueries, useSuspenseQuery } from '@tanstack/
 import { Badge, Button, Dialog, Divider, useToast } from '@yourssu-inhouse/interior';
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { Suspense } from 'react';
-import { Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
+import {
+  Controller,
+  type SubmitErrorHandler,
+  type SubmitHandler,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
 import z from 'zod/v4';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
@@ -22,7 +28,9 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
+import { useDocumentAnalytics } from '../../analytics';
 import {
+  DOCUMENT_RUBRIC_ITEM_MINIMUM_ERROR,
   DOCUMENT_RUBRIC_TOTAL_SCORE,
   UpdatePartDocumentsRubricsFormSchema,
 } from './formValidationSchema';
@@ -39,6 +47,7 @@ export const DocumentRubricSettingButton = ({ applicant }: DocumentRubricSetting
 
   const queryClient = useQueryClient();
   const openRubricSettingDialog = useAlertDialog();
+  const trackDocumentEvent = useDocumentAnalytics();
 
   const isDocumentEvaluationDisabled = !isDocumentEvalActionAllowed(state);
 
@@ -50,6 +59,10 @@ export const DocumentRubricSettingButton = ({ applicant }: DocumentRubricSetting
     });
 
     if (isLocked) {
+      trackDocumentEvent('policy_error_view', {
+        action_name: 'document_rubric_change',
+        reason_code: 'locked_after_submission',
+      });
       return openRubricSettingDialog({
         title: '배점 변경 불가',
         content: rubricSettingDisabledMessage,
@@ -57,6 +70,7 @@ export const DocumentRubricSettingButton = ({ applicant }: DocumentRubricSetting
       });
     }
 
+    trackDocumentEvent('document_rubric_open', {});
     return openRubricSettingDialog({
       title: '문항 배점 설정',
       content: ({ closeAsTrue, closeAsFalse }) => (
@@ -113,6 +127,7 @@ const DocumentRubricSettingForm = ({
 
   const queryClient = useQueryClient();
   const toast = useToast();
+  const trackDocumentEvent = useDocumentAnalytics();
 
   const {
     control,
@@ -173,14 +188,39 @@ const DocumentRubricSettingForm = ({
     if (isLocked) {
       closeAsFalse();
       toast.error(rubricSettingDisabledMessage);
+      trackDocumentEvent('policy_error_view', {
+        action_name: 'document_rubric_change',
+        reason_code: 'locked_after_submission',
+      });
       return;
     }
 
-    mutateWithToast({ partId: part.partId, data: data.rubrics });
+    const result = await mutateWithToast({ partId: part.partId, data: data.rubrics });
+
+    if (result.success) {
+      trackDocumentEvent('document_rubric_complete', {
+        rubric_total_score: totalScore,
+      });
+    }
+  };
+
+  const onInvalid: SubmitErrorHandler<UpdatePartDocumentsRubricsFormInput> = (formErrors) => {
+    const hasItemBelowMinimum =
+      Array.isArray(formErrors.rubrics) &&
+      formErrors.rubrics.some(
+        (rubricError) => rubricError?.maxScore?.message === DOCUMENT_RUBRIC_ITEM_MINIMUM_ERROR,
+      );
+
+    if (hasItemBelowMinimum) {
+      trackDocumentEvent('policy_error_view', {
+        action_name: 'document_rubric_save',
+        reason_code: 'rubric_item_below_minimum',
+      });
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
       <Dialog.Content className="w-160 gap-3">
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-14 text-neutral font-semibold">{part.partName} 서류평가 문항 설정</h3>
@@ -237,6 +277,11 @@ const DocumentRubricSettingForm = ({
           <Dialog.Button
             disabled={!isScoreValid}
             loading={isPending}
+            onClick={() =>
+              trackDocumentEvent('document_rubric_save_click', {
+                rubric_total_score: totalScore,
+              })
+            }
             type="submit"
             variant="primary"
           >
