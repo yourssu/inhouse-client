@@ -37,7 +37,7 @@ import {
   useMailSelectionContext,
 } from '@/routes/~_auth/~recruit/~mail/~new/context';
 import { useMailValidation } from '@/routes/~_auth/~recruit/~mail/~new/hooks/useMailValidation';
-import { MailAnalyticsContext } from '@/routes/~_auth/~recruit/~mail/analytics';
+import { MailAnalyticsContext, useMailAnalytics } from '@/routes/~_auth/~recruit/~mail/analytics';
 import { useLoadTemplate } from '@/routes/~_auth/~recruit/~mail/hooks/useLoadTemplate';
 
 const MailContent = ({
@@ -50,6 +50,7 @@ const MailContent = ({
   onLoadTemplate: () => void;
 }) => {
   const { mailSelection } = useMailSelectionContext();
+  const trackMailEvent = useMailAnalytics();
   const [formData] = useTemplateFormData(initialTemplate);
 
   const { data: parts } = useSuspenseQuery(partsOption());
@@ -97,30 +98,34 @@ const MailContent = ({
 
   const handleTestSend = async () => {
     overlay.open(({ isOpen, close }) => (
-      <TestMailDialog
-        close={close}
-        formData={formData}
-        isOpen={isOpen}
-        partName={mailSelection.partName}
-        selectedPartId={selectedPart?.partId}
-        templateId={mailSelection.templateId ?? initialTemplate.id}
-        variableValues={variableValues}
-      />
+      <MailAnalyticsContext.Provider value={trackMailEvent}>
+        <TestMailDialog
+          close={close}
+          formData={formData}
+          isOpen={isOpen}
+          partName={mailSelection.partName}
+          selectedPartId={selectedPart?.partId}
+          templateId={mailSelection.templateId ?? initialTemplate.id}
+          variableValues={variableValues}
+        />
+      </MailAnalyticsContext.Provider>
     ));
   };
 
   const handleSend = async () => {
     overlay.open(({ isOpen, close }) => (
-      <SendMailDialog
-        bccMembers={bccMembers}
-        close={close}
-        formData={formData}
-        isOpen={isOpen}
-        receivers={receivers}
-        selectedPartId={selectedPart?.partId}
-        templateId={mailSelection.templateId ?? initialTemplate.id}
-        variableValues={variableValues}
-      />
+      <MailAnalyticsContext.Provider value={trackMailEvent}>
+        <SendMailDialog
+          bccMembers={bccMembers}
+          close={close}
+          formData={formData}
+          isOpen={isOpen}
+          receivers={receivers}
+          selectedPartId={selectedPart?.partId}
+          templateId={mailSelection.templateId ?? initialTemplate.id}
+          variableValues={variableValues}
+        />
+      </MailAnalyticsContext.Provider>
     ));
   };
 
