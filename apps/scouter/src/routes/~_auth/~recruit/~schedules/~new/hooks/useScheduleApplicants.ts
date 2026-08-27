@@ -16,13 +16,13 @@ interface UseScheduleApplicantsReturn {
 }
 
 export const useScheduleApplicants = (): UseScheduleApplicantsReturn => {
-  const { selectedPartId, selectedSemesterId } = useScheduleCreationContext();
+  const { semesterId, selectedPartId } = useScheduleCreationContext();
 
   const { data: parts } = useSuspenseQuery(partsOption());
   const { data: allApplicants } = useSuspenseQuery(
     applicantsOption({
-      semesterId: selectedSemesterId,
-      states: ['UNDER_REVIEW'],
+      semesterId,
+      states: ['UNDER_REVIEW', 'DOCUMENT_ACCEPTED', 'ASSIGNMENT_ACCEPTED', 'FINAL_ACCEPTED'],
     }),
   );
 

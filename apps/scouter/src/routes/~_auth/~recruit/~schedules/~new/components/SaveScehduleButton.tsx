@@ -27,14 +27,14 @@ const SaveDialogContent = ({
   closeAsTrue,
   draftSchedules,
   selectedPart,
-  selectedSemester,
+  semester,
   targetApplicantCount,
 }: {
   closeAsFalse: () => void;
   closeAsTrue: () => void;
   draftSchedules: DraftScheduleType[];
   selectedPart: PartType;
-  selectedSemester: string;
+  semester: string;
   targetApplicantCount: number;
 }) => {
   const [isLoading, startLoading] = useLoading();
@@ -53,7 +53,7 @@ const SaveDialogContent = ({
       draft_schedule_count: draftSchedules.length,
       part: selectedPart.partName,
       part_id: selectedPart.partId,
-      selected_semester: selectedSemester,
+      selected_semester: semester,
       target_applicant_count: targetApplicantCount,
     });
 
@@ -73,7 +73,7 @@ const SaveDialogContent = ({
             part: selectedPart.partName,
             part_id: selectedPart.partId,
             scheduled_applicant_count: draftSchedules.length,
-            selected_semester: selectedSemester,
+            selected_semester: semester,
             target_applicant_count: targetApplicantCount,
           });
           await invalidateSchedules();
@@ -124,7 +124,7 @@ const SaveDialogContent = ({
 
 export const SaveScheduleButton = () => {
   const navigate = useNavigate();
-  const { draftSchedules, selectedSemester } = useScheduleCreationContext();
+  const { draftSchedules, semester } = useScheduleCreationContext();
 
   const openAlertDialog = useAlertDialog();
   const toast = useToast();
@@ -151,7 +151,7 @@ export const SaveScheduleButton = () => {
           closeAsTrue={closeAsTrue}
           draftSchedules={draftSchedules}
           selectedPart={selectedPart}
-          selectedSemester={selectedSemester}
+          semester={semester}
           targetApplicantCount={applicants.length}
         />
       ),

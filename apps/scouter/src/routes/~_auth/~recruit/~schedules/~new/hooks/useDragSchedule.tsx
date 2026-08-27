@@ -39,7 +39,7 @@ export const useDragSchedule = (
   activeApplicant: ApplicantType | undefined,
   availableTimeRanges: AvailableTimeRange[],
 ): UseDragScheduleReturn => {
-  const { selectedPartId, selectedSemester, addDraftSchedule } = useScheduleCreationContext();
+  const { semester, selectedPartId, addDraftSchedule } = useScheduleCreationContext();
   const trackScheduleEvent = useScheduleAnalytics();
 
   const openAlertDialog = useAlertDialog();
@@ -154,7 +154,7 @@ export const useDragSchedule = (
               location_type: locationType,
               part: selectedPartName,
               part_id: selectedPartId,
-              selected_semester: selectedSemester,
+              selected_semester: semester,
             });
           }}
           selectedPartName={selectedPartName}
@@ -174,7 +174,7 @@ export const useDragSchedule = (
     activeApplicant,
     selectedPartId,
     selectedPartName,
-    selectedSemester,
+    semester,
     addDraftSchedule,
     openAlertDialog,
     trackScheduleEvent,

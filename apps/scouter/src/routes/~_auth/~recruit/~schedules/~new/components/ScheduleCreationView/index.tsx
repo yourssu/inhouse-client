@@ -24,7 +24,7 @@ import { CalendarPaper } from '@/routes/~_auth/~recruit/~schedules/components/Ca
 export const ScheduleCreationView = () => {
   const [displayDate, setDisplayDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'전체' | '희망'>('전체');
-  const { selectedPartId, selectedSemester, activeApplicantId } = useScheduleCreationContext();
+  const { semester, selectedPartId, activeApplicantId } = useScheduleCreationContext();
   const trackScheduleEvent = useScheduleAnalytics();
 
   const { parts, allApplicants, applicants, selectedPart } = useScheduleApplicants();
@@ -73,7 +73,7 @@ export const ScheduleCreationView = () => {
         availability_filter: scheduleAvailabilityFilter[mode],
         part: selectedPart.partName,
         part_id: selectedPart.partId,
-        selected_semester: selectedSemester,
+        selected_semester: semester,
       });
     }
 
@@ -101,7 +101,7 @@ export const ScheduleCreationView = () => {
         <div className="flex h-full flex-[1_1_0] flex-col items-center justify-center">
           <Lottie autoPlay className="size-30" delay={100} json={lotties.leftArrow} />
           <div className="text-neutralMuted text-center text-lg font-medium whitespace-pre-wrap">
-            {'먼저, 왼쪽 패널에서\n학기와 파트를 선택해주세요'}
+            {'먼저, 왼쪽 패널에서\n파트를 선택해주세요'}
           </div>
         </div>
       )}
