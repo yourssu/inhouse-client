@@ -134,11 +134,13 @@ const RouteComponent = () => {
                           });
                           overlay.open(({ isOpen, close }) => {
                             return (
-                              <FinalEvalDialog
-                                applicantId={applicant.applicantId}
-                                close={close}
-                                isOpen={isOpen}
-                              />
+                              <DocumentAnalyticsContext.Provider value={trackDocumentEvent}>
+                                <FinalEvalDialog
+                                  applicantId={applicant.applicantId}
+                                  close={close}
+                                  isOpen={isOpen}
+                                />
+                              </DocumentAnalyticsContext.Provider>
                             );
                           });
                         }}

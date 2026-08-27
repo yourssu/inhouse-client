@@ -28,7 +28,7 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
-import { useDocumentAnalytics } from '../../analytics';
+import { DocumentAnalyticsContext, useDocumentAnalytics } from '../../analytics';
 import {
   DOCUMENT_RUBRIC_ITEM_MINIMUM_ERROR,
   DOCUMENT_RUBRIC_TOTAL_SCORE,
@@ -74,13 +74,15 @@ export const DocumentRubricSettingButton = ({ applicant }: DocumentRubricSetting
     return openRubricSettingDialog({
       title: '문항 배점 설정',
       content: ({ closeAsTrue, closeAsFalse }) => (
-        <Suspense fallback={<DocumentRubricSettingFormSkeleton />}>
-          <DocumentRubricSettingForm
-            applicantId={applicantId}
-            closeAsFalse={closeAsFalse}
-            closeAsTrue={closeAsTrue}
-          />
-        </Suspense>
+        <DocumentAnalyticsContext.Provider value={trackDocumentEvent}>
+          <Suspense fallback={<DocumentRubricSettingFormSkeleton />}>
+            <DocumentRubricSettingForm
+              applicantId={applicantId}
+              closeAsFalse={closeAsFalse}
+              closeAsTrue={closeAsTrue}
+            />
+          </Suspense>
+        </DocumentAnalyticsContext.Provider>
       ),
       customized: true,
       closeableWithOutside: false,
