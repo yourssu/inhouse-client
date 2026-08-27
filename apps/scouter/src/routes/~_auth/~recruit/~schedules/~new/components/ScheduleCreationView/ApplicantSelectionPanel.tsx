@@ -7,10 +7,10 @@ import { MdCheck } from 'react-icons/md';
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { PartType } from '@/apis/parts/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
-import type { DraftScheduleType } from '@/types/schedule';
 
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduledApplicantIds } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
+import { useSelectPart } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useSelectPart';
 import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { partNameKo } from '@/types/parts';
 
@@ -18,6 +18,8 @@ interface ApplicantSelectionPanelProps {
   allApplicants: ApplicantType[];
   applicants: ApplicantType[];
   existingSchedules: InterviewScheduleType[];
+  /** 지정되면 파트 선택 대신 이 파트를 일반 텍스트로 보여줘요. 본인 파트로 고정된 사용자예요. */
+  fixedPart?: PartType;
   onApplicantSelect?: (applicant: ApplicantType) => void;
   parts: PartType[];
 }
@@ -26,10 +28,11 @@ export const ApplicantSelectionPanel = ({
   allApplicants,
   applicants,
   existingSchedules,
+  fixedPart,
   onApplicantSelect,
   parts,
 }: ApplicantSelectionPanelProps) => {
-  const { semester, selectedPartId, activeApplicantId, selectPart, setActiveApplicant } =
+  const { semester, selectedPartId, activeApplicantId, setActiveApplicant } =
     useScheduleCreationContext();
   const trackScheduleEvent = useScheduleAnalytics();
 
@@ -44,26 +47,14 @@ export const ApplicantSelectionPanel = ({
 
   const selectedPart = parts.find((p) => p.partId === selectedPartId);
 
+  const selectPartWith = useSelectPart({ allApplicants, existingSchedules });
+
   const handlePartChange = (partNameKoValue: string) => {
     const part = parts.find((p) => partNameKo[p.partName] === partNameKoValue);
     if (part && part.partId !== selectedPartId) {
-      // 해당 파트의 첫 번째 지원자를 자동 선택
-      const partApplicants = allApplicants.filter((a) => a.part === part.partName);
-      const partApplicantIds = new Set(partApplicants.map((a) => a.applicantId));
-
-      // 선택한 파트의 기존 일정을 초안으로 불러온다.
-      // 단, 현재 학기의 면접 일정 대상 상태에 포함되지 않는 지원자의 일정은 제외한다.
-      const initialDrafts: DraftScheduleType[] = existingSchedules
-        .filter((s) => s.part === part.partName && partApplicantIds.has(s.applicantId))
-        .map((s) => ({
-          applicantId: s.applicantId,
-          applicantName: s.name,
-          startTime: new Date(s.startTime),
-          endTime: new Date(s.endTime),
-          locationType: s.locationType,
-          locationDetail: s.locationDetail ?? null,
-          partId: part.partId,
-        }));
+      const { initialDrafts, partApplicants } = selectPartWith(part, {
+        onFirstApplicantSelected: (applicant) => onApplicantSelect?.(applicant),
+      });
 
       trackScheduleEvent('schedule_target_filter_changed', {
         already_scheduled_count: initialDrafts.length,
@@ -73,13 +64,6 @@ export const ApplicantSelectionPanel = ({
         selected_semester: semester,
         target_applicant_count: partApplicants.length,
       });
-
-      selectPart(part.partId, initialDrafts);
-
-      if (partApplicants.length > 0) {
-        setActiveApplicant(partApplicants[0].applicantId);
-        onApplicantSelect?.(partApplicants[0]);
-      }
     }
   };
 
@@ -88,17 +72,25 @@ export const ApplicantSelectionPanel = ({
       <Fieldset label="현재 학기">
         <p className="text-neutralMuted text-17 font-semibold">{semester}</p>
       </Fieldset>
-      <Select
-        className="w-full"
-        description="지원자가 없는 파트는 표시되지 않아요."
-        items={partsWithApplicants.map((p) => partNameKo[p.partName])}
-        label="파트 선택"
-        onValueChange={handlePartChange}
-        placeholder="파트"
-        size="lg"
-        value={selectedPart ? partNameKo[selectedPart.partName] : undefined}
-        variant="dimmed"
-      />
+      {fixedPart ? (
+        <Fieldset label="파트">
+          <p className="text-neutralMuted text-17 font-semibold">
+            {partNameKo[fixedPart.partName]}
+          </p>
+        </Fieldset>
+      ) : (
+        <Select
+          className="w-full"
+          description="지원자가 없는 파트는 표시되지 않아요."
+          items={partsWithApplicants.map((p) => partNameKo[p.partName])}
+          label="파트 선택"
+          onValueChange={handlePartChange}
+          placeholder="파트"
+          size="lg"
+          value={selectedPart ? partNameKo[selectedPart.partName] : undefined}
+          variant="dimmed"
+        />
+      )}
 
       {selectedPartId && (
         <Fieldset label="지원자 선택">

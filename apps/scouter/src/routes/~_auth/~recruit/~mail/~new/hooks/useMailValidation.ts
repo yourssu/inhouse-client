@@ -47,7 +47,8 @@ export const useMailValidation = ({
     !formData.content.trim() ||
     formData.content === '<p></p>' ||
     formData.content === '<div></div>';
-  const isSendDisabled = isSubjectEmpty || isContentEmpty || isAnyVariableUnset;
+  const isSendDisabled =
+    receivers.length === 0 || isSubjectEmpty || isContentEmpty || isAnyVariableUnset;
 
   const warningMessage = (() => {
     if (isSubjectEmpty || isContentEmpty) {

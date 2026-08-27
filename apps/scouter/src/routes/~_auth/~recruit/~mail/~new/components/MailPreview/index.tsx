@@ -1,5 +1,4 @@
 import { Lottie } from '@toss/lottie';
-import { Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
@@ -29,8 +28,6 @@ export const MailPreview = ({
   const hasApplicants = applicantNames.length > 0;
   const isValidToPreview = hasContent && hasApplicants;
 
-  const resultData = hasContent ? resultContent.noRecipient : resultContent.noContent;
-
   return (
     <div className="flex size-full flex-col">
       {isValidToPreview ? (
@@ -42,25 +39,13 @@ export const MailPreview = ({
           onVariableClick={onVariableClick}
         />
       ) : (
-        <div className="flex h-full items-center justify-center pb-16">
-          <Result
-            description={resultData.description}
-            figure={<Lottie className="size-30" delay={0.2} json={lotties.leftArrow} />}
-            title={resultData.title}
-          />
+        <div className="flex h-full flex-[1_1_0] flex-col items-center pb-16">
+          <Lottie autoPlay className="size-30 rotate-180" delay={100} json={lotties.leftArrow} />
+          <div className="text-neutralMuted text-center text-lg font-medium whitespace-pre-wrap">
+            {'오른쪽 패널에서\n받는 사람을 선택해주세요.'}
+          </div>
         </div>
       )}
     </div>
   );
 };
-
-const resultContent = {
-  noRecipient: {
-    description: undefined,
-    title: '받는 사람을 추가해주세요',
-  },
-  noContent: {
-    description: '또는 템플릿으로 시작해보세요.',
-    title: '왼쪽 에디터에서 내용을 작성해보세요',
-  },
-} as const satisfies Record<string, { description?: string; title: string }>;

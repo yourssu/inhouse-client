@@ -89,14 +89,24 @@ export const VariableList = ({
                     {variable.name}
                   </div>
                   <div className="bg-greyOpacity50 flex flex-col gap-2 rounded-xl p-4 pt-2.5">
-                    {applicantNames.map((name) => (
-                      <VariableField
-                        key={`${variable.id}-${name}`}
-                        memberNames={memberNames}
-                        variable={{ ...variable, name }}
-                        variableKey={`${variable.id}_${name}`}
-                      />
-                    ))}
+                    {applicantNames.length === 0 ? (
+                      <div className="pt-2 pb-6">
+                        <Result
+                          description="이 변수는 받는 사람 선택이 필요해요."
+                          figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
+                          title="받는 사람이 없어요"
+                        />
+                      </div>
+                    ) : (
+                      applicantNames.map((name) => (
+                        <VariableField
+                          key={`${variable.id}-${name}`}
+                          memberNames={memberNames}
+                          variable={{ ...variable, name }}
+                          variableKey={`${variable.id}_${name}`}
+                        />
+                      ))
+                    )}
                   </div>
                 </div>
               );
