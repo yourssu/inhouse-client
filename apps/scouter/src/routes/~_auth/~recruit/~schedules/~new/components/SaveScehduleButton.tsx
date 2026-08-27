@@ -18,7 +18,10 @@ import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduleApplicants } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
-import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
+import {
+  ScheduleAnalyticsContext,
+  useScheduleAnalytics,
+} from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { partNameKo } from '@/types/parts';
 import { handleError } from '@/utils/error';
 
@@ -128,6 +131,7 @@ export const SaveScheduleButton = () => {
 
   const openAlertDialog = useAlertDialog();
   const toast = useToast();
+  const trackScheduleEvent = useScheduleAnalytics();
 
   const { applicants, selectedPart } = useScheduleApplicants();
 
@@ -146,14 +150,16 @@ export const SaveScheduleButton = () => {
     const result = await openAlertDialog({
       title: '이대로 면접 일정을 저장할까요?',
       content: ({ closeAsTrue, closeAsFalse }) => (
-        <SaveDialogContent
-          closeAsFalse={closeAsFalse}
-          closeAsTrue={closeAsTrue}
-          draftSchedules={draftSchedules}
-          selectedPart={selectedPart}
-          semester={semester}
-          targetApplicantCount={applicants.length}
-        />
+        <ScheduleAnalyticsContext.Provider value={trackScheduleEvent}>
+          <SaveDialogContent
+            closeAsFalse={closeAsFalse}
+            closeAsTrue={closeAsTrue}
+            draftSchedules={draftSchedules}
+            selectedPart={selectedPart}
+            semester={semester}
+            targetApplicantCount={applicants.length}
+          />
+        </ScheduleAnalyticsContext.Provider>
       ),
       customized: true,
     });
