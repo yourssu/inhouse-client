@@ -5,6 +5,7 @@ import { MdMoreVert } from 'react-icons/md';
 import type { ApplicantStateType, ApplicantType } from '@/apis/applicants/schema';
 
 import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { useApplicantsAnalytics } from '@/routes/~_auth/~recruit/~applicants/analytics';
 import { AssignmentEvalDialogContent } from '@/routes/~_auth/~recruit/~applicants/components/AssignmentEvalDialogContent';
 import {
   isAssignmentEvalAccessAllowed,
@@ -28,6 +29,15 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   const { applicantId, applicationSemester, name: applicantName, partId, state } = applicant;
   const navigate = useNavigate();
   const openAlertDialog = useAlertDialog();
+  const trackApplicantsEvent = useApplicantsAnalytics();
+
+  const applicantProperties = {
+    applicant_id: applicantId,
+    applicant_state: state,
+    application_semester: applicationSemester,
+    assignment_required: hasAssignment,
+    part_id: partId,
+  };
 
   // 서류 불합이면 과제 평가 자체가 의미 없는 상태라 메뉴 항목을 아예 비활성화해요.
   // 그 외 차단 상태는 isAssignmentEvaluationAccessDisabled가 담당하고, 클릭 시 에러 모달로 안내해요.
@@ -37,6 +47,12 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   const isInterviewEvaluationDisabled = !isInterviewEvalAccessAllowed(state);
 
   const handleDocumentEvaluationClick = () => {
+    trackApplicantsEvent('feature_entry_click', {
+      ...applicantProperties,
+      access_result: 'allowed',
+      entry_point: 'applicant_action_menu',
+      target_feature: 'document_evaluation',
+    });
     navigate({
       params: { applicantId: String(applicantId) },
       to: '/recruit/applicants/$applicantId/eval/document',
@@ -44,6 +60,12 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   };
 
   const handleQuestionnaireClick = () => {
+    trackApplicantsEvent('feature_entry_click', {
+      ...applicantProperties,
+      access_result: 'allowed',
+      entry_point: 'applicant_action_menu',
+      target_feature: 'questionnaire',
+    });
     navigate({
       params: { applicantId: String(applicantId) },
       search: { partId, semester: applicationSemester },
@@ -51,6 +73,12 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
     });
   };
   const handleInterviewEvaluationClick = () => {
+    trackApplicantsEvent('feature_entry_click', {
+      ...applicantProperties,
+      access_result: 'allowed',
+      entry_point: 'applicant_action_menu',
+      target_feature: 'interview_evaluation',
+    });
     navigate({
       params: { applicantId: String(applicantId) },
       to: '/recruit/applicants/$applicantId/eval/interview',
@@ -58,6 +86,13 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   };
 
   const handleAssignmentEvaluationClick = async () => {
+    trackApplicantsEvent('feature_entry_click', {
+      ...applicantProperties,
+      access_result: isAssignmentEvaluationAccessDisabled ? 'blocked' : 'allowed',
+      entry_point: 'applicant_action_menu',
+      target_feature: 'assignment_evaluation',
+    });
+
     if (isAssignmentEvaluationAccessDisabled) {
       await openAlertDialog({
         content:
@@ -74,6 +109,12 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
           applicantId={applicantId}
           applicantName={applicantName}
           closeAsTrue={closeAsTrue}
+          onEvaluationComplete={(evaluationResult) =>
+            trackApplicantsEvent('assignment_evaluation_complete', {
+              ...applicantProperties,
+              evaluation_result: evaluationResult,
+            })
+          }
         />
       ),
       customized: true,
@@ -82,7 +123,13 @@ export const ApplicantActionMenu = ({ applicant, hasAssignment }: ApplicantActio
   };
 
   return (
-    <Menu>
+    <Menu
+      onOpenChange={(isOpen) => {
+        if (isOpen) {
+          trackApplicantsEvent('applicant_action_menu_open', applicantProperties);
+        }
+      }}
+    >
       <Menu.Trigger asChild>
         <IconButton
           aria-label={`${applicantName} 지원자 평가 메뉴 열기`}

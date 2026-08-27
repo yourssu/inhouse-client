@@ -11,6 +11,7 @@ import { applicantsOption } from '@/apis/applicants/query';
 import { partsOption } from '@/apis/parts/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
+import { useApplicantsAnalytics } from '@/routes/~_auth/~recruit/~applicants/analytics';
 import { ApplicantActionMenu } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantActionMenu';
 import {
   applicantStatesByTab,
@@ -22,12 +23,19 @@ import { formatSemester } from '@/utils/semester';
 
 interface ApplicantsTableProps {
   searchKeyword: string;
+  selectedSemester?: string;
   semesterId?: number;
   tab: ApplicantTabNameType;
 }
 
-export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTableProps) => {
+export const ApplicantsTable = ({
+  searchKeyword,
+  selectedSemester,
+  semesterId,
+  tab,
+}: ApplicantsTableProps) => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/applicants/' });
+  const trackApplicantsEvent = useApplicantsAnalytics();
   const setters = {
     page: useSetStateSelector(setSearch, 'page'),
     partId: useSetStateSelector(setSearch, 'partId'),
@@ -58,6 +66,17 @@ export const ApplicantsTable = ({ searchKeyword, semesterId, tab }: ApplicantsTa
     const partNameEn = invert(partNameKo)[v];
     const part = parts.find(({ partName }) => partName === partNameEn);
     assert(!!part, '존재하지 않는 파트를 선택했어요.');
+
+    if (part.partId !== search.partId) {
+      trackApplicantsEvent('applicant_filter_changed', {
+        current_tab: tab,
+        has_search_query: searchKeyword.length > 0,
+        selected_part: part.partName,
+        selected_part_id: part.partId,
+        ...(selectedSemester === undefined ? {} : { selected_semester: selectedSemester }),
+      });
+    }
+
     startTransition(() => {
       setters.partId(part.partId);
       setters.page(undefined);
