@@ -15,20 +15,25 @@ import {
   getDateBounds,
   getNavigationDisabled,
 } from '@/routes/~_auth/~recruit/~schedules/~new/utils/calendarNavigation';
+import {
+  scheduleAvailabilityFilter,
+  useScheduleAnalytics,
+} from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { CalendarPaper } from '@/routes/~_auth/~recruit/~schedules/components/CalendarPaper';
 
 export const ScheduleCreationView = () => {
   const [displayDate, setDisplayDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'전체' | '희망'>('전체');
-  const { selectedPartId, selectedSemesterId, activeApplicantId } = useScheduleCreationContext();
+  const { selectedPartId, selectedSemester, activeApplicantId } = useScheduleCreationContext();
+  const trackScheduleEvent = useScheduleAnalytics();
 
-  const { parts, allApplicants, applicants } = useScheduleApplicants();
+  const { parts, allApplicants, applicants, selectedPart } = useScheduleApplicants();
   const { data: existingSchedules = [] } = useSuspenseQuery({
     ...interviewSchedulesOption(),
     staleTime: 1000 * 60 * 10,
   });
 
-  const showCalendar = selectedSemesterId !== null && selectedPartId !== null;
+  const showCalendar = selectedPartId !== null;
 
   const activeApplicant = useMemo(
     () => applicants.find((a) => a.applicantId === activeApplicantId),
@@ -55,6 +60,26 @@ export const ScheduleCreationView = () => {
     if (applicant.availableTimes.length > 0) {
       const dates = applicant.availableTimes.map((time) => parseISO(time));
       setDisplayDate(min(dates));
+    }
+  };
+
+  const handleViewModeChange = (mode: '전체' | '희망') => {
+    if (mode === viewMode) {
+      return;
+    }
+
+    if (selectedPart !== undefined) {
+      trackScheduleEvent('schedule_availability_filter_selected', {
+        availability_filter: scheduleAvailabilityFilter[mode],
+        part: selectedPart.partName,
+        part_id: selectedPart.partId,
+        selected_semester: selectedSemester,
+      });
+    }
+
+    setViewMode(mode);
+    if (mode === '희망' && minDate) {
+      setDisplayDate(minDate);
     }
   };
 
@@ -93,12 +118,7 @@ export const ScheduleCreationView = () => {
               <SegmentedControl
                 id="calendar-view-mode"
                 items={['전체', '희망']}
-                onValueChange={(mode) => {
-                  setViewMode(mode);
-                  if (mode === '희망' && minDate) {
-                    setDisplayDate(minDate);
-                  }
-                }}
+                onValueChange={handleViewModeChange}
                 value={viewMode}
               />
             </CalendarPaper.HeaderRow>

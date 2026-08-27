@@ -19,6 +19,7 @@ import {
   getDragStartMinutes,
   getSnappedMinutesFromPosition,
 } from '@/routes/~_auth/~recruit/~schedules/~new/utils/dragPosition';
+import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
 
 interface DragPosition {
   date: Date;
@@ -38,7 +39,8 @@ export const useDragSchedule = (
   activeApplicant: ApplicantType | undefined,
   availableTimeRanges: AvailableTimeRange[],
 ): UseDragScheduleReturn => {
-  const { selectedPartId, addDraftSchedule } = useScheduleCreationContext();
+  const { selectedPartId, selectedSemester, addDraftSchedule } = useScheduleCreationContext();
+  const trackScheduleEvent = useScheduleAnalytics();
 
   const openAlertDialog = useAlertDialog();
 
@@ -147,6 +149,13 @@ export const useDragSchedule = (
               locationType,
               locationDetail,
             });
+            trackScheduleEvent('schedule_draft_changed', {
+              applicant_id: activeApplicant.applicantId,
+              location_type: locationType,
+              part: selectedPartName,
+              part_id: selectedPartId,
+              selected_semester: selectedSemester,
+            });
           }}
           selectedPartName={selectedPartName}
           startTime={startTime}
@@ -165,8 +174,10 @@ export const useDragSchedule = (
     activeApplicant,
     selectedPartId,
     selectedPartName,
+    selectedSemester,
     addDraftSchedule,
     openAlertDialog,
+    trackScheduleEvent,
   ]);
 
   // 글로벌 mouseup 이벤트 처리

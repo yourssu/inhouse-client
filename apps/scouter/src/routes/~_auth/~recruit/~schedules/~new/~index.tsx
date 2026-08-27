@@ -2,18 +2,23 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button } from '@yourssu-inhouse/interior';
 import { useToast } from '@yourssu-inhouse/interior';
-import { Suspense } from 'react';
+import { Suspense, useCallback } from 'react';
 import { IoSparkles } from 'react-icons/io5';
 import { MdArrowBack } from 'react-icons/md';
 
-import { SaveScehduleButton } from '@/routes/~_auth/~recruit/~schedules/~new/components/SaveScehduleButton';
+import { trackScouterEvent } from '@/analytics/client';
+import { SaveScheduleButton } from '@/routes/~_auth/~recruit/~schedules/~new/components/SaveScehduleButton';
 
+import type { ScheduleAnalyticsCommonProperties, TrackScheduleEvent } from '../analytics';
+
+import { ScheduleAnalyticsContext, useScheduleAnalytics } from '../analytics';
 import { ScheduleCreationView } from './components/ScheduleCreationView';
 import { ScheduleCreationProvider } from './context';
 
 const ScheduleNewPageContent = () => {
   const router = useRouter();
   const toast = useToast();
+  const trackScheduleEvent = useScheduleAnalytics();
 
   return (
     <PageLayout.Content
@@ -31,13 +36,16 @@ const ScheduleNewPageContent = () => {
           <div className="flex gap-2">
             <Button
               left={<IoSparkles />}
-              onClick={() => toast.default('아직 준비중인 기능이에요.')}
+              onClick={() => {
+                trackScheduleEvent('schedule_auto_generate_click', {});
+                toast.default('아직 준비중인 기능이에요.');
+              }}
               size="lg"
               variant="subPrimary"
             >
               자동 생성
             </Button>
-            <SaveScehduleButton />
+            <SaveScheduleButton />
           </div>
         </div>
       }
@@ -50,12 +58,22 @@ const ScheduleNewPageContent = () => {
 };
 
 const RouteComponent = () => {
+  const trackScheduleEvent = useCallback<TrackScheduleEvent>((eventName, properties) => {
+    const commonProperties: ScheduleAnalyticsCommonProperties = {
+      event_schema_version: 'v1',
+    };
+
+    trackScouterEvent(eventName, { ...commonProperties, ...properties });
+  }, []);
+
   return (
-    <ScheduleCreationProvider>
-      <Suspense>
-        <ScheduleNewPageContent />
-      </Suspense>
-    </ScheduleCreationProvider>
+    <ScheduleAnalyticsContext.Provider value={trackScheduleEvent}>
+      <ScheduleCreationProvider>
+        <Suspense>
+          <ScheduleNewPageContent />
+        </Suspense>
+      </ScheduleCreationProvider>
+    </ScheduleAnalyticsContext.Provider>
   );
 };
 

@@ -14,6 +14,7 @@ import { interviewSchedulesOption, interviewSchedulesQueryKey } from '@/apis/sch
 import { locationTypeNames } from '@/apis/schedule/schema';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { findLocationConflict } from '@/routes/~_auth/~recruit/~schedules/utils/locationConflict';
 
 interface LocationDialogContentProps {
@@ -30,6 +31,7 @@ export const LocationDialogContent = ({
   const [locationType, setLocationType] = useState<LocationType>(schedule.locationType);
   const [locationDetail, setLocationDetail] = useState(schedule.locationDetail ?? '');
   const toast = useToast();
+  const trackScheduleEvent = useScheduleAnalytics();
 
   const { data: schedules = [], isLoading: isSchedulesLoading } = useQuery({
     ...interviewSchedulesOption(),
@@ -71,6 +73,11 @@ export const LocationDialogContent = ({
       locationDetail: trimmedDetail === '' ? null : trimmedDetail,
     });
     if (success) {
+      trackScheduleEvent('schedule_location_change_complete', {
+        applicant_id: schedule.applicantId,
+        location_type: locationType,
+        part: schedule.part,
+      });
       closeAsTrue();
     }
   };

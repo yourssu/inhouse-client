@@ -13,6 +13,7 @@ import type { DraftScheduleType } from '@/types/schedule';
 import { SemesterSelect } from '@/components/SemesterSelect';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduledApplicantIds } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
+import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { partNameKo } from '@/types/parts';
 import { formatRecruitingSemester } from '@/utils/semester';
 
@@ -34,11 +35,13 @@ export const ApplicantSelectionPanel = ({
   const {
     selectedPartId,
     selectedSemester,
+    selectedSemesterId,
     activeApplicantId,
     selectPart,
     selectSemester,
     setActiveApplicant,
   } = useScheduleCreationContext();
+  const trackScheduleEvent = useScheduleAnalytics();
 
   // O(1) 일정 존재 확인을 위한 Set
   const scheduledIds = useScheduledApplicantIds();
@@ -52,9 +55,8 @@ export const ApplicantSelectionPanel = ({
   const selectedPart = parts.find((p) => p.partId === selectedPartId);
 
   const handlePartChange = (partNameKoValue: string) => {
-    const partName = Object.entries(partNameKo).find(([, ko]) => ko === partNameKoValue)?.[0];
-    const part = parts.find((p) => p.partName === partName);
-    if (part) {
+    const part = parts.find((p) => partNameKo[p.partName] === partNameKoValue);
+    if (part && part.partId !== selectedPartId) {
       // 해당 파트의 첫 번째 지원자를 자동 선택
       const partApplicants = allApplicants.filter((a) => a.part === part.partName);
       const partApplicantIds = new Set(partApplicants.map((a) => a.applicantId));
@@ -73,6 +75,15 @@ export const ApplicantSelectionPanel = ({
           partId: part.partId,
         }));
 
+      trackScheduleEvent('schedule_target_filter_changed', {
+        already_scheduled_count: initialDrafts.length,
+        filter_type: 'part',
+        part: part.partName,
+        part_id: part.partId,
+        selected_semester: selectedSemester,
+        target_applicant_count: partApplicants.length,
+      });
+
       selectPart(part.partId, initialDrafts);
 
       if (partApplicants.length > 0) {
@@ -83,7 +94,16 @@ export const ApplicantSelectionPanel = ({
   };
 
   const handleSemesterChange = (semester: SemesterType) => {
-    selectSemester(semester.semesterId, formatRecruitingSemester(semester));
+    if (semester.semesterId === selectedSemesterId) {
+      return;
+    }
+
+    const selectedSemesterLabel = formatRecruitingSemester(semester);
+    trackScheduleEvent('schedule_target_filter_changed', {
+      filter_type: 'semester',
+      selected_semester: selectedSemesterLabel,
+    });
+    selectSemester(semester.semesterId, selectedSemesterLabel);
   };
 
   return (
@@ -93,7 +113,7 @@ export const ApplicantSelectionPanel = ({
         label="학기 선택"
         onValueChange={handleSemesterChange}
         size="lg"
-        value={selectedSemester ?? undefined}
+        value={selectedSemester}
         variant="dimmed"
       />
       <Select

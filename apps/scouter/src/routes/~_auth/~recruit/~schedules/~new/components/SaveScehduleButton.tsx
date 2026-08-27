@@ -18,6 +18,7 @@ import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduleApplicants } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
+import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { partNameKo } from '@/types/parts';
 import { handleError } from '@/utils/error';
 
@@ -26,11 +27,15 @@ const SaveDialogContent = ({
   closeAsTrue,
   draftSchedules,
   selectedPart,
+  selectedSemester,
+  targetApplicantCount,
 }: {
   closeAsFalse: () => void;
   closeAsTrue: () => void;
   draftSchedules: DraftScheduleType[];
   selectedPart: PartType;
+  selectedSemester: string;
+  targetApplicantCount: number;
 }) => {
   const [isLoading, startLoading] = useLoading();
   const toast = useToast();
@@ -41,8 +46,17 @@ const SaveDialogContent = ({
     mutationFn: postInterviewSchedules,
   });
   const { invalidate: invalidateSchedules } = useQueryInvalidation(interviewSchedulesQueryKey);
+  const trackScheduleEvent = useScheduleAnalytics();
 
   const onSubmit = async () => {
+    trackScheduleEvent('schedule_save_click', {
+      draft_schedule_count: draftSchedules.length,
+      part: selectedPart.partName,
+      part_id: selectedPart.partId,
+      selected_semester: selectedSemester,
+      target_applicant_count: targetApplicantCount,
+    });
+
     try {
       await startLoading(
         (async () => {
@@ -55,6 +69,13 @@ const SaveDialogContent = ({
               endTime: v.endTime.toISOString(),
             })),
           );
+          trackScheduleEvent('schedule_save_complete', {
+            part: selectedPart.partName,
+            part_id: selectedPart.partId,
+            scheduled_applicant_count: draftSchedules.length,
+            selected_semester: selectedSemester,
+            target_applicant_count: targetApplicantCount,
+          });
           await invalidateSchedules();
         })(),
       );
@@ -101,9 +122,9 @@ const SaveDialogContent = ({
   );
 };
 
-export const SaveScehduleButton = () => {
+export const SaveScheduleButton = () => {
   const navigate = useNavigate();
-  const { draftSchedules } = useScheduleCreationContext();
+  const { draftSchedules, selectedSemester } = useScheduleCreationContext();
 
   const openAlertDialog = useAlertDialog();
   const toast = useToast();
@@ -130,6 +151,8 @@ export const SaveScehduleButton = () => {
           closeAsTrue={closeAsTrue}
           draftSchedules={draftSchedules}
           selectedPart={selectedPart}
+          selectedSemester={selectedSemester}
+          targetApplicantCount={applicants.length}
         />
       ),
       customized: true,
