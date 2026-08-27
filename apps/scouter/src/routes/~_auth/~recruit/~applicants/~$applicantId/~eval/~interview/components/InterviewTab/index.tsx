@@ -3,6 +3,8 @@ import clsx from 'clsx';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { useDeferredValue, useId, useState } from 'react';
 
+import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
+
 interface InterviewTabProps<TTab extends string> {
   children: (p: { tab: TTab }) => React.ReactNode;
   className?: string;
@@ -17,8 +19,13 @@ export const InterviewTab = <TTab extends string>({
   const id = useId();
   const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0] ?? null);
   const deferredActiveTab = useDeferredValue(activeTab);
+  const trackInterviewEvent = useInterviewAnalytics();
 
   const handleTabClick = (nextTab: TTab) => {
+    if (activeTab !== nextTab && nextTab === '지원서') {
+      trackInterviewEvent('interview_application_card_open', {});
+    }
+
     setActiveTab((prev) => (prev === nextTab ? null : nextTab));
   };
 

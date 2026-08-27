@@ -23,6 +23,7 @@ import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { InterviewAnalyticsContext, useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 import { UpdateInterviewRubricFormSchema } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSettingButton/formValidationSchema';
 import { TotalInterviewScore } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSettingButton/TotalInterviewScore';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
@@ -40,8 +41,11 @@ export const InterviewRubricSettingButton = ({
   semester,
 }: InterviewRubricSettingButtonProps) => {
   const openRubricSettingDialog = useAlertDialog();
+  const trackInterviewEvent = useInterviewAnalytics();
 
   const handleDialogTrigger = () => {
+    trackInterviewEvent('interview_rubric_change_click', { is_locked: isLocked });
+
     if (isLocked) {
       return openRubricSettingDialog({
         title: '배점 변경 불가',
@@ -53,13 +57,15 @@ export const InterviewRubricSettingButton = ({
     return openRubricSettingDialog({
       title: '면접 평가 문항 설정',
       content: ({ closeAsTrue }) => (
-        <Suspense fallback={<InterviewRubricSettingFormSkeleton />}>
-          <InterviewRubricSettingForm
-            closeAsTrue={closeAsTrue}
-            partId={partId}
-            semester={semester}
-          />
-        </Suspense>
+        <InterviewAnalyticsContext.Provider value={trackInterviewEvent}>
+          <Suspense fallback={<InterviewRubricSettingFormSkeleton />}>
+            <InterviewRubricSettingForm
+              closeAsTrue={closeAsTrue}
+              partId={partId}
+              semester={semester}
+            />
+          </Suspense>
+        </InterviewAnalyticsContext.Provider>
       ),
       customized: true,
     });
@@ -89,6 +95,7 @@ const InterviewRubricSettingForm = ({
   partId,
   semester,
 }: InterviewRubricSettingFormProps) => {
+  const trackInterviewEvent = useInterviewAnalytics();
   const { data: rubric } = useSuspenseQuery(interviewRubricOption({ partId, semester }));
 
   const orderedGroups = interviewRubricGroupNames.flatMap(
@@ -127,7 +134,14 @@ const InterviewRubricSettingForm = ({
 
   const { isPending, mutateWithToast: mutateInterviewRubric } = useToastedMutation({
     mutationFn: updateInterviewRubric,
-    onSuccess: () => {
+    onSuccess: (_, { data }) => {
+      trackInterviewEvent('interview_rubric_complete', {
+        rubric_total_score: data.groups.reduce(
+          (totalScore, { items }) =>
+            totalScore + items.reduce((groupScore, { maxScore }) => groupScore + maxScore, 0),
+          0,
+        ),
+      });
       closeAsTrue();
       invalidateRubric();
     },

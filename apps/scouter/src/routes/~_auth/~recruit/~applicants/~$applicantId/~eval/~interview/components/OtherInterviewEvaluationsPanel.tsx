@@ -23,6 +23,7 @@ import {
   myInterviewEvaluationOption,
   otherInterviewEvaluationsOption,
 } from '@/apis/interviews/evaluations/query';
+import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 import { FinalInterviewEvaluationDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/FinalInterviewEvaluationDialog';
 import { InterviewAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewAverageScoreSummary';
 import { interviewEvaluatorStatusOptions, interviewResultKo } from '@/types/interviews';
@@ -207,7 +208,10 @@ const FinalInterviewEvaluationButton = ({
   disabled,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationButtonProps) => {
+  const trackInterviewEvent = useInterviewAnalytics();
+
   const handleClick = () => {
+    trackInterviewEvent('interview_final_decision_click', {});
     void overlay.openAsync<boolean>(({ close, isOpen }) => (
       <FinalInterviewEvaluationDialog
         applicantId={applicantId}
@@ -234,12 +238,22 @@ const OtherInterviewEvaluationCollapsible = ({
   evaluation,
 }: OtherInterviewEvaluationCollapsibleProps) => {
   const [open, setOpen] = useState(false);
+  const trackInterviewEvent = useInterviewAnalytics();
   const resultOption = interviewEvaluationResultOptions[evaluation.result];
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      trackInterviewEvent('interview_peer_evaluator_view', {
+        peer_evaluator_id: evaluation.evaluatorId,
+      });
+    }
+  };
 
   return (
     <Collapsible.Root
       className="border-greyOpacity200 rounded-10 overflow-clip border"
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       open={open}
     >
       <Collapsible.Trigger

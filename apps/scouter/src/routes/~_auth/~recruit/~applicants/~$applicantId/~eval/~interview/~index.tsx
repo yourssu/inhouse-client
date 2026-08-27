@@ -2,12 +2,13 @@ import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Divider } from '@yourssu-inhouse/interior';
-import { Suspense, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 
 import type { ApplicantStateType } from '@/apis/applicants/schema';
 import type { AssignedQuestions } from '@/apis/interviews/questions/schema';
 
+import { trackScouterEvent } from '@/analytics/client';
 import { applicantByIdOption, applicantDocumentAnswersOption } from '@/apis/applicants/query';
 import {
   interviewEvaluatorStatusesOption,
@@ -31,6 +32,10 @@ import {
 import { MyInterviewEvaluationPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel';
 import { OtherInterviewEvaluationsPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/OtherInterviewEvaluationsPanel';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/ApplicantPageHeader';
+
+import type { InterviewAnalyticsCommonProperties, TrackInterviewEvent } from './analytics';
+
+import { InterviewAnalyticsContext } from './analytics';
 
 const INTERVIEW_TABS = ['질문', '지원서'] as const;
 
@@ -74,80 +79,95 @@ const RouteComponent = () => {
     applicantState: applicant.state,
     hasAssignment,
   });
+  const trackInterviewEvent = useCallback<TrackInterviewEvent>(
+    (eventName, properties) => {
+      const commonProperties: InterviewAnalyticsCommonProperties = {
+        applicant_id: applicant.applicantId,
+        applicant_state: applicant.state,
+        application_semester: applicant.applicationSemester,
+        event_schema_version: 'v1',
+        part_id: applicant.partId,
+      };
 
+      trackScouterEvent(eventName, { ...commonProperties, ...properties });
+    },
+    [applicant.applicantId, applicant.applicationSemester, applicant.partId, applicant.state],
+  );
   return (
     <PageLayout.Content className="py-7!" maxWidth="full">
       <ApplicantPageHeader applicant={applicant} label="면접 평가" />
 
-      <main className="flex min-h-0 flex-[1_1_0] items-start gap-4 pt-7">
-        <InterviewTab className="min-h-0 w-fit self-stretch" tabs={INTERVIEW_TABS}>
-          {({ tab }) => (
-            <Paper className="h-full w-90 flex-1 scrollbar-gutter-stable overflow-y-auto p-0">
-              <SwitchCase
-                caseBy={{
-                  질문: () => (
-                    <InterviewQuestionList
-                      onSelectQuestion={setSelectedQuestionId}
-                      questions={assignedQuestions}
-                      selectedQuestionId={selectedQuestionId}
-                    />
-                  ),
-                  지원서: () => <DocumentAnswerForInterview applicantId={Number(applicantId)} />,
-                }}
-                value={tab}
-              />
-            </Paper>
-          )}
-        </InterviewTab>
-
-        <Paper className="min-h-0 flex-1 flex-col self-stretch overflow-y-auto p-0">
-          <SwitchCase
-            caseBy={{
-              질문: () =>
-                selectedQuestion != null ? (
-                  <>
-                    <InterviewQuestionContent question={selectedQuestion} />
-                    {/* 면접관이 확정하지 않은 기본 미리보기 질문은 id가 없어요(OpenAPI 스펙 명시).*/}
-                    {selectedQuestion.id != null && (
-                      <InterviewMemoByQuestion
-                        applicantId={Number(applicantId)}
-                        sectionId={selectedQuestion.id}
+      <InterviewAnalyticsContext.Provider value={trackInterviewEvent}>
+        <main className="flex min-h-0 flex-[1_1_0] items-start gap-4 pt-7">
+          <InterviewTab className="min-h-0 w-fit self-stretch" tabs={INTERVIEW_TABS}>
+            {({ tab }) => (
+              <Paper className="h-full w-90 flex-1 scrollbar-gutter-stable overflow-y-auto p-0">
+                <SwitchCase
+                  caseBy={{
+                    질문: () => (
+                      <InterviewQuestionList
+                        onSelectQuestion={setSelectedQuestionId}
+                        questions={assignedQuestions}
+                        selectedQuestionId={selectedQuestionId}
                       />
-                    )}
-                  </>
-                ) : null,
-              스크립트: () => <InterviewScriptContent selectedScript={selectedScript} />,
-            }}
-            value={panelState}
-          />
-        </Paper>
-
-        <Paper className="flex min-h-0 w-100 shrink-0 flex-col self-stretch overflow-y-auto p-0">
-          <aside aria-label="내 면접 평가" className="w-full p-4">
-            <Suspense>
-              <MyInterviewEvaluationPanel
-                applicantId={Number(applicantId)}
-                partId={applicant.partId}
-                semester={applicant.applicationSemester}
-                {...submissionAvailability}
-              />
-            </Suspense>
-          </aside>
-          {!submissionAvailability.isSubmissionDisabled && (
-            <>
-              <Divider />
-              <aside aria-label="다른 평가자 평가" className="w-full p-4">
-                <OtherInterviewEvaluationsPanel
-                  applicantId={Number(applicantId)}
-                  applicantName={applicant.name}
-                  applicantState={applicant.state}
-                  interviewAverageScore={applicant.interviewAverageScore}
+                    ),
+                    지원서: () => <DocumentAnswerForInterview applicantId={Number(applicantId)} />,
+                  }}
+                  value={tab}
                 />
-              </aside>
-            </>
-          )}
-        </Paper>
-      </main>
+              </Paper>
+            )}
+          </InterviewTab>
+
+          <Paper className="min-h-0 flex-1 flex-col self-stretch overflow-y-auto p-0">
+            <SwitchCase
+              caseBy={{
+                질문: () =>
+                  selectedQuestion != null ? (
+                    <>
+                      <InterviewQuestionContent question={selectedQuestion} />
+                      {/* 면접관이 확정하지 않은 기본 미리보기 질문은 id가 없어요(OpenAPI 스펙 명시).*/}
+                      {selectedQuestion.id != null && (
+                        <InterviewMemoByQuestion
+                          applicantId={Number(applicantId)}
+                          sectionId={selectedQuestion.id}
+                        />
+                      )}
+                    </>
+                  ) : null,
+                스크립트: () => <InterviewScriptContent selectedScript={selectedScript} />,
+              }}
+              value={panelState}
+            />
+          </Paper>
+
+          <Paper className="flex min-h-0 w-100 shrink-0 flex-col self-stretch overflow-y-auto p-0">
+            <aside aria-label="내 면접 평가" className="w-full p-4">
+              <Suspense>
+                <MyInterviewEvaluationPanel
+                  applicantId={Number(applicantId)}
+                  partId={applicant.partId}
+                  semester={applicant.applicationSemester}
+                  {...submissionAvailability}
+                />
+              </Suspense>
+            </aside>
+            {!submissionAvailability.isSubmissionDisabled && (
+              <>
+                <Divider />
+                <aside aria-label="다른 평가자 평가" className="w-full p-4">
+                  <OtherInterviewEvaluationsPanel
+                    applicantId={Number(applicantId)}
+                    applicantName={applicant.name}
+                    applicantState={applicant.state}
+                    interviewAverageScore={applicant.interviewAverageScore}
+                  />
+                </aside>
+              </>
+            )}
+          </Paper>
+        </main>
+      </InterviewAnalyticsContext.Provider>
     </PageLayout.Content>
   );
 };
