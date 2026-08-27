@@ -34,6 +34,7 @@ interface TemplateEditorDialogProps {
   initialData?: MailTemplateDetail;
   isOpen: boolean;
   mode: '생성' | '수정';
+  onSubmitComplete: () => void;
 }
 
 export const TemplateEditorDialog = ({
@@ -42,6 +43,7 @@ export const TemplateEditorDialog = ({
   closeAsFalse,
   mode,
   initialData,
+  onSubmitComplete,
 }: TemplateEditorDialogProps) => {
   const openAlertDialog = useAlertDialog();
   const [loading, startLoading] = useLoading();
@@ -111,6 +113,7 @@ export const TemplateEditorDialog = ({
 
     if (res.success) {
       invalidate();
+      onSubmitComplete();
       closeAsTrue();
     }
   };

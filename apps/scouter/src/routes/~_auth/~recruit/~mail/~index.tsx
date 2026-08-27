@@ -4,10 +4,16 @@ import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { Button } from '@yourssu-inhouse/interior';
 import { InlineButton } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
-import { Suspense } from 'react';
+import { Suspense, useCallback } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { z } from 'zod/v4';
 
+import type {
+  MailAnalyticsCommonProperties,
+  TrackMailEvent,
+} from '@/routes/~_auth/~recruit/~mail/analytics';
+
+import { trackScouterEvent } from '@/analytics/client';
 import { mailReservationStatus } from '@/apis/mails/schema';
 import { Paper } from '@/components/Paper';
 import { useSearchState } from '@/hooks/useSearchState';
@@ -19,6 +25,13 @@ const RouteComponent = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/' });
   const { loading: isLoadTemplateLoading, openLoadTemplateDialog } = useLoadTemplate();
+  const trackMailEvent = useCallback<TrackMailEvent>((eventName, properties) => {
+    const commonProperties: MailAnalyticsCommonProperties = {
+      event_schema_version: 'v1',
+    };
+
+    trackScouterEvent(eventName, { ...commonProperties, ...properties });
+  }, []);
   const setters = {
     status: useSetStateSelector(setSearch, 'status'),
     page: useSetStateSelector(setSearch, 'page'),
@@ -27,6 +40,10 @@ const RouteComponent = () => {
   const handleCreateMail = async () => {
     const template = await openLoadTemplateDialog({ requireConfirm: false });
     if (template) {
+      trackMailEvent('mail_template_selected', {
+        entry_point: 'mail_management',
+        template_id: template.id,
+      });
       navigate({ search: { tid: template.id }, to: '/recruit/mail/new' });
     }
   };

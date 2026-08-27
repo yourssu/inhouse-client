@@ -17,6 +17,7 @@ import type { VariableValueType } from '@/routes/~_auth/~recruit/~mail/~new/comp
 
 import { postMailReservation } from '@/apis/mails';
 import { buildReservationPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
+import { useMailAnalytics } from '@/routes/~_auth/~recruit/~mail/analytics';
 import { handleError } from '@/utils/error';
 
 interface SendMailDialogProps {
@@ -25,6 +26,7 @@ interface SendMailDialogProps {
   formData: TemplateFormData;
   isOpen: boolean;
   receivers: ApplicantType[];
+  selectedPartId?: number;
   templateId: number;
   variableValues: Record<VariableItem['id'], VariableValueType>;
 }
@@ -37,7 +39,9 @@ export const SendMailDialog = ({
   bccMembers,
   variableValues,
   templateId,
+  selectedPartId,
 }: SendMailDialogProps) => {
+  const trackMailEvent = useMailAnalytics();
   const [type, setType] = useState<'now' | 'reserve'>('reserve');
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<string>('00:00');
@@ -60,6 +64,16 @@ export const SendMailDialog = ({
       return set(date, { hours, minutes, seconds: 0, milliseconds: 0 }).toISOString();
     })();
 
+    const sendMode: 'immediate' | 'scheduled' = type === 'now' ? 'immediate' : 'scheduled';
+    trackMailEvent('mail_send_click', {
+      ...(selectedPartId === undefined
+        ? { target_scope: 'all' as const }
+        : { part_id: selectedPartId, target_scope: 'part' as const }),
+      bcc_count: bccMembers.length,
+      recipient_count: receivers.length,
+      send_mode: sendMode,
+      template_id: templateId,
+    });
     const result = await startLoading(
       mutation
         .mutateAsync(
@@ -85,6 +99,17 @@ export const SendMailDialog = ({
         }),
     );
 
+    if (result.success) {
+      trackMailEvent('mail_send_request_complete', {
+        ...(selectedPartId === undefined
+          ? { target_scope: 'all' as const }
+          : { part_id: selectedPartId, target_scope: 'part' as const }),
+        bcc_count: bccMembers.length,
+        recipient_count: receivers.length,
+        send_mode: sendMode,
+        template_id: templateId,
+      });
+    }
     toast[result.success ? 'success' : 'error'](result.message);
     close();
   };

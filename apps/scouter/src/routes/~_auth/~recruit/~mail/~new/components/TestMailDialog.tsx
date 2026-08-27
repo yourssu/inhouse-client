@@ -13,12 +13,15 @@ import { postMailSend } from '@/apis/mails';
 import { meOption } from '@/apis/members/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { buildTestSendPayload } from '@/routes/~_auth/~recruit/~mail/~new/utils/buildMailPayload';
+import { useMailAnalytics } from '@/routes/~_auth/~recruit/~mail/analytics';
 
 interface TestMailDialogProps {
   close: () => void;
   formData: TemplateFormData;
   isOpen: boolean;
   partName: Exclude<PartNameType, 'Head lead'> | null;
+  selectedPartId?: number;
+  templateId: number;
   variableValues: Record<VariableItem['id'], VariableValueType>;
 }
 
@@ -27,9 +30,12 @@ export const TestMailDialog = ({
   formData,
   isOpen,
   partName,
+  selectedPartId,
+  templateId,
   variableValues,
 }: TestMailDialogProps) => {
   const { data: me } = useSuspenseQuery(meOption());
+  const trackMailEvent = useMailAnalytics();
 
   const [email, setEmail] = useState(me.email);
   const [loading, startLoading] = useLoading();
@@ -44,6 +50,12 @@ export const TestMailDialog = ({
       return;
     }
 
+    trackMailEvent('mail_test_send_click', {
+      ...(selectedPartId === undefined
+        ? { target_scope: 'all' as const }
+        : { part_id: selectedPartId, target_scope: 'part' as const }),
+      template_id: templateId,
+    });
     const res = await startLoading(
       mutateWithToast(
         buildTestSendPayload({
@@ -56,6 +68,12 @@ export const TestMailDialog = ({
     );
 
     if (res.success) {
+      trackMailEvent('mail_test_send_complete', {
+        ...(selectedPartId === undefined
+          ? { target_scope: 'all' as const }
+          : { part_id: selectedPartId, target_scope: 'part' as const }),
+        template_id: templateId,
+      });
       close();
     }
   };
