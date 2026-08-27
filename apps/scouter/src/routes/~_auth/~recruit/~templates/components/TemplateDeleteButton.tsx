@@ -6,6 +6,7 @@ import { useLoading } from 'react-simplikit';
 import { deleteMailTemplate } from '@/apis/mails';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { useTemplateAnalytics } from '@/routes/~_auth/~recruit/~templates/analytics';
 
 interface TemplateDeleteButtonProps {
   templateId: number;
@@ -15,6 +16,7 @@ export const TemplateDeleteButton = ({ templateId }: TemplateDeleteButtonProps) 
   const queryClient = useQueryClient();
   const [loading, startLoading] = useLoading();
   const openAlert = useAlertDialog();
+  const trackTemplateEvent = useTemplateAnalytics();
 
   const mutation = useToastedMutation({
     mutationFn: deleteMailTemplate,
@@ -25,6 +27,10 @@ export const TemplateDeleteButton = ({ templateId }: TemplateDeleteButtonProps) 
   });
 
   const onClick = async () => {
+    trackTemplateEvent('template_action_click', {
+      template_action: 'delete',
+      template_id: templateId,
+    });
     const isConfirm = await openAlert({
       title: '이 템플릿을 삭제할까요?',
       content: '삭제된 템플릿은 복구할 수 없어요.',
@@ -33,7 +39,10 @@ export const TemplateDeleteButton = ({ templateId }: TemplateDeleteButtonProps) 
     });
 
     if (isConfirm) {
-      await startLoading(mutation.mutateWithToast(templateId));
+      const result = await startLoading(mutation.mutateWithToast(templateId));
+      if (result.success) {
+        trackTemplateEvent('template_delete_complete', { template_id: templateId });
+      }
     }
   };
 

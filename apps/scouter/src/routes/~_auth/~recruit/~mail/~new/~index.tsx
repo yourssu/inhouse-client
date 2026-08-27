@@ -3,7 +3,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Button } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
-import { Suspense, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import { z } from 'zod';
 
 import type { MailTemplateDetail } from '@/apis/mails/schema';
@@ -12,7 +12,12 @@ import type {
   VariableTab,
   VariableValueType,
 } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/type';
+import type {
+  MailAnalyticsCommonProperties,
+  TrackMailEvent,
+} from '@/routes/~_auth/~recruit/~mail/analytics';
 
+import { trackScouterEvent } from '@/analytics/client';
 import { applicantsOption } from '@/apis/applicants/query';
 import { mailsQueryKeys, mailTemplateDetailOption } from '@/apis/mails/query';
 import { activeMembersOption, meOption } from '@/apis/members/query';
@@ -32,6 +37,7 @@ import {
   useMailSelectionContext,
 } from '@/routes/~_auth/~recruit/~mail/~new/context';
 import { useMailValidation } from '@/routes/~_auth/~recruit/~mail/~new/hooks/useMailValidation';
+import { MailAnalyticsContext } from '@/routes/~_auth/~recruit/~mail/analytics';
 import { useLoadTemplate } from '@/routes/~_auth/~recruit/~mail/hooks/useLoadTemplate';
 
 const MailContent = ({
@@ -96,6 +102,8 @@ const MailContent = ({
         formData={formData}
         isOpen={isOpen}
         partName={mailSelection.partName}
+        selectedPartId={selectedPart?.partId}
+        templateId={mailSelection.templateId ?? initialTemplate.id}
         variableValues={variableValues}
       />
     ));
@@ -109,6 +117,7 @@ const MailContent = ({
         formData={formData}
         isOpen={isOpen}
         receivers={receivers}
+        selectedPartId={selectedPart?.partId}
         templateId={mailSelection.templateId ?? initialTemplate.id}
         variableValues={variableValues}
       />
@@ -202,6 +211,13 @@ const RouteComponent = () => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/new/' });
   const { data: me } = useSuspenseQuery(meOption());
   const { loading: isLoadTemplateLoading, openLoadTemplateDialog } = useLoadTemplate();
+  const trackMailEvent = useCallback<TrackMailEvent>((eventName, properties) => {
+    const commonProperties: MailAnalyticsCommonProperties = {
+      event_schema_version: 'v1',
+    };
+
+    trackScouterEvent(eventName, { ...commonProperties, ...properties });
+  }, []);
 
   const initialPartName = me.parts?.[0]?.part ?? null;
 
@@ -213,6 +229,10 @@ const RouteComponent = () => {
   const handleLoadTemplate = async () => {
     const template = await openLoadTemplateDialog({ currentTemplateId: search.tid });
     if (template) {
+      trackMailEvent('mail_template_selected', {
+        entry_point: 'mail_composer',
+        template_id: template.id,
+      });
       // 같은 템플릿을 다시 불러올 때 tid가 안 바뀌어도 최신 내용으로 갱신되도록 상세 쿼리를 무효화한다.
       await queryClient.invalidateQueries({ queryKey: mailsQueryKeys.templateDetail(template.id) });
       setSearch((prev) => ({ ...prev, tid: template.id }));
@@ -227,14 +247,16 @@ const RouteComponent = () => {
   }
 
   return (
-    <MailSelectionContext.Provider value={{ mailSelection, setMailSelection }}>
-      <ResolvedMailContent
-        key={`${mailSelection.partName ?? 'all'}-${templateId}`}
-        loadTemplateLoading={isLoadTemplateLoading}
-        onLoadTemplate={handleLoadTemplate}
-        tid={templateId}
-      />
-    </MailSelectionContext.Provider>
+    <MailAnalyticsContext.Provider value={trackMailEvent}>
+      <MailSelectionContext.Provider value={{ mailSelection, setMailSelection }}>
+        <ResolvedMailContent
+          key={`${mailSelection.partName ?? 'all'}-${templateId}`}
+          loadTemplateLoading={isLoadTemplateLoading}
+          onLoadTemplate={handleLoadTemplate}
+          tid={templateId}
+        />
+      </MailSelectionContext.Provider>
+    </MailAnalyticsContext.Provider>
   );
 };
 

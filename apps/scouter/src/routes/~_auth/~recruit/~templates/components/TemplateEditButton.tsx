@@ -6,6 +6,7 @@ import { useLoading } from 'react-simplikit';
 
 import { mailTemplateDetailOption } from '@/apis/mails/query';
 import { TemplateEditorDialog } from '@/components/TemplateEditorDialog';
+import { useTemplateAnalytics } from '@/routes/~_auth/~recruit/~templates/analytics';
 
 interface TemplateEditButtonProps {
   templateId: number;
@@ -14,8 +15,13 @@ interface TemplateEditButtonProps {
 export const TemplateEditButton = ({ templateId }: TemplateEditButtonProps) => {
   const queryClient = useQueryClient();
   const [loading, startLoading] = useLoading();
+  const trackTemplateEvent = useTemplateAnalytics();
 
   const onClick = async () => {
+    trackTemplateEvent('template_action_click', {
+      template_action: 'edit',
+      template_id: templateId,
+    });
     const detail = await startLoading(queryClient.fetchQuery(mailTemplateDetailOption(templateId)));
     overlay.openAsync<boolean>(({ close, isOpen }) => {
       return (
@@ -25,6 +31,9 @@ export const TemplateEditButton = ({ templateId }: TemplateEditButtonProps) => {
           initialData={detail}
           isOpen={isOpen}
           mode="수정"
+          onSubmitComplete={() =>
+            trackTemplateEvent('template_update_complete', { template_id: templateId })
+          }
         />
       );
     });
