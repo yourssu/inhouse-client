@@ -202,7 +202,6 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
     context.queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
     context.queryClient.prefetchQuery(meOption());
   },
-  remountDeps: ({ params }) => [params.applicantId],
 });
 
 const getInterviewEvaluationSubmissionAvailability = ({
