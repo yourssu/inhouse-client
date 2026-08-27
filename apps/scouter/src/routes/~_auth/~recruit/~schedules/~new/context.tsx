@@ -2,7 +2,6 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { assert } from 'es-toolkit';
 import { createContext, type PropsWithChildren, useCallback, useContext, useState } from 'react';
 
-import type { SemesterType } from '@/apis/semesters/schema';
 import type { DraftScheduleType } from '@/types/schedule';
 
 import { semestersNowOption } from '@/apis/semesters/query';
@@ -14,8 +13,11 @@ interface ScheduleCreationContextState {
   isCreatingSchedule: boolean;
   selectedApplicantIds: number[];
   selectedPartId: null | number;
-  selectedSemester: string;
-  selectedSemesterId: number;
+}
+
+interface ScheduleCreationContextData {
+  semester: string;
+  semesterId: number;
 }
 
 interface ScheduleCreationContextActions {
@@ -25,12 +27,13 @@ interface ScheduleCreationContextActions {
   exitCreationMode: () => void;
   removeDraftSchedule: (applicantId: number) => void;
   selectPart: (partId: null | number, initialDrafts?: DraftScheduleType[]) => void;
-  selectSemester: (semesterId: number, semester: string) => void;
   setActiveApplicant: (applicantId: null | number) => void;
   toggleApplicant: (applicantId: number) => void;
 }
 
-type ScheduleCreationContextType = ScheduleCreationContextActions & ScheduleCreationContextState;
+type ScheduleCreationContextType = ScheduleCreationContextActions &
+  ScheduleCreationContextData &
+  ScheduleCreationContextState;
 
 const ScheduleCreationContext = createContext<ScheduleCreationContextType | undefined>(undefined);
 
@@ -44,29 +47,25 @@ export const useScheduleCreationContext = () => {
   return context;
 };
 
-const createInitialState = (semester: SemesterType): ScheduleCreationContextState => ({
+const createInitialState = (): ScheduleCreationContextState => ({
   isCreatingSchedule: false,
   selectedPartId: null,
-  selectedSemester: formatRecruitingSemester(semester),
-  selectedSemesterId: semester.semesterId,
   selectedApplicantIds: [],
   activeApplicantId: null,
   draftSchedules: [],
 });
 
 export const ScheduleCreationProvider = ({ children }: PropsWithChildren) => {
-  const { data: semester } = useSuspenseQuery(semestersNowOption());
-  const [state, setState] = useState<ScheduleCreationContextState>(() =>
-    createInitialState(semester),
-  );
+  const { data: currentSemester } = useSuspenseQuery(semestersNowOption());
+  const [state, setState] = useState(createInitialState);
 
   const enterCreationMode = useCallback(() => {
     setState((prev) => ({ ...prev, isCreatingSchedule: true }));
   }, []);
 
   const exitCreationMode = useCallback(() => {
-    setState(createInitialState(semester));
-  }, [semester]);
+    setState(createInitialState());
+  }, []);
 
   const selectPart = useCallback(
     (partId: null | number, initialDrafts: DraftScheduleType[] = []) => {
@@ -80,17 +79,6 @@ export const ScheduleCreationProvider = ({ children }: PropsWithChildren) => {
     },
     [],
   );
-
-  const selectSemester = useCallback((semesterId: number, semester: string) => {
-    setState((prev) => ({
-      ...prev,
-      selectedSemesterId: semesterId,
-      selectedSemester: semester,
-      selectedApplicantIds: [],
-      activeApplicantId: null,
-      draftSchedules: [],
-    }));
-  }, []);
 
   const toggleApplicant = useCallback((applicantId: number) => {
     setState((prev) => {
@@ -147,10 +135,11 @@ export const ScheduleCreationProvider = ({ children }: PropsWithChildren) => {
 
   const value: ScheduleCreationContextType = {
     ...state,
+    semester: formatRecruitingSemester(currentSemester),
+    semesterId: currentSemester.semesterId,
     enterCreationMode,
     exitCreationMode,
     selectPart,
-    selectSemester,
     toggleApplicant,
     setActiveApplicant,
     addDraftSchedule,

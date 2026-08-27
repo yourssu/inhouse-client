@@ -7,15 +7,12 @@ import { MdCheck } from 'react-icons/md';
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { PartType } from '@/apis/parts/schema';
 import type { InterviewScheduleType } from '@/apis/schedule/schema';
-import type { SemesterType } from '@/apis/semesters/schema';
 import type { DraftScheduleType } from '@/types/schedule';
 
-import { SemesterSelect } from '@/components/SemesterSelect';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
 import { useScheduledApplicantIds } from '@/routes/~_auth/~recruit/~schedules/~new/hooks/useScheduleApplicants';
 import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { partNameKo } from '@/types/parts';
-import { formatRecruitingSemester } from '@/utils/semester';
 
 interface ApplicantSelectionPanelProps {
   allApplicants: ApplicantType[];
@@ -32,15 +29,8 @@ export const ApplicantSelectionPanel = ({
   onApplicantSelect,
   parts,
 }: ApplicantSelectionPanelProps) => {
-  const {
-    selectedPartId,
-    selectedSemester,
-    selectedSemesterId,
-    activeApplicantId,
-    selectPart,
-    selectSemester,
-    setActiveApplicant,
-  } = useScheduleCreationContext();
+  const { semester, selectedPartId, activeApplicantId, selectPart, setActiveApplicant } =
+    useScheduleCreationContext();
   const trackScheduleEvent = useScheduleAnalytics();
 
   // O(1) 일정 존재 확인을 위한 Set
@@ -62,7 +52,7 @@ export const ApplicantSelectionPanel = ({
       const partApplicantIds = new Set(partApplicants.map((a) => a.applicantId));
 
       // 선택한 파트의 기존 일정을 초안으로 불러온다.
-      // 단, 현재 지원자 풀(UNDER_REVIEW)에 없는 지원자의 일정은 제외한다.
+      // 단, 현재 학기의 면접 일정 대상 상태에 포함되지 않는 지원자의 일정은 제외한다.
       const initialDrafts: DraftScheduleType[] = existingSchedules
         .filter((s) => s.part === part.partName && partApplicantIds.has(s.applicantId))
         .map((s) => ({
@@ -80,7 +70,7 @@ export const ApplicantSelectionPanel = ({
         filter_type: 'part',
         part: part.partName,
         part_id: part.partId,
-        selected_semester: selectedSemester,
+        selected_semester: semester,
         target_applicant_count: partApplicants.length,
       });
 
@@ -93,29 +83,11 @@ export const ApplicantSelectionPanel = ({
     }
   };
 
-  const handleSemesterChange = (semester: SemesterType) => {
-    if (semester.semesterId === selectedSemesterId) {
-      return;
-    }
-
-    const selectedSemesterLabel = formatRecruitingSemester(semester);
-    trackScheduleEvent('schedule_target_filter_changed', {
-      filter_type: 'semester',
-      selected_semester: selectedSemesterLabel,
-    });
-    selectSemester(semester.semesterId, selectedSemesterLabel);
-  };
-
   return (
     <div className="flex flex-col gap-4">
-      <SemesterSelect
-        className="w-full"
-        label="학기 선택"
-        onValueChange={handleSemesterChange}
-        size="lg"
-        value={selectedSemester}
-        variant="dimmed"
-      />
+      <Fieldset label="현재 학기">
+        <p className="text-neutralMuted text-17 font-semibold">{semester}</p>
+      </Fieldset>
       <Select
         className="w-full"
         description="지원자가 없는 파트는 표시되지 않아요."
