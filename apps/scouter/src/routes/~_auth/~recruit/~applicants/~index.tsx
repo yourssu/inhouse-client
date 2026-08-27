@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
@@ -18,9 +18,8 @@ import type {
 
 import { trackScouterEvent } from '@/analytics/client';
 import { partsOption } from '@/apis/parts/query';
-import { semestersOption } from '@/apis/semesters/query';
+import { semestersNowOption } from '@/apis/semesters/query';
 import { Paper } from '@/components/Paper';
-import { SemesterSelect } from '@/components/SemesterSelect';
 import { useSearchState } from '@/hooks/useSearchState';
 import { ApplicantsAnalyticsContext } from '@/routes/~_auth/~recruit/~applicants/analytics';
 import { ApplicantsTable } from '@/routes/~_auth/~recruit/~applicants/components/ApplicantsTable';
@@ -35,16 +34,13 @@ const RouteComponent = () => {
     page: useSetStateSelector(setSearch, 'page'),
     partId: useSetStateSelector(setSearch, 'partId'),
     search: useSetStateSelector(setSearch, 'search'),
-    semesterId: useSetStateSelector(setSearch, 'semesterId'),
   };
 
-  const { data: parts } = useSuspenseQuery(partsOption());
-  const { data: semesters } = useSuspenseQuery(semestersOption());
+  const [{ data: parts }, { data: currentSemester }] = useSuspenseQueries({
+    queries: [partsOption(), semestersNowOption()],
+  });
   const selectedPart = parts.find(({ partId }) => partId === search.partId);
-  const selectedSemester = semesters.find(({ semesterId }) => semesterId === search.semesterId);
-  const selectedSemesterLabel = selectedSemester
-    ? formatRecruitingSemester(selectedSemester)
-    : undefined;
+  const currentSemesterLabel = formatRecruitingSemester(currentSemester);
   const trackApplicantsEvent = useCallback<TrackApplicantsEvent>((eventName, properties) => {
     const commonProperties: ApplicantsAnalyticsCommonProperties = {
       event_schema_version: 'v1',
@@ -91,9 +87,7 @@ const RouteComponent = () => {
                             ...(search.partId === undefined
                               ? {}
                               : { selected_part_id: search.partId }),
-                            ...(selectedSemesterLabel === undefined
-                              ? {}
-                              : { selected_semester: selectedSemesterLabel }),
+                            selected_semester: currentSemesterLabel,
                           });
                         }
 
@@ -105,39 +99,16 @@ const RouteComponent = () => {
                       value={keyword}
                       variant="outline"
                     />
-                    <SemesterSelect
-                      onValueChange={(v) => {
-                        if (v.semesterId !== search.semesterId) {
-                          trackApplicantsEvent('applicant_filter_changed', {
-                            current_tab: search.t,
-                            has_search_query: keyword.length > 0,
-                            ...(selectedPart === undefined
-                              ? {}
-                              : { selected_part: selectedPart.partName }),
-                            ...(search.partId === undefined
-                              ? {}
-                              : { selected_part_id: search.partId }),
-                            selected_semester: formatRecruitingSemester(v),
-                          });
-                        }
-
-                        setters.semesterId(v.semesterId);
-                        setters.page(undefined);
-                      }}
-                      size="md"
-                      value={selectedSemesterLabel}
-                      variant="outline"
-                    />
-                    {(search.partId || search.semesterId) && (
+                    {search.partId && (
                       <InlineButton
                         className="text-violet600 text-sm font-medium underline"
                         onClick={() => {
                           trackApplicantsEvent('applicant_filter_changed', {
                             current_tab: search.t,
                             has_search_query: keyword.length > 0,
+                            selected_semester: currentSemesterLabel,
                           });
                           setters.partId(undefined);
-                          setters.semesterId(undefined);
                         }}
                       >
                         필터 제거하기
@@ -148,8 +119,8 @@ const RouteComponent = () => {
                 <Suspense fallback={<Table.Skeleton count={10} />}>
                   <ApplicantsTable
                     searchKeyword={keyword}
-                    selectedSemester={selectedSemesterLabel}
-                    semesterId={search.semesterId}
+                    selectedSemester={currentSemesterLabel}
+                    semesterId={currentSemester.semesterId}
                     tab={applicantTabNameEn[tab]}
                   />
                 </Suspense>
@@ -173,6 +144,5 @@ export const Route = createFileRoute('/_auth/recruit/applicants/')({
     page: z.number().optional(),
     search: z.string().optional(),
     partId: z.number().optional(),
-    semesterId: z.number().optional(),
   }),
 });
