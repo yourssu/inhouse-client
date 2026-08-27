@@ -11,5 +11,6 @@ createGlobalTheme(':root', zIndex, {
   modal: '200',
   dropdown: '300',
   popover: '400',
+  tooltip: '450',
   notification: '500',
 });
