@@ -22,7 +22,7 @@ export const useScheduleApplicants = (): UseScheduleApplicantsReturn => {
   const { data: allApplicants } = useSuspenseQuery(
     applicantsOption({
       semesterId,
-      states: ['UNDER_REVIEW', 'DOCUMENT_ACCEPTED', 'ASSIGNMENT_ACCEPTED', 'FINAL_ACCEPTED'],
+      states: ['UNDER_REVIEW', 'DOCUMENT_ACCEPTED', 'ASSIGNMENT_ACCEPTED'],
     }),
   );
 

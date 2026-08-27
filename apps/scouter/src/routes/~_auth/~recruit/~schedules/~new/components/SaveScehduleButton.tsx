@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { Button } from '@yourssu-inhouse/interior';
@@ -9,11 +9,13 @@ import { assert } from 'es-toolkit';
 import { useMemo } from 'react';
 import { useLoading } from 'react-simplikit';
 
+import type { ApplicantType } from '@/apis/applicants/schema';
 import type { PartType } from '@/apis/parts/schema';
+import type { CreateScheduleRequestType } from '@/apis/schedule/schema';
 import type { DraftScheduleType } from '@/types/schedule';
 
-import { deleteInterviewSchedulesByPart, postInterviewSchedules } from '@/apis/schedule';
-import { interviewSchedulesQueryKey } from '@/apis/schedule/query';
+import { putInterviewSchedulesByPart } from '@/apis/schedule';
+import { interviewSchedulesOption, interviewSchedulesQueryKey } from '@/apis/schedule/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useScheduleCreationContext } from '@/routes/~_auth/~recruit/~schedules/~new/context';
@@ -26,27 +28,26 @@ import { partNameKo } from '@/types/parts';
 import { handleError } from '@/utils/error';
 
 const SaveDialogContent = ({
+  applicants,
   closeAsFalse,
   closeAsTrue,
   draftSchedules,
   selectedPart,
   semester,
-  targetApplicantCount,
 }: {
+  applicants: ApplicantType[];
   closeAsFalse: () => void;
   closeAsTrue: () => void;
   draftSchedules: DraftScheduleType[];
   selectedPart: PartType;
   semester: string;
-  targetApplicantCount: number;
 }) => {
   const [isLoading, startLoading] = useLoading();
+  const queryClient = useQueryClient();
   const toast = useToast();
-  const { mutateAsync: mutateDeletePartSchedules } = useMutation({
-    mutationFn: deleteInterviewSchedulesByPart,
-  });
-  const { mutateAsync: mutatePostSchedules } = useMutation({
-    mutationFn: postInterviewSchedules,
+  const { mutateAsync: mutatePutPartSchedules } = useMutation({
+    mutationFn: (schedules: CreateScheduleRequestType[]) =>
+      putInterviewSchedulesByPart(selectedPart.partId, schedules),
   });
   const { invalidate: invalidateSchedules } = useQueryInvalidation(interviewSchedulesQueryKey);
   const trackScheduleEvent = useScheduleAnalytics();
@@ -57,27 +58,44 @@ const SaveDialogContent = ({
       part: selectedPart.partName,
       part_id: selectedPart.partId,
       selected_semester: semester,
-      target_applicant_count: targetApplicantCount,
+      target_applicant_count: applicants.length,
     });
 
     try {
       await startLoading(
         (async () => {
-          // NOTE: post에서 에러 발생 시 delete된 채로 끝나므로 일정을 되돌리는 로직이 필요함
-          await mutateDeletePartSchedules(selectedPart.partId);
-          await mutatePostSchedules(
-            draftSchedules.map((v) => ({
-              ...v,
-              startTime: v.startTime.toISOString(),
-              endTime: v.endTime.toISOString(),
-            })),
+          const latestSchedules = await queryClient.fetchQuery({
+            ...interviewSchedulesOption({ partId: selectedPart.partId }),
+            staleTime: 0,
+          });
+          const scheduleTargetApplicantIds = new Set(
+            applicants.map((applicant) => applicant.applicantId),
           );
+          const preservedSchedules = latestSchedules.filter(
+            (schedule) => !scheduleTargetApplicantIds.has(schedule.applicantId),
+          );
+
+          await mutatePutPartSchedules([
+            ...preservedSchedules.map((schedule) => ({
+              applicantId: schedule.applicantId,
+              partId: selectedPart.partId,
+              startTime: schedule.startTime,
+              endTime: schedule.endTime,
+              locationType: schedule.locationType,
+              locationDetail: schedule.locationDetail ?? null,
+            })),
+            ...draftSchedules.map((schedule) => ({
+              ...schedule,
+              startTime: schedule.startTime.toISOString(),
+              endTime: schedule.endTime.toISOString(),
+            })),
+          ]);
           trackScheduleEvent('schedule_save_complete', {
             part: selectedPart.partName,
             part_id: selectedPart.partId,
             scheduled_applicant_count: draftSchedules.length,
             selected_semester: semester,
-            target_applicant_count: targetApplicantCount,
+            target_applicant_count: applicants.length,
           });
           await invalidateSchedules();
         })(),
@@ -152,12 +170,12 @@ export const SaveScheduleButton = () => {
       content: ({ closeAsTrue, closeAsFalse }) => (
         <ScheduleAnalyticsContext.Provider value={trackScheduleEvent}>
           <SaveDialogContent
+            applicants={applicants}
             closeAsFalse={closeAsFalse}
             closeAsTrue={closeAsTrue}
             draftSchedules={draftSchedules}
             selectedPart={selectedPart}
             semester={semester}
-            targetApplicantCount={applicants.length}
           />
         </ScheduleAnalyticsContext.Provider>
       ),
