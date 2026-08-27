@@ -1,5 +1,7 @@
 import { Dialog } from '@yourssu-inhouse/interior';
 
+import type { ApplicantStateType } from '@/apis/applicants/schema';
+
 import { patchApplicant } from '@/apis/applicants';
 import { applicantsQueryKeys } from '@/apis/applicants/query';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
@@ -9,18 +11,23 @@ interface AssignmentEvalDialogContentProps {
   applicantId: number;
   applicantName: string;
   closeAsTrue: () => void;
+  onEvaluationComplete: (
+    evaluationResult: Extract<ApplicantStateType, 'ASSIGNMENT_ACCEPTED' | 'ASSIGNMENT_REJECTED'>,
+  ) => void;
 }
 
 export const AssignmentEvalDialogContent = ({
   applicantName,
   applicantId,
   closeAsTrue,
+  onEvaluationComplete,
 }: AssignmentEvalDialogContentProps) => {
   const { invalidate } = useQueryInvalidation(applicantsQueryKeys.all());
 
   const { isPending: isFailPending, mutateWithToast: failMutateWithToast } = useToastedMutation({
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'ASSIGNMENT_REJECTED' } }),
     onSuccess: () => {
+      onEvaluationComplete('ASSIGNMENT_REJECTED');
       invalidate();
       closeAsTrue();
     },
@@ -30,6 +37,7 @@ export const AssignmentEvalDialogContent = ({
   const { isPending: isPassPending, mutateWithToast: passMutateWithToast } = useToastedMutation({
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'ASSIGNMENT_ACCEPTED' } }),
     onSuccess: () => {
+      onEvaluationComplete('ASSIGNMENT_ACCEPTED');
       invalidate();
       closeAsTrue();
     },
