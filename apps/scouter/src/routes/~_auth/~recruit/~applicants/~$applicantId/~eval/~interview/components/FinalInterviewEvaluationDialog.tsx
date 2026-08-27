@@ -7,12 +7,17 @@ import { patchApplicant } from '@/apis/applicants';
 import { applicantsQueryKeys } from '@/apis/applicants/query';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import {
+  type InterviewFinalDecisionResult,
+  useInterviewAnalytics,
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 
 interface FinalInterviewEvaluationDialogProps {
   applicantId: number;
   applicantName: string;
   close: (submitted: boolean) => void;
   isOpen: boolean;
+  submittedEvaluatorCount: number;
   unsubmittedEvaluators: InterviewEvaluatorStatus[];
 }
 
@@ -21,14 +26,25 @@ export const FinalInterviewEvaluationDialog = ({
   applicantName,
   close,
   isOpen,
+  submittedEvaluatorCount,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationDialogProps) => {
+  const trackInterviewEvent = useInterviewAnalytics();
   const { invalidate } = useQueryInvalidation(applicantsQueryKeys.all());
+
+  const trackDecisionComplete = (decisionResult: InterviewFinalDecisionResult) => {
+    trackInterviewEvent('interview_final_decision_complete', {
+      decision_result: decisionResult,
+      submitted_evaluator_count: submittedEvaluatorCount,
+      unresolved_evaluator_count: unsubmittedEvaluators.length,
+    });
+  };
 
   const { isPending: isPassPending, mutateWithToast: passMutateWithToast } = useToastedMutation({
     errorText: '최종 면접 결과를 저장하지 못했어요.',
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'FINAL_ACCEPTED' } }),
     onSuccess: async () => {
+      trackDecisionComplete('FINAL_ACCEPTED');
       await invalidate();
       close(true);
     },
@@ -39,6 +55,7 @@ export const FinalInterviewEvaluationDialog = ({
     errorText: '최종 면접 결과를 저장하지 못했어요.',
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'INTERVIEW_REJECTED' } }),
     onSuccess: async () => {
+      trackDecisionComplete('INTERVIEW_REJECTED');
       await invalidate();
       close(true);
     },

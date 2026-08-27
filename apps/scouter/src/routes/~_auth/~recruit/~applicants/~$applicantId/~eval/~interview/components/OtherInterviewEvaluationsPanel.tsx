@@ -23,7 +23,10 @@ import {
   myInterviewEvaluationOption,
   otherInterviewEvaluationsOption,
 } from '@/apis/interviews/evaluations/query';
-import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
+import {
+  InterviewAnalyticsContext,
+  useInterviewAnalytics,
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 import { FinalInterviewEvaluationDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/FinalInterviewEvaluationDialog';
 import { InterviewAverageScoreSummary } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewAverageScoreSummary';
 import { interviewEvaluatorStatusOptions, interviewResultKo } from '@/types/interviews';
@@ -129,6 +132,7 @@ const LockedOtherInterviewEvaluations = ({
         applicantId={applicantId}
         applicantName={applicantName}
         disabled
+        submittedEvaluatorCount={0}
         unsubmittedEvaluators={[]}
       />
     </div>
@@ -189,6 +193,7 @@ const SubmittedOtherInterviewEvaluations = ({
         applicantId={applicantId}
         applicantName={applicantName}
         disabled={!finalInterviewEvaluationAllowedStates.includes(applicantState)}
+        submittedEvaluatorCount={submittedCount}
         unsubmittedEvaluators={unsubmittedEvaluators}
       />
     </div>
@@ -199,6 +204,7 @@ interface FinalInterviewEvaluationButtonProps {
   applicantId: number;
   applicantName: string;
   disabled: boolean;
+  submittedEvaluatorCount: number;
   unsubmittedEvaluators: InterviewEvaluatorStatus[];
 }
 
@@ -206,6 +212,7 @@ const FinalInterviewEvaluationButton = ({
   applicantId,
   applicantName,
   disabled,
+  submittedEvaluatorCount,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationButtonProps) => {
   const trackInterviewEvent = useInterviewAnalytics();
@@ -213,13 +220,16 @@ const FinalInterviewEvaluationButton = ({
   const handleClick = () => {
     trackInterviewEvent('interview_final_decision_click', {});
     void overlay.openAsync<boolean>(({ close, isOpen }) => (
-      <FinalInterviewEvaluationDialog
-        applicantId={applicantId}
-        applicantName={applicantName}
-        close={close}
-        isOpen={isOpen}
-        unsubmittedEvaluators={unsubmittedEvaluators}
-      />
+      <InterviewAnalyticsContext.Provider value={trackInterviewEvent}>
+        <FinalInterviewEvaluationDialog
+          applicantId={applicantId}
+          applicantName={applicantName}
+          close={close}
+          isOpen={isOpen}
+          submittedEvaluatorCount={submittedEvaluatorCount}
+          unsubmittedEvaluators={unsubmittedEvaluators}
+        />
+      </InterviewAnalyticsContext.Provider>
     ));
   };
 

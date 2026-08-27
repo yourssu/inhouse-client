@@ -5,6 +5,11 @@ import type { ApplicantStateType, ApplicantType } from '@/apis/applicants/schema
 
 type NoEventProperties = Record<never, never>;
 
+export type InterviewFinalDecisionResult = Extract<
+  ApplicantStateType,
+  'FINAL_ACCEPTED' | 'INTERVIEW_REJECTED'
+>;
+
 export interface InterviewAnalyticsEventProperties {
   /** 좌측 지원서 카드를 열어 지원서 내용을 표시했을 때 발생해요. */
   interview_application_card_open: NoEventProperties;
@@ -14,6 +19,12 @@ export interface InterviewAnalyticsEventProperties {
   interview_evaluation_submit_click: NoEventProperties;
   /** 최종 면접 결과 결정 버튼을 클릭해 모달을 열었을 때 발생해요. */
   interview_final_decision_click: NoEventProperties;
+  /** 최종 면접 평가 API가 성공해 지원자의 최종 합격 또는 불합격 결과가 반영됐을 때 발생해요. */
+  interview_final_decision_complete: {
+    decision_result: InterviewFinalDecisionResult;
+    submitted_evaluator_count: number;
+    unresolved_evaluator_count: number;
+  };
   /** 다른 평가자 목록에서 특정 평가자의 상세 평가를 열었을 때 발생해요. */
   interview_peer_evaluator_view: {
     peer_evaluator_id: number;
