@@ -2,7 +2,7 @@ import type { Prettify } from '@yourssu-inhouse/inhouse-utils/type';
 
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { Badge, HoverTooltip } from '@yourssu-inhouse/interior';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdInfoOutline } from 'react-icons/md';
 
@@ -18,6 +18,7 @@ import {
   otherInterviewEvaluationsOption,
 } from '@/apis/interviews/evaluations/query';
 import { meOption } from '@/apis/members/query';
+import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 import { interviewEvaluatorStatusOptions } from '@/types/interviews';
 
 interface PeerItemScoresTooltipProps {
@@ -66,6 +67,8 @@ interface PeerItemScoresProps {
 }
 
 const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) => {
+  const hasTrackedView = useRef(false);
+  const { markPeerEvaluationViewed, trackInterviewEvent } = useInterviewAnalytics();
   const peerScoreRows = useSuspenseQueries({
     queries: [
       { ...interviewEvaluatorStatusesOption(applicantId), staleTime: 1000 * 60 },
@@ -84,6 +87,16 @@ const PeerItemScores = ({ applicantId, itemId, maxScore }: PeerItemScoresProps) 
     ],
     combine: combinePeerScoreRows,
   });
+
+  useEffect(() => {
+    if (hasTrackedView.current) {
+      return;
+    }
+
+    markPeerEvaluationViewed();
+    trackInterviewEvent('interview_question_peer_score_view', { evaluation_item_id: itemId });
+    hasTrackedView.current = true;
+  }, [itemId, markPeerEvaluationViewed, trackInterviewEvent]);
 
   if (peerScoreRows.length === 0) {
     return <span className="text-13 whitespace-nowrap">다른 평가자가 없어요.</span>;

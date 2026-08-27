@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 
 import type { AssignedQuestion, QuestionCategory } from '@/apis/interviews/questions/schema';
 
+import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 import {
   INTRO_SCRIPT,
   OUTRO_SCRIPT,
@@ -30,6 +31,7 @@ export const InterviewQuestionList = ({
   questions,
   selectedQuestionId,
 }: InterviewQuestionListProps) => {
+  const { trackInterviewEvent } = useInterviewAnalytics();
   const questionsByCategory = groupBy(questions, (question) => question.category);
   const questionSections = CATEGORY_ORDER.map((category) => ({
     category,
@@ -60,6 +62,12 @@ export const InterviewQuestionList = ({
                   isSelected={isInterviewerAssignedQuestion && question.id === selectedQuestionId}
                   onClickQuestion={() => {
                     if (question.id != null) {
+                      if (question.id !== selectedQuestionId && question.assignedMemberId != null) {
+                        trackInterviewEvent('interview_question_card_open', {
+                          assigned_member_id: question.assignedMemberId,
+                          question_id: question.id,
+                        });
+                      }
                       onSelectQuestion(question.id);
                     }
                   }}

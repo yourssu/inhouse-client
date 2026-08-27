@@ -6,6 +6,7 @@ import { postApplicantInterviewMemo } from '@/apis/interviews/memos';
 import { interviewMemosQueryKey } from '@/apis/interviews/memos/query';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 
 interface MemoFieldProps {
   applicantId: number;
@@ -18,11 +19,13 @@ export const MemoField = ({ applicantId, sectionId }: MemoFieldProps) => {
   const trimmedContent = content.trim();
   const isContentEmpty = trimmedContent === '';
   const { invalidate: invalidateMemos } = useQueryInvalidation(interviewMemosQueryKey(applicantId));
+  const { trackInterviewEvent } = useInterviewAnalytics();
 
   const { isPending: isWritePending, mutateWithToast: writeMemoWithToast } = useToastedMutation({
     mutationFn: postApplicantInterviewMemo,
     successText: '메모를 작성했어요.',
     onSuccess: () => {
+      trackInterviewEvent('interview_question_memo_saved', { question_id: sectionId });
       invalidateMemos();
       setContent('');
       if (textareaRef.current != null) {

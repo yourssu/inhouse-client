@@ -42,6 +42,7 @@ import { meOption } from '@/apis/members/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 import { InterviewRubricSettingButton } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewRubricSettingButton';
 import { MyInterviewEvaluationFormSchema } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel/formValidationSchema';
 import { PeerItemScoresTooltip } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/MyInterviewEvaluationPanel/PeerItemScoresTooltip';
@@ -71,6 +72,7 @@ export const MyInterviewEvaluationPanel = ({
   semester,
   submissionDisabledReason,
 }: MyInterviewEvaluationPanelProps) => {
+  const { hasViewedPeerEvaluation, trackInterviewEvent } = useInterviewAnalytics();
   const [
     {
       data: { isRubricLocked, orderedRubricGroups },
@@ -125,6 +127,7 @@ export const MyInterviewEvaluationPanel = ({
   const { isPending, mutateWithToast: mutateMyInterviewEvaluation } = useToastedMutation({
     mutationFn: saveMyInterviewEvaluation,
     onSuccess: () => {
+      trackInterviewEvent('interview_evaluation_submit', {});
       invalidateMyEvaluation();
       invalidateEvaluatorStatuses();
       invalidateOtherEvaluations();
@@ -141,7 +144,7 @@ export const MyInterviewEvaluationPanel = ({
       return;
     }
 
-    mutateMyInterviewEvaluation({
+    return mutateMyInterviewEvaluation({
       applicantId,
       data: {
         items: groups.flatMap(({ items }) => items.map(({ itemId, score }) => ({ itemId, score }))),
@@ -226,7 +229,17 @@ export const MyInterviewEvaluationPanel = ({
             quantitativeScore={quantitativeScore}
           />
 
-          <Button className="w-full" loading={isPending} size="md" type="submit">
+          <Button
+            className="w-full"
+            loading={isPending}
+            onClick={() =>
+              trackInterviewEvent('interview_evaluation_submit_click', {
+                peer_viewed_before_edit: hasViewedPeerEvaluation,
+              })
+            }
+            size="md"
+            type="submit"
+          >
             {!isMyEvaluationSubmitted ? '내 평가 제출하기' : '내 평가 다시 제출하기'}
           </Button>
         </form>
