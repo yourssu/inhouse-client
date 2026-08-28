@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import {
   getApplicantById,
@@ -9,7 +9,7 @@ import {
   type GetApplicantsParams,
 } from '@/apis/applicants';
 
-const qk = pluginQueryKey('scouter');
+const qk = createQueryKeyNamespace('scouter');
 
 export const applicantsQueryKeys = {
   all: () => qk.for('applicants'),

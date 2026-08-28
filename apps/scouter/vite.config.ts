@@ -21,7 +21,6 @@ export default defineConfig({
       federationOptions: {
         dts: { tsConfigPath: './tsconfig.app.json' },
       },
-      id: 'scouter',
       remote,
     }),
     tanstackRouter({
@@ -35,7 +34,7 @@ export default defineConfig({
   ],
   server: {
     cors: true,
-    port: 5174,
+    port: remote.port,
     fs: {
       // NOTE: Window에서 ~ 라우팅이 예약어인 이슈가 있어 우회합니다.
       strict: false,

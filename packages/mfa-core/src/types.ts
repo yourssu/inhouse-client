@@ -31,17 +31,7 @@ interface RemotePluginLifecycle {
   mocks?: (ctx: PluginRuntimeContext) => Promise<RequestHandler[]>;
 }
 
-interface RemotePluginCapabilities {
-  /** dev preview harness 보유 여부. 기본 true. */
-  preview?: boolean;
-}
-
 export interface RemotePlugin {
-  capabilities?: RemotePluginCapabilities;
-  /**
-   * remote 앱 루트(`apps/<이름>`) 기준 상대 경로(예: './src/styles/runtime.css').
-   */
-  cssEntry?: string;
   lifecycle?: RemotePluginLifecycle;
   /** Module Federation remote 이름. mfa.config 의 remote id 와 일치해야 해요. */
   name: string;

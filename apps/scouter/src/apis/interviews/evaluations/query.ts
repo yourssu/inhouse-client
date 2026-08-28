@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import {
   getInterviewEvaluatorStatuses,
@@ -7,7 +7,7 @@ import {
   getOtherInterviewEvaluations,
 } from '@/apis/interviews/evaluations';
 
-const qk = pluginQueryKey('scouter');
+const qk = createQueryKeyNamespace('scouter');
 
 export const interviewEvaluationsQueryKeys = {
   all: () => qk.for('interviews', 'evaluations'),

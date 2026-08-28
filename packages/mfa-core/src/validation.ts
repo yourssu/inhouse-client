@@ -51,8 +51,13 @@ export const validatePlugin = (plugin: RemotePlugin): void => {
 export class RouteRegistry {
   private readonly basePaths = new Set<string>();
   private readonly graftIds = new Set<string>();
+  private readonly pluginNames = new Set<string>();
 
   assertPlugin(plugin: RemotePlugin): void {
+    if (this.pluginNames.has(plugin.name)) {
+      throw new Error(`[mfa-core] plugin '${plugin.name}' is already registered`);
+    }
+
     const basePath = plugin.routes.basePath.replace(/\/$/, '');
     if (this.basePaths.has(basePath)) {
       throw new Error(`[mfa-core] basePath '${basePath}' is already registered by another plugin`);
@@ -67,13 +72,14 @@ export class RouteRegistry {
     }
   }
 
-  has(id: string): boolean {
-    return this.graftIds.has(id);
+  hasPlugin(name: string): boolean {
+    return this.pluginNames.has(name);
   }
 
   register(plugin: RemotePlugin): void {
     const basePath = plugin.routes.basePath.replace(/\/$/, '');
     this.basePaths.add(basePath);
+    this.pluginNames.add(plugin.name);
     const entry = findPluginEntryRoute(plugin);
     for (const child of (entry.children as AnyRoute[] | undefined) ?? []) {
       for (const id of collectRouteIds(child)) {

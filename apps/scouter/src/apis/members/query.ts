@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import {
   getActiveMembers,
@@ -13,7 +13,7 @@ import {
 
 type MembersOptionParams = GetMembersParams;
 
-const qk = pluginQueryKey('scouter');
+const qk = createQueryKeyNamespace('scouter');
 
 export const meOption = () =>
   queryOptions({

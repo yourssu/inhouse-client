@@ -1,9 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import { getParts } from '@/apis/parts';
 
-const qk = pluginQueryKey('scouter');
+const qk = createQueryKeyNamespace('scouter');
 
 export const partsOption = () =>
   queryOptions({

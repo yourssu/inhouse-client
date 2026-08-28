@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import {
   getApplicantDocumentComments,
@@ -10,7 +10,7 @@ import {
   getPartDocumentsRubrics,
 } from '@/apis/documents';
 
-const qk = pluginQueryKey('scouter');
+const qk = createQueryKeyNamespace('scouter');
 
 export const getApplicantDocumentsEvaluationsOption = (applicantId: number) =>
   queryOptions({

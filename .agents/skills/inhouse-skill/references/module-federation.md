@@ -13,25 +13,27 @@ shell·remote 등록, plugin manifest, route graft, preview, shared dependency, 
 
 ## 단일 출처
 
-| 계약 | 단일 출처 |
-| --- | --- |
-| remote id·dev port·plugin source override | `mfa.config.ts` |
-| shell과 remote의 federation 설정 | `packages/mfa-vite/src/plugin.ts` |
-| expose key·remote entry 파일명·plugin 기본 경로 | `packages/mfa-core/src/config.ts` |
-| shared·singleton dependency 정책 | `packages/mfa-core/src/shared.ts` |
-| shell build 선행 remote | `turbo.json`의 `@yourssu-inhouse/shell#build.dependsOn` |
-| remote route·lifecycle manifest | `apps/<remote>/src/plugin.ts` |
-| runtime load·graft·실패 격리 | `packages/mfa-shell/src/` |
-| shell이 조합할 runtime spec | `mfa.config.ts`에서 파생된 `apps/shell/src/plugins.config.ts` |
+| 계약                                             | 단일 출처                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------- |
+| remote id·dev port·plugin source·shell CSS entry | `mfa.config.ts`                                               |
+| shell과 remote의 federation 설정                 | `packages/mfa-vite/src/plugin.ts`                             |
+| remote entry 파일명·plugin 기본 경로             | `packages/mfa-vite/src/config.ts`                             |
+| shared·singleton dependency 정책                 | `packages/mfa-vite/src/shared.ts`                             |
+| remote load retry 정책                           | `packages/mfa-vite/src/retryPlugin.ts`                        |
+| 고정 plugin expose key                           | `packages/mfa-core/src/config.ts`                             |
+| shell build 선행 remote                          | `turbo.json`의 `@yourssu-inhouse/shell#build.dependsOn`       |
+| remote route·lifecycle manifest                  | `apps/<remote>/src/plugin.ts`                                 |
+| runtime load·graft·실패 격리                     | `packages/mfa-shell/src/`                                     |
+| shell이 조합할 runtime spec                      | `mfa.config.ts`에서 파생된 `apps/shell/src/plugins.config.ts` |
 
 포트, remote 목록, retry 횟수와 구체적인 shared 버전은 바뀔 수 있으므로 위 구현을 확인하고 문서의 숫자를 기억해 사용하지 않는다.
 
 ## 새 remote 등록 절차
 
 1. `apps/<remote>` workspace와 package name을 만든다.
-2. `mfa.config.ts`에 고유한 `id`와 `port`를 추가한다. plugin 경로가 기본 `./src/plugin.ts`와 다를 때만 override한다.
+2. `mfa.config.ts`에 고유한 `id`와 `port`를 추가한다. plugin 경로가 기본 `./src/plugin.ts`와 다르거나 shell build에 합칠 보조 CSS가 있을 때만 `plugin.path`·`cssEntry`를 선언한다.
 3. `turbo.json`의 shell build 의존성에 remote workspace build를 추가한다.
-4. remote Vite config에서 `mfaVitePlugin.remote({ id, remote })`를 사용한다. federation remotes·exposes·shared 객체를 직접 복제하지 않는다.
+4. remote Vite config에서 `mfaVitePlugin.remote({ remote })`를 사용하고 server port도 `remote.port`에서 가져온다. federation remotes·exposes·shared 객체를 직접 복제하지 않는다.
 5. `src/plugin.ts`에서 `defineRemotePlugin`으로 name, basePath, entry, routeTree와 필요한 lifecycle을 선언한다.
 6. `src/main.tsx`에서 같은 plugin과 routeTree를 `createRemotePreviewApp`에 전달한다.
 7. remote의 pathless `~_auth.tsx`는 `<Outlet />`만 렌더링하는 통과 라우트로 유지한다.
@@ -61,17 +63,16 @@ remote별로 routeTree를 직접 탐색하거나 `AnyRoute` 단언과 검증 로
 
 ## Shared dependency
 
-- `SHARED_DEPS`가 shell과 모든 remote의 shared 정책 단일 출처다.
+- `packages/mfa-vite/src/shared.ts`가 shell과 모든 remote의 shared 정책 단일 출처다.
 - React, React DOM, TanStack Router, TanStack Query와 Context·store를 소유하는 패키지는 plugin 경계에서 인스턴스가 달라지지 않도록 singleton을 유지한다.
 - 공개 subpath가 별도 모듈 인스턴스를 만들 수 있으면 필요한 subpath도 shared에 포함한다.
-- `requiredVersion`이 있는 dependency는 runtime 검사와 workspace 실제 버전을 함께 갱신한다.
 - 앱별 Vite config에 shared 설정을 덧붙여 우회하지 않는다.
 
-shared 정책 변경은 모든 remote에 영향을 주므로 `mfa-core`, `mfa-vite`, `mfa-shell`, shell과 모든 remote를 검증한다.
+shared 정책 변경은 모든 remote에 영향을 주므로 `mfa-vite`, `mfa-shell`, shell과 모든 remote를 검증한다.
 
 ## QueryClient와 인증 소유권
 
-- shell이 하나의 QueryClient를 모든 remote에 제공한다. remote query와 invalidate key는 `pluginQueryKey(pluginName)` namespace를 사용한다.
+- shell이 하나의 QueryClient를 모든 remote에 제공한다. remote query와 invalidate key는 `createQueryKeyNamespace(pluginName)` namespace를 사용한다.
 - shell의 `/_auth`만 `requireAuth`와 공통 layout을 가진다.
 - remote의 `~_auth.tsx`에 guard, AuthProvider 또는 shell layout을 복제하지 않는다.
 - Module Federation shared 설정에서 Auth Context 관련 모듈 인스턴스가 달라지지 않는지 확인한다.
@@ -80,7 +81,7 @@ shared 정책 변경은 모든 remote에 영향을 주므로 `mfa-core`, `mfa-vi
 
 ## Lifecycle과 mock
 
-- `lifecycle.init`은 shell과 preview mount 전에 실행할 plugin 초기화가 실제로 있을 때만 사용한다.
+- `lifecycle.init`은 shell과 preview mount 전에 실행할 plugin 초기화가 실제로 있을 때만 사용한다. lifecycle 실행 정책은 `mfa-shell`이 소유한다.
 - `lifecycle.mocks`는 MSW handler를 반환한다. 개발 모드에서 shell 또는 preview가 모든 handler를 하나의 worker로 합친다.
 - mock하지 않는 remote 요청은 중앙 worker의 `bypass` 정책을 따른다.
 - remote entry와 preview에서 같은 초기화·mock 소스를 재사용하고 별도 bootstrap을 복제하지 않는다.
@@ -98,7 +99,7 @@ shared 정책 변경은 모든 remote에 영향을 주므로 `mfa-core`, `mfa-vi
 - shell은 host Tailwind build 하나로 `apps/*/src/**`를 스캔해 remote가 사용하는 utility까지 생성한다.
 - remote plugin은 Tailwind utility CSS를 runtime asset으로 별도 노출하지 않는다.
 - remote preview는 자기 `styles/index.css`를 import해 Tailwind base와 앱 전용 선언을 포함한다.
-- scouter처럼 랩 전용 `@utility`와 editor selector가 있으면 preview용 CSS entry에서 재사용하되, shell에 Tailwind theme·preflight를 중복 주입하지 않는다.
+- scouter처럼 앱 전용 `@utility`와 editor selector가 있으면 `mfa.config.ts`의 `cssEntry`에 보조 CSS 경로를 선언하고 preview에서도 같은 source를 재사용한다. plugin runtime manifest에는 CSS 경로를 넣지 않는다.
 - `interior`와 `exterior`의 CSS는 각 패키지 공개 CSS entry를 사용한다.
 - 새 remote가 생겨도 shell의 `apps/*/src/**` source glob을 remote별 목록으로 바꾸지 않는다.
 

@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import {
   getCurrentSemester,
@@ -10,7 +10,7 @@ import {
   getSemesters,
 } from '@/apis/members';
 
-const qk = pluginQueryKey('member');
+const qk = createQueryKeyNamespace('member');
 
 export const membersQueries = {
   parts: () =>

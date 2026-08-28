@@ -19,7 +19,8 @@
     "check:lint": "eslint .",
     "check:format": "prettier --check .",
     "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write ."
+    "fix:format": "prettier --write .",
+    "test": "pnpm build && node --test tests/*.test.mjs"
   },
   "devDependencies": {
     "@tanstack/react-router": "catalog:",
@@ -30,14 +31,11 @@
     "eslint": "catalog:",
     "msw": "^2.14.6",
     "prettier": "^3.9.6",
-    "react": "catalog:",
-    "react-dom": "catalog:",
     "tsdown": "^0.22.14",
     "typescript": "catalog:"
   },
   "peerDependencies": {
     "@tanstack/react-router": "^1.170.11",
-    "msw": "^2.14.6",
-    "react": "^19.2.6"
+    "msw": "^2.14.6"
   }
 }

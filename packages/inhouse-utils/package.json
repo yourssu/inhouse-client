@@ -8,6 +8,7 @@
     "./type": "./src/type.ts",
     "./misc": "./src/misc.ts",
     "./object": "./src/object.ts",
+    "./query": "./src/query.ts",
     "./ky": "./src/ky.ts"
   },
   "scripts": {

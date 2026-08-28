@@ -10,11 +10,11 @@ import {
   createExteriorApp,
   type CreateExteriorAppOptions,
 } from '@yourssu-inhouse/exterior';
-import { findRouteById, runPluginInits, setupPluginMocks } from '@yourssu-inhouse/mfa-core';
+import { findRouteById } from '@yourssu-inhouse/mfa-core';
 
 import { RemoteUnavailable } from './components/RemoteUnavailable';
 import { composePlugins, type RemotePluginSpec } from './composePlugins';
-import { assertSharedVersions } from './sharedCheck';
+import { runPluginInits, setupPluginMocks } from './lifecycle';
 
 type SharedShellOptions = Pick<
   CreateExteriorAppOptions<unknown>,
@@ -51,8 +51,6 @@ export const bootstrapShell = async (
   if (!shellAuth) {
     throw new Error(`[mfa-shell] shell entry route '${authEntryId}' not found`);
   }
-
-  await assertSharedVersions();
 
   const { failures, plugins } = await composePlugins(shellAuth, options.specs);
 

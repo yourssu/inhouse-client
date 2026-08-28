@@ -6,30 +6,9 @@ settings:
 
 catalogs:
   default:
-    '@tanstack/react-query':
-      specifier: ^5.101.0
-      version: 5.101.0
-    '@tanstack/react-router':
-      specifier: ^1.170.32
-      version: 1.170.32
-    '@tanstack/router-plugin':
-      specifier: ^1.168.35
-      version: 1.168.35
-    eslint:
-      specifier: ^10.3.0
-      version: 10.4.1
-    react:
-      specifier: ^19.2.6
-      version: 19.2.7
-    react-dom:
-      specifier: ^19.2.6
-      version: 19.2.7
     typescript:
       specifier: ~6.0.2
       version: 6.0.3
-    zod:
-      specifier: ^4.4.3
-      version: 4.4.3
 
 patchedDependencies:
   '@tailwindcss/vite@4.3.3': abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2
@@ -41,9 +20,6 @@ importers:
       '@types/node':
         specifier: ^24.13.0
         version: 24.13.2
-      '@yourssu-inhouse/mfa-core':
-        specifier: workspace:*
-        version: link:packages/mfa-core
       '@yourssu-inhouse/mfa-vite':
         specifier: workspace:*
         version: link:packages/mfa-vite
@@ -1125,12 +1101,6 @@ importers:
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
-      react:
-        specifier: 'catalog:'
-        version: 19.2.7
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.7(react@19.2.7)
       tsdown:
         specifier: ^0.22.14
         version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
@@ -1195,6 +1165,9 @@ importers:
 
   packages/mfa-vite:
     dependencies:
+      '@module-federation/retry-plugin':
+        specifier: ^2.9.0
+        version: 2.9.0(@module-federation/runtime@2.9.0)
       '@yourssu-inhouse/mfa-core':
         specifier: workspace:*
         version: link:../mfa-core
@@ -1667,6 +1640,11 @@ packages:
 
   '@module-federation/managers@2.8.2':
     resolution: {integrity: sha512-OQfnoUwy1IUfn6DaI2S/DPKgnElkYlP+gG8mbUQlJVEW1Zg/8V/dZbNgJUKikTJly6yR1r08PK59g7239ITYMw==}
+
+  '@module-federation/retry-plugin@2.9.0':
+    resolution: {integrity: sha512-FVFXpIA5aBJfQTE64TgbDfMbpmyeOCVqCQ95lekltrPQDbtlZ/CiXuzZitMhFW0M7KTvI+oh4GpQ9ZWEvtXWwg==}
+    peerDependencies:
+      '@module-federation/runtime': '*'
 
   '@module-federation/runtime-core@2.8.2':
     resolution: {integrity: sha512-PEkkK9MUp+nUCeQMS4ox3QGZfwwxgfjGA7P4umEnr5c3y8DLNDR+26tyHf/Gkjen2VsjlcyL+mEAQo1Zi4IE3g==}
@@ -5479,6 +5457,11 @@ snapshots:
   '@module-federation/managers@2.8.2':
     dependencies:
       '@module-federation/sdk': 2.8.2
+
+  '@module-federation/retry-plugin@2.9.0(@module-federation/runtime@2.9.0)':
+    dependencies:
+      '@module-federation/runtime': 2.9.0
+      '@module-federation/sdk': 2.9.0
 
   '@module-federation/runtime-core@2.8.2':
     dependencies:

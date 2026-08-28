@@ -1,7 +1,8 @@
 import type { AnyRouter } from '@tanstack/react-router';
+import type { RemotePlugin } from '@yourssu-inhouse/mfa-core';
 import type { RequestHandler } from 'msw';
 
-import type { ExteriorAppMode, RemotePlugin } from './types';
+type ExteriorAppMode = 'preview' | 'shell';
 
 interface RunPluginInitsContext {
   mode: ExteriorAppMode;

@@ -11,7 +11,7 @@ ky 클라이언트, API fetcher, Zod 스키마, TanStack Query options, mutation
 - 외부 API 응답은 `unknown`으로 취급하고 해당 도메인의 Zod 스키마로 파싱한 값을 반환한다.
 - 요청 payload를 위한 Zod 스키마가 정의되어 있으면 fetch 호출 전에 검증한다.
 - 컴포넌트 `useEffect`에서 fetch 후 지역 state에 복사하지 않는다.
-- shell과 모든 remote의 `QueryClient`를 공유하므로 remote의 query key와 invalidate key는 `pluginQueryKey`로 plugin namespace를 포함한다. `['members', 'list']` 같은 raw key는 다른 remote의 같은 도메인 cache와 충돌할 수 있다.
+- shell과 모든 remote의 `QueryClient`를 공유하므로 remote의 query key와 invalidate key는 `createQueryKeyNamespace`로 plugin namespace를 포함한다. `['members', 'list']` 같은 raw key는 다른 remote의 같은 도메인 cache와 충돌할 수 있다.
 
 ## Fetcher 성공 예시
 
@@ -57,11 +57,11 @@ plugin 이름은 해당 remote의 실제 이름을 사용하고 module scope에�
 
 ```tsx
 import { queryOptions } from '@tanstack/react-query';
-import { pluginQueryKey } from '@yourssu-inhouse/mfa-core';
+import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import { getMembers, type GetMembersParams } from '@/apis/members';
 
-const qk = pluginQueryKey('scouter');
+const qk = createQueryKeyNamespace('scouter');
 
 export const memberQueryKeys = {
   all: () => qk.for('members'),
@@ -91,11 +91,11 @@ invalidate할 때는 `queryClient.invalidateQueries({ queryKey: memberQueryKeys.
 - `apps/*/src/apis/api.ts`
 - `apps/*/src/apis/<domain>/`
 - `packages/auth/src/apis/`
-- `packages/mfa-core/src/queryKey.ts`
+- `packages/inhouse-utils/src/query.ts`
 
 ## 검증
 
 - 성공 응답뿐 아니라 스키마 불일치와 네트워크 오류를 확인한다.
 - query key에 결과를 바꾸는 입력이 빠지지 않았는지 확인한다.
-- remote query와 invalidate key가 `pluginQueryKey` namespace를 사용하는지 확인한다.
+- remote query와 invalidate key가 `createQueryKeyNamespace` namespace를 사용하는지 확인한다.
 - mutation 후 관련 화면의 cache가 갱신되는지 확인한다.
