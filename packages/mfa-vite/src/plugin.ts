@@ -22,7 +22,6 @@ const REMOTE_CSS_GEN_FILENAME = 'mfa-remotes.gen.css';
 const toPosix = (p: string): string => p.split(path.sep).join('/');
 
 const buildRemoteCssContent = (root: string, config: MfaConfig): string => {
-  const appsDir = path.resolve(root, '..');
   const genDir = path.resolve(root, 'src/styles');
   const lines: string[] = [
     '/* 자동 생성 파일 — 직접 수정하지 마세요. mfa.config.ts의 cssEntry로 생성해요. */',
@@ -33,7 +32,10 @@ const buildRemoteCssContent = (root: string, config: MfaConfig): string => {
       continue;
     }
 
-    const cssEntryAbs = path.resolve(appsDir, remote.id, remote.cssEntry);
+    const cssEntryAbs = remote.cssEntry;
+    if (!path.isAbsolute(cssEntryAbs)) {
+      throw new Error(`[mfa-vite] '${remote.id}' cssEntry must be absolute: ${cssEntryAbs}`);
+    }
     if (!fs.existsSync(cssEntryAbs)) {
       throw new Error(`[mfa-vite] '${remote.id}' cssEntry not found: ${cssEntryAbs}`);
     }
@@ -66,6 +68,15 @@ const remoteCssGenPlugin = (config: MfaConfig): PluginOption => ({
   },
 });
 
+const remoteIdsPlugin = (config: MfaConfig): PluginOption => ({
+  name: 'mfa-shell-remote-ids',
+  config: () => ({
+    define: {
+      MFA_REMOTE_IDS: JSON.stringify(config.remotes.map((remote) => remote.id)),
+    },
+  }),
+});
+
 interface ShellPluginOptions {
   config: MfaConfig;
   /** loadEnv 로 읽은 env(빈 값이면 dev 기본 URL 폴백). */
@@ -89,6 +100,7 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
   );
 
   return [
+    remoteIdsPlugin(config),
     federation({
       name: SHELL_FEDERATION_NAME,
       remotes,

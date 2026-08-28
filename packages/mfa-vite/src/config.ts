@@ -10,7 +10,7 @@ export interface PluginSpec {
 }
 
 export interface MfaRemoteEntry {
-  /** Shell Tailwind build에 포함할 remote CSS source. */
+  /** Shell Tailwind build에 포함할 remote CSS source의 절대 경로. */
   cssEntry?: string;
   /** Module Federation remote name이자 shell registry key. */
   id: string;
