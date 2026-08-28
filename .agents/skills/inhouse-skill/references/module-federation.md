@@ -66,7 +66,6 @@ remote별로 routeTree를 직접 탐색하거나 `AnyRoute` 단언과 검증 로
 - `packages/mfa-vite/src/shared.ts`가 shell과 모든 remote의 shared 정책 단일 출처다.
 - React, React DOM, TanStack Router, TanStack Query와 Context·store를 소유하는 패키지는 plugin 경계에서 인스턴스가 달라지지 않도록 singleton을 유지한다.
 - 공개 subpath가 별도 모듈 인스턴스를 만들 수 있으면 필요한 subpath도 shared에 포함한다.
-- `requiredVersion`이 있는 dependency는 runtime 검사와 workspace 실제 버전을 함께 갱신한다.
 - 앱별 Vite config에 shared 설정을 덧붙여 우회하지 않는다.
 
 shared 정책 변경은 모든 remote에 영향을 주므로 `mfa-vite`, `mfa-shell`, shell과 모든 remote를 검증한다.
