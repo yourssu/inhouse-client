@@ -27,7 +27,10 @@ import {
   QuestionnairePanelSkeleton,
 } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnaireSkeletons';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/ApplicantPageHeader';
-import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DocumentReview';
+import {
+  DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS,
+  DocumentReview,
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DocumentReview';
 
 import type { QuestionnaireAnalyticsCommonProperties, TrackQuestionnaireEvent } from './analytics';
 
@@ -63,7 +66,9 @@ const QuestionnairePage = () => {
       <ApplicantPageHeader applicant={applicant} label="질문지 설계" />
 
       <QuestionnaireAnalyticsContext.Provider value={trackQuestionnaireEvent}>
-        <main className="flex min-h-0 min-w-0 flex-[1_1_0] gap-4 pt-7">
+        <main
+          className={`grid min-h-0 min-w-0 flex-[1_1_0] ${DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS} grid-rows-1 gap-4 pt-7`}
+        >
           <section
             aria-label="지원서 답변과 코멘트"
             className="flex min-h-0 min-w-0 flex-1 flex-col"
@@ -90,7 +95,7 @@ const QuestionnairePage = () => {
             </PanelBoundary>
           </section>
 
-          <aside aria-label="면접 질문지" className="flex min-h-0 w-100 shrink-0 flex-col">
+          <aside aria-label="면접 질문지" className="flex min-h-0 flex-col">
             <PanelBoundary
               description="면접 질문지와 요구조건을 다시 불러와 주세요."
               fallback={<QuestionnairePanelSkeleton />}

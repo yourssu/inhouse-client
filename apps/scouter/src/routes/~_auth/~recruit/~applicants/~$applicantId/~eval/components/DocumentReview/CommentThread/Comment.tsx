@@ -213,10 +213,10 @@ const CommentItem = ({ actions, children, comment }: CommentItemProps) => {
     : null;
 
   return (
-    <div className="group min-w-60">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 whitespace-nowrap">
-          <span className="text-13 font-medium">
+    <div className="group">
+      <div className="flex items-center justify-between gap-1">
+        <div className="flex min-w-0 items-center gap-1 whitespace-nowrap">
+          <span className="text-13 truncate font-medium">
             {author.nickname} [{author.part}]
           </span>
           {relativeTime && (

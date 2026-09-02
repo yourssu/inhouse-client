@@ -23,7 +23,10 @@ import { EvalForm } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~ev
 import { OtherDocumentEvaluationsPanel } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/EvalForm/OtherDocumentEvaluationsPanel';
 import { FinalEvalDialog } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~document/components/FinalEvalDialog';
 import { ApplicantPageHeader } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/ApplicantPageHeader';
-import { DocumentReview } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DocumentReview';
+import {
+  DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS,
+  DocumentReview,
+} from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/DocumentReview';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
 
 import type { DocumentAnalyticsCommonProperties, TrackDocumentEvent } from './analytics';
@@ -90,10 +93,12 @@ const RouteComponent = () => {
       <ApplicantPageHeader applicant={applicant} label="서류 평가" />
 
       <DocumentAnalyticsContext.Provider value={trackDocumentEvent}>
-        <main className="flex min-h-0 flex-[1_1_0] gap-4 pt-7">
+        <main
+          className={`grid min-h-0 flex-[1_1_0] ${DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS} grid-rows-1 gap-4 pt-7`}
+        >
           <ErrorBoundary
             fallback={
-              <Paper className="flex size-full items-center justify-center">
+              <Paper className="col-span-2 flex size-full items-center justify-center">
                 <Result
                   description="지원자가 제출한 서류 응답이 아직 연동되지 않았어요."
                   figure={<Lottie className="size-10" delay={0.2} json={lotties.empty} />}
@@ -114,7 +119,7 @@ const RouteComponent = () => {
                 })
               }
             />
-            <Paper className="relative min-h-0 w-100 overflow-hidden p-4">
+            <Paper className="relative min-h-0 overflow-hidden p-4">
               <div className="flex min-h-0 w-full flex-col overflow-y-auto">
                 <EvalForm />
                 {isScoringComplete && (

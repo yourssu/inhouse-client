@@ -12,6 +12,9 @@ import { CommentThread } from './CommentThread';
 import { DocumentAnswer } from './DocumentAnswer';
 import { groupCommentThreads } from './groupCommentThreads';
 
+export const DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS =
+  'grid-cols-[minmax(36rem,1fr)_minmax(17.5rem,25rem)]';
+
 interface DocumentReviewProps {
   answers: ApplicantDocumentAnswersType;
   applicantId: number;
@@ -72,8 +75,8 @@ export const DocumentReview = ({
   }, [selectedSectionId]);
 
   return (
-    <Paper className="min-h-0 flex-[1_1_0] gap-4 overflow-hidden">
-      <div className="flex min-h-0 min-w-0 flex-[3_1_0] flex-col gap-4 overflow-y-auto">
+    <Paper className="grid min-h-0 grid-cols-3 grid-rows-1 gap-4 overflow-hidden">
+      <div className="col-span-2 flex min-h-0 min-w-0 flex-col gap-4 overflow-y-auto only:col-span-full">
         {answers.map((answer, index) => {
           const { sectionId } = answer;
 
@@ -91,7 +94,7 @@ export const DocumentReview = ({
       </div>
 
       {showCommentPanel && (
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="col-span-1 flex min-h-0 flex-col">
           <div
             className="-mx-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4"
             ref={scrollContainerRef}
