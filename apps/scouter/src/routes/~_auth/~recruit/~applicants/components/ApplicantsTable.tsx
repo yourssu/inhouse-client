@@ -95,7 +95,7 @@ export const ApplicantsTable = ({
             value={part && partNameKo[part.partName]}
           />
           <Table.Th>학번</Table.Th>
-          <Table.Th>학과</Table.Th>
+          <Table.Th className="min-w-50">학과</Table.Th>
           <Table.Th>현재 학기</Table.Th>
           <Table.Th>출생년도</Table.Th>
           <Table.Th>심사 상태</Table.Th>
@@ -116,7 +116,7 @@ export const ApplicantsTable = ({
                 </Table.Cell>
                 <Table.Cell>{partNameKo[applicant.part]}</Table.Cell>
                 <Table.Cell>{applicant.studentId}</Table.Cell>
-                <Table.Cell>{applicant.department}</Table.Cell>
+                <Table.Cell className="min-w-50">{applicant.department}</Table.Cell>
                 <Table.Cell>{formatSemester(applicant.academicSemester)}</Table.Cell>
                 <Table.Cell>{applicant.age}</Table.Cell>
                 <Table.Cell>
