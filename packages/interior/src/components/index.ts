@@ -19,6 +19,7 @@ export * from './Result';
 export * from './SearchField';
 export * from './SegmentedControl';
 export * from './Select';
+export * from './Sidebar';
 export * from './Switch';
 export * from './Tab';
 export * from './TabButton';
