@@ -108,7 +108,10 @@ export const QuestionnaireEditor = ({
   const { isPending, mutateWithToast } = useToastedMutation({
     mutationFn: saveAssignedQuestions,
     onError: async (error) => {
-      if (isKyHTTPError(error) && error.response.status === 404) {
+      if (
+        isKyHTTPError(error) &&
+        (error.response.status === 404 || error.response.status === 409)
+      ) {
         await invalidateAssignedQuestions();
       }
     },
