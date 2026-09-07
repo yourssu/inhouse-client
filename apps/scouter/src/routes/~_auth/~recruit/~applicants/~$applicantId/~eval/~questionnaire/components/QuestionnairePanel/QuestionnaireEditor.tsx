@@ -23,13 +23,15 @@ import {
   interviewEvaluatorStatusesOption,
   myInterviewEvaluationOption,
 } from '@/apis/interviews/evaluations/query';
+import { saveAssignedQuestions } from '@/apis/interviews/questions';
 import {
   assignedQuestionsOption,
-  saveAssignedQuestionsMutationOptions,
+  interviewQuestionsQueryKeys,
 } from '@/apis/interviews/questions/query';
 import { FieldErrorMessage } from '@/components/FieldErrorMessage';
 import { Paper } from '@/components/Paper';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
+import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 import type { QuestionnaireSaveErrorCode } from '../../analytics';
@@ -68,6 +70,9 @@ export const QuestionnaireEditor = ({
 }: QuestionnaireEditorProps) => {
   const openAlertDialog = useAlertDialog();
   const queryClient = useQueryClient();
+  const { invalidate: invalidateAssignedQuestions } = useQueryInvalidation(
+    interviewQuestionsQueryKeys.applicant(applicantId),
+  );
   const trackQuestionnaireEvent = useQuestionnaireAnalytics();
   const toast = useToast();
   const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
@@ -100,7 +105,8 @@ export const QuestionnaireEditor = ({
     values: toQuestionnaireFormValues(assignedQuestions),
   });
   const { isPending, mutateWithToast } = useToastedMutation({
-    ...saveAssignedQuestionsMutationOptions,
+    mutationFn: saveAssignedQuestions,
+    onSuccess: () => invalidateAssignedQuestions(),
     successText: '질문지를 저장했어요.',
   });
   const disabledDescription = isQuestionnaireDisabled

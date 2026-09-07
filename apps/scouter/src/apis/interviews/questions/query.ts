@@ -1,13 +1,9 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import type { PartInterviewQuestionsParams } from '@/apis/interviews/questions/schema';
 
-import {
-  getAssignedQuestions,
-  getPartInterviewQuestions,
-  saveAssignedQuestions,
-} from '@/apis/interviews/questions';
+import { getAssignedQuestions, getPartInterviewQuestions } from '@/apis/interviews/questions';
 
 const qk = createQueryKeyNamespace('scouter');
 
@@ -28,12 +24,3 @@ export const partInterviewQuestionsOption = (params: PartInterviewQuestionsParam
     queryKey: interviewQuestionsQueryKeys.part(params),
     queryFn: () => getPartInterviewQuestions(params),
   });
-
-export const saveAssignedQuestionsMutationOptions = mutationOptions({
-  mutationFn: saveAssignedQuestions,
-  // 지원자의 질문지 조회 쿼리를 무효화
-  onSuccess: (_, { applicantId }, _onMutateResult, context) =>
-    context.client.invalidateQueries({
-      queryKey: interviewQuestionsQueryKeys.applicant(applicantId),
-    }),
-});
