@@ -38,23 +38,24 @@ export const Sidebar = ({ menu, profile }: SidebarProps) => {
   return (
     <header className="border-greyOpacity100 bg-background z-sticky sticky top-0 flex h-14 shrink-0 items-center border-b px-3">
       <SidebarPrimitive
-        contentProps={{ style: { width: 'min(328px, 100vw)' } }}
         label="주 메뉴"
         onOpenChange={pageLayout.onMobileSidebarOpenChange}
         open={pageLayout.isMobileSidebarOpen}
-        trigger={
+      >
+        <SidebarPrimitive.Trigger>
           <IconButton aria-label="메뉴 열기" size="md">
             <MdMenu className="text-2xl" />
           </IconButton>
-        }
-      >
-        <div className="flex size-full overflow-hidden">
-          <SidebarRail menu={menu} profile={profile} />
-          <div
-            className="min-w-0 flex-1"
-            ref={(container) => pageLayout.setMobileSidebarContainer(container)}
-          />
-        </div>
+        </SidebarPrimitive.Trigger>
+        <SidebarPrimitive.Content style={{ width: 'min(328px, 100vw)' }}>
+          <div className="flex size-full overflow-hidden">
+            <SidebarRail menu={menu} profile={profile} />
+            <div
+              className="min-w-0 flex-1"
+              ref={(container) => pageLayout.setMobileSidebarContainer(container)}
+            />
+          </div>
+        </SidebarPrimitive.Content>
       </SidebarPrimitive>
     </header>
   );
