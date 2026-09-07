@@ -1,3 +1,4 @@
+import { Divider } from '@yourssu-inhouse/interior';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
@@ -99,7 +100,7 @@ export const DocumentReview = ({
             className="-mx-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4"
             ref={scrollContainerRef}
           >
-            {answers.flatMap(({ sectionId }) => {
+            {answers.flatMap(({ sectionId }, index) => {
               if (sectionId === undefined) {
                 return [];
               }
@@ -112,6 +113,14 @@ export const DocumentReview = ({
                   key={sectionId}
                   ref={registerSectionRef(sectionId)}
                 >
+                  {(threads.length > 0 || openCommentSectionId === sectionId) && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-neutralMuted shrink-0 text-sm font-medium">
+                        {index + 1}번 문항
+                      </span>
+                      <Divider className="min-w-0 flex-1" />
+                    </div>
+                  )}
                   {openCommentSectionId === sectionId && (
                     <CommentField
                       applicantId={applicantId}
