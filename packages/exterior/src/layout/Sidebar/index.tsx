@@ -83,9 +83,9 @@ const SidebarRail = ({ menu = [], profile }: SidebarProps) => {
   };
 
   return (
-    <div className="bg-sidebarBackground sticky top-0 h-full">
-      <div className="flex h-full w-18 flex-col items-center justify-between px-0.5 pt-5.5 pb-5">
-        <div className="flex w-full flex-col items-center gap-4">
+    <div className="bg-sidebarBackground sticky top-0 h-full overflow-y-auto">
+      <div className="flex min-h-full w-18 flex-col items-center justify-between px-0.5 pt-5.5 pb-5">
+        <div className="flex w-full shrink-0 flex-col items-center gap-4">
           <IconButton
             aria-label={isMobileLayout ? '메뉴 닫기' : undefined}
             className="text-neutralDisabled text-2xl"
@@ -134,7 +134,7 @@ const SidebarRail = ({ menu = [], profile }: SidebarProps) => {
             return button;
           })}
         </div>
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex shrink-0 flex-col items-center gap-4">
           <IconButton
             aria-label={themeButtonContent[theme].tooltip}
             onClick={toggle}

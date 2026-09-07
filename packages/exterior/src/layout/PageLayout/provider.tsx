@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 
 import { PageLayoutContext } from './context';
 
-const mobileLayoutQuery = '(max-width: 767px)';
+const mobileLayoutQuery = '(width < 48rem)';
 
 const subscribeMobileLayout = (callback: () => void) => {
   const mediaQuery = window.matchMedia(mobileLayoutQuery);

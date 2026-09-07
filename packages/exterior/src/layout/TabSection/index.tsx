@@ -31,7 +31,7 @@ export const TabSection = ({ items, logo }: TabSectionProps) => {
   const showNotReadyToast = () => toast.default('아직 준비중인 기능이에요');
 
   const content = (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex min-h-full w-full flex-col">
       <div className="mb-7 px-4">{logo}</div>
 
       <div className="mb-7 px-4">
@@ -70,7 +70,7 @@ export const TabSection = ({ items, logo }: TabSectionProps) => {
     }
 
     return createPortal(
-      <div className="border-greyOpacity100 h-full min-w-0 flex-1 overflow-hidden border-r border-solid py-7">
+      <div className="border-greyOpacity100 h-full min-w-0 flex-1 overflow-y-auto border-r border-solid py-7">
         {content}
       </div>,
       pageLayout.mobileSidebarContainer,
