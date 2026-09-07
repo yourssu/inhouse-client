@@ -27,7 +27,7 @@ export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogP
   const mutation = useToastedMutation({
     mutationFn: patchApplicant,
     successText: '최종 서류 평가를 제출했어요.',
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: getApplicantDocumentsEvaluationsOption(applicantId).queryKey,
       });
