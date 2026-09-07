@@ -1,4 +1,4 @@
-import type { KeyboardEvent, ReactNode } from 'react';
+import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
@@ -65,12 +65,14 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     setIsEditing(true);
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = (e?: MouseEvent<HTMLButtonElement>) => {
+    e?.stopPropagation();
     setEditedContent(content);
     setIsEditing(false);
   };
 
-  const handleSubmitEdit = async () => {
+  const handleSubmitEdit = async (e?: MouseEvent<HTMLButtonElement>) => {
+    e?.stopPropagation();
     if (isUpdatePending) {
       return;
     }
@@ -169,8 +171,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
             autoFocus
             className="text-13 min-h-fit overflow-hidden p-0 pl-1"
             disabled={isUpdatePending}
-            onBlur={handleCancelEdit}
+            onBlur={() => handleCancelEdit()}
             onChange={(e) => setEditedContent(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
             onKeyDown={handleEditKeyDown}
             ref={editTextareaRef}
             rows={1}
