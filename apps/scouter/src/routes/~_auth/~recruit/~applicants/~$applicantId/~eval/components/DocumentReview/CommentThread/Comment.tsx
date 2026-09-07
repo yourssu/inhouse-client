@@ -164,7 +164,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
       comment={comment}
     >
       {isEditing ? (
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-0.5" onClick={(e) => e.stopPropagation()}>
           <MultilineTextField
             autoFocus
             className="text-13 min-h-fit overflow-hidden p-0 pl-1"
