@@ -43,9 +43,12 @@ export const FinalInterviewEvaluationDialog = ({
   const { isPending: isPassPending, mutateWithToast: passMutateWithToast } = useToastedMutation({
     errorText: '최종 면접 결과를 저장하지 못했어요.',
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'FINAL_ACCEPTED' } }),
-    onSettled: invalidate,
-    onSuccess: () => {
+    onError: async () => {
+      await invalidate();
+    },
+    onSuccess: async () => {
       trackDecisionComplete('FINAL_ACCEPTED');
+      await invalidate();
       close(true);
     },
     successText: '최종 면접 합격으로 결정했어요.',
@@ -54,9 +57,12 @@ export const FinalInterviewEvaluationDialog = ({
   const { isPending: isFailPending, mutateWithToast: failMutateWithToast } = useToastedMutation({
     errorText: '최종 면접 결과를 저장하지 못했어요.',
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'INTERVIEW_REJECTED' } }),
-    onSettled: invalidate,
-    onSuccess: () => {
+    onError: async () => {
+      await invalidate();
+    },
+    onSuccess: async () => {
       trackDecisionComplete('INTERVIEW_REJECTED');
+      await invalidate();
       close(true);
     },
     successText: '최종 면접 불합격으로 결정했어요.',
