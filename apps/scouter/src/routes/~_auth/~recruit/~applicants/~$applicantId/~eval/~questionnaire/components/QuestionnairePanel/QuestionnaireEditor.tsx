@@ -33,6 +33,7 @@ import { Paper } from '@/components/Paper';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { isKyHTTPError } from '@/utils/ky';
 
 import type { QuestionnaireSaveErrorCode } from '../../analytics';
 import type { QuestionnaireFormValues } from './questionnaireForm';
@@ -106,6 +107,11 @@ export const QuestionnaireEditor = ({
   });
   const { isPending, mutateWithToast } = useToastedMutation({
     mutationFn: saveAssignedQuestions,
+    onError: async (error) => {
+      if (isKyHTTPError(error) && error.response.status === 404) {
+        await invalidateAssignedQuestions();
+      }
+    },
     onSuccess: () => invalidateAssignedQuestions(),
     successText: '질문지를 저장했어요.',
   });
