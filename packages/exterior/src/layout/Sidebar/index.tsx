@@ -38,7 +38,6 @@ export const Sidebar = ({ menu, profile }: SidebarProps) => {
   return (
     <header className="border-greyOpacity100 bg-background z-sticky sticky top-0 flex h-14 shrink-0 items-center border-b px-3">
       <SidebarPrimitive
-        label="주 메뉴"
         onOpenChange={pageLayout.onMobileSidebarOpenChange}
         open={pageLayout.isMobileSidebarOpen}
       >
@@ -47,7 +46,7 @@ export const Sidebar = ({ menu, profile }: SidebarProps) => {
             <MdMenu className="text-2xl" />
           </IconButton>
         </SidebarPrimitive.Trigger>
-        <SidebarPrimitive.Content style={{ width: 'min(328px, 100vw)' }}>
+        <SidebarPrimitive.Content aria-label="주 메뉴" style={{ width: 'min(328px, 100vw)' }}>
           <div className="flex size-full overflow-hidden">
             <SidebarRail menu={menu} profile={profile} />
             <div

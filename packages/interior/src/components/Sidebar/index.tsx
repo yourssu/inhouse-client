@@ -1,13 +1,12 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import clsx from 'clsx';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { AnimatePresence, motion } from 'motion/react';
 import { createContext, use } from 'react';
 
 import * as styles from './Sidebar.css';
 
 export interface SidebarProps {
-  label: string;
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }
@@ -16,7 +15,6 @@ export type SidebarTriggerProps = React.ComponentProps<typeof DialogPrimitive.Tr
 export type SidebarContentProps = React.ComponentProps<typeof DialogPrimitive.Content>;
 
 interface SidebarContextValue {
-  label: string;
   open: boolean;
 }
 
@@ -36,8 +34,14 @@ const Trigger = ({ asChild = true, ...props }: SidebarTriggerProps) => {
   return <DialogPrimitive.Trigger {...props} asChild={asChild} />;
 };
 
-const Content = ({ children, className, ...props }: SidebarContentProps) => {
-  const { label, open } = useSidebarContext();
+const Content = ({
+  children,
+  className,
+  'aria-label': ariaLabel,
+  ...props
+}: SidebarContentProps) => {
+  const { open } = useSidebarContext();
+  const label = ariaLabel || '사이드바';
 
   return (
     <AnimatePresence>
@@ -47,7 +51,8 @@ const Content = ({ children, className, ...props }: SidebarContentProps) => {
           <DialogPrimitive.Content
             {...props}
             aria-describedby={props['aria-describedby']}
-            className={clsx(styles.content, className)}
+            aria-label={label}
+            className={cn(styles.content, className)}
           >
             <motion.div
               animate="open"
@@ -69,14 +74,9 @@ const Content = ({ children, className, ...props }: SidebarContentProps) => {
   );
 };
 
-const SidebarRoot = ({
-  children,
-  label,
-  onOpenChange,
-  open,
-}: React.PropsWithChildren<SidebarProps>) => {
+const SidebarRoot = ({ children, onOpenChange, open }: React.PropsWithChildren<SidebarProps>) => {
   return (
-    <SidebarContext.Provider value={{ label, open }}>
+    <SidebarContext.Provider value={{ open }}>
       <DialogPrimitive.Root onOpenChange={onOpenChange} open={open}>
         {children}
       </DialogPrimitive.Root>

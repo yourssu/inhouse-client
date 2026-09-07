@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 
-import clsx from 'clsx';
+import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 
 export interface PageContentProps {
   className?: string;
@@ -21,7 +21,7 @@ export const PageContent = ({
   return (
     <div className="flex min-h-0 min-w-0 flex-[1_1_0] md:min-h-screen">
       <div
-        className={clsx(
+        className={cn(
           'flex min-w-0 flex-[1_1_0] flex-col px-4 py-6 md:px-13 md:py-9',
           maxWidth !== 'full' && 'mx-auto',
           className,
