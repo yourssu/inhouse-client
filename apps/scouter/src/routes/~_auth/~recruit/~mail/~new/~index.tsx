@@ -22,6 +22,7 @@ import { applicantsOption } from '@/apis/applicants/query';
 import { mailsQueryKeys, mailTemplateDetailOption } from '@/apis/mails/query';
 import { activeMembersOption, meOption } from '@/apis/members/query';
 import { partsOption } from '@/apis/parts/query';
+import { semestersNowOption } from '@/apis/semesters/query';
 import { useTemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
 import { useSearchState } from '@/hooks/useSearchState';
 import { MailEditPaper } from '@/routes/~_auth/~recruit/~mail/~new/components/MailEditPaper';
@@ -55,10 +56,16 @@ const MailContent = ({
 
   const { data: parts } = useSuspenseQuery(partsOption());
   const { data: activeMembersRes } = useSuspenseQuery(activeMembersOption());
+  const { data: currentSemester } = useSuspenseQuery(semestersNowOption());
   const activeMembers = activeMembersRes.members;
 
   const selectedPart = parts.find((p) => p.partName === mailSelection.partName);
-  const { data: applicants } = useSuspenseQuery(applicantsOption({ partId: selectedPart?.partId }));
+  const { data: applicants } = useSuspenseQuery(
+    applicantsOption({
+      partId: selectedPart?.partId,
+      semesterId: currentSemester.semesterId,
+    }),
+  );
 
   const [receivers, setReceivers] = useState(applicants);
   const [bccMembers, setBccMembers] = useState(
