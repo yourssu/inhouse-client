@@ -43,8 +43,8 @@ export const FinalInterviewEvaluationDialog = ({
   const { isPending: isPassPending, mutateWithToast: passMutateWithToast } = useToastedMutation({
     errorText: '최종 면접 결과를 저장하지 못했어요.',
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'FINAL_ACCEPTED' } }),
-    onError: async () => {
-      await invalidate();
+    onError: () => {
+      invalidate();
     },
     onSuccess: async () => {
       trackDecisionComplete('FINAL_ACCEPTED');
