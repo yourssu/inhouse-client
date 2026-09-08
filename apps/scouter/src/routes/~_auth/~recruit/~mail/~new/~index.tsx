@@ -58,9 +58,7 @@ const MailContent = ({
   const activeMembers = activeMembersRes.members;
 
   const selectedPart = parts.find((p) => p.partName === mailSelection.partName);
-  const { data: applicants } = useSuspenseQuery(
-    applicantsOption({ partId: selectedPart?.partId, states: ['UNDER_REVIEW'] }),
-  );
+  const { data: applicants } = useSuspenseQuery(applicantsOption({ partId: selectedPart?.partId }));
 
   const [receivers, setReceivers] = useState(applicants);
   const [bccMembers, setBccMembers] = useState(
