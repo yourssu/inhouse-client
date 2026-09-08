@@ -34,14 +34,8 @@ const Trigger = ({ asChild = true, ...props }: SidebarTriggerProps) => {
   return <DialogPrimitive.Trigger {...props} asChild={asChild} />;
 };
 
-const Content = ({
-  children,
-  className,
-  'aria-label': ariaLabel,
-  ...props
-}: SidebarContentProps) => {
+const Content = ({ children, className, ...props }: SidebarContentProps) => {
   const { open } = useSidebarContext();
-  const label = ariaLabel || '사이드바';
 
   return (
     <AnimatePresence>
@@ -51,7 +45,6 @@ const Content = ({
           <DialogPrimitive.Content
             {...props}
             aria-describedby={props['aria-describedby']}
-            aria-label={label}
             className={cn(styles.content, className)}
           >
             <motion.div
@@ -63,7 +56,7 @@ const Content = ({
               variants={{ closed: { x: '-100%' }, open: { x: 0 } }}
             >
               <VisuallyHidden>
-                <DialogPrimitive.Title>{label}</DialogPrimitive.Title>
+                <DialogPrimitive.Title>사이드바</DialogPrimitive.Title>
               </VisuallyHidden>
               {children}
             </motion.div>

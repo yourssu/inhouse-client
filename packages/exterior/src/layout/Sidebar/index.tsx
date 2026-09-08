@@ -46,7 +46,7 @@ export const Sidebar = ({ menu, profile }: SidebarProps) => {
             <MdMenu className="text-2xl" />
           </IconButton>
         </SidebarPrimitive.Trigger>
-        <SidebarPrimitive.Content aria-label="주 메뉴" style={{ width: 'min(328px, 100vw)' }}>
+        <SidebarPrimitive.Content style={{ width: 'min(328px, 100vw)' }}>
           <div className="flex size-full overflow-hidden">
             <SidebarRail menu={menu} profile={profile} />
             <div
