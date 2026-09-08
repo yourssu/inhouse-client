@@ -1,6 +1,6 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { createContext, use } from 'react';
 
@@ -45,7 +45,7 @@ const Content = ({ children, className, ...props }: SidebarContentProps) => {
           <DialogPrimitive.Content
             {...props}
             aria-describedby={props['aria-describedby']}
-            className={cn(styles.content, className)}
+            className={clsx(styles.content, className)}
           >
             <motion.div
               animate="open"
