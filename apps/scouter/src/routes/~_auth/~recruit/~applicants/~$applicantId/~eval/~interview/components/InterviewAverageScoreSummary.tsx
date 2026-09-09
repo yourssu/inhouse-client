@@ -20,7 +20,12 @@ export const InterviewAverageScoreSummary = ({
           'text-violet500 text-base font-semibold': !isAverageScorePending,
         })}
       >
-        {isAverageScorePending ? '집계 전' : `${interviewAverageScore} / 100`}
+        {isAverageScorePending
+          ? '집계 전'
+          : `${interviewAverageScore.toLocaleString('ko-KR', {
+              maximumFractionDigits: 2,
+              roundingMode: 'trunc',
+            })} / 100`}
       </dd>
     </dl>
   );
