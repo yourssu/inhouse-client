@@ -20,7 +20,12 @@ export const DocumentAverageScoreSummary = ({
           'text-violet500 text-base font-semibold': !isAverageScorePending,
         })}
       >
-        {isAverageScorePending ? '집계 전' : `${documentAverageScore} / 100`}
+        {isAverageScorePending
+          ? '집계 전'
+          : `${documentAverageScore.toLocaleString('ko-KR', {
+              maximumFractionDigits: 2,
+              roundingMode: 'trunc',
+            })} / 100`}
       </dd>
     </dl>
   );
