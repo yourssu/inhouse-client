@@ -26,7 +26,6 @@ import {
 } from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { partNameKo } from '@/types/parts';
 import { handleError } from '@/utils/error';
-import { isKyHTTPError } from '@/utils/ky';
 
 const SaveDialogContent = ({
   applicants,
@@ -101,14 +100,21 @@ const SaveDialogContent = ({
           await invalidateSchedules();
         })(),
       );
-    } catch (error) {
-      if (isKyHTTPError(error) && error.response.status === 409) {
+    } catch (e) {
+      const { error, type, message } = handleError(e);
+
+      if (type !== 'KyHTTPError') {
+        toast.error(message);
+        return;
+      }
+
+      if (error.response.status === 409) {
         await invalidateSchedules();
         toast.error('다른 일정과 충돌했을 수 있어요. 최신 일정을 확인해 주세요.');
-      } else {
-        const { message } = handleError(error);
-        toast.error(typeof message === 'string' ? message : await message());
+        return;
       }
+
+      toast.error(await message());
       return;
     }
     closeAsTrue();
