@@ -21,9 +21,9 @@ export const InterviewQuestionContent = ({ question }: InterviewQuestionContentP
       </div>
       <Divider />
       <div className="flex flex-col gap-2 p-6">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {requirements.map(({ id, content: requirement }) => (
-            <Badge color="violet" key={id} size="sm">
+            <Badge className="shrink-0 whitespace-nowrap" color="violet" key={id} size="sm">
               {requirement}
             </Badge>
           ))}

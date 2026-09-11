@@ -1,4 +1,4 @@
-import { Badge, Divider } from '@yourssu-inhouse/interior';
+import { Badge, Divider, HoverTooltip } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { groupBy } from 'es-toolkit';
 import { Fragment } from 'react';
@@ -112,20 +112,28 @@ const InterviewQuestion = ({ isSelected, onClickQuestion, question }: InterviewQ
       onClick={onClickQuestion}
       type="button"
     >
-      <div className="flex items-center gap-2">
+      <div className="flex w-full min-w-0 flex-col items-start gap-2">
         <span
           className={clsx(
-            'text-14 font-semibold',
+            'text-14 shrink-0 font-semibold whitespace-nowrap',
             isSelected ? 'text-violet600' : 'text-neutralMuted',
           )}
         >
           {assignedMemberName}
         </span>
-        {requirements.map(({ content: requirementContent, id: requirementId }) => (
-          <Badge color="violet" key={requirementId} size="sm">
-            {requirementContent}
-          </Badge>
-        ))}
+        {requirements.length > 0 && (
+          <div className="flex w-full flex-wrap gap-1.5">
+            {requirements.map(({ content: requirementContent, id: requirementId }) => (
+              <HoverTooltip content={requirementContent} key={requirementId}>
+                <div className="max-w-20 shrink-0">
+                  <Badge className="max-w-full" color="violet" size="sm">
+                    <span className="min-w-0 truncate">{requirementContent}</span>
+                  </Badge>
+                </div>
+              </HoverTooltip>
+            ))}
+          </div>
+        )}
       </div>
       <span className="text-neutral text-15 font-medium">{content}</span>
     </button>
