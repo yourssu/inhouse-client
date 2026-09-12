@@ -45,11 +45,11 @@ const SaveDialogContent = ({
   const [isLoading, startLoading] = useLoading();
   const queryClient = useQueryClient();
   const toast = useToast();
-  const { invalidate: invalidateSchedules } = useQueryInvalidation(interviewSchedulesQueryKey);
   const { mutateAsync: mutatePutPartSchedules } = useMutation({
     mutationFn: (schedules: CreateScheduleRequestType[]) =>
       putInterviewSchedulesByPart(selectedPart.partId, schedules),
   });
+  const { invalidate: invalidateSchedules } = useQueryInvalidation(interviewSchedulesQueryKey);
   const trackScheduleEvent = useScheduleAnalytics();
 
   const onSubmit = async () => {
@@ -101,21 +101,9 @@ const SaveDialogContent = ({
         })(),
       );
     } catch (e) {
-      const { error, type, message } = handleError(e);
-
-      if (type !== 'KyHTTPError') {
-        toast.error(message);
-        return;
-      }
-
-      if (error.response.status === 409) {
-        await invalidateSchedules();
-        toast.error('다른 일정과 충돌했을 수 있어요. 최신 일정을 확인해 주세요.');
-        return;
-      }
-
-      toast.error(await message());
-      return;
+      const { message } = handleError(e);
+      toast.error(typeof message === 'string' ? message : await message());
+      throw e;
     }
     closeAsTrue();
   };
