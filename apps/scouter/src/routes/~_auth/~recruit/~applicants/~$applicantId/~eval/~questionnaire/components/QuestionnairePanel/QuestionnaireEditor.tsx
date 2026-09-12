@@ -108,14 +108,10 @@ export const QuestionnaireEditor = ({
   const { isPending, mutateWithToast } = useToastedMutation({
     mutationFn: saveAssignedQuestions,
     onError: async (error) => {
-      if (
-        isKyHTTPError(error) &&
-        (error.response.status === 404 || error.response.status === 409)
-      ) {
+      if (isKyHTTPError(error) && error.response.status === 404) {
         await invalidateAssignedQuestions();
       }
     },
-    onSuccess: () => invalidateAssignedQuestions(),
     successText: '질문지를 저장했어요.',
   });
   const disabledDescription = isQuestionnaireDisabled
