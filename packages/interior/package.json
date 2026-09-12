@@ -39,6 +39,7 @@
     "@vanilla-extract/recipes": "^0.5.7",
     "@yourssu-inhouse/inhouse-react": "workspace:*",
     "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@yourssu-inhouse/interior-tailwind": "workspace:*",
     "@yourssu-inhouse/interior-vars": "workspace:*",
     "@yourssu-inhouse/resources": "workspace:*",
     "clsx": "^2.1.1",
