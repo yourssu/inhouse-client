@@ -13,6 +13,8 @@ const qk = createQueryKeyNamespace('scouter');
 
 export const applicantsQueryKeys = {
   all: () => qk.for('applicants'),
+  detail: (applicantId: number) => qk.for('applicants', applicantId),
+  lists: () => qk.for('applicants', 'list'),
   list: (params?: GetApplicantsParams) => qk.for('applicants', 'list', params),
 };
 
@@ -24,7 +26,7 @@ export const applicantsOption = (params?: GetApplicantsParams) =>
 
 export const applicantByIdOption = (applicantId: number) =>
   queryOptions({
-    queryKey: qk.for('applicants', applicantId),
+    queryKey: applicantsQueryKeys.detail(applicantId),
     queryFn: () => getApplicantById(applicantId),
   });
 

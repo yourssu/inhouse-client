@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Dialog } from '@yourssu-inhouse/interior';
 import { IoMdAlert } from 'react-icons/io';
 
@@ -5,7 +6,6 @@ import type { InterviewEvaluatorStatus } from '@/apis/interviews/evaluations/sch
 
 import { patchApplicant } from '@/apis/applicants';
 import { applicantsQueryKeys } from '@/apis/applicants/query';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import {
   type InterviewFinalDecisionResult,
@@ -29,8 +29,17 @@ export const FinalInterviewEvaluationDialog = ({
   submittedEvaluatorCount,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationDialogProps) => {
+  const queryClient = useQueryClient();
   const trackInterviewEvent = useInterviewAnalytics();
-  const { invalidate } = useQueryInvalidation(applicantsQueryKeys.all());
+
+  const invalidateApplicants = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: applicantsQueryKeys.lists() }),
+      queryClient.invalidateQueries({
+        exact: true,
+        queryKey: applicantsQueryKeys.detail(applicantId),
+      }),
+    ]);
 
   const trackDecisionComplete = (decisionResult: InterviewFinalDecisionResult) => {
     trackInterviewEvent('interview_final_decision_complete', {
@@ -43,9 +52,12 @@ export const FinalInterviewEvaluationDialog = ({
   const { isPending: isPassPending, mutateWithToast: passMutateWithToast } = useToastedMutation({
     errorText: '최종 면접 결과를 저장하지 못했어요.',
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'FINAL_ACCEPTED' } }),
+    onError: () => {
+      invalidateApplicants();
+    },
     onSuccess: async () => {
       trackDecisionComplete('FINAL_ACCEPTED');
-      await invalidate();
+      await invalidateApplicants();
       close(true);
     },
     successText: '최종 면접 합격으로 결정했어요.',
@@ -54,9 +66,12 @@ export const FinalInterviewEvaluationDialog = ({
   const { isPending: isFailPending, mutateWithToast: failMutateWithToast } = useToastedMutation({
     errorText: '최종 면접 결과를 저장하지 못했어요.',
     mutationFn: () => patchApplicant({ applicantId, data: { state: 'INTERVIEW_REJECTED' } }),
+    onError: () => {
+      invalidateApplicants();
+    },
     onSuccess: async () => {
       trackDecisionComplete('INTERVIEW_REJECTED');
-      await invalidate();
+      await invalidateApplicants();
       close(true);
     },
     successText: '최종 면접 불합격으로 결정했어요.',
