@@ -28,7 +28,7 @@ export const InterviewQuestionContent = ({ question }: InterviewQuestionContentP
             </Badge>
           ))}
         </div>
-        <span className="text-neutral font-medium">{content}</span>
+        <span className="text-neutral font-medium whitespace-pre-wrap">{content}</span>
         <span className="text-neutralMuted text-15">
           질문자: <span className="text-violet600">{assignedMemberName}</span>
         </span>
