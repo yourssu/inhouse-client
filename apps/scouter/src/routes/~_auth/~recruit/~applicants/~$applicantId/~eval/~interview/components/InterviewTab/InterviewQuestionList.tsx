@@ -135,7 +135,7 @@ const InterviewQuestion = ({ isSelected, onClickQuestion, question }: InterviewQ
           </div>
         )}
       </div>
-      <span className="text-neutral text-15 font-medium">{content}</span>
+      <span className="text-neutral text-15 font-medium whitespace-pre-wrap">{content}</span>
     </button>
   );
 };
