@@ -16,14 +16,14 @@ shell·remote 등록, plugin manifest, route graft, preview, shared dependency, 
 | 계약                                             | 단일 출처                                                     |
 | ------------------------------------------------ | ------------------------------------------------------------- |
 | remote id·dev port·plugin source·shell CSS entry | `mfa.config.ts`                                               |
-| shell과 remote의 federation 설정                 | `packages/mfa-vite/src/plugin.ts`                             |
-| remote entry 파일명·plugin 기본 경로             | `packages/mfa-vite/src/config.ts`                             |
-| shared·singleton dependency 정책                 | `packages/mfa-vite/src/shared.ts`                             |
-| remote load retry 정책                           | `packages/mfa-vite/src/retryPlugin.ts`                        |
-| 고정 plugin expose key                           | `packages/mfa-core/src/config.ts`                             |
+| shell과 remote의 federation 설정                 | `packages/@inhouse-mfa/vite/src/plugin.ts`                             |
+| remote entry 파일명·plugin 기본 경로             | `packages/@inhouse-mfa/vite/src/config.ts`                             |
+| shared·singleton dependency 정책                 | `packages/@inhouse-mfa/vite/src/shared.ts`                             |
+| remote load retry 정책                           | `packages/@inhouse-mfa/vite/src/retryPlugin.ts`                        |
+| 고정 plugin expose key                           | `packages/@inhouse-mfa/core/src/config.ts`                             |
 | shell build 선행 remote                          | `turbo.json`의 `@yourssu-inhouse/shell#build.dependsOn`       |
 | remote route·lifecycle manifest                  | `apps/<remote>/src/plugin.ts`                                 |
-| runtime load·graft·실패 격리                     | `packages/mfa-shell/src/`                                     |
+| runtime load·graft·실패 격리                     | `packages/@inhouse-mfa/shell/src/`                                     |
 | shell이 조합할 runtime spec                      | `mfa.config.ts`에서 파생된 `apps/shell/src/plugins.config.ts` |
 
 포트, remote 목록, retry 횟수와 구체적인 shared 버전은 바뀔 수 있으므로 위 구현을 확인하고 문서의 숫자를 기억해 사용하지 않는다.
@@ -63,7 +63,7 @@ remote별로 routeTree를 직접 탐색하거나 `AnyRoute` 단언과 검증 로
 
 ## Shared dependency
 
-- `packages/mfa-vite/src/shared.ts`가 shell과 모든 remote의 shared 정책 단일 출처다.
+- `packages/@inhouse-mfa/vite/src/shared.ts`가 shell과 모든 remote의 shared 정책 단일 출처다.
 - React, React DOM, TanStack Router, TanStack Query와 Context·store를 소유하는 패키지는 plugin 경계에서 인스턴스가 달라지지 않도록 singleton을 유지한다.
 - 공개 subpath가 별도 모듈 인스턴스를 만들 수 있으면 필요한 subpath도 shared에 포함한다.
 - 앱별 Vite config에 shared 설정을 덧붙여 우회하지 않는다.

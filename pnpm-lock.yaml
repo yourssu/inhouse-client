@@ -38,12 +38,12 @@ importers:
 
   .:
     devDependencies:
+      '@inhouse-mfa/vite':
+        specifier: workspace:*
+        version: link:packages/@inhouse-mfa/vite
       '@types/node':
         specifier: ^24.13.0
         version: 24.13.2
-      '@yourssu-inhouse/mfa-vite':
-        specifier: workspace:*
-        version: link:packages/mfa-vite
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:packages/typescript-config
@@ -162,6 +162,12 @@ importers:
 
   apps/member:
     dependencies:
+      '@inhouse-mfa/core':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/core
+      '@inhouse-mfa/shell':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/shell
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth
@@ -198,12 +204,6 @@ importers:
       '@yourssu-inhouse/exterior':
         specifier: workspace:*
         version: link:../../packages/exterior
-      '@yourssu-inhouse/mfa-core':
-        specifier: workspace:*
-        version: link:../../packages/mfa-core
-      '@yourssu-inhouse/mfa-shell':
-        specifier: workspace:*
-        version: link:../../packages/mfa-shell
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -250,6 +250,9 @@ importers:
       '@babel/core':
         specifier: ^7.29.0
         version: 7.29.7
+      '@inhouse-mfa/vite':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/vite
       '@module-federation/runtime':
         specifier: ^2.9.0
         version: 2.9.0
@@ -283,9 +286,6 @@ importers:
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@yourssu-inhouse/mfa-vite':
-        specifier: workspace:*
-        version: link:../../packages/mfa-vite
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -316,6 +316,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.82.0(react@19.2.7))
+      '@inhouse-mfa/core':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/core
+      '@inhouse-mfa/shell':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/shell
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth
@@ -412,12 +418,6 @@ importers:
       '@yourssu-inhouse/exterior':
         specifier: workspace:*
         version: link:../../packages/exterior
-      '@yourssu-inhouse/mfa-core':
-        specifier: workspace:*
-        version: link:../../packages/mfa-core
-      '@yourssu-inhouse/mfa-shell':
-        specifier: workspace:*
-        version: link:../../packages/mfa-shell
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -491,6 +491,9 @@ importers:
       '@babel/core':
         specifier: ^7.29.0
         version: 7.29.7
+      '@inhouse-mfa/vite':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/vite
       '@module-federation/runtime':
         specifier: ^2.9.0
         version: 2.9.0
@@ -521,9 +524,6 @@ importers:
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@yourssu-inhouse/mfa-vite':
-        specifier: workspace:*
-        version: link:../../packages/mfa-vite
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -566,6 +566,9 @@ importers:
 
   apps/shell:
     dependencies:
+      '@inhouse-mfa/shell':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/shell
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth
@@ -593,9 +596,6 @@ importers:
       '@yourssu-inhouse/exterior':
         specifier: workspace:*
         version: link:../../packages/exterior
-      '@yourssu-inhouse/mfa-shell':
-        specifier: workspace:*
-        version: link:../../packages/mfa-shell
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -630,6 +630,9 @@ importers:
       '@babel/core':
         specifier: ^7.29.0
         version: 7.29.7
+      '@inhouse-mfa/vite':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/vite
       '@module-federation/runtime':
         specifier: ^2.9.0
         version: 2.9.0
@@ -663,9 +666,6 @@ importers:
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@yourssu-inhouse/mfa-vite':
-        specifier: workspace:*
-        version: link:../../packages/mfa-vite
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -690,6 +690,131 @@ importers:
       vite-tsconfig-paths:
         specifier: ^6.1.1
         version: 6.1.1(typescript@6.0.3)(vite@8.2.2(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+
+  packages/@inhouse-mfa/core:
+    devDependencies:
+      '@tanstack/react-router':
+        specifier: 'catalog:'
+        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      msw:
+        specifier: ^2.14.6
+        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+      tsdown:
+        specifier: ^0.22.14
+        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/@inhouse-mfa/shell:
+    dependencies:
+      '@inhouse-mfa/core':
+        specifier: workspace:*
+        version: link:../core
+      '@inhouse/auth':
+        specifier: workspace:*
+        version: link:../../@inhouse/auth
+      '@yourssu-inhouse/exterior':
+        specifier: workspace:*
+        version: link:../../exterior
+    devDependencies:
+      '@module-federation/runtime':
+        specifier: ^2.9.0
+        version: 2.9.0
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.101.0(react@19.2.7)
+      '@tanstack/react-router':
+        specifier: 'catalog:'
+        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      msw:
+        specifier: ^2.14.6
+        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/@inhouse-mfa/vite:
+    dependencies:
+      '@inhouse-mfa/core':
+        specifier: workspace:*
+        version: link:../core
+      '@module-federation/retry-plugin':
+        specifier: ^2.9.0
+        version: 2.9.0(@module-federation/runtime@2.9.0)
+    devDependencies:
+      '@module-federation/vite':
+        specifier: ^1.20.8
+        version: 1.20.8(typescript@6.0.3)(vite@8.2.2(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+      tsdown:
+        specifier: ^0.22.14
+        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vite:
+        specifier: ^8.2.2
+        version: 8.2.2(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
 
   packages/@inhouse/auth:
     dependencies:
@@ -1116,131 +1241,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
-
-  packages/mfa-core:
-    devDependencies:
-      '@tanstack/react-router':
-        specifier: 'catalog:'
-        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@types/node':
-        specifier: ^24.13.0
-        version: 24.13.2
-      '@types/react':
-        specifier: ^19.2.14
-        version: 19.2.17
-      '@yourssu-inhouse/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@yourssu-inhouse/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      eslint:
-        specifier: 'catalog:'
-        version: 10.4.1(jiti@2.7.0)
-      msw:
-        specifier: ^2.14.6
-        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
-      prettier:
-        specifier: ^3.9.6
-        version: 3.9.6
-      tsdown:
-        specifier: ^0.22.14
-        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-
-  packages/mfa-shell:
-    dependencies:
-      '@inhouse/auth':
-        specifier: workspace:*
-        version: link:../@inhouse/auth
-      '@yourssu-inhouse/exterior':
-        specifier: workspace:*
-        version: link:../exterior
-      '@yourssu-inhouse/mfa-core':
-        specifier: workspace:*
-        version: link:../mfa-core
-    devDependencies:
-      '@module-federation/runtime':
-        specifier: ^2.9.0
-        version: 2.9.0
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.101.0(react@19.2.7)
-      '@tanstack/react-router':
-        specifier: 'catalog:'
-        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@types/node':
-        specifier: ^24.13.0
-        version: 24.13.2
-      '@types/react':
-        specifier: ^19.2.14
-        version: 19.2.17
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.17)
-      '@yourssu-inhouse/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@yourssu-inhouse/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      eslint:
-        specifier: 'catalog:'
-        version: 10.4.1(jiti@2.7.0)
-      msw:
-        specifier: ^2.14.6
-        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
-      prettier:
-        specifier: ^3.9.6
-        version: 3.9.6
-      react:
-        specifier: 'catalog:'
-        version: 19.2.7
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.7(react@19.2.7)
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-
-  packages/mfa-vite:
-    dependencies:
-      '@module-federation/retry-plugin':
-        specifier: ^2.9.0
-        version: 2.9.0(@module-federation/runtime@2.9.0)
-      '@yourssu-inhouse/mfa-core':
-        specifier: workspace:*
-        version: link:../mfa-core
-    devDependencies:
-      '@module-federation/vite':
-        specifier: ^1.20.8
-        version: 1.20.8(typescript@6.0.3)(vite@8.2.2(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@types/node':
-        specifier: ^24.13.0
-        version: 24.13.2
-      '@yourssu-inhouse/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@yourssu-inhouse/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      eslint:
-        specifier: 'catalog:'
-        version: 10.4.1(jiti@2.7.0)
-      prettier:
-        specifier: ^3.9.6
-        version: 3.9.6
-      tsdown:
-        specifier: ^0.22.14
-        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-      vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
 
   packages/typescript-config: {}
 

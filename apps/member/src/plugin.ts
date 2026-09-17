@@ -1,4 +1,4 @@
-import { defineRemotePlugin, type RemotePlugin } from '@yourssu-inhouse/mfa-core';
+import { defineRemotePlugin, type RemotePlugin } from '@inhouse-mfa/core';
 
 import { routeTree } from '@/routeTree.gen';
 
