@@ -16,7 +16,7 @@ export default defineConfig({
       '@module-federation/retry-plugin',
       '@module-federation/vite',
       'vite',
-      '@yourssu-inhouse/mfa-core',
+      '@inhouse-mfa/core',
     ],
   },
 });

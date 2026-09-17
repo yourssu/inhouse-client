@@ -1,10 +1,6 @@
 import type { AnyRoute } from '@tanstack/react-router';
 
-import {
-  findPluginEntryRoute,
-  type RemotePlugin,
-  type RouteRegistry,
-} from '@yourssu-inhouse/mfa-core';
+import { findPluginEntryRoute, type RemotePlugin, type RouteRegistry } from '@inhouse-mfa/core';
 
 export const graftPlugin = (
   hostEntry: AnyRoute,

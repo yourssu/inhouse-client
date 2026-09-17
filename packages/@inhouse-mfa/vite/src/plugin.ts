@@ -1,7 +1,7 @@
 import type { PluginOption } from 'vite';
 
+import { PLUGIN_EXPOSE_KEY } from '@inhouse-mfa/core';
 import { federation, type ModuleFederationOptions } from '@module-federation/vite';
-import { PLUGIN_EXPOSE_KEY } from '@yourssu-inhouse/mfa-core';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -104,7 +104,7 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
     federation({
       name: SHELL_FEDERATION_NAME,
       remotes,
-      runtimePlugins: ['@yourssu-inhouse/mfa-vite/retry-plugin'],
+      runtimePlugins: ['@inhouse-mfa/vite/retry-plugin'],
       shared: buildFederationShared(),
       dev: { remoteHmr: true },
       ...federationOptions,
