@@ -1,5 +1,5 @@
+import { ThemeProvider, ToastProvider } from '@interior/react';
 import { type QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider, ToastProvider } from '@yourssu-inhouse/interior';
 import { type ReactNode, StrictMode } from 'react';
 
 export interface AppProvidersProps {

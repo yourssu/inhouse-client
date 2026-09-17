@@ -1,5 +1,5 @@
+import { InlineButton } from '@interior/react';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { InlineButton } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { differenceInMinutes } from 'date-fns';
 import { useState } from 'react';

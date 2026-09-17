@@ -28,9 +28,9 @@
 | 앱 shell 레이아웃·부트스트랩·route overlay cleanup | `@yourssu-inhouse/exterior`            |
 | 범용 React hook                                    | `@yourssu-inhouse/inhouse-react/hooks` |
 | 날짜·타입·객체·ky·query key namespace 범용 유틸    | `@yourssu-inhouse/inhouse-utils/*`     |
-| Button·Dialog·Table·Toast 등 UI primitive          | `@yourssu-inhouse/interior`            |
-| Tailwind plugin·`cn`·`tv`                          | `@yourssu-inhouse/interior-tailwind`   |
-| 디자인 토큰 원천                                   | `@yourssu-inhouse/interior-vars`       |
+| Button·Dialog·Table·Toast 등 UI primitive          | `@interior/react`            |
+| Tailwind plugin·`cn`·`tv`                          | `@interior/tailwind`   |
+| 디자인 토큰 원천                                   | `@interior/vars`       |
 | Module Federation plugin·route 계약                | `@yourssu-inhouse/mfa-core`            |
 | shell·remote preview·plugin lifecycle 런타임       | `@yourssu-inhouse/mfa-shell`           |
 | Vite Module Federation 설정·shared·retry 정책      | `@yourssu-inhouse/mfa-vite`            |

@@ -1,4 +1,4 @@
-import { Combobox } from '@yourssu-inhouse/interior';
+import { Combobox } from '@interior/react';
 import clsx from 'clsx';
 import { useState } from 'react';
 

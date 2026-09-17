@@ -6,9 +6,9 @@ Tailwind CSS, 디자인 토큰, `cn`·`clsx`·`tv`, 공용 UI primitive, 아이�
 
 ## 필수 규칙
 
-- 공용 UI primitive가 필요하면 `@yourssu-inhouse/interior`를 먼저 확인한다.
-- 앱 코드에서 새 색상·그림자·radius를 임의의 Hex·RGB 값으로 추가하지 않는다. `interior-vars`와 프로젝트 semantic token을 사용한다.
-- 외부에서 받은 `className`과 기본 Tailwind class를 합칠 때는 `@yourssu-inhouse/interior-tailwind/utils`의 `cn`을 사용한다.
+- 공용 UI primitive가 필요하면 `@interior/react`를 먼저 확인한다.
+- 앱 코드에서 새 색상·그림자·radius를 임의의 Hex·RGB 값으로 추가하지 않는다. `@interior/vars`와 프로젝트 semantic token을 사용한다.
+- 외부에서 받은 `className`과 기본 Tailwind class를 합칠 때는 `@interior/tailwind/utils`의 `cn`을 사용한다.
 - `overlay-kit`을 사용하는 Dialog는 `isOpen`과 `close` 계약을 지키고 취소·외부 닫기·성공 결과를 구분한다.
 - mutation을 실행하는 Dialog는 중복 제출을 막고 loading·성공·실패 상태를 사용자에게 보여준다.
 
@@ -18,20 +18,20 @@ Tailwind CSS, 디자인 토큰, `cn`·`clsx`·`tv`, 공용 UI primitive, 아이�
 - 외부 `className` 병합이나 충돌 해결이 필요하면 `cn`을 사용한다.
 - 크기·색상·상태처럼 이름 있는 variant 조합이 반복되면 `tv`를 사용한다.
 - boolean 한 개의 짧은 분기나 한 번만 쓰는 class 조합까지 `tv`로 감싸지 않는다.
-- JavaScript에서 토큰 값이 필요하면 `interior-vars`의 공개 값이나 CSS variable을 사용한다.
+- JavaScript에서 토큰 값이 필요하면 `@interior/vars`의 공개 값이나 CSS variable을 사용한다.
 
 ## 디자인 시스템 경계
 
-- 토큰 원천: `@yourssu-inhouse/interior-vars`
-- Tailwind v4 매핑과 `cn`·`tv`: `@yourssu-inhouse/interior-tailwind`
-- Button, Dialog, Table, Toast 등 UI primitive: `@yourssu-inhouse/interior`
+- 토큰 원천: `@interior/vars`
+- Tailwind v4 매핑과 `cn`·`tv`: `@interior/tailwind`
+- Button, Dialog, Table, Toast 등 UI primitive: `@interior/react`
 - 앱의 `src/components`: 앱 도메인에 특화된 합성 컴포넌트
 
 토큰명, dark variant, CSS 배포 방식은 변경될 수 있으므로 다음 구현을 확인한다.
 
-- `packages/interior-vars/src/`
-- `packages/interior-tailwind/src/`
-- `packages/interior/src/`
+- `packages/@interior/vars/src/`
+- `packages/@interior/tailwind/src/`
+- `packages/@interior/react/src/`
 - `apps/*/src/styles/index.css`
 
 ## 오버레이 선택 기준

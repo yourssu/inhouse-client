@@ -1,4 +1,4 @@
-import { Divider } from '@yourssu-inhouse/interior';
+import { Divider } from '@interior/react';
 
 import type { InterviewScriptTypes } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/components/InterviewTab/introScript';
 

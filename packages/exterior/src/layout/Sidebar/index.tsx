@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { IconButton, type ThemeType, useTheme, useToast } from '@interior/react';
 import { type LinkProps } from '@tanstack/react-router';
-import { IconButton, type ThemeType, useTheme, useToast } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
 import { IoMdMoon } from 'react-icons/io';
 import { MdKeyboardDoubleArrowLeft, MdSunny } from 'react-icons/md';

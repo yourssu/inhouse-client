@@ -1,9 +1,9 @@
 import type { ChangeEvent } from 'react';
 
-import { DatePicker } from '@yourssu-inhouse/interior';
-import { Fieldset } from '@yourssu-inhouse/interior';
-import { Select } from '@yourssu-inhouse/interior';
-import { TextField } from '@yourssu-inhouse/interior';
+import { DatePicker } from '@interior/react';
+import { Fieldset } from '@interior/react';
+import { Select } from '@interior/react';
+import { TextField } from '@interior/react';
 import { josa } from 'es-hangul';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { cn } from '@interior/tailwind/utils';
 
 import { AttachmentUploadButton } from '@/components/MailEditor/components/AttachmentUploadButton';
 import { ContentEditor } from '@/components/MailEditor/components/ContentEditor';

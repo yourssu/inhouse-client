@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Badge, Button, Dialog, Divider, useToast } from '@interior/react';
+import { cn } from '@interior/tailwind/utils';
 import { useQueryClient, useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
-import { Badge, Button, Dialog, Divider, useToast } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { Suspense } from 'react';
 import {
   Controller,

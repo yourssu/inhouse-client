@@ -1,7 +1,7 @@
 import type { Key, ReactNode } from 'react';
 
+import { Badge, Button } from '@interior/react';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { Badge, Button } from '@yourssu-inhouse/interior';
 import { MdAdd, MdKeyboardArrowDown } from 'react-icons/md';
 
 interface QuestionSectionProps<TQuestion extends { id: Key }> {

@@ -1,8 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as Collapsible from '@radix-ui/react-collapsible';
-import { useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
-import { useParams } from '@tanstack/react-router';
-import { Lottie } from '@toss/lottie';
 import {
   Badge,
   Button,
@@ -11,7 +7,11 @@ import {
   MultilineTextField,
   Result,
   Select,
-} from '@yourssu-inhouse/interior';
+} from '@interior/react';
+import * as Collapsible from '@radix-ui/react-collapsible';
+import { useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
+import { Lottie } from '@toss/lottie';
 import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { useState } from 'react';

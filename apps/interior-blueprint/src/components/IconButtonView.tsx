@@ -1,4 +1,4 @@
-import { IconButton } from '@yourssu-inhouse/interior';
+import { IconButton } from '@interior/react';
 import { MdAdd } from 'react-icons/md';
 
 export const IconButtonView = () => {

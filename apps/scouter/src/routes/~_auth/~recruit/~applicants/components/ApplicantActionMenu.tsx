@@ -1,5 +1,5 @@
+import { IconButton, Menu } from '@interior/react';
 import { useNavigate } from '@tanstack/react-router';
-import { IconButton, Menu } from '@yourssu-inhouse/interior';
 import { MdMoreVert } from 'react-icons/md';
 
 import type { ApplicantStateType, ApplicantType } from '@/apis/applicants/schema';
