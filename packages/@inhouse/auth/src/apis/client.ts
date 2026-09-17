@@ -1,4 +1,4 @@
-import { isKyHTTPError } from '@yourssu-inhouse/inhouse-utils/ky';
+import { isKyHTTPError } from '@inhouse/utils/ky';
 import ky, { type KyInstance } from 'ky';
 
 import { refreshToken } from './endpoints';

@@ -1,7 +1,7 @@
 import type { TV } from 'tailwind-variants';
 
+import { objectKeys } from '@inhouse/utils/object';
 import { vars } from '@interior/vars';
-import { objectKeys } from '@yourssu-inhouse/inhouse-utils/object';
 import { type ClassValue, clsx } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 import { tv as tvBase } from 'tailwind-variants';

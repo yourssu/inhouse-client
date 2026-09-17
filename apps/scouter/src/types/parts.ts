@@ -1,4 +1,4 @@
-import type { ValueOf } from '@yourssu-inhouse/inhouse-utils/type';
+import type { ValueOf } from '@inhouse/utils/type';
 
 import { vars } from '@interior/vars';
 

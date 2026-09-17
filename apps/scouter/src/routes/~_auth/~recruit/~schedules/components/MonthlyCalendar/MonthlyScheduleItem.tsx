@@ -1,5 +1,5 @@
+import { formatTemplates } from '@inhouse/utils/date';
 import { InlineButton } from '@interior/react';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { differenceInMinutes } from 'date-fns';
 import { BiSolidCalendarCheck } from 'react-icons/bi';
 import { MdLocationOn } from 'react-icons/md';

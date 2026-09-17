@@ -1,6 +1,6 @@
-import type { GetFieldTypeStrictly } from '@yourssu-inhouse/inhouse-utils/type';
+import type { GetFieldTypeStrictly } from '@inhouse/utils/type';
 
-import { getIn } from '@yourssu-inhouse/inhouse-utils/misc';
+import { getIn } from '@inhouse/utils/misc';
 import { set } from 'es-toolkit/compat';
 import { produce } from 'immer';
 import { type Dispatch, type SetStateAction, useCallback } from 'react';

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { lotties } from '@inhouse/resources';
 import {
   Badge,
   Button,
@@ -12,7 +13,6 @@ import * as Collapsible from '@radix-ui/react-collapsible';
 import { useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
-import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { useState } from 'react';
 import {

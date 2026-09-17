@@ -1,6 +1,6 @@
+import { formatTemplates } from '@inhouse/utils/date';
 import { IconButton } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { HiOutlineTrash } from 'react-icons/hi2';
 
 import type { InterviewMemoType } from '@/apis/interviews/memos/schema';
