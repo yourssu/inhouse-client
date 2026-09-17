@@ -1,7 +1,7 @@
 import type { AnyRoute } from '@tanstack/react-router';
 
+import { PLUGIN_EXPOSE_KEY, type RemotePlugin, RouteRegistry } from '@inhouse-mfa/core';
 import { loadRemote } from '@module-federation/runtime';
-import { PLUGIN_EXPOSE_KEY, type RemotePlugin, RouteRegistry } from '@yourssu-inhouse/mfa-core';
 
 import { graftPlugin } from './graft';
 

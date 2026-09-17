@@ -1,5 +1,5 @@
+import type { RemotePlugin } from '@inhouse-mfa/core';
 import type { AnyRouter } from '@tanstack/react-router';
-import type { RemotePlugin } from '@yourssu-inhouse/mfa-core';
 import type { RequestHandler } from 'msw';
 
 type ExteriorAppMode = 'preview' | 'shell';

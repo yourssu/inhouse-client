@@ -1,5 +1,6 @@
-import type { RemotePlugin } from '@yourssu-inhouse/mfa-core';
+import type { RemotePlugin } from '@inhouse-mfa/core';
 
+import { findRouteById } from '@inhouse-mfa/core';
 import {
   createRouter,
   type RouterConstructorOptions,
@@ -10,7 +11,6 @@ import {
   createExteriorApp,
   type CreateExteriorAppOptions,
 } from '@yourssu-inhouse/exterior';
-import { findRouteById } from '@yourssu-inhouse/mfa-core';
 
 import { RemoteUnavailable } from './components/RemoteUnavailable';
 import { composePlugins, type RemotePluginSpec } from './composePlugins';

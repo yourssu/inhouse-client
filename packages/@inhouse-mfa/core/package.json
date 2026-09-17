@@ -1,5 +1,5 @@
 {
-  "name": "@yourssu-inhouse/mfa-core",
+  "name": "@inhouse-mfa/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",

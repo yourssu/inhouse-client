@@ -1,4 +1,4 @@
-import type { RemotePlugin } from '@yourssu-inhouse/mfa-core';
+import type { RemotePlugin } from '@inhouse-mfa/core';
 import type { ReactNode } from 'react';
 
 import { type AuthConfig, AuthProvider } from '@inhouse/auth';

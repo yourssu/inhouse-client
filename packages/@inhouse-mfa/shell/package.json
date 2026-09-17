@@ -1,5 +1,5 @@
 {
-  "name": "@yourssu-inhouse/mfa-shell",
+  "name": "@inhouse-mfa/shell",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -22,7 +22,7 @@
   "dependencies": {
     "@inhouse/auth": "workspace:*",
     "@yourssu-inhouse/exterior": "workspace:*",
-    "@yourssu-inhouse/mfa-core": "workspace:*"
+    "@inhouse-mfa/core": "workspace:*"
   },
   "devDependencies": {
     "@module-federation/runtime": "^2.9.0",

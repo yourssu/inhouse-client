@@ -1,4 +1,4 @@
-import { defineRemotePlugin, type RemotePlugin } from '@yourssu-inhouse/mfa-core';
+import { defineRemotePlugin, type RemotePlugin } from '@inhouse-mfa/core';
 
 import { initScouterAnalytics } from './analytics/client';
 import { routeTree } from './routeTree.gen';
