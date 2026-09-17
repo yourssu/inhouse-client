@@ -2,8 +2,8 @@
 
 @import 'tailwindcss';
 @import '@yourssu-inhouse/exterior/index.css';
-@import '@yourssu-inhouse/interior/index.css';
-@plugin '@yourssu-inhouse/interior-tailwind/plugin';
+@import '@interior/react/index.css';
+@plugin '@interior/tailwind/plugin';
 
 /*
   mfaVitePlugin.shell 이 mfa.config.ts 의 cssEntry 를 mfa-remotes.gen.css 의 @import 로 만들어요.

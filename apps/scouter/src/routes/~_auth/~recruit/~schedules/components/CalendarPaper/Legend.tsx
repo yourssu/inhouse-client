@@ -1,8 +1,8 @@
+import { useSetStateSelector } from '@inhouse/react/hooks';
+import { objectEntries } from '@inhouse/utils/object';
+import { InlineButton } from '@interior/react';
+import { cn } from '@interior/tailwind/utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
-import { objectEntries } from '@yourssu-inhouse/inhouse-utils/object';
-import { InlineButton } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { startTransition } from 'react';
 
 import { partsOption } from '@/apis/parts/query';

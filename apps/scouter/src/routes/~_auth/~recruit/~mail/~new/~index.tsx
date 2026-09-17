@@ -1,7 +1,7 @@
+import { Button } from '@interior/react';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
-import { Button } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import { Suspense, useCallback, useState } from 'react';
 import { z } from 'zod';

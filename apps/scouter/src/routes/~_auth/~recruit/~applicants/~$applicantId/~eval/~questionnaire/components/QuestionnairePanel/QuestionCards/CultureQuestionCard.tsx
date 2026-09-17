@@ -1,4 +1,4 @@
-import { Badge, Checkbox, Fieldset } from '@yourssu-inhouse/interior';
+import { Badge, Checkbox, Fieldset } from '@interior/react';
 import { type Control, Controller } from 'react-hook-form';
 
 import type { ActiveMemberType } from '@/apis/members/schema';

@@ -1,5 +1,5 @@
+import { getAuthTokens, removeAuthTokens } from '@inhouse/auth';
 import { redirect } from '@tanstack/react-router';
-import { getAuthTokens, removeAuthTokens } from '@yourssu-inhouse/auth';
 
 /**
  * TanStack Router 의 `beforeLoad` 에서 쓰는 인증 가드예요.

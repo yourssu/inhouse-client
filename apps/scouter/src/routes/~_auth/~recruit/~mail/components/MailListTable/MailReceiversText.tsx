@@ -1,4 +1,4 @@
-import { HoverTooltip } from '@yourssu-inhouse/interior';
+import { HoverTooltip } from '@interior/react';
 
 interface MailReceiversTextProps {
   receivers: string[];

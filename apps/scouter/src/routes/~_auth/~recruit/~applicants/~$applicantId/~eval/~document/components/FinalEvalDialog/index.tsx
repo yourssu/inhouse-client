@@ -1,5 +1,5 @@
+import { Dialog } from '@interior/react';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Dialog } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 import { IoMdAlert } from 'react-icons/io';
 

@@ -1,6 +1,6 @@
-import type { ValueOf } from '@yourssu-inhouse/inhouse-utils/type';
+import type { ValueOf } from '@inhouse/utils/type';
 
-import { vars } from '@yourssu-inhouse/interior-vars';
+import { vars } from '@interior/vars';
 
 import type { PartNameType } from '@/apis/parts/schema';
 

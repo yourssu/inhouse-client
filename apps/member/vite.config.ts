@@ -1,8 +1,8 @@
+import { mfaVitePlugin } from '@inhouse-mfa/vite';
 import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
-import { mfaVitePlugin } from '@yourssu-inhouse/mfa-vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 

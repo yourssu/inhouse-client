@@ -5,6 +5,9 @@ allowBuilds:
 packages:
   - 'apps/*'
   - 'packages/*'
+  - 'packages/@interior/*'
+  - 'packages/@inhouse/*'
+  - 'packages/@inhouse-mfa/*'
 
 catalog:
   eslint: '^10.3.0'

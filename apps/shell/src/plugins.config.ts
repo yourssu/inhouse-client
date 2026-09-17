@@ -1,4 +1,4 @@
-import { buildRemoteSpecs, type RemotePluginSpec } from '@yourssu-inhouse/mfa-shell';
+import { buildRemoteSpecs, type RemotePluginSpec } from '@inhouse-mfa/shell';
 
 /*
   mfaVitePlugin.shell 이 mfa.config 의 remote id를 빌드 시점에 주입해요. shell 이 아는 건

@@ -1,4 +1,4 @@
-import { Button } from '@yourssu-inhouse/interior';
+import { Button } from '@interior/react';
 import { useId } from 'react';
 
 interface DevToolActionCardProps {

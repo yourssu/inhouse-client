@@ -1,4 +1,4 @@
-import type { MfaConfig } from '@yourssu-inhouse/mfa-vite';
+import type { MfaConfig } from '@inhouse-mfa/vite';
 import { resolve } from 'node:path';
 
 export const mfaConfig: MfaConfig = {

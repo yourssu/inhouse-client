@@ -1,5 +1,5 @@
+import type { Prettify } from '@inhouse/utils/type';
 import type { RouteById, RouteIds } from '@tanstack/react-router';
-import type { Prettify } from '@yourssu-inhouse/inhouse-utils/type';
 
 import { type FileRouteTypes, routeTree } from '@/routeTree.gen';
 

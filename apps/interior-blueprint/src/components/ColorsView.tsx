@@ -1,4 +1,4 @@
-import { vars } from '@yourssu-inhouse/interior-vars';
+import { vars } from '@interior/vars';
 
 export const ColorsView = () => {
   return (

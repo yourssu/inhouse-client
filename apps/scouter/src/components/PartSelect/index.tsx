@@ -1,7 +1,7 @@
-import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
+import type { Merge } from '@inhouse/utils/type';
 
+import { Select, type SelectProps } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Select, type SelectProps } from '@yourssu-inhouse/interior';
 import { assert } from 'es-toolkit';
 
 import { partsOption } from '@/apis/parts/query';

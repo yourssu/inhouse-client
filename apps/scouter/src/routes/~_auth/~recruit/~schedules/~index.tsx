@@ -1,6 +1,6 @@
+import { Button } from '@interior/react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
-import { Button } from '@yourssu-inhouse/interior';
 import { Suspense, useCallback } from 'react';
 import { MdAdd } from 'react-icons/md';
 import { z } from 'zod/v4';

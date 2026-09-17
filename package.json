@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.0",
-    "@yourssu-inhouse/mfa-vite": "workspace:*",
+    "@inhouse-mfa/vite": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",

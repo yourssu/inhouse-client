@@ -1,4 +1,4 @@
-import { Badge } from '@yourssu-inhouse/interior';
+import { Badge } from '@interior/react';
 
 export const BadgeView = () => {
   return (

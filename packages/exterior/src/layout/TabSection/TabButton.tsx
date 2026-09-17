@@ -1,7 +1,7 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 
+import { TabButton } from '@interior/react';
 import { Link, type LinkProps } from '@tanstack/react-router';
-import { TabButton } from '@yourssu-inhouse/interior';
 
 export interface TabLinkButtonProps {
   icon?: ReactNode;

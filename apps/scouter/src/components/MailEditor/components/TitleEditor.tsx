@@ -1,8 +1,8 @@
+import { useEffectOnce } from '@inhouse/react/hooks';
+import { cn } from '@interior/tailwind/utils';
 import Placeholder from '@tiptap/extension-placeholder';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffectOnce } from '@yourssu-inhouse/inhouse-react/hooks';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useEffect, useMemo } from 'react';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';

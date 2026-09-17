@@ -1,5 +1,5 @@
+import { Divider } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Divider } from '@yourssu-inhouse/interior';
 
 import type { InterviewMemoType } from '@/apis/interviews/memos/schema';
 
