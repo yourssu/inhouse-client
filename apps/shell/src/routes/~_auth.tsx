@@ -13,8 +13,7 @@ const AuthLayout = () => {
           icon: <MdPerson />,
           label: '멤버',
           to: '/members',
-          disabled: true,
-          disabledToastMessage: '아직 준비중인 서비스에요',
+          disabledToast: '아직 준비중인 서비스에요',
         },
         { icon: <MdPersonSearch />, label: '스카우터', to: '/recruit' },
       ]}
