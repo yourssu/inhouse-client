@@ -1,3 +1,4 @@
+import { formatTemplates } from '@inhouse/utils/date';
 import { DatePicker } from '@interior/react';
 import { Dialog } from '@interior/react';
 import { Fieldset } from '@interior/react';
@@ -5,7 +6,6 @@ import { SegmentedControl } from '@interior/react';
 import { TextField } from '@interior/react';
 import { useToast } from '@interior/react';
 import { useMutation } from '@tanstack/react-query';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import {
   addMinutes,
   endOfDay,

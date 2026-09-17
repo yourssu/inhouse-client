@@ -1,9 +1,4 @@
-import {
-  createAuthApiClient,
-  getAuthTokens,
-  removeAuthTokens,
-  setAuthTokens,
-} from '@yourssu-inhouse/auth';
+import { createAuthApiClient, getAuthTokens, removeAuthTokens, setAuthTokens } from '@inhouse/auth';
 
 import { config } from '@/config';
 

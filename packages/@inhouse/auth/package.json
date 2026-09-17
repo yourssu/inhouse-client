@@ -1,5 +1,5 @@
 {
-  "name": "@yourssu-inhouse/auth",
+  "name": "@inhouse/auth",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -30,7 +30,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@yourssu-inhouse/eslint-config": "workspace:*",
-    "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@inhouse/utils": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
     "ky": "^2.0.2",

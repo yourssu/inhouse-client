@@ -24,17 +24,17 @@
 
 | 역할                                               | 먼저 확인할 패키지                     |
 | -------------------------------------------------- | -------------------------------------- |
-| 인증 클라이언트·토큰·Provider·guard                | `@yourssu-inhouse/auth`                |
+| 인증 클라이언트·토큰·Provider·guard                | `@inhouse/auth`                |
 | 앱 shell 레이아웃·부트스트랩·route overlay cleanup | `@yourssu-inhouse/exterior`            |
-| 범용 React hook                                    | `@yourssu-inhouse/inhouse-react/hooks` |
-| 날짜·타입·객체·ky·query key namespace 범용 유틸    | `@yourssu-inhouse/inhouse-utils/*`     |
+| 범용 React hook                                    | `@inhouse/react/hooks` |
+| 날짜·타입·객체·ky·query key namespace 범용 유틸    | `@inhouse/utils/*`     |
 | Button·Dialog·Table·Toast 등 UI primitive          | `@interior/react`            |
 | Tailwind plugin·`cn`·`tv`                          | `@interior/tailwind`   |
 | 디자인 토큰 원천                                   | `@interior/vars`       |
 | Module Federation plugin·route 계약                | `@yourssu-inhouse/mfa-core`            |
 | shell·remote preview·plugin lifecycle 런타임       | `@yourssu-inhouse/mfa-shell`           |
 | Vite Module Federation 설정·shared·retry 정책      | `@yourssu-inhouse/mfa-vite`            |
-| 이미지·Lottie 등 정적 리소스                       | `@yourssu-inhouse/resources`           |
+| 이미지·Lottie 등 정적 리소스                       | `@inhouse/resources`           |
 
 이 표보다 현재 `package.json#exports`가 우선한다. 패키지가 추가되거나 export가 바뀌면 표도 함께 갱신한다.
 

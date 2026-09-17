@@ -1,4 +1,4 @@
-import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
+import type { Merge } from '@inhouse/utils/type';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';

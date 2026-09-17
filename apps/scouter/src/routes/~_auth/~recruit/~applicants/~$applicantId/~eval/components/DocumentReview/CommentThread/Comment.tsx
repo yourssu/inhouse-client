@@ -1,8 +1,8 @@
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
+import { formatTemplates } from '@inhouse/utils/date';
 import { IconButton, Menu, MultilineTextField } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';

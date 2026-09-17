@@ -1,4 +1,4 @@
-import type { Prettify } from '@yourssu-inhouse/inhouse-utils/type';
+import type { Prettify } from '@inhouse/utils/type';
 
 import { Badge, HoverTooltip } from '@interior/react';
 import { useSuspenseQueries } from '@tanstack/react-query';

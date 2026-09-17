@@ -1,6 +1,6 @@
+import { useEffectOnce } from '@inhouse/react/hooks';
 import { Badge, Button, useToast } from '@interior/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffectOnce } from '@yourssu-inhouse/inhouse-react/hooks';
 import { useRef, useState } from 'react';
 import {
   FieldArray,

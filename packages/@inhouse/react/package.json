@@ -1,5 +1,5 @@
 {
-  "name": "@yourssu-inhouse/inhouse-react",
+  "name": "@inhouse/react",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -31,7 +31,7 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@inhouse/utils": "workspace:*",
     "es-toolkit": "^1.47.0",
     "immer": "^11.1.8",
     "react-simplikit": "^0.0.51"

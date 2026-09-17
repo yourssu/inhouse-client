@@ -16,11 +16,11 @@
   "dependencies": {
     "@tanstack/react-router": "catalog:",
     "@toss/lottie": "^1.3.2",
-    "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@inhouse/utils": "workspace:*",
     "@interior/react": "workspace:*",
     "@interior/tailwind": "workspace:*",
     "@interior/vars": "workspace:*",
-    "@yourssu-inhouse/resources": "workspace:*",
+    "@inhouse/resources": "workspace:*",
     "clsx": "^2.1.1",
     "es-toolkit": "^1.47.0",
     "overlay-kit": "^1.9.0",

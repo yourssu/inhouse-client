@@ -20,7 +20,7 @@
     "fix:format": "prettier --write ."
   },
   "dependencies": {
-    "@yourssu-inhouse/auth": "workspace:*",
+    "@inhouse/auth": "workspace:*",
     "@yourssu-inhouse/exterior": "workspace:*",
     "@yourssu-inhouse/mfa-core": "workspace:*"
   },

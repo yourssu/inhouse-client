@@ -57,7 +57,7 @@ plugin 이름은 해당 remote의 실제 이름을 사용하고 module scope에�
 
 ```tsx
 import { queryOptions } from '@tanstack/react-query';
-import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
+import { createQueryKeyNamespace } from '@inhouse/utils/query';
 
 import { getMembers, type GetMembersParams } from '@/apis/members';
 
@@ -90,8 +90,8 @@ invalidate할 때는 `queryClient.invalidateQueries({ queryKey: memberQueryKeys.
 
 - `apps/*/src/apis/api.ts`
 - `apps/*/src/apis/<domain>/`
-- `packages/auth/src/apis/`
-- `packages/inhouse-utils/src/query.ts`
+- `packages/@inhouse/auth/src/apis/`
+- `packages/@inhouse/utils/src/query.ts`
 
 ## 검증
 

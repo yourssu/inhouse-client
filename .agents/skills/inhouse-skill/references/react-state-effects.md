@@ -56,7 +56,7 @@ Context 선언과 소비 훅은 별도 `context.ts`에 두되, feature 상태 �
 
 ## 객체 state의 필드 setter
 
-객체 state의 독립적인 필드를 갱신할 때는 `@yourssu-inhouse/inhouse-react/hooks`의 `useSetStateSelector`를 사용할 수 있다. 앱에 같은 이름의 로컬 복사본이 있어도 공용 package를 우선한다. 같은 컴포넌트에서 selector setter가 여러 개 필요하면 각각 `setField` 변수로 늘어놓지 말고 state 필드명과 같은 key를 가진 `setters` 객체로 모아 선언한다. 관련 setter를 한곳에서 찾을 수 있고 호출부에서도 어떤 필드를 변경하는지 바로 드러난다.
+객체 state의 독립적인 필드를 갱신할 때는 `@inhouse/react/hooks`의 `useSetStateSelector`를 사용할 수 있다. 앱에 같은 이름의 로컬 복사본이 있어도 공용 package를 우선한다. 같은 컴포넌트에서 selector setter가 여러 개 필요하면 각각 `setField` 변수로 늘어놓지 말고 state 필드명과 같은 key를 가진 `setters` 객체로 모아 선언한다. 관련 setter를 한곳에서 찾을 수 있고 호출부에서도 어떤 필드를 변경하는지 바로 드러난다.
 
 ```tsx
 const [state, setState] = useState({

@@ -1,4 +1,4 @@
-import type { EmptyObjectType } from '@yourssu-inhouse/inhouse-utils/type';
+import type { EmptyObjectType } from '@inhouse/utils/type';
 
 import { TabDialog } from '@interior/react';
 import { overlay } from 'overlay-kit';
