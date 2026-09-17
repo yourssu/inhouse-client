@@ -1,4 +1,4 @@
-import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
+import type { Merge } from '@inhouse/utils/type';
 
 export interface DateRange {
   from: Date | null;

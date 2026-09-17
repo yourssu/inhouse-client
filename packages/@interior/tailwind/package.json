@@ -15,7 +15,7 @@
     "fix:format": "prettier --write ."
   },
   "dependencies": {
-    "@yourssu-inhouse/inhouse-utils": "workspace:*",
+    "@inhouse/utils": "workspace:*",
     "@interior/vars": "workspace:*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.6.0",

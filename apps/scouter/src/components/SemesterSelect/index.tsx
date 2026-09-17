@@ -1,4 +1,4 @@
-import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
+import type { Merge } from '@inhouse/utils/type';
 
 import { Select, type SelectProps } from '@interior/react';
 import { cn } from '@interior/tailwind/utils';

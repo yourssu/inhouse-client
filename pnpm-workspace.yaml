@@ -6,6 +6,7 @@ packages:
   - 'apps/*'
   - 'packages/*'
   - 'packages/@interior/*'
+  - 'packages/@inhouse/*'
 
 catalog:
   eslint: '^10.3.0'

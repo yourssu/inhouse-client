@@ -1,15 +1,11 @@
 {
-  "name": "@yourssu-inhouse/inhouse-utils",
+  "name": "@inhouse/resources",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "sideEffects": false,
   "exports": {
-    "./date": "./src/date.ts",
-    "./type": "./src/type.ts",
-    "./misc": "./src/misc.ts",
-    "./object": "./src/object.ts",
-    "./query": "./src/query.ts",
-    "./ky": "./src/ky.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "check:type": "tsc --noEmit",
@@ -17,11 +13,6 @@
     "check:format": "prettier --check .",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write ."
-  },
-  "dependencies": {
-    "date-fns": "^4.4.0",
-    "es-toolkit": "^1.47.0",
-    "ky": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "^24.13.0",

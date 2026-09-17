@@ -1,5 +1,5 @@
-import { getAuthTokens, validateToken } from '@yourssu-inhouse/auth';
-import { isKyHTTPError } from '@yourssu-inhouse/inhouse-utils/ky';
+import { getAuthTokens, validateToken } from '@inhouse/auth';
+import { isKyHTTPError } from '@inhouse/utils/ky';
 
 import { authClient } from '@/apis/authClient';
 

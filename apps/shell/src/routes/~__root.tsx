@@ -1,7 +1,7 @@
 import type { RouteContext } from '@yourssu-inhouse/exterior';
 
+import { AuthProvider } from '@inhouse/auth';
 import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router';
-import { AuthProvider } from '@yourssu-inhouse/auth';
 
 import { authClient } from '@/apis/authClient';
 import { authConfig } from '@/config';

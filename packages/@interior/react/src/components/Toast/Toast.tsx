@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react';
 
+import { lotties } from '@inhouse/resources';
 import { Lottie } from '@toss/lottie';
-import { lotties } from '@yourssu-inhouse/resources';
 
 import type { ToastType } from './type';
 

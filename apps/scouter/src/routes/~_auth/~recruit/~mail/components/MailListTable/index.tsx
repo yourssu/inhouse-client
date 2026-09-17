@@ -1,3 +1,6 @@
+import { useSetStateSelector } from '@inhouse/react/hooks';
+import { lotties } from '@inhouse/resources';
+import { formatTemplates } from '@inhouse/utils/date';
 import { IconButton, InlineButton } from '@interior/react';
 import { Menu } from '@interior/react';
 import { Pagination } from '@interior/react';
@@ -5,9 +8,6 @@ import { Result } from '@interior/react';
 import { Table } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
-import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { overlay } from 'overlay-kit';
 import { useMemo } from 'react';

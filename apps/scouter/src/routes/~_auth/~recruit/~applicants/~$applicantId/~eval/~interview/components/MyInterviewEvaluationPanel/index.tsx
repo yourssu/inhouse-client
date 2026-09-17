@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { lotties } from '@inhouse/resources';
 import {
   Badge,
   Button,
@@ -12,7 +13,6 @@ import {
 } from '@interior/react';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
-import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
 import { type Control, Controller, type SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { IoMdAlert } from 'react-icons/io';

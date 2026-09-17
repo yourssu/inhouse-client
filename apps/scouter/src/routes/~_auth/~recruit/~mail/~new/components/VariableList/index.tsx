@@ -1,7 +1,7 @@
+import { lotties } from '@inhouse/resources';
 import { Result } from '@interior/react';
 import { TabButton } from '@interior/react';
 import { Lottie } from '@toss/lottie';
-import { lotties } from '@yourssu-inhouse/resources';
 import { includes } from 'es-toolkit/compat';
 import { useState } from 'react';
 

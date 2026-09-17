@@ -1,4 +1,4 @@
-import type { GetFieldTypeStrictly, Mutable, Prettify } from '@yourssu-inhouse/inhouse-utils/type';
+import type { GetFieldTypeStrictly, Mutable, Prettify } from '@inhouse/utils/type';
 
 import { get } from 'es-toolkit/compat';
 

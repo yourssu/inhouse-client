@@ -1,6 +1,6 @@
+import { formatTemplates } from '@inhouse/utils/date';
 import { Dialog, Select, TextField, useToast } from '@interior/react';
 import { useQuery } from '@tanstack/react-query';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { differenceInMinutes } from 'date-fns';
 import { useState } from 'react';
 import { BiSolidCalendarCheck } from 'react-icons/bi';

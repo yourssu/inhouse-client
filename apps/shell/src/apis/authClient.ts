@@ -1,4 +1,4 @@
-import { createAuthApiClient } from '@yourssu-inhouse/auth';
+import { createAuthApiClient } from '@inhouse/auth';
 
 import { config } from '@/config';
 

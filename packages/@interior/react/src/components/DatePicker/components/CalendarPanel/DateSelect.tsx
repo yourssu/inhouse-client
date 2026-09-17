@@ -1,4 +1,4 @@
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
+import { formatTemplates } from '@inhouse/utils/date';
 import { isSameMonth, isSameYear } from 'date-fns';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 

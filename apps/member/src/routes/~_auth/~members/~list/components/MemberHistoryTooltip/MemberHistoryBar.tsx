@@ -1,5 +1,5 @@
+import { objectEntries } from '@inhouse/utils/object';
 import { tv } from '@interior/tailwind/utils';
-import { objectEntries } from '@yourssu-inhouse/inhouse-utils/object';
 
 import type { Member } from '@/apis/members/schema';
 

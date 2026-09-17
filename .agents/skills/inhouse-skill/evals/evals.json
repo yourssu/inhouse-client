@@ -41,7 +41,7 @@
       "expectations": [
         "routing-url-state.md와 react-state-effects.md를 선택한다.",
         "validateSearch에서 URL state를 Zod로 검증하고 기존 useSearchState를 사용한다.",
-        "useDelayedValue는 @yourssu-inhouse/inhouse-react/hooks에서 import하고 query 입력에만 적용한다.",
+        "useDelayedValue는 @inhouse/react/hooks에서 import하고 query 입력에만 적용한다.",
         "useEffect나 지역 state로 URL 값을 양방향 복제하지 않는다.",
         "필터와 page 초기화를 하나의 함수형 search update에서 처리한다.",
         "새로고침·뒤로가기·잘못된 URL과 scouter build 결과를 보고한다."
@@ -68,7 +68,7 @@
       "expectations": [
         "workspace-packages.md, quality.md를 선택한다.",
         "packages/*/package.json#exports와 구현을 먼저 확인하고 앱 복사본을 선례로 사용하지 않는다.",
-        "@yourssu-inhouse/inhouse-react와 inhouse-utils를 workspace dependency로 선언하고 공개 subpath로 import한다.",
+        "`@inhouse/react`와 `@inhouse/utils`를 workspace dependency로 선언하고 공개 subpath로 import한다.",
         "공용 구현과 동일한 hook·date 복사본은 제거하되 scouter 전용 object 유틸은 근거 없이 이동하지 않는다.",
         "scouter type, lint, format, build와 검색·날짜 표시의 보존 여부를 보고한다."
       ]
