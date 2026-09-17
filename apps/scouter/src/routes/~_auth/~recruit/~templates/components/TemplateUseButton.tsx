@@ -1,5 +1,5 @@
+import { Menu } from '@interior/react';
 import { useNavigate } from '@tanstack/react-router';
-import { Menu } from '@yourssu-inhouse/interior';
 import { MdSend } from 'react-icons/md';
 
 import { useTemplateAnalytics } from '@/routes/~_auth/~recruit/~templates/analytics';

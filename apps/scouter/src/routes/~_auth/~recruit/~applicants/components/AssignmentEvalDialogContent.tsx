@@ -1,4 +1,4 @@
-import { Dialog } from '@yourssu-inhouse/interior';
+import { Dialog } from '@interior/react';
 
 import type { ApplicantStateType } from '@/apis/applicants/schema';
 

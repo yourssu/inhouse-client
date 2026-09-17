@@ -1,4 +1,4 @@
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { cn } from '@interior/tailwind/utils';
 import { useEffect, useRef } from 'react';
 
 import type { VariableTypeName } from '@/apis/mails/schema';

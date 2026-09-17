@@ -1,4 +1,4 @@
-import { HoverTooltip, type HoverTooltipContentProps } from '@yourssu-inhouse/interior';
+import { HoverTooltip, type HoverTooltipContentProps } from '@interior/react';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 

@@ -1,4 +1,4 @@
-import { Combobox } from '@yourssu-inhouse/interior';
+import { Combobox } from '@interior/react';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 

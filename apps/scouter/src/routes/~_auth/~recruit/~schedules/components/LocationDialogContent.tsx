@@ -1,6 +1,6 @@
+import { Dialog, Select, TextField, useToast } from '@interior/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { Dialog, Select, TextField, useToast } from '@yourssu-inhouse/interior';
 import { differenceInMinutes } from 'date-fns';
 import { josa } from 'es-hangul';
 import { useState } from 'react';

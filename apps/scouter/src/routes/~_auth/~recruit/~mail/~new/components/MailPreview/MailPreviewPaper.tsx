@@ -1,5 +1,5 @@
-import { Button } from '@yourssu-inhouse/interior';
-import { Tab } from '@yourssu-inhouse/interior';
+import { Button } from '@interior/react';
+import { Tab } from '@interior/react';
 
 import type { VariableTypeName } from '@/apis/mails/schema';
 import type { TemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';

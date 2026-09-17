@@ -5,6 +5,7 @@ allowBuilds:
 packages:
   - 'apps/*'
   - 'packages/*'
+  - 'packages/@interior/*'
 
 catalog:
   eslint: '^10.3.0'

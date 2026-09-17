@@ -1,4 +1,4 @@
-import { Button } from '@yourssu-inhouse/interior';
+import { Button } from '@interior/react';
 
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useTabDialog } from '@/hooks/useTabDialog';

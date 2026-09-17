@@ -1,8 +1,8 @@
 import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
 
+import { Select, type SelectProps } from '@interior/react';
+import { cn } from '@interior/tailwind/utils';
 import { useSuspenseQueries } from '@tanstack/react-query';
-import { Select, type SelectProps } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { assert } from 'es-toolkit';
 
 import type { SemesterType } from '@/apis/semesters/schema';

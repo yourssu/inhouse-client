@@ -1,8 +1,8 @@
+import { Badge, Pagination, Result, Table } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
 import { useDelayedValue, useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
-import { Badge, Pagination, Result, Table } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { assert, invert } from 'es-toolkit';
 import { startTransition } from 'react';

@@ -1,5 +1,5 @@
+import { Select } from '@interior/react';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Select } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 
 import type { PartType } from '@/apis/parts/schema';

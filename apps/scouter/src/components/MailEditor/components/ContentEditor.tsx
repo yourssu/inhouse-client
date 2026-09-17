@@ -1,3 +1,4 @@
+import { cn } from '@interior/tailwind/utils';
 import Image from '@tiptap/extension-image';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -6,7 +7,6 @@ import { TextStyleKit } from '@tiptap/extension-text-style';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEffectOnce } from '@yourssu-inhouse/inhouse-react/hooks';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { useEffect, useMemo } from 'react';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';

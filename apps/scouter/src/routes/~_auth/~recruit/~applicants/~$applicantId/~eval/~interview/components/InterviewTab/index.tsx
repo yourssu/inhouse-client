@@ -1,4 +1,4 @@
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { cn } from '@interior/tailwind/utils';
 import clsx from 'clsx';
 import { LayoutGroup, motion, useReducedMotion } from 'motion/react';
 import { Activity, useId, useState } from 'react';

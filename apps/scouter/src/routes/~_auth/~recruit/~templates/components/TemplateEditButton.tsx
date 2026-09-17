@@ -1,5 +1,5 @@
+import { Menu } from '@interior/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Menu } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import { MdEdit } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';

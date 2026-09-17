@@ -1,4 +1,4 @@
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { cn } from '@interior/tailwind/utils';
 
 export const Paper = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (

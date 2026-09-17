@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { useToast } from '@interior/react';
 import { type LinkProps } from '@tanstack/react-router';
-import { useToast } from '@yourssu-inhouse/interior';
 import { motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import { useStorageState } from 'react-simplikit';

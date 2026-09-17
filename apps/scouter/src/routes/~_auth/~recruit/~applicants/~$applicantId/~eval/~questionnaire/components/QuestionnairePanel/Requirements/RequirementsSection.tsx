@@ -1,5 +1,5 @@
+import { Badge } from '@interior/react';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { Badge } from '@yourssu-inhouse/interior';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
