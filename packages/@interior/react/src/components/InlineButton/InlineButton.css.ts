@@ -1,5 +1,5 @@
+import { vars } from '@interior/vars';
 import { style } from '@vanilla-extract/css';
-import { vars } from '@yourssu-inhouse/interior-vars';
 
 export const root = style({
   display: 'inline-block',

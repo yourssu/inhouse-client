@@ -13,7 +13,7 @@ const SHARED_DEPS = {
   '@tanstack/react-router': { requiredVersion: '^1.170.11', singleton: true },
   '@tanstack/react-query': { requiredVersion: '^5.101.0', singleton: true },
   '@yourssu-inhouse/auth': { singleton: true },
-  '@yourssu-inhouse/interior': { singleton: true },
+  '@interior/react': { singleton: true },
   '@yourssu-inhouse/exterior': { singleton: true },
   '@yourssu-inhouse/exterior/layout': { singleton: true },
   'react-simplikit': { singleton: true },

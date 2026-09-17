@@ -1,7 +1,7 @@
 import type { Prettify } from '@yourssu-inhouse/inhouse-utils/type';
 
+import { Badge, HoverTooltip } from '@interior/react';
 import { useSuspenseQueries } from '@tanstack/react-query';
-import { Badge, HoverTooltip } from '@yourssu-inhouse/interior';
 import { Suspense, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MdInfoOutline } from 'react-icons/md';

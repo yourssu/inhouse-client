@@ -1,6 +1,6 @@
+import { Button, useTheme, useToast } from '@interior/react';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { Login } from '@yourssu-inhouse/auth';
-import { Button, useTheme, useToast } from '@yourssu-inhouse/interior';
 import { images } from '@yourssu-inhouse/resources';
 import { FcGoogle } from 'react-icons/fc';
 

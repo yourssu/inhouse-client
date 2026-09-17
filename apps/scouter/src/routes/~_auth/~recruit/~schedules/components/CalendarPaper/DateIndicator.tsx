@@ -1,6 +1,6 @@
+import { IconButton } from '@interior/react';
+import { cn } from '@interior/tailwind/utils';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { IconButton } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { addMonths, addWeeks, endOfWeek, startOfWeek, subMonths, subWeeks } from 'date-fns';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 

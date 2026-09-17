@@ -1,5 +1,5 @@
+import { vars } from '@interior/vars';
 import * as Tooltip from '@radix-ui/react-tooltip';
-import { vars } from '@yourssu-inhouse/interior-vars';
 import clsx from 'clsx';
 
 import * as styles from './HoverTooltip.css';

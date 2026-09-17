@@ -1,7 +1,7 @@
 import type { QueryClient, QueryClientConfig } from '@tanstack/react-query';
 
+import { initializeTheme } from '@interior/react';
 import { type AnyRouter, RouterProvider } from '@tanstack/react-router';
-import { initializeTheme } from '@yourssu-inhouse/interior';
 import { type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 

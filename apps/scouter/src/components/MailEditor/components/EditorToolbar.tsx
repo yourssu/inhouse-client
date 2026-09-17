@@ -1,6 +1,6 @@
+import { IconButton, type IconButtonProps } from '@interior/react';
+import { Select } from '@interior/react';
 import { type Editor, useEditorState } from '@tiptap/react';
-import { IconButton, type IconButtonProps } from '@yourssu-inhouse/interior';
-import { Select } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { overlay } from 'overlay-kit';
 import { useCallback } from 'react';

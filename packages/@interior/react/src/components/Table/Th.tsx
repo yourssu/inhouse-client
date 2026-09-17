@@ -1,5 +1,5 @@
+import { vars } from '@interior/vars';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { vars } from '@yourssu-inhouse/interior-vars';
 import clsx from 'clsx';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { MdKeyboardArrowDown } from 'react-icons/md';

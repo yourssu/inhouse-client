@@ -1,6 +1,6 @@
+import { vars } from '@interior/vars';
 import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
-import { vars } from '@yourssu-inhouse/interior-vars';
 
 export const tooltip = style({
   paddingTop: 6,

@@ -1,5 +1,5 @@
+import { vars as varsSource } from '@interior/vars';
 import { createGlobalTheme, createGlobalThemeContract } from '@vanilla-extract/css';
-import { vars as varsSource } from '@yourssu-inhouse/interior-vars';
 
 import { vars } from './color.css';
 import { interiorContract } from './utils/contract.ts';

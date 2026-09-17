@@ -1,5 +1,5 @@
 {
-  "name": "@yourssu-inhouse/interior",
+  "name": "@interior/react",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -39,7 +39,7 @@
     "@vanilla-extract/recipes": "^0.5.7",
     "@yourssu-inhouse/inhouse-react": "workspace:*",
     "@yourssu-inhouse/inhouse-utils": "workspace:*",
-    "@yourssu-inhouse/interior-vars": "workspace:*",
+    "@interior/vars": "workspace:*",
     "@yourssu-inhouse/resources": "workspace:*",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",

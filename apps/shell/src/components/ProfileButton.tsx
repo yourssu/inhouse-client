@@ -1,7 +1,7 @@
+import { Button, Divider, Popover, useToast } from '@interior/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useAuth } from '@yourssu-inhouse/auth';
-import { Button, Divider, Popover, useToast } from '@yourssu-inhouse/interior';
 import { MdArrowForwardIos, MdPerson } from 'react-icons/md';
 
 import { meOption, meQueryKey } from '@/apis/me';

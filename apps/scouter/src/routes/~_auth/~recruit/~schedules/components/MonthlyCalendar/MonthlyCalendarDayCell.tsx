@@ -1,4 +1,4 @@
-import { tv } from '@yourssu-inhouse/interior-tailwind/utils';
+import { tv } from '@interior/tailwind/utils';
 import clsx from 'clsx';
 import { getDate, isSunday, isToday } from 'date-fns';
 import { useState } from 'react';

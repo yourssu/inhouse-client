@@ -1,6 +1,6 @@
+import { Result, SegmentedControl } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
-import { Result, SegmentedControl } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { min, parseISO } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';

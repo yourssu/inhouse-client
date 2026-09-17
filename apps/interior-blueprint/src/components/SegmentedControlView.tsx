@@ -1,4 +1,4 @@
-import { SegmentedControl } from '@yourssu-inhouse/interior';
+import { SegmentedControl } from '@interior/react';
 import { useState } from 'react';
 
 export const SegmentedControlView = () => {

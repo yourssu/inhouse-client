@@ -1,6 +1,6 @@
+import { Dialog } from '@interior/react';
+import { TextField } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Dialog } from '@yourssu-inhouse/interior';
-import { TextField } from '@yourssu-inhouse/interior';
 import { useState } from 'react';
 import { useLoading } from 'react-simplikit';
 

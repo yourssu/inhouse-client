@@ -1,8 +1,8 @@
+import { Button, Divider, Result } from '@interior/react';
 import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
-import { Button, Divider, Result } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { overlay } from 'overlay-kit';
 import { Suspense, useCallback } from 'react';

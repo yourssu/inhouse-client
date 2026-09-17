@@ -1,4 +1,4 @@
-import { Menu } from '@yourssu-inhouse/interior';
+import { Menu } from '@interior/react';
 import { MdDelete } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 

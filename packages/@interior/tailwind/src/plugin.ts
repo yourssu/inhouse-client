@@ -1,5 +1,5 @@
+import { vars } from '@interior/vars';
 import { objectEntries } from '@yourssu-inhouse/inhouse-utils/object';
-import { vars } from '@yourssu-inhouse/interior-vars';
 import plugin from 'tailwindcss/plugin';
 
 const getInteriorColors = () => ({

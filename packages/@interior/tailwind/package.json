@@ -1,5 +1,5 @@
 {
-  "name": "@yourssu-inhouse/interior-tailwind",
+  "name": "@interior/tailwind",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@yourssu-inhouse/inhouse-utils": "workspace:*",
-    "@yourssu-inhouse/interior-vars": "workspace:*",
+    "@interior/vars": "workspace:*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.6.0",
     "tailwind-variants": "^3.3.1"

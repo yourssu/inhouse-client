@@ -1,5 +1,5 @@
+import { vars } from '@interior/vars';
 import { recipe } from '@vanilla-extract/recipes';
-import { vars } from '@yourssu-inhouse/interior-vars';
 
 export const popoverSurface = recipe({
   base: {

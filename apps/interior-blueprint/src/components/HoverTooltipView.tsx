@@ -1,4 +1,4 @@
-import { Button, HoverTooltip, InlineButton } from '@yourssu-inhouse/interior';
+import { Button, HoverTooltip, InlineButton } from '@interior/react';
 import { RxQuestionMarkCircled } from 'react-icons/rx';
 
 const sides = ['top', 'right', 'bottom', 'left'] as const;
