@@ -11,6 +11,9 @@ import { TAB_SECTION_COLLAPSED_STORAGE_KEY } from '../constants';
 import { SidebarLinkButton } from './SidebarLinkButton';
 
 export interface SidebarMenuItem {
+  /** 이동하지 않고 disabledToastMessage 안내 토스트를 띄우는 비활성 항목. */
+  disabled?: boolean;
+  disabledToastMessage?: string;
   icon: ReactNode;
   label: string;
   to: LinkProps['to'];
@@ -53,7 +56,7 @@ export const Sidebar = ({ menu = [], profile }: SidebarProps) => {
             </motion.div>
           </IconButton>
           {menu.map((item) => {
-            const blocked = item.to === '/members';
+            const blocked = item.disabled === true;
             const button = (
               <SidebarLinkButton
                 disabled={blocked}
@@ -70,7 +73,9 @@ export const Sidebar = ({ menu = [], profile }: SidebarProps) => {
                 <div
                   key={`${item.label}-${String(item.to)}`}
                   onClick={() => {
-                    toast.default('아직 준비중인 서비스에요');
+                    if (item.disabledToastMessage) {
+                      toast.default(item.disabledToastMessage);
+                    }
                   }}
                 >
                   {button}
