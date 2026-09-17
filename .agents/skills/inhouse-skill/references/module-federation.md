@@ -100,7 +100,7 @@ shared 정책 변경은 모든 remote에 영향을 주므로 `mfa-vite`, `mfa-sh
 - remote plugin은 Tailwind utility CSS를 runtime asset으로 별도 노출하지 않는다.
 - remote preview는 자기 `styles/index.css`를 import해 Tailwind base와 앱 전용 선언을 포함한다.
 - scouter처럼 앱 전용 `@utility`와 editor selector가 있으면 `mfa.config.ts`의 `cssEntry`에 보조 CSS 경로를 선언하고 preview에서도 같은 source를 재사용한다. plugin runtime manifest에는 CSS 경로를 넣지 않는다.
-- `interior`와 `exterior`의 CSS는 각 패키지 공개 CSS entry를 사용한다.
+- `@interior/react`와 `@exterior/layout`의 CSS는 각 패키지 공개 CSS entry를 사용한다.
 - 새 remote가 생겨도 shell의 `apps/*/src/**` source glob을 remote별 목록으로 바꾸지 않는다.
 
 ## 코드 주석 정책

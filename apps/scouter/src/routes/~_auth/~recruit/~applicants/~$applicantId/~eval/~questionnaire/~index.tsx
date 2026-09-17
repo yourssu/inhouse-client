@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
+import { PageLayout } from '@exterior/layout';
 import { Button, Result } from '@interior/react';
 import { QueryErrorResetBoundary, useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Suspense, useCallback } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 

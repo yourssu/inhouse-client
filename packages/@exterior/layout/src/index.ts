@@ -1,6 +1,6 @@
 /*
-  exterior 의 layout subpath entry예요. `@yourssu-inhouse/exterior/layout` 로 import 하면
-  createExteriorApp·AppProviders 같은 bootstrap 코드 없이 layout 컴포넌트만 JIT 로 가져와요.
+  @exterior/layout 패키지의 entry예요. 조합 root(@exterior/core) 없이 레이아웃·프레임
+  컴포넌트만 가져와요.
 */
 export { PageContent } from './PageContent';
 export type { PageContentProps } from './PageContent';

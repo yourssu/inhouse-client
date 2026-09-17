@@ -25,7 +25,9 @@
 | 역할                                               | 먼저 확인할 패키지                     |
 | -------------------------------------------------- | -------------------------------------- |
 | 인증 클라이언트·토큰·Provider·guard                | `@inhouse/auth`                |
-| 앱 shell 레이아웃·부트스트랩·route overlay cleanup | `@yourssu-inhouse/exterior`            |
+| 앱 조합 root·부트스트랩·QueryClient·Provider | `@exterior/core`                 |
+| 앱 shell 레이아웃·공용 PageLayout·TabSection | `@exterior/layout`              |
+| route overlay cleanup hook                     | `@exterior/utils`                |
 | 범용 React hook                                    | `@inhouse/react/hooks` |
 | 날짜·타입·객체·ky·query key namespace 범용 유틸    | `@inhouse/utils/*`     |
 | Button·Dialog·Table·Toast 등 UI primitive          | `@interior/react`            |

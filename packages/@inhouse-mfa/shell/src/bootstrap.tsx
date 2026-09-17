@@ -1,16 +1,16 @@
 import type { RemotePlugin } from '@inhouse-mfa/core';
 
+import {
+  type AppRouteTree,
+  createExteriorApp,
+  type CreateExteriorAppOptions,
+} from '@exterior/core';
 import { findRouteById } from '@inhouse-mfa/core';
 import {
   createRouter,
   type RouterConstructorOptions,
   type RouterHistory,
 } from '@tanstack/react-router';
-import {
-  type AppRouteTree,
-  createExteriorApp,
-  type CreateExteriorAppOptions,
-} from '@yourssu-inhouse/exterior';
 
 import { RemoteUnavailable } from './components/RemoteUnavailable';
 import { composePlugins, type RemotePluginSpec } from './composePlugins';

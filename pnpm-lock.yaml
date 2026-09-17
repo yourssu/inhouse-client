@@ -162,6 +162,15 @@ importers:
 
   apps/member:
     dependencies:
+      '@exterior/core':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/core
+      '@exterior/layout':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/layout
+      '@exterior/utils':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/utils
       '@inhouse-mfa/core':
         specifier: workspace:*
         version: link:../../packages/@inhouse-mfa/core
@@ -201,9 +210,6 @@ importers:
       '@toss/lottie':
         specifier: ^1.3.2
         version: 1.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@yourssu-inhouse/exterior':
-        specifier: workspace:*
-        version: link:../../packages/exterior
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -313,6 +319,15 @@ importers:
 
   apps/scouter:
     dependencies:
+      '@exterior/core':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/core
+      '@exterior/layout':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/layout
+      '@exterior/utils':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/utils
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.82.0(react@19.2.7))
@@ -415,9 +430,6 @@ importers:
       '@toss/lottie':
         specifier: ^1.3.2
         version: 1.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@yourssu-inhouse/exterior':
-        specifier: workspace:*
-        version: link:../../packages/exterior
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -566,6 +578,12 @@ importers:
 
   apps/shell:
     dependencies:
+      '@exterior/core':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/core
+      '@exterior/layout':
+        specifier: workspace:*
+        version: link:../../packages/@exterior/layout
       '@inhouse-mfa/shell':
         specifier: workspace:*
         version: link:../../packages/@inhouse-mfa/shell
@@ -593,9 +611,6 @@ importers:
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@yourssu-inhouse/exterior':
-        specifier: workspace:*
-        version: link:../../packages/exterior
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -691,6 +706,140 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1(typescript@6.0.3)(vite@8.2.2(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
 
+  packages/@exterior/core:
+    dependencies:
+      '@interior/react':
+        specifier: workspace:*
+        version: link:../../@interior/react
+    devDependencies:
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.101.0(react@19.2.7)
+      '@tanstack/react-router':
+        specifier: 'catalog:'
+        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
+      tsdown:
+        specifier: ^0.22.14
+        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/@exterior/layout:
+    dependencies:
+      '@interior/react':
+        specifier: workspace:*
+        version: link:../../@interior/react
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react-icons:
+        specifier: ^5.6.0
+        version: 5.6.0(react@19.2.7)
+      react-simplikit:
+        specifier: ^0.0.51
+        version: 0.0.51(react@19.2.7)
+    devDependencies:
+      '@tanstack/react-router':
+        specifier: 'catalog:'
+        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      motion:
+        specifier: ^12.40.0
+        version: 12.40.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
+      tsdown:
+        specifier: ^0.22.14
+        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/@exterior/utils:
+    devDependencies:
+      '@tanstack/react-router':
+        specifier: 'catalog:'
+        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      tsdown:
+        specifier: ^0.22.14
+        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   packages/@inhouse-mfa/core:
     devDependencies:
       '@tanstack/react-router':
@@ -726,15 +875,15 @@ importers:
 
   packages/@inhouse-mfa/shell:
     dependencies:
+      '@exterior/core':
+        specifier: workspace:*
+        version: link:../../@exterior/core
       '@inhouse-mfa/core':
         specifier: workspace:*
         version: link:../core
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../@inhouse/auth
-      '@yourssu-inhouse/exterior':
-        specifier: workspace:*
-        version: link:../../exterior
     devDependencies:
       '@module-federation/runtime':
         specifier: ^2.9.0
@@ -1171,76 +1320,6 @@ importers:
       typescript-eslint:
         specifier: ^8.59.2
         version: 8.61.0(eslint@10.4.1(jiti@2.7.0))(typescript@6.0.3)
-
-  packages/exterior:
-    dependencies:
-      '@inhouse/utils':
-        specifier: workspace:*
-        version: link:../@inhouse/utils
-      '@interior/react':
-        specifier: workspace:*
-        version: link:../@interior/react
-      '@interior/tailwind':
-        specifier: workspace:*
-        version: link:../@interior/tailwind
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      es-toolkit:
-        specifier: ^1.47.0
-        version: 1.47.0
-      react-icons:
-        specifier: ^5.6.0
-        version: 5.6.0(react@19.2.7)
-      react-simplikit:
-        specifier: ^0.0.51
-        version: 0.0.51(react@19.2.7)
-    devDependencies:
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.101.0(react@19.2.7)
-      '@tanstack/react-router':
-        specifier: 'catalog:'
-        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@types/node':
-        specifier: ^24.13.0
-        version: 24.13.2
-      '@types/react':
-        specifier: ^19.2.14
-        version: 19.2.17
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.17)
-      '@yourssu-inhouse/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@yourssu-inhouse/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      eslint:
-        specifier: 'catalog:'
-        version: 10.4.1(jiti@2.7.0)
-      motion:
-        specifier: ^12.40.0
-        version: 12.40.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      msw:
-        specifier: ^2.14.6
-        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
-      prettier:
-        specifier: ^3.9.6
-        version: 3.9.6
-      react:
-        specifier: 'catalog:'
-        version: 19.2.7
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.7(react@19.2.7)
-      tsdown:
-        specifier: ^0.22.14
-        version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
 
   packages/typescript-config: {}
 

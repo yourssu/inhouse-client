@@ -1,5 +1,5 @@
+import { PageLayout } from '@exterior/layout';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { MdPerson, MdPersonSearch } from 'react-icons/md';
 
 import { ProfileButton } from '@/components/ProfileButton';

@@ -1,7 +1,7 @@
+import { PageLayout } from '@exterior/layout';
+import { useUnmountOverlaysOnRouteChange } from '@exterior/utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
-import { useUnmountOverlaysOnRouteChange } from '@yourssu-inhouse/exterior';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { overlay, OverlayProvider } from 'overlay-kit';
 import { useEffect } from 'react';
 import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons/fc';
