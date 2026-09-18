@@ -12,4 +12,6 @@ export const interviewMemosOption = (applicantId: number) =>
   queryOptions({
     queryKey: interviewMemosQueryKey(applicantId),
     queryFn: () => getApplicantInterviewMemos(applicantId),
+    refetchInterval: 5_000,
+    refetchOnWindowFocus: true,
   });
