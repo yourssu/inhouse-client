@@ -940,6 +940,9 @@ importers:
       '@yourssu-inhouse/inhouse-utils':
         specifier: workspace:*
         version: link:../inhouse-utils
+      '@yourssu-inhouse/interior-tailwind':
+        specifier: workspace:*
+        version: link:../interior-tailwind
       '@yourssu-inhouse/interior-vars':
         specifier: workspace:*
         version: link:../interior-vars
