@@ -1,7 +1,7 @@
 import { assert } from 'es-toolkit';
 import { createContext, useContext } from 'react';
 
-import type { ToastItem, ToastType } from '@/components/Toast/type';
+import type { ToastItem, ToastType } from './type';
 
 interface ToastContextProps {
   addToast: (props: { text: string; type: ToastType }) => void;

@@ -1,9 +1,8 @@
 import { RxQuestionMarkCircled } from 'react-icons/rx';
 
-import { Divider } from '@/components/Divider';
-import { HoverTooltip } from '@/components/HoverTooltip';
-import { InlineButton } from '@/components/InlineButton';
-
+import { Divider } from '../Divider';
+import { HoverTooltip } from '../HoverTooltip';
+import { InlineButton } from '../InlineButton';
 import * as styles from './ItemList.css';
 
 const Header = ({ children }: React.PropsWithChildren<unknown>) => {

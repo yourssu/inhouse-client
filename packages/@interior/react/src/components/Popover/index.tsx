@@ -3,10 +3,9 @@ import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 import { type SetStateAction, useContext, useState } from 'react';
 
-import { popoverSurface } from '@/styles/recipes/popoverSurface.css.ts';
-
 import type { PopoverBehaviorType } from './type';
 
+import { popoverSurface } from '../../styles/recipes/popoverSurface.css.ts';
 import { PopoverContext } from './context';
 import { usePopoverBehavior } from './hook';
 import * as styles from './Popover.css';

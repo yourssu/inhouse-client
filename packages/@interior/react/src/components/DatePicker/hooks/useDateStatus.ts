@@ -1,7 +1,7 @@
 import { isAfter, isFuture, isSameDay } from 'date-fns';
 
-import { useCalendarContext } from '@/components/DatePicker/context';
-import { isInRange } from '@/components/DatePicker/utils';
+import { useCalendarContext } from '../context';
+import { isInRange } from '../utils';
 
 type DateStatus =
   | {

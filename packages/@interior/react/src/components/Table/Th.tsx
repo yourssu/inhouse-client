@@ -4,9 +4,8 @@ import clsx from 'clsx';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-import { HoverTooltip } from '@/components/HoverTooltip';
-import * as selectStyles from '@/components/Select/Select.css';
-
+import { HoverTooltip } from '../HoverTooltip';
+import * as selectStyles from '../Select/Select.css';
 import { useTableContext } from './context';
 import * as styles from './Table.css';
 
