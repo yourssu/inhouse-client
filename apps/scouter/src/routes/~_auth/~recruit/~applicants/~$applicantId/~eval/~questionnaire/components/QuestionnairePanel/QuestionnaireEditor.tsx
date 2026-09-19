@@ -88,7 +88,7 @@ export const QuestionnaireEditor = ({
   const errorSummaryRef = useRef<HTMLParagraphElement>(null);
   const {
     control,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isSubmitting },
     handleSubmit,
     reset,
   } = useForm<QuestionnaireFormValues>({
@@ -105,7 +105,7 @@ export const QuestionnaireEditor = ({
     },
     values: toQuestionnaireFormValues(assignedQuestions),
   });
-  const { isPending, mutateWithToast } = useToastedMutation({
+  const { mutateWithToast } = useToastedMutation({
     mutationFn: saveAssignedQuestions,
     onError: async (error) => {
       if (isKyHTTPError(error) && error.response.status === 404) {
@@ -190,6 +190,8 @@ export const QuestionnaireEditor = ({
     });
 
     if (saveResult.success) {
+      queryClient.setQueryData(assignedQuestionsOption(applicantId).queryKey, saveResult.result);
+      reset(toQuestionnaireFormValues(saveResult.result));
       const cultureSelectedCount = values.CULTURE.filter(
         ({ isSelected }) => isSelected === true,
       ).length;
@@ -501,7 +503,7 @@ export const QuestionnaireEditor = ({
             <Button
               className="w-full"
               disabled={isQuestionnaireDisabled || !isDirty}
-              loading={isPending}
+              loading={isSubmitting}
               onClick={() => trackQuestionnaireEvent('questionnaire_save_click', {})}
               size="md"
               type="submit"
