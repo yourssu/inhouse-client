@@ -10,8 +10,6 @@ import { interviewRubricOption } from '@/apis/interviews/rubrics/query';
 import { activeMembersOption } from '@/apis/members/query';
 import { QuestionnaireEditor } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~questionnaire/components/QuestionnairePanel/QuestionnaireEditor';
 
-import { isQuestionnaireLocked } from './questionnaireLock';
-
 interface QuestionnairePanelProps {
   applicantId: number;
   partId: number;
@@ -37,7 +35,9 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
     ],
   });
 
-  const isQuestionnaireDisabled = isQuestionnaireLocked({ evaluatorStatuses, myEvaluation });
+  const isQuestionnaireDisabled =
+    myEvaluation.submittedAt != null ||
+    evaluatorStatuses.some(({ status }) => status === 'SUBMITTED');
 
   return (
     <QuestionnaireEditor
