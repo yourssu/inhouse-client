@@ -1,17 +1,17 @@
 import type { RemotePlugin } from '@inhouse-mfa/core';
 import type { ReactNode } from 'react';
 
+import {
+  type AppRouteTree,
+  createExteriorApp,
+  type CreateExteriorAppOptions,
+} from '@exterior/core';
 import { type AuthConfig, AuthProvider } from '@inhouse/auth';
 import {
   createRouter,
   type RouterConstructorOptions,
   type RouterHistory,
 } from '@tanstack/react-router';
-import {
-  type AppRouteTree,
-  createExteriorApp,
-  type CreateExteriorAppOptions,
-} from '@yourssu-inhouse/exterior';
 
 import { PreviewAuthNotice, PreviewBanner } from './components/PreviewBanner';
 import { runPluginInits, setupPluginMocks } from './lifecycle';

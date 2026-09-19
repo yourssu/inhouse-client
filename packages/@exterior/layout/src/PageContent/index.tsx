@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { cn } from '@interior/tailwind/utils';
 
 export interface PageContentProps {
   className?: string;

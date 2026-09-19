@@ -1,7 +1,7 @@
+import { PageLayout } from '@exterior/layout';
 import { Divider } from '@interior/react';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Suspense, useCallback, useState } from 'react';
 import { SwitchCase } from 'react-simplikit';
 
