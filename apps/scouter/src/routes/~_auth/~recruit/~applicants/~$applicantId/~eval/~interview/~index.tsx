@@ -99,7 +99,11 @@ const RouteComponent = () => {
 
       <InterviewAnalyticsContext.Provider value={trackInterviewEvent}>
         <main className="flex min-h-0 flex-[1_1_0] items-start gap-4 pt-7">
-          <InterviewTab className="min-h-0 w-fit self-stretch" tabs={INTERVIEW_TABS}>
+          <InterviewTab
+            className="min-h-0 w-fit self-stretch"
+            key={applicantId}
+            tabs={INTERVIEW_TABS}
+          >
             {({ tab }) => (
               <Paper className="h-full w-90 flex-1 scrollbar-gutter-stable overflow-y-auto p-0">
                 <SwitchCase
