@@ -5,17 +5,11 @@ import { defineConfig } from 'tsdown';
 export default defineConfig({
   entry: ['./src/index.ts'],
   format: ['esm'],
-  dts: {
-    build: true,
-    sourcemap: true,
-  },
+  dts: false,
   sourcemap: true,
   clean: !process.argv.includes('--watch'),
   deps: {
     neverBundle: ['react', 'react-dom', '@tanstack/react-router', 'motion', 'motion/react'],
-    dts: {
-      neverBundle: ['@tanstack/react-router', '@tanstack/router-core', '@tanstack/history'],
-    },
   },
   hooks: {
     // styles/index.css 는 Tailwind 의 @source 디렉티브만 담고 있어
