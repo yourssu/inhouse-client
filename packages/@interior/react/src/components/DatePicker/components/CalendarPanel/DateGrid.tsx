@@ -1,8 +1,7 @@
 import { getMonth, getYear } from 'date-fns';
 
-import * as styles from '@/components/DatePicker/DatePicker.css';
-import { getCalendarDays } from '@/components/DatePicker/utils';
-
+import * as styles from '../../DatePicker.css';
+import { getCalendarDays } from '../../utils';
 import { DateGridCell } from './DateGridCell';
 
 interface DateGridProps {

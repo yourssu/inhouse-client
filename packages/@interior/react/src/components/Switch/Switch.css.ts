@@ -1,7 +1,7 @@
 import { vars } from '@interior/vars';
 import { recipe } from '@vanilla-extract/recipes';
 
-import { shadows } from '@/styles/shadow.css.ts';
+import { shadows } from '../../styles/shadow.css.ts';
 
 export const base = recipe({
   base: {

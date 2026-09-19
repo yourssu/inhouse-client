@@ -2,8 +2,8 @@ import { formatTemplates } from '@inhouse/utils/date';
 import { isSameMonth, isSameYear } from 'date-fns';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-import * as styles from '@/components/DatePicker/DatePicker.css';
-import { Popover } from '@/components/Popover';
+import { Popover } from '../../../Popover';
+import * as styles from '../../DatePicker.css';
 
 interface DateSelectProps {
   currentDate: Date;

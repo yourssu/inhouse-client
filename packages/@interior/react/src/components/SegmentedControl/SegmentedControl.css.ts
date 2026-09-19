@@ -1,7 +1,7 @@
 import { vars } from '@interior/vars';
 import { style } from '@vanilla-extract/css';
 
-import { typography } from '@/styles/typography.css.ts';
+import { typography } from '../../styles/typography.css.ts';
 
 export const root = style({
   backgroundColor: vars.color.palette.greyOpacity100,

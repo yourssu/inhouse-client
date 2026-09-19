@@ -2,8 +2,7 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 import clsx from 'clsx';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-import { Fieldset } from '@/components/Fieldset';
-
+import { Fieldset } from '../Fieldset';
 import * as styles from './Select.css';
 
 export interface SelectProps<TValue extends string> {
