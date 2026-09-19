@@ -1,5 +1,5 @@
+import { PageLayout } from '@exterior/layout';
 import { cn } from '@interior/tailwind/utils';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 
 import { Paper } from '@/components/Paper';
 

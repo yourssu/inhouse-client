@@ -1,6 +1,6 @@
+import { PageLayout } from '@exterior/layout';
+import { useUnmountOverlaysOnRouteChange } from '@exterior/utils';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { useUnmountOverlaysOnRouteChange } from '@yourssu-inhouse/exterior';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { overlay, OverlayProvider } from 'overlay-kit';
 import { FcConferenceCall } from 'react-icons/fc';
 

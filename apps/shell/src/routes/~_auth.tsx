@@ -1,5 +1,5 @@
+import { PageLayout } from '@exterior/layout';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { MdPerson, MdPersonSearch } from 'react-icons/md';
 
 import { ProfileButton } from '@/components/ProfileButton';
@@ -9,7 +9,12 @@ const AuthLayout = () => {
   return (
     <PageLayout
       menu={[
-        { icon: <MdPerson />, label: '멤버', to: '/members' },
+        {
+          icon: <MdPerson />,
+          label: '멤버',
+          to: '/members',
+          disabledToast: '아직 준비중인 서비스에요',
+        },
         { icon: <MdPersonSearch />, label: '스카우터', to: '/recruit' },
       ]}
       profile={<ProfileButton />}

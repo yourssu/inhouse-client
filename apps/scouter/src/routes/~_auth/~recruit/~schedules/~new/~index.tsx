@@ -1,7 +1,7 @@
+import { PageLayout } from '@exterior/layout';
 import { Button } from '@interior/react';
 import { useToast } from '@interior/react';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { Suspense, useCallback } from 'react';
 import { IoSparkles } from 'react-icons/io5';
 import { MdArrowBack } from 'react-icons/md';

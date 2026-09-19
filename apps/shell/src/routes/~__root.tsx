@@ -1,4 +1,4 @@
-import type { RouteContext } from '@yourssu-inhouse/exterior';
+import type { RouteContext } from '@exterior/core';
 
 import { AuthProvider } from '@inhouse/auth';
 import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router';

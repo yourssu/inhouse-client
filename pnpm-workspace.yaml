@@ -8,6 +8,7 @@ packages:
   - 'packages/@interior/*'
   - 'packages/@inhouse/*'
   - 'packages/@inhouse-mfa/*'
+  - 'packages/@exterior/*'
 
 catalog:
   eslint: '^10.3.0'

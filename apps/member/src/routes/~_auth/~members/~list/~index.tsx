@@ -1,3 +1,4 @@
+import { PageLayout } from '@exterior/layout';
 import { useDelayedValue } from '@inhouse/react/hooks';
 import { useSetStateSelector } from '@inhouse/react/hooks';
 import { lotties } from '@inhouse/resources';
@@ -13,7 +14,6 @@ import { tv } from '@interior/tailwind/utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { invert } from 'es-toolkit';
 import { Suspense, useState } from 'react';
 import { match } from 'ts-pattern';

@@ -1,18 +1,20 @@
 {
-  "name": "@inhouse-mfa/shell",
+  "name": "@exterior/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     }
   },
   "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "check:type": "tsc --noEmit",
     "check:lint": "eslint .",
     "check:format": "prettier --check .",
@@ -20,12 +22,9 @@
     "fix:format": "prettier --write ."
   },
   "dependencies": {
-    "@inhouse/auth": "workspace:*",
-    "@exterior/core": "workspace:*",
-    "@inhouse-mfa/core": "workspace:*"
+    "@interior/react": "workspace:*"
   },
   "devDependencies": {
-    "@module-federation/runtime": "^2.9.0",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@types/node": "^24.13.0",
@@ -34,17 +33,15 @@
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
-    "msw": "^2.14.6",
     "prettier": "^3.9.6",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "tsdown": "^0.22.14",
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@module-federation/runtime": "^2.6.0",
     "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-router": "^1.170.11",
-    "msw": "^2.14.6",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   }
