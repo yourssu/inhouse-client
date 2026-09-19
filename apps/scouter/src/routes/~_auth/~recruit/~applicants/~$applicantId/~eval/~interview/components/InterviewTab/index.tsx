@@ -1,7 +1,7 @@
 import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import clsx from 'clsx';
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
-import { useDeferredValue, useId, useState } from 'react';
+import { LayoutGroup, motion, useReducedMotion } from 'motion/react';
+import { Activity, useId, useState } from 'react';
 
 import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
 
@@ -17,20 +17,21 @@ export const InterviewTab = <TTab extends string>({
   className,
 }: InterviewTabProps<TTab>) => {
   const id = useId();
-  const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0] ?? null);
-  const deferredActiveTab = useDeferredValue(activeTab);
   const trackInterviewEvent = useInterviewAnalytics();
+  const shouldReduceMotion = useReducedMotion();
+  const [activeTab, setActiveTab] = useState<null | TTab>(tabs[0] ?? null);
+  const isOpen = activeTab !== null;
 
   const handleTabClick = (nextTab: TTab) => {
     if (activeTab !== nextTab && nextTab === '지원서') {
       trackInterviewEvent('interview_application_card_open', {});
     }
 
-    setActiveTab((prev) => (prev === nextTab ? null : nextTab));
+    setActiveTab((previous) => (previous === nextTab ? null : nextTab));
   };
 
   return (
-    <div className={cn('flex w-full gap-3', className)}>
+    <div className={cn('flex w-full', className)}>
       <LayoutGroup id={id}>
         <div aria-orientation="vertical" className="flex flex-col gap-1.5" role="tablist">
           {tabs.map((item) => {
@@ -39,7 +40,7 @@ export const InterviewTab = <TTab extends string>({
 
             return (
               <button
-                aria-controls={deferredActiveTab !== null ? `${id}-tabpanel` : undefined}
+                aria-controls={`${id}-tabpanel-${item}`}
                 aria-selected={isHighlighted}
                 className={clsx(
                   'rounded-6 relative flex cursor-pointer border-none px-3 py-2 transition-colors outline-none',
@@ -66,7 +67,11 @@ export const InterviewTab = <TTab extends string>({
                   <motion.div
                     className="bg-violet600 absolute top-0 right-0 h-full w-0.5"
                     layoutId="interview-tab-indicator"
-                    transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+                    transition={{
+                      type: 'spring',
+                      bounce: 0,
+                      duration: shouldReduceMotion ? 0 : 0.4,
+                    }}
                   />
                 )}
               </button>
@@ -74,22 +79,35 @@ export const InterviewTab = <TTab extends string>({
           })}
         </div>
       </LayoutGroup>
-      <AnimatePresence initial={false}>
-        {deferredActiveTab !== null && (
-          <motion.div
-            animate={{ width: 'auto', opacity: 1 }}
-            aria-labelledby={`${id}-tab-${deferredActiveTab}`}
-            className="min-h-0 overflow-hidden"
-            exit={{ width: 0, opacity: 0 }}
-            id={`${id}-tabpanel`}
-            initial={{ width: 0, opacity: 0 }}
-            role="tabpanel"
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-          >
-            {children({ tab: deferredActiveTab })}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <motion.div
+        animate={isOpen ? 'open' : 'closed'}
+        className="min-h-0 overflow-hidden"
+        initial={false}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.3, ease: 'easeOut' }}
+        variants={panelVariants}
+      >
+        {/* Activity가 내용을 숨겨도 너비를 유지해요. 이 래퍼가 없으면 auto 너비가 즉시 0이 되어 닫기 애니메이션이 사라져요. */}
+        <div className="box-content h-full w-90 pl-3">
+          {/* 탭 전환이나 닫기 시에도 각 탭의 DOM을 보존해 스크롤 위치를 유지하기 위해 Activity를 사용해요. */}
+          {tabs.map((item) => (
+            <Activity key={item} mode={item === activeTab ? 'visible' : 'hidden'}>
+              <div
+                aria-labelledby={`${id}-tab-${item}`}
+                className="h-full"
+                id={`${id}-tabpanel-${item}`}
+                role="tabpanel"
+              >
+                {children({ tab: item })}
+              </div>
+            </Activity>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
+};
+
+const panelVariants = {
+  closed: { opacity: 0, width: 0 },
+  open: { opacity: 1, width: 'auto' },
 };
