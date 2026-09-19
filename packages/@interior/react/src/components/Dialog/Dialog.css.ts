@@ -1,8 +1,8 @@
 import { vars } from '@interior/vars';
 import { style } from '@vanilla-extract/css';
 
-import { shadows } from '@/styles/shadow.css.ts';
-import { typography } from '@/styles/typography.css.ts';
+import { shadows } from '../../styles/shadow.css.ts';
+import { typography } from '../../styles/typography.css.ts';
 
 export const overlay = style({
   position: 'fixed',

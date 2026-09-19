@@ -1,7 +1,7 @@
 import { vars } from '@interior/vars';
 import { style } from '@vanilla-extract/css';
 
-import { typography } from '@/styles/typography.css.ts';
+import { typography } from '../../styles/typography.css.ts';
 
 export const content = style({
   backgroundColor: vars.color.bg.backgroundLevel02,

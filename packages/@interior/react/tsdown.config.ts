@@ -28,10 +28,7 @@ const bundleCSSPlugin = (layer: string, cssFileName: string) => ({
 export default defineConfig({
   entry: ['./src/index.ts'],
   format: ['esm'],
-  dts: {
-    build: true,
-    sourcemap: true,
-  },
+  dts: false,
   sourcemap: true,
   clean: !process.argv.includes('--watch'),
   outputOptions: {

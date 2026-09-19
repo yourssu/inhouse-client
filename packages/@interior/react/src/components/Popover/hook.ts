@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { PopoverContext } from '@/components/Popover/context';
+import { PopoverContext } from './context';
 
 export const usePopoverBehavior = () => {
   const { behavior, setOpen } = useContext(PopoverContext);

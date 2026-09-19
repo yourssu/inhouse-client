@@ -1,6 +1,6 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react';
 
-import type { PopoverBehaviorType } from '@/components/Popover/type';
+import type { PopoverBehaviorType } from './type';
 
 type PopoverContextType = {
   behavior: PopoverBehaviorType;

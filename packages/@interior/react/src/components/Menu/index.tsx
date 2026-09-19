@@ -1,10 +1,9 @@
 import * as RadixPopover from '@radix-ui/react-popover';
 import clsx from 'clsx';
 
-import { Popover, type PopoverProps } from '@/components/Popover';
-import { usePopoverBehavior } from '@/components/Popover/hook';
-import { popoverSurface } from '@/styles/recipes/popoverSurface.css.ts';
-
+import { popoverSurface } from '../../styles/recipes/popoverSurface.css.ts';
+import { Popover, type PopoverProps } from '../Popover';
+import { usePopoverBehavior } from '../Popover/hook';
 import * as styles from './Menu.css';
 
 interface ButtonItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

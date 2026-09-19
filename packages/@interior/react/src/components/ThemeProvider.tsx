@@ -1,7 +1,7 @@
 import { assert } from 'es-toolkit';
 import { createContext, useContext, useState } from 'react';
 
-import { documentThemeAttributeKey, setDocumentTheme } from '@/bootstrap/color-theme';
+import { documentThemeAttributeKey, setDocumentTheme } from '../bootstrap/color-theme';
 
 export type ThemeType = 'dark' | 'light';
 

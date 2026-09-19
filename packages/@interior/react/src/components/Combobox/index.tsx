@@ -3,8 +3,7 @@ import clsx from 'clsx';
 import { disassemble } from 'es-hangul';
 import { useCallback, useRef, useState } from 'react';
 
-import { Fieldset } from '@/components/Fieldset';
-
+import { Fieldset } from '../Fieldset';
 import * as styles from './Combobox.css';
 import { ComboboxChip } from './ComboboxChip';
 import { ComboboxItem } from './ComboboxItem';

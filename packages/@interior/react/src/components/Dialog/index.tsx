@@ -6,9 +6,8 @@ import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { MdClose } from 'react-icons/md';
 
-import { type ButtonProps, Button as StyledButton } from '@/components/Button';
-import { TabButton } from '@/components/TabButton';
-
+import { type ButtonProps, Button as StyledButton } from '../Button';
+import { TabButton } from '../TabButton';
 import * as styles from './Dialog.css';
 
 export interface DialogProps {
