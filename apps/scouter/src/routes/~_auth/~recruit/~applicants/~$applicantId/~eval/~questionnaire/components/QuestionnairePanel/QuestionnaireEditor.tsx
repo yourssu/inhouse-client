@@ -190,6 +190,7 @@ export const QuestionnaireEditor = ({
     });
 
     if (saveResult.success) {
+      queryClient.setQueryData(assignedQuestionsOption(applicantId).queryKey, saveResult.result);
       const cultureSelectedCount = values.CULTURE.filter(
         ({ isSelected }) => isSelected === true,
       ).length;
