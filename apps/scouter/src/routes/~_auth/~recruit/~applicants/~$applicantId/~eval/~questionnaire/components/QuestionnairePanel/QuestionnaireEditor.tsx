@@ -45,7 +45,6 @@ import { RequirementsSection } from './Requirements/RequirementsSection';
 
 const questionnaireDisabledMessage = '면접 평가가 제출되어 질문지를 수정할 수 없어요.';
 const questionnaireSaveErrorMessage = '질문지를 저장하지 못했어요.';
-const questionnaireSaveLockedMessage = '지원자에 대한 평가가 제출돼서 질문지를 수정할 수 없어요.';
 const sharedQuestionDisabledMessage =
   '파트의 면접 평가가 진행되어 컬처핏·파트 공통 질문을 수정할 수 없어요.';
 
@@ -109,38 +108,6 @@ export const QuestionnaireEditor = ({
     values: toQuestionnaireFormValues(assignedQuestions),
   });
 
-  const { mutateAsync: mutateAssignedQuestions } = useMutation({
-    mutationFn: saveAssignedQuestions,
-    onError: async (error) => {
-      if (!isKyHTTPError(error)) {
-        toast.error(questionnaireSaveErrorMessage);
-        return;
-      }
-
-      if (error.response.status === 404) {
-        await invalidateAssignedQuestions();
-        toast.error(questionnaireSaveErrorMessage);
-        return;
-      }
-
-      if (error.response.status === 409) {
-        await Promise.all([invalidateMyEvaluation(), invalidateEvaluatorStatuses()]);
-        toast.error(questionnaireSaveLockedMessage);
-        const latestAssignedQuestions = await queryClient.fetchQuery({
-          ...assignedQuestionsOption(applicantId),
-          staleTime: 0,
-        });
-        reset(toQuestionnaireFormValues(latestAssignedQuestions));
-        trackQuestionnaireEvent('questionnaire_save_error_view', {
-          error_codes: ['locked'],
-        });
-        return;
-      }
-
-      toast.error(questionnaireSaveErrorMessage);
-    },
-    onSuccess: () => toast.success('질문지를 저장했어요.'),
-  });
   const disabledDescription = isQuestionnaireDisabled
     ? {
         id: 'questionnaire-disabled-description',
@@ -178,39 +145,69 @@ export const QuestionnaireEditor = ({
     }
   });
 
-  const onSubmit: SubmitHandler<QuestionnaireFormValues> = async (values) => {
+  const { mutate: mutateAssignedQuestions } = useMutation({
+    mutationFn: saveAssignedQuestions,
+    onError: async (error) => {
+      toast.error(questionnaireSaveErrorMessage);
+
+      if (!isKyHTTPError(error)) {
+        return;
+      }
+
+      if (error.response.status === 404) {
+        await invalidateAssignedQuestions();
+        return;
+      }
+
+      if (error.response.status === 409) {
+        await Promise.all([invalidateMyEvaluation(), invalidateEvaluatorStatuses()]);
+        const latestAssignedQuestions = await queryClient.fetchQuery({
+          ...assignedQuestionsOption(applicantId),
+          staleTime: 0,
+        });
+        reset(toQuestionnaireFormValues(latestAssignedQuestions));
+        trackQuestionnaireEvent('questionnaire_save_error_view', {
+          error_codes: ['locked'],
+        });
+      }
+    },
+  });
+
+  const onSubmit: SubmitHandler<QuestionnaireFormValues> = (values) => {
     if (isQuestionnaireDisabled) {
       return;
     }
 
-    const saveResult = await mutateAssignedQuestions({
-      applicantId,
-      data: {
-        questions: toSaveAssignedQuestions(values),
+    mutateAssignedQuestions(
+      {
+        applicantId,
+        data: {
+          questions: toSaveAssignedQuestions(values),
+        },
       },
-    }).catch(() => null);
+      {
+        onSuccess: (saveResult) => {
+          toast.success('질문지를 저장했어요.');
+          queryClient.setQueryData(assignedQuestionsOption(applicantId).queryKey, saveResult);
 
-    if (saveResult === null) {
-      return;
-    }
+          const cultureSelectedCount = values.CULTURE.filter(
+            ({ isSelected }) => isSelected === true,
+          ).length;
 
-    queryClient.setQueryData(assignedQuestionsOption(applicantId).queryKey, saveResult);
-
-    const cultureSelectedCount = values.CULTURE.filter(
-      ({ isSelected }) => isSelected === true,
-    ).length;
-
-    trackQuestionnaireEvent('questionnaire_save_complete', {
-      culture_selected_count: cultureSelectedCount,
-      part_question_count: values.PART.length,
-      personal_question_count: values.PERSONAL.length,
-      question_count:
-        values.INTRO.length +
-        values.OUTRO.length +
-        cultureSelectedCount +
-        values.PART.length +
-        values.PERSONAL.length,
-    });
+          trackQuestionnaireEvent('questionnaire_save_complete', {
+            culture_selected_count: cultureSelectedCount,
+            part_question_count: values.PART.length,
+            personal_question_count: values.PERSONAL.length,
+            question_count:
+              values.INTRO.length +
+              values.OUTRO.length +
+              cultureSelectedCount +
+              values.PART.length +
+              values.PERSONAL.length,
+          });
+        },
+      },
+    );
   };
 
   const onInvalid: SubmitErrorHandler<QuestionnaireFormValues> = (fieldErrors) => {
