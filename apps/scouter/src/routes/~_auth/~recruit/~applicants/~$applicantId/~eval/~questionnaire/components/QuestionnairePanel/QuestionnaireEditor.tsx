@@ -188,9 +188,9 @@ export const QuestionnaireEditor = ({
         },
       },
       {
-        onSuccess: (saveResult) => {
+        onSuccess: () => {
           toast.success('질문지를 저장했어요.');
-          queryClient.setQueryData(assignedQuestionsOption(applicantId).queryKey, saveResult);
+          invalidateAssignedQuestions();
 
           const cultureSelectedCount = values.CULTURE.filter(
             ({ isSelected }) => isSelected === true,
