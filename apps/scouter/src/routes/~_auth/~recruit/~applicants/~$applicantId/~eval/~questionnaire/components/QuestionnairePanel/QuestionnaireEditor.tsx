@@ -150,6 +150,8 @@ export const QuestionnaireEditor = ({
     onError: async (error) => {
       toast.error(questionnaireSaveErrorMessage);
 
+      // 질문지는 입력량이 많아, 모든 오류에서 캐시를 갱신하면 저장하지 못한 작업이 초기화될 수 있어요.
+      // 작성 중인 내용을 보존하기 위해 서버 상태와의 불일치가 확인되는 응답에서만 관련 데이터를 갱신해요.
       if (!isKyHTTPError(error)) {
         return;
       }
