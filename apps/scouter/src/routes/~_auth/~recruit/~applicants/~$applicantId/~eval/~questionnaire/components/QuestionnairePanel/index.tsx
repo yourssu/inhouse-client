@@ -40,7 +40,7 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
     ],
   });
 
-  const isQuestionnaireDisabled = isQuestionnaireLocked({ evaluatorStatuses, myEvaluation });
+  const isQuestionnaireDisabled = hasSubmittedInterviewEvaluation ({ evaluatorStatuses, myEvaluation });
 
   return (
     <QuestionnaireEditor
@@ -59,6 +59,6 @@ interface IsQuestionnaireLockedParams {
   myEvaluation: MyInterviewEvaluation;
 }
 
-const isQuestionnaireLocked = ({ evaluatorStatuses, myEvaluation }: IsQuestionnaireLockedParams) =>
+const hasSubmittedInterviewEvaluation  = ({ evaluatorStatuses, myEvaluation }: IsQuestionnaireLockedParams) =>
   myEvaluation.submittedAt != null ||
   evaluatorStatuses.some(({ status }) => status === 'SUBMITTED');
