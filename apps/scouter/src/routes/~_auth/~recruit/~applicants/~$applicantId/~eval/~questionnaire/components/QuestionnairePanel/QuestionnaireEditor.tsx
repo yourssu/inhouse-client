@@ -19,6 +19,7 @@ import type {
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
+import { interviewEvaluationsQueryKeys } from '@/apis/interviews/evaluations/query';
 import { saveAssignedQuestions } from '@/apis/interviews/questions';
 import {
   assignedQuestionsOption,
@@ -52,7 +53,7 @@ interface QuestionnaireEditorProps {
   activeMembers: ActiveMemberType[];
   applicantId: number;
   assignedQuestions: AssignedQuestions;
-  isInitialQuestionnaireDisabled: boolean;
+  isQuestionnaireDisabled: boolean;
   isSharedQuestionDisabled: boolean;
   requirements: InterviewRequirements;
 }
@@ -61,7 +62,7 @@ export const QuestionnaireEditor = ({
   activeMembers,
   applicantId,
   assignedQuestions,
-  isInitialQuestionnaireDisabled,
+  isQuestionnaireDisabled,
   isSharedQuestionDisabled,
   requirements,
 }: QuestionnaireEditorProps) => {
@@ -70,9 +71,13 @@ export const QuestionnaireEditor = ({
   const { invalidate: invalidateAssignedQuestions } = useQueryInvalidation(
     interviewQuestionsQueryKeys.applicant(applicantId),
   );
+  const { invalidate: invalidateMyEvaluation } = useQueryInvalidation(
+    interviewEvaluationsQueryKeys.my(applicantId),
+  );
+  const { invalidate: invalidateEvaluatorStatuses } = useQueryInvalidation(
+    interviewEvaluationsQueryKeys.statuses(applicantId),
+  );
   const trackQuestionnaireEvent = useQuestionnaireAnalytics();
-  const [isQuestionnaireLockedAfterSave, setIsQuestionnaireLockedAfterSave] = useState(false);
-  const isQuestionnaireDisabled = isInitialQuestionnaireDisabled || isQuestionnaireLockedAfterSave;
   const toast = useToast();
   const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
     Record<QuestionCategory, boolean>
@@ -119,7 +124,7 @@ export const QuestionnaireEditor = ({
       }
 
       if (error.response.status === 409) {
-        setIsQuestionnaireLockedAfterSave(true);
+        await Promise.all([invalidateMyEvaluation(), invalidateEvaluatorStatuses()]);
         toast.error(questionnaireSaveLockedMessage);
         const latestAssignedQuestions = await queryClient.fetchQuery({
           ...assignedQuestionsOption(applicantId),
@@ -190,7 +195,7 @@ export const QuestionnaireEditor = ({
     }
 
     queryClient.setQueryData(assignedQuestionsOption(applicantId).queryKey, saveResult);
-  
+
     const cultureSelectedCount = values.CULTURE.filter(
       ({ isSelected }) => isSelected === true,
     ).length;
