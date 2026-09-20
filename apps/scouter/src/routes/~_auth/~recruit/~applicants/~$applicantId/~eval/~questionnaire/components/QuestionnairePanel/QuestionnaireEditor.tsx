@@ -19,10 +19,6 @@ import type {
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';
 import type { ActiveMemberType } from '@/apis/members/schema';
 
-import {
-  interviewEvaluatorStatusesOption,
-  myInterviewEvaluationOption,
-} from '@/apis/interviews/evaluations/query';
 import { saveAssignedQuestions } from '@/apis/interviews/questions';
 import {
   assignedQuestionsOption,
@@ -43,7 +39,6 @@ import { CultureQuestionCard } from './QuestionCards/CultureQuestionCard';
 import { PartQuestionCard } from './QuestionCards/PartQuestionCard';
 import { PersonalQuestionCard } from './QuestionCards/PersonalQuestionCard';
 import { RequiredQuestionCard } from './QuestionCards/RequiredQuestionCard';
-import { isQuestionnaireLocked } from './questionnaireLock';
 import { QuestionSection } from './QuestionSection';
 import { teamJobRequirementCategories } from './Requirements/requirementOptions';
 import { RequirementsSection } from './Requirements/RequirementsSection';
@@ -56,7 +51,7 @@ interface QuestionnaireEditorProps {
   activeMembers: ActiveMemberType[];
   applicantId: number;
   assignedQuestions: AssignedQuestions;
-  isQuestionnaireDisabled: boolean;
+  isInitialQuestionnaireDisabled: boolean;
   isSharedQuestionDisabled: boolean;
   requirements: InterviewRequirements;
 }
@@ -65,7 +60,7 @@ export const QuestionnaireEditor = ({
   activeMembers,
   applicantId,
   assignedQuestions,
-  isQuestionnaireDisabled,
+  isInitialQuestionnaireDisabled,
   isSharedQuestionDisabled,
   requirements,
 }: QuestionnaireEditorProps) => {
@@ -75,6 +70,8 @@ export const QuestionnaireEditor = ({
     interviewQuestionsQueryKeys.applicant(applicantId),
   );
   const trackQuestionnaireEvent = useQuestionnaireAnalytics();
+  const [isQuestionnaireLockedAfterSave, setIsQuestionnaireLockedAfterSave] = useState(false);
+  const isQuestionnaireDisabled = isInitialQuestionnaireDisabled || isQuestionnaireLockedAfterSave;
   const toast = useToast();
   const [questionSectionOpenByCategory, setQuestionSectionOpenByCategory] = useState<
     Record<QuestionCategory, boolean>
@@ -105,11 +102,31 @@ export const QuestionnaireEditor = ({
     },
     values: toQuestionnaireFormValues(assignedQuestions),
   });
+
   const { mutateWithToast } = useToastedMutation({
     mutationFn: saveAssignedQuestions,
     onError: async (error) => {
-      if (isKyHTTPError(error) && error.response.status === 404) {
+      if (!isKyHTTPError(error)) {
+        return;
+      }
+
+      if (error.response.status === 404) {
         await invalidateAssignedQuestions();
+        return;
+      }
+
+      if (error.response.status === 409) {
+        setIsQuestionnaireLockedAfterSave(true);
+        const latestAssignedQuestions = await queryClient.fetchQuery({
+          ...assignedQuestionsOption(applicantId),
+          staleTime: 0,
+        });
+        toast.error('지원자에 대한 평가가 제출돼서 질문지를 수정할 수 없어요.');
+        reset(toQuestionnaireFormValues(latestAssignedQuestions));
+        trackQuestionnaireEvent('questionnaire_save_error_view', {
+          error_codes: ['locked'],
+        });
+        return;
       }
     },
     successText: '질문지를 저장했어요.',
@@ -153,32 +170,6 @@ export const QuestionnaireEditor = ({
 
   const onSubmit: SubmitHandler<QuestionnaireFormValues> = async (values) => {
     if (isQuestionnaireDisabled) {
-      return;
-    }
-
-    // 폼을 편집하는 동안 평가가 제출됐을 수 있어, 저장 직전에 최신 상태를 다시 확인해요.
-    const [evaluatorStatuses, myEvaluation] = await Promise.all([
-      queryClient.fetchQuery({
-        ...interviewEvaluatorStatusesOption(applicantId),
-        staleTime: 0,
-      }),
-      queryClient.fetchQuery({
-        ...myInterviewEvaluationOption(applicantId),
-        staleTime: 0,
-      }),
-    ]);
-    const isLocked = isQuestionnaireLocked({ evaluatorStatuses, myEvaluation });
-
-    if (isLocked) {
-      const latestAssignedQuestions = await queryClient.fetchQuery({
-        ...assignedQuestionsOption(applicantId),
-        staleTime: 0,
-      });
-      reset(toQuestionnaireFormValues(latestAssignedQuestions));
-      toast.error(questionnaireDisabledMessage);
-      trackQuestionnaireEvent('questionnaire_save_error_view', {
-        error_codes: ['locked'],
-      });
       return;
     }
 

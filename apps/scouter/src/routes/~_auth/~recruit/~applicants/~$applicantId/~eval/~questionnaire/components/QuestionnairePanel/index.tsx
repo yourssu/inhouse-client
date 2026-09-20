@@ -44,7 +44,7 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
       activeMembers={activeMembersResponse.members}
       applicantId={applicantId}
       assignedQuestions={assignedQuestions}
-      isQuestionnaireDisabled={isQuestionnaireDisabled}
+      isInitialQuestionnaireDisabled={isQuestionnaireDisabled}
       isSharedQuestionDisabled={rubric.isLocked}
       requirements={requirements}
     />
