@@ -90,7 +90,7 @@ export const QuestionnaireEditor = ({
   const errorSummaryRef = useRef<HTMLParagraphElement>(null);
   const {
     control,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty },
     handleSubmit,
     reset,
   } = useForm<QuestionnaireFormValues>({
@@ -145,7 +145,7 @@ export const QuestionnaireEditor = ({
     }
   });
 
-  const { mutate: mutateAssignedQuestions } = useMutation({
+  const { isPending, mutate: mutateAssignedQuestions } = useMutation({
     mutationFn: saveAssignedQuestions,
     onError: async (error) => {
       toast.error(questionnaireSaveErrorMessage);
@@ -505,7 +505,7 @@ export const QuestionnaireEditor = ({
             <Button
               className="w-full"
               disabled={isQuestionnaireDisabled || !isDirty}
-              loading={isSubmitting}
+              loading={isPending}
               onClick={() => trackQuestionnaireEvent('questionnaire_save_click', {})}
               size="md"
               type="submit"
