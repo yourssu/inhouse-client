@@ -1,5 +1,10 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
 
+import type {
+  InterviewEvaluatorStatuses,
+  MyInterviewEvaluation,
+} from '@/apis/interviews/evaluations/schema';
+
 import {
   interviewEvaluatorStatusesOption,
   myInterviewEvaluationOption,
@@ -35,9 +40,7 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
     ],
   });
 
-  const isQuestionnaireDisabled =
-    myEvaluation.submittedAt != null ||
-    evaluatorStatuses.some(({ status }) => status === 'SUBMITTED');
+  const isQuestionnaireDisabled = isQuestionnaireLocked({ evaluatorStatuses, myEvaluation });
 
   return (
     <QuestionnaireEditor
@@ -50,3 +53,12 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
     />
   );
 };
+
+interface IsQuestionnaireLockedParams {
+  evaluatorStatuses: InterviewEvaluatorStatuses;
+  myEvaluation: MyInterviewEvaluation;
+}
+
+const isQuestionnaireLocked = ({ evaluatorStatuses, myEvaluation }: IsQuestionnaireLockedParams) =>
+  myEvaluation.submittedAt != null ||
+  evaluatorStatuses.some(({ status }) => status === 'SUBMITTED');
