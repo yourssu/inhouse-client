@@ -3,7 +3,12 @@ import test from 'node:test';
 
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 
-import { defineRemotePlugin, findRouteById, RouteRegistry } from '../dist/index.mjs';
+import {
+  assertGraftCandidate,
+  defineRemotePlugin,
+  findRouteById,
+  RouteRegistry,
+} from '../dist/index.mjs';
 
 /** routeTree.gen.ts와 같은 방식: createRoute 후 update로 id와 path를 함께 지정한다. */
 const makeRoute = (parent, spec) => {
@@ -36,15 +41,17 @@ const plugin = (name, basePath, nested = []) =>
     },
   });
 
-/** graft.ts와 같은 방식으로 plugin entry의 children을 host anchor 아래에 이식한다. */
-const graftChildren = (hostTree, pluginTree) => {
-  const anchor = findRouteById(hostTree, '/_auth');
+/** graftPlugin의 반영 단계와 같은 방식으로 검증을 통과한 자식만 원본에 연결한다. */
+const commitChildren = (hostEntry, pluginTree) => {
   const children = [...(findRouteById(pluginTree, '/_auth').children ?? [])];
   for (const child of children) {
-    child.update({ getParentRoute: () => anchor });
+    child.update({ getParentRoute: () => hostEntry });
   }
-  anchor.addChildren([...(anchor.children ?? []), ...children]);
+  hostEntry.addChildren([...(hostEntry.children ?? []), ...children]);
 };
+
+const hostTreeWithMembersDetails = () =>
+  makeRouteTree([{ children: [{ fragment: '/details' }], fragment: '/members' }]);
 
 test('validates remote route boundaries', () => {
   assert.equal(plugin('member', '/members').name, 'member');
@@ -71,47 +78,111 @@ test('rejects duplicate plugin names and base paths', () => {
   assert.throws(() => registry.assertPlugin(plugin('other', '/members')), /basePath '\/members'/);
 });
 
-test('allows identical nested fragments under different basePaths', () => {
-  const registry = new RouteRegistry();
-  registry.register(plugin('member', '/members', ['/details', '/', '/$id']));
+test('graft candidate allows identical fragments under different basePaths', () => {
+  const hostTree = hostTreeWithMembersDetails();
+  const hostEntry = findRouteById(hostTree, '/_auth');
 
   assert.doesNotThrow(() => {
-    const scouter = plugin('scouter', '/recruit', ['/details', '/', '/$id']);
-    registry.assertPlugin(scouter);
-    registry.register(scouter);
+    assertGraftCandidate(hostEntry, plugin('scouter', '/recruit', ['/details', '/', '/$id']));
   });
 });
 
-test('rejects grafted subtrees with the same final route id', () => {
-  const registry = new RouteRegistry();
-  registry.register(plugin('member', '/members', ['/details']));
-
-  // basePath는 다르지만 graft 결과 routeTree의 최종 id가 '/_auth/members/details'로 겹친다.
-  assert.throws(
-    () => registry.assertPlugin(plugin('recruit', '/members/details')),
-    /route id '\/_auth\/members\/details' is already grafted/,
-  );
-});
-
-test('allowed fragment overlap yields distinct final ids in a real router', () => {
-  const hostTree = makeRouteTree([{ children: [{ fragment: '/details' }], fragment: '/members' }]);
-  graftChildren(
-    hostTree,
-    makeRouteTree([{ children: [{ fragment: '/details' }], fragment: '/recruit' }]),
-  );
-
-  const router = createRouter({ routeTree: hostTree });
-
-  assert.equal(router.routesById['/_auth/members/details']?.id, '/_auth/members/details');
-  assert.equal(router.routesById['/_auth/recruit/details']?.id, '/_auth/recruit/details');
-});
-
-test('real router rejects the same final id the registry rejects', () => {
-  const hostTree = makeRouteTree([{ children: [{ fragment: '/details' }], fragment: '/members' }]);
-  graftChildren(hostTree, makeRouteTree([{ fragment: '/members/details' }]));
+test('graft candidate rejects a final id the shell already owns', () => {
+  const hostTree = hostTreeWithMembersDetails();
+  const hostEntry = findRouteById(hostTree, '/_auth');
 
   assert.throws(
-    () => createRouter({ routeTree: hostTree }),
+    () => assertGraftCandidate(hostEntry, plugin('recruit', '/members/details')),
     /Duplicate routes found with id: \/_auth\/members\/details/,
+  );
+});
+
+test('graft candidate rejects duplicate final ids inside a plugin', () => {
+  const hostTree = hostTreeWithMembersDetails();
+  const hostEntry = findRouteById(hostTree, '/_auth');
+
+  const duplicateChildrenPlugin = defineRemotePlugin({
+    name: 'dup',
+    routes: {
+      basePath: '/members',
+      entry: '/_auth',
+      routeTree: makeRouteTree([{ fragment: '/members' }, { fragment: '/members' }]),
+    },
+  });
+
+  assert.throws(
+    () => assertGraftCandidate(hostEntry, duplicateChildrenPlugin),
+    /Duplicate routes found with id: \/_auth\/members/,
+  );
+});
+
+test('graft candidate rejects routes outside the declared basePath', () => {
+  const hostTree = hostTreeWithMembersDetails();
+  const hostEntry = findRouteById(hostTree, '/_auth');
+
+  // defineRemotePlugin의 정적 검사를 우회한 manifest를 runtime 방어로 잡는다.
+  const wrongBasePathPlugin = {
+    name: 'wrong',
+    routes: {
+      basePath: '/members',
+      entry: '/_auth',
+      routeTree: makeRouteTree([{ fragment: '/admin' }]),
+    },
+  };
+  assert.throws(
+    () => assertGraftCandidate(hostEntry, wrongBasePathPlugin),
+    /route id '\/_auth\/admin' does not live under basePath '\/members'/,
+  );
+
+  const emptyEntryPlugin = {
+    name: 'empty',
+    routes: {
+      basePath: '/members',
+      entry: '/_auth',
+      routeTree: makeRouteTree([]),
+    },
+  };
+  assert.throws(
+    () => assertGraftCandidate(hostEntry, emptyEntryPlugin),
+    /entry route has no children to graft/,
+  );
+});
+
+test('failed candidate leaves the existing tree and plugin routes untouched', () => {
+  const hostTree = hostTreeWithMembersDetails();
+  const hostEntry = findRouteById(hostTree, '/_auth');
+  const conflicting = plugin('recruit', '/members/details');
+  const pluginTree = conflicting.routes.routeTree;
+  const pluginEntry = findRouteById(pluginTree, '/_auth');
+  const pluginChild = pluginEntry.children[0];
+
+  assert.throws(() => assertGraftCandidate(hostEntry, conflicting), /Duplicate routes found/);
+
+  assert.equal(hostEntry.children.length, 1);
+  assert.equal(pluginChild.options.getParentRoute(), pluginEntry);
+  assert.equal(pluginChild.id, undefined);
+
+  const hostRouter = createRouter({ routeTree: hostTree });
+  assert.equal(hostRouter.routesById['/_auth/members/details'].id, '/_auth/members/details');
+
+  // 실패한 plugin 원본도 자기 트리에서는 온전하게 동작한다.
+  assert.doesNotThrow(() => createRouter({ routeTree: pluginTree }));
+});
+
+test('committed candidate merges cleanly and blocks later conflicting plugins', () => {
+  const hostTree = hostTreeWithMembersDetails();
+  const hostEntry = findRouteById(hostTree, '/_auth');
+  const scouter = plugin('scouter', '/recruit', ['/details']);
+
+  assertGraftCandidate(hostEntry, scouter);
+  commitChildren(hostEntry, scouter.routes.routeTree);
+
+  const mergedRouter = createRouter({ routeTree: hostTree });
+  assert.equal(mergedRouter.routesById['/_auth/members/details'].id, '/_auth/members/details');
+  assert.equal(mergedRouter.routesById['/_auth/recruit/details'].id, '/_auth/recruit/details');
+
+  assert.throws(
+    () => assertGraftCandidate(hostEntry, plugin('late', '/recruit/details')),
+    /Duplicate routes found with id: \/_auth\/recruit\/details/,
   );
 });
