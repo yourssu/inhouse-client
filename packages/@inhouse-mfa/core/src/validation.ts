@@ -2,11 +2,37 @@ import type { AnyRoute } from '@tanstack/react-router';
 
 import type { RemotePlugin } from './types';
 
-const collectRouteIds = (route: AnyRoute, acc: Set<string> = new Set()): Set<string> => {
-  const id = (route.options as any)?.id;
-  if (typeof id === 'string') {
-    acc.add(id);
+interface RouteIdOptions {
+  getParentRoute?: () => AnyRoute | undefined;
+  id?: string;
+  path?: string;
+}
+
+const ROOT_ROUTE_ID = '__root__';
+
+const joinPaths = (paths: Array<string | undefined>): string =>
+  paths
+    .filter((value) => value !== undefined)
+    .join('/')
+    .replace(/\/{2,}/g, '/');
+
+const trimPathLeft = (path: string): string => (path === '/' ? path : path.replace(/^\/+/, ''));
+
+const computeRouteId = (route: AnyRoute): string => {
+  const options = (route.options ?? {}) as RouteIdOptions;
+  const customId =
+    options.id || (options.path === undefined ? undefined : trimPathLeft(options.path));
+  if (!customId) {
+    return ROOT_ROUTE_ID;
   }
+  const parent = options.getParentRoute?.();
+  const parentId = parent ? computeRouteId(parent) : ROOT_ROUTE_ID;
+  const id = joinPaths([parentId === ROOT_ROUTE_ID ? '' : parentId, customId]);
+  return id === ROOT_ROUTE_ID ? id : joinPaths(['/', id]);
+};
+
+const collectRouteIds = (route: AnyRoute, acc: Set<string> = new Set()): Set<string> => {
+  acc.add(computeRouteId(route));
   for (const child of (route.children as AnyRoute[] | undefined) ?? []) {
     collectRouteIds(child, acc);
   }
