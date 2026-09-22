@@ -763,9 +763,6 @@ importers:
       '@yourssu-inhouse/interior':
         specifier: workspace:*
         version: link:../interior
-      '@yourssu-inhouse/interior-tailwind':
-        specifier: workspace:*
-        version: link:../interior-tailwind
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
