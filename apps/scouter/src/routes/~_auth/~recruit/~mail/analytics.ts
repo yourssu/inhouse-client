@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { createContext, useContext } from 'react';
 
+import type { MailReservationGroupsResponse } from '@/apis/mails/schema';
+
+type MailReservationGroup = MailReservationGroupsResponse['groups'][number];
+
 type MailTargetProperties =
   | {
       part_id: number;
@@ -22,6 +26,13 @@ type MailTestSendProperties = MailTargetProperties & {
 };
 
 export interface MailAnalyticsEventProperties {
+  /** 메일 목록의 제목을 클릭해 상세 모달을 열 때 발생해요. */
+  mail_detail_click: {
+    group_id: MailReservationGroup['groupId'];
+    recipient_count: number;
+    status: MailReservationGroup['status'];
+    template_id: MailReservationGroup['templateId'];
+  };
   /** 발송 다이얼로그에서 즉시 또는 예약 발송 요청을 실행했을 때 발생해요. */
   mail_send_click: MailSendProperties;
   /** 즉시 또는 예약 발송 요청 API가 성공했을 때 발생해요. */

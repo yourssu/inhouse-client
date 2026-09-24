@@ -19,6 +19,7 @@ import type { MailStatusNameType } from '@/types/mails';
 import { mailReservationGroupsOption } from '@/apis/mails/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
+import { useMailAnalytics } from '@/routes/~_auth/~recruit/~mail/analytics';
 import { MailDetailDialog } from '@/routes/~_auth/~recruit/~mail/components/MailDetailDialog';
 import { MailGroupCancelButton } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailGroupCancelButton';
 import { MailReceiversText } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailReceiversText';
@@ -26,6 +27,7 @@ import { MailStatusBadge } from '@/routes/~_auth/~recruit/~mail/components/MailL
 import { mailStatusNameMap, mailStatusNames } from '@/types/mails';
 
 export const MailListTable = () => {
+  const trackMailEvent = useMailAnalytics();
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/' });
   const setters = {
     page: useSetStateSelector(setSearch, 'page'),
@@ -86,6 +88,12 @@ export const MailListTable = () => {
                       aria-haspopup="dialog"
                       className="text-left underline-offset-4 hover:underline focus-visible:underline"
                       onClick={() => {
+                        trackMailEvent('mail_detail_click', {
+                          group_id: item.groupId,
+                          recipient_count: item.mails.length,
+                          status: item.status,
+                          template_id: item.templateId,
+                        });
                         overlay.open(({ isOpen, close }) => (
                           <MailDetailDialog close={close} group={item} isOpen={isOpen} />
                         ));
