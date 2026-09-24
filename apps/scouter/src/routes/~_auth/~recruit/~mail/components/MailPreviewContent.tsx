@@ -54,3 +54,9 @@ export const MailPreviewContent = ({
   const ref = useRawHTMLRenderer(html, onVariableClick as any);
   return <div className={cn('mail-preview-content text-15', className)} ref={ref} />;
 };
+
+export const MailPreviewBody = (props: MailPreviewContentProps) => (
+  <div className="[&_div]:font-[Arial,Helvetica,sans-serif] [&_div]:leading-normal [&_p]:my-[13px] [&_p]:font-[Arial,Helvetica,sans-serif] [&_p]:leading-normal">
+    <MailPreviewContent {...props} />
+  </div>
+);

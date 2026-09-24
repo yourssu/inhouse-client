@@ -136,6 +136,20 @@ export const MailReservationListResponseSchema = z.object({
   items: z.array(MailReservationItemSchema),
 });
 
+export const MailReservationDetailSchema = z.object({
+  reservationId: z.number(),
+  reservationTime: z.iso.datetime(),
+  status: z.enum(mailReservationStatus),
+  senderEmailAddress: z.string().optional(),
+  mailSubject: z.string(),
+  mailBody: z.string(),
+  bodyFormat: z.string(),
+  receiverEmailAddresses: z.array(z.string()),
+  ccEmailAddresses: z.array(z.string()),
+  bccEmailAddresses: z.array(z.string()),
+  attachmentReferences: z.array(AttachmentReferenceSchema),
+});
+
 export const MailReservationStatusItemSchema = z.object({
   reservationId: z.number(),
   reservationTime: z.iso.datetime(),

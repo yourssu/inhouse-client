@@ -3,12 +3,14 @@ import { Lottie } from '@toss/lottie';
 import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton } from '@yourssu-inhouse/interior';
+import { InlineButton } from '@yourssu-inhouse/interior';
 import { Menu } from '@yourssu-inhouse/interior';
 import { Pagination } from '@yourssu-inhouse/interior';
 import { Result } from '@yourssu-inhouse/interior';
 import { Table } from '@yourssu-inhouse/interior';
 import { lotties } from '@yourssu-inhouse/resources';
 import { invert } from 'es-toolkit';
+import { overlay } from 'overlay-kit';
 import { useMemo } from 'react';
 import { MdMoreHoriz } from 'react-icons/md';
 
@@ -17,6 +19,7 @@ import type { MailStatusNameType } from '@/types/mails';
 import { mailReservationGroupsOption } from '@/apis/mails/query';
 import { usePaginatedItems } from '@/hooks/usePaginatedItems';
 import { useSearchState } from '@/hooks/useSearchState';
+import { MailDetailDialog } from '@/routes/~_auth/~recruit/~mail/components/MailDetailDialog';
 import { MailGroupCancelButton } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailGroupCancelButton';
 import { MailReceiversText } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailReceiversText';
 import { MailStatusBadge } from '@/routes/~_auth/~recruit/~mail/components/MailListTable/MailStatusBadge';
@@ -72,10 +75,26 @@ export const MailListTable = () => {
         </Table.Head>
         <Table.Body>
           {paginatedMails.map((item, idx) => {
+            const subject = item.mails[0]?.mailSubject || '(제목 없음)';
             return (
               <Table.Row key={`${item.groupId}-${idx}`}>
                 <Table.Cell className="min-w-60">
-                  {item.mails.length !== 0 ? item.mails[0].mailSubject : '(제목 없음)'}
+                  {item.mails.length === 0 ? (
+                    subject
+                  ) : (
+                    <InlineButton
+                      aria-haspopup="dialog"
+                      className="text-left underline-offset-4 hover:underline focus-visible:underline"
+                      onClick={() => {
+                        overlay.open(({ isOpen, close }) => (
+                          <MailDetailDialog close={close} group={item} isOpen={isOpen} />
+                        ));
+                      }}
+                      type="button"
+                    >
+                      {subject}
+                    </InlineButton>
+                  )}
                 </Table.Cell>
                 <Table.Cell>
                   <MailStatusBadge status={item.status} />

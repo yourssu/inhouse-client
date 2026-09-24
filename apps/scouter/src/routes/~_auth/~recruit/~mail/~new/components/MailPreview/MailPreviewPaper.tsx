@@ -9,9 +9,12 @@ import {
   renderBodyHtml,
   renderSubjectHtml,
 } from '@/components/TemplateEditorDialog/utils/variable';
-import { MailPreviewContent } from '@/routes/~_auth/~recruit/~mail/~new/components/MailPreview/MailPreviewContent';
 import { useVariableContext } from '@/routes/~_auth/~recruit/~mail/~new/components/VariableList/context';
 import { useMailSelectionContext } from '@/routes/~_auth/~recruit/~mail/~new/context';
+import {
+  MailPreviewBody,
+  MailPreviewContent,
+} from '@/routes/~_auth/~recruit/~mail/components/MailPreviewContent';
 
 interface MailPreviewPaperProps {
   applicantNames: string[];
@@ -73,9 +76,7 @@ export const MailPreviewPaper = ({
                   />
                 )}
 
-                <div className="[&_div]:font-[Arial,Helvetica,sans-serif] [&_div]:leading-normal [&_p]:my-[13px] [&_p]:font-[Arial,Helvetica,sans-serif] [&_p]:leading-normal">
-                  <MailPreviewContent html={currentHtml} onVariableClick={onVariableClick} />
-                </div>
+                <MailPreviewBody html={currentHtml} onVariableClick={onVariableClick} />
               </div>
 
               {formData.attachments.length > 0 && (
