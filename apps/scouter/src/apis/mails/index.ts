@@ -10,6 +10,7 @@ import {
   MailFileConfirmResponseSchema,
   MailFilePresignResponseSchema,
   type MailFileUsageType,
+  MailReservationDetailSchema,
   type MailReservationGroupsResponse,
   MailReservationGroupsResponseSchema,
   type MailReservationListResponse,
@@ -122,6 +123,11 @@ export const deleteMailTemplate = async (templateId: number) => {
 export const getMailReservations = async (): Promise<MailReservationListResponse> => {
   const res = await api.get('api/mails/reservation').json();
   return MailReservationListResponseSchema.parse(res);
+};
+
+export const getMailReservationDetail = async (reservationId: number) => {
+  const res = await api.get(`api/mails/reservation/${reservationId}`).json();
+  return MailReservationDetailSchema.parse(res);
 };
 
 export const getMailReservationStatus = async (): Promise<MailReservationStatusResponse> => {

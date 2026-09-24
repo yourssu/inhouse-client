@@ -4,6 +4,7 @@ import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 import type { MailTemplatesResponse } from '@/apis/mails/schema';
 
 import {
+  getMailReservationDetail,
   getMailReservationGroups,
   getMailReservations,
   getMailTemplateDetail,
@@ -18,6 +19,8 @@ export const mailsQueryKeys = {
   templateDetail: (templateId: number) => qk.for('mails', 'templates', templateId),
   reservations: () => qk.for('mails', 'reservations'),
   reservationGroups: () => qk.for('mails', 'reservations', 'groups'),
+  reservationDetail: (reservationId: number) =>
+    qk.for('mails', 'reservations', 'detail', reservationId),
 };
 
 export const mailTemplatesInfiniteOption = (params: Omit<GetMailTemplatesParams, 'page'> = {}) =>
@@ -55,4 +58,10 @@ export const mailReservationGroupsOption = () =>
   queryOptions({
     queryKey: qk.for('mails', 'reservations', 'groups'),
     queryFn: () => getMailReservationGroups(),
+  });
+
+export const mailReservationDetailOption = (reservationId: number) =>
+  queryOptions({
+    queryKey: mailsQueryKeys.reservationDetail(reservationId),
+    queryFn: () => getMailReservationDetail(reservationId),
   });

@@ -17,6 +17,7 @@ import { trackScouterEvent } from '@/analytics/client';
 import { mailReservationStatus } from '@/apis/mails/schema';
 import { Paper } from '@/components/Paper';
 import { useSearchState } from '@/hooks/useSearchState';
+import { MailAnalyticsContext } from '@/routes/~_auth/~recruit/~mail/analytics';
 import { MailListTable } from '@/routes/~_auth/~recruit/~mail/components/MailListTable';
 import { MailStatusGrid } from '@/routes/~_auth/~recruit/~mail/components/MailStatusGrid';
 import { useLoadTemplate } from '@/routes/~_auth/~recruit/~mail/hooks/useLoadTemplate';
@@ -49,47 +50,49 @@ const RouteComponent = () => {
   };
 
   return (
-    <PageLayout.Content
-      right={
-        <Button
-          className="p-2 pr-2.5"
-          left={<MdAdd className="size-4.5" />}
-          loading={isLoadTemplateLoading}
-          onClick={handleCreateMail}
-          size="lg"
-        >
-          메일 작성
-        </Button>
-      }
-      title="메일 관리"
-    >
-      <div className="mb-4">
-        <Suspense fallback={<MailStatusGrid.Skeleton />}>
-          <MailStatusGrid />
-        </Suspense>
-      </div>
-      <div className="flex flex-[1_1_0] gap-4 pt-3.5">
-        <Paper className="block h-fit min-w-180 grow px-3 pt-1 pb-3">
-          <div className="mb-2 flex items-center justify-between px-2 pt-3">
-            <h2 className="text-lg font-semibold">메일 목록</h2>
-            {search.status && (
-              <InlineButton
-                className="text-violet600 text-sm font-medium underline"
-                onClick={() => {
-                  setters.status(undefined);
-                  setters.page(undefined);
-                }}
-              >
-                필터 제거하기
-              </InlineButton>
-            )}
-          </div>
-          <Suspense fallback={<Table.Skeleton count={10} />}>
-            <MailListTable />
+    <MailAnalyticsContext.Provider value={trackMailEvent}>
+      <PageLayout.Content
+        right={
+          <Button
+            className="p-2 pr-2.5"
+            left={<MdAdd className="size-4.5" />}
+            loading={isLoadTemplateLoading}
+            onClick={handleCreateMail}
+            size="lg"
+          >
+            메일 작성
+          </Button>
+        }
+        title="메일 관리"
+      >
+        <div className="mb-4">
+          <Suspense fallback={<MailStatusGrid.Skeleton />}>
+            <MailStatusGrid />
           </Suspense>
-        </Paper>
-      </div>
-    </PageLayout.Content>
+        </div>
+        <div className="flex flex-[1_1_0] gap-4 pt-3.5">
+          <Paper className="block h-fit min-w-180 grow px-3 pt-1 pb-3">
+            <div className="mb-2 flex items-center justify-between px-2 pt-3">
+              <h2 className="text-lg font-semibold">메일 목록</h2>
+              {search.status && (
+                <InlineButton
+                  className="text-violet600 text-sm font-medium underline"
+                  onClick={() => {
+                    setters.status(undefined);
+                    setters.page(undefined);
+                  }}
+                >
+                  필터 제거하기
+                </InlineButton>
+              )}
+            </div>
+            <Suspense fallback={<Table.Skeleton count={10} />}>
+              <MailListTable />
+            </Suspense>
+          </Paper>
+        </div>
+      </PageLayout.Content>
+    </MailAnalyticsContext.Provider>
   );
 };
 
