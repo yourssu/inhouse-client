@@ -65,7 +65,7 @@ export const MailDetailDialog = ({ group, isOpen, close }: MailDetailDialogProps
           )}
           <section
             aria-label="선택한 메일 내용"
-            className="text-neutralSubtle min-h-0 min-w-0 flex-1 overflow-y-auto"
+            className="min-h-0 min-w-0 flex-1 overflow-y-auto"
             key={selectedId}
           >
             {selectedId !== undefined ? (

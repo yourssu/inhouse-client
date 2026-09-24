@@ -42,7 +42,7 @@ const MailReservationDetail = ({
 
   return (
     <div className="flex min-h-full flex-col gap-6">
-      <dl className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-x-4 gap-y-2 text-sm">
+      <dl className="text-neutralSubtle grid w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-x-4 gap-y-2 text-sm">
         <dt className="text-neutralMuted py-1">예약자</dt>
         <dd className="py-1 break-words">
           {reserverName}{' '}
