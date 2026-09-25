@@ -15,10 +15,6 @@ const SHARED_DEPS = {
   '@inhouse/auth': { singleton: true },
   '@interior/react': { singleton: true },
   '@exterior/layout': { singleton: true },
-  'react-simplikit': { singleton: true },
-  motion: { singleton: true },
-  zod: { singleton: true },
-  'es-toolkit': { singleton: true },
 } as const satisfies Record<string, SharedDepPolicy>;
 
 export const buildFederationShared = (): FederationSharedConfig => ({ ...SHARED_DEPS });
