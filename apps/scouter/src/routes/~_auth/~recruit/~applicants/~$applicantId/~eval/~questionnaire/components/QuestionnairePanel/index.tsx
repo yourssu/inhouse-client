@@ -166,28 +166,19 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
   });
 
   const { isPending, mutate: mutateAssignedQuestions } = useMutation({
-    mutationFn: (values: QuestionnaireFormValues) =>
-      saveAssignedQuestions({
-        applicantId,
-        data: {
-          questions: toSaveAssignedQuestions(values),
-        },
-      }),
-    onSuccess: (_, values) => {
-      const cultureSelectedCount = values.CULTURE.filter(
-        ({ isSelected }) => isSelected === true,
-      ).length;
+    mutationFn: saveAssignedQuestions,
+    onSuccess: (_, { data }) => {
+      const selectedQuestions = data.questions.filter(
+        ({ category, isSelected }) => category !== 'CULTURE' || isSelected === true,
+      );
+      const countByCategory = (category: QuestionCategory) =>
+        selectedQuestions.filter((question) => question.category === category).length;
 
       trackQuestionnaireEvent('questionnaire_save_complete', {
-        culture_selected_count: cultureSelectedCount,
-        part_question_count: values.PART.length,
-        personal_question_count: values.PERSONAL.length,
-        question_count:
-          values.INTRO.length +
-          values.OUTRO.length +
-          cultureSelectedCount +
-          values.PART.length +
-          values.PERSONAL.length,
+        culture_selected_count: countByCategory('CULTURE'),
+        part_question_count: countByCategory('PART'),
+        personal_question_count: countByCategory('PERSONAL'),
+        question_count: selectedQuestions.length,
       });
 
       return invalidateAssignedQuestions();
@@ -215,28 +206,36 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
       return;
     }
 
-    mutateAssignedQuestions(values, {
-      onSuccess: () => {
-        toast.success('질문지를 저장했어요.');
+    mutateAssignedQuestions(
+      {
+        applicantId,
+        data: {
+          questions: toSaveAssignedQuestions(values),
+        },
       },
-      onError: (error) => {
-        toast.error(questionnaireSaveErrorMessage);
+      {
+        onSuccess: () => {
+          toast.success('질문지를 저장했어요.');
+        },
+        onError: (error) => {
+          toast.error(questionnaireSaveErrorMessage);
 
-        if (isKyHTTPError(error) && error.response.status === 409) {
-          // 서버 데이터가 이전과 같으면 values 변경에 의한 자동 reset이 일어나지 않아, 작성 중인 내용을 직접 되돌려요.
-          const latestAssignedQuestions = queryClient.getQueryData(
-            assignedQuestionsOption(applicantId).queryKey,
-          );
+          if (isKyHTTPError(error) && error.response.status === 409) {
+            // 서버 데이터가 이전과 같으면 values 변경에 의한 자동 reset이 일어나지 않아, 작성 중인 내용을 직접 되돌려요.
+            const latestAssignedQuestions = queryClient.getQueryData(
+              assignedQuestionsOption(applicantId).queryKey,
+            );
 
-          if (latestAssignedQuestions) {
-            reset(toQuestionnaireFormValues(latestAssignedQuestions));
+            if (latestAssignedQuestions) {
+              reset(toQuestionnaireFormValues(latestAssignedQuestions));
+            }
+            trackQuestionnaireEvent('questionnaire_save_error_view', {
+              error_codes: ['locked'],
+            });
           }
-          trackQuestionnaireEvent('questionnaire_save_error_view', {
-            error_codes: ['locked'],
-          });
-        }
+        },
       },
-    });
+    );
   };
 
   const onInvalid: SubmitErrorHandler<QuestionnaireFormValues> = (fieldErrors) => {
