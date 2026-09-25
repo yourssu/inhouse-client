@@ -68,6 +68,7 @@ remote별로 routeTree를 직접 탐색하거나 `AnyRoute` 단언과 검증 로
 - React, React DOM, TanStack Router, TanStack Query와 Context·store를 소유하는 패키지는 plugin 경계에서 인스턴스가 달라지지 않도록 singleton을 유지한다.
 - 순수 유틸리티·UI·애니메이션 라이브러리(`es-toolkit`, `react-simplikit`, `motion`, `zod`)는 shared에 두지 않는다. 각 앱이 선언한 버전을 자기 번들에 포함하고, workspace 패키지가 쓰는 부분은 해당 패키지의 shared 청크에 함께 번들된다.
 - 공개 subpath가 별도 모듈 인스턴스를 만들 수 있으면 필요한 subpath도 shared에 포함한다.
+- `mfaVitePlugin`이 shell·remote 구동 시점에 앱에 실제 설치된 의존성 버전이 shared `requiredVersion`과 맞는지 검사하고 어긋나면 build를 실패한다. runtime 버전 협상 실패가 화면 장애로 번지기 전에 차단한다.
 - 앱별 Vite config에 shared 설정을 덧붙여 우회하지 않는다.
 
 shared 정책 변경은 모든 remote에 영향을 주므로 `mfa-vite`, `mfa-shell`, shell과 모든 remote를 검증한다.

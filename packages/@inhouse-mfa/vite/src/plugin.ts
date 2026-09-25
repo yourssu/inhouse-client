@@ -13,6 +13,7 @@ import {
   REMOTE_ENTRY_FILENAME,
   remoteEntryDevUrl,
 } from './config';
+import { ensureGlobalModulesPlugin } from './ensureGlobalModules';
 import { buildFederationShared } from './shared';
 
 /** shell Tailwind build에 remote CSS import를 생성하는 파일 이름. */
@@ -110,6 +111,7 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       ...federationOptions,
     }),
     remoteCssGenPlugin(config),
+    ensureGlobalModulesPlugin(),
   ];
 };
 
@@ -123,14 +125,17 @@ const remote = ({ remote, federationOptions }: RemotePluginOptions): PluginOptio
     [PLUGIN_EXPOSE_KEY]: remote.plugin?.path ?? DEFAULT_PLUGIN_PATH,
   };
 
-  return federation({
-    name: remote.id,
-    filename: REMOTE_ENTRY_FILENAME,
-    exposes,
-    shared: buildFederationShared(),
-    dev: { remoteHmr: true },
-    ...federationOptions,
-  });
+  return [
+    federation({
+      name: remote.id,
+      filename: REMOTE_ENTRY_FILENAME,
+      exposes,
+      shared: buildFederationShared(),
+      dev: { remoteHmr: true },
+      ...federationOptions,
+    }),
+    ensureGlobalModulesPlugin(),
+  ];
 };
 
 export const mfaVitePlugin = { remote, shell };
