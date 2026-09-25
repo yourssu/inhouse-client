@@ -7,10 +7,10 @@ settings:
 catalogs:
   default:
     '@tanstack/react-query':
-      specifier: ^5.101.0
+      specifier: 5.101.0
       version: 5.101.0
     '@tanstack/react-router':
-      specifier: ^1.170.32
+      specifier: 1.170.32
       version: 1.170.32
     '@tanstack/router-plugin':
       specifier: ^1.168.35
@@ -19,10 +19,10 @@ catalogs:
       specifier: ^10.3.0
       version: 10.4.1
     react:
-      specifier: ^19.2.6
+      specifier: 19.2.7
       version: 19.2.7
     react-dom:
-      specifier: ^19.2.6
+      specifier: 19.2.7
       version: 19.2.7
     typescript:
       specifier: ~6.0.2

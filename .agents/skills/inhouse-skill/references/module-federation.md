@@ -66,6 +66,7 @@ remote별로 routeTree를 직접 탐색하거나 `AnyRoute` 단언과 검증 로
 
 - `packages/@inhouse-mfa/vite/src/shared.ts`가 shell과 모든 remote의 shared 정책 단일 출처다.
 - React, React DOM, TanStack Router, TanStack Query와 Context·store를 소유하는 패키지는 plugin 경계에서 인스턴스가 달라지지 않도록 singleton을 유지한다.
+- singleton 의존성의 `requiredVersion`과 catalog 버전은 exact로 고정한다. version-first 공유 전략에서 범위를 허용하면 앱마다 버전이 갈라져도 협상이 통과하므로, workspace 전체에서 같은 버전만 쓴다.
 - 순수 유틸리티·UI·애니메이션 라이브러리(`es-toolkit`, `react-simplikit`, `motion`, `zod`)는 shared에 두지 않는다. 각 앱이 선언한 버전을 자기 번들에 포함하고, workspace 패키지가 쓰는 부분은 해당 패키지의 shared 청크에 함께 번들된다.
 - 공개 subpath가 별도 모듈 인스턴스를 만들 수 있으면 필요한 subpath도 shared에 포함한다.
 - `mfaVitePlugin`이 shell·remote 구동 시점에 앱에 실제 설치된 의존성 버전이 shared `requiredVersion`과 맞는지 검사하고 어긋나면 build를 실패한다. runtime 버전 협상 실패가 화면 장애로 번지기 전에 차단한다.

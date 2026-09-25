@@ -6,12 +6,12 @@ interface SharedDepPolicy {
 type FederationSharedConfig = Record<string, SharedDepPolicy>;
 
 const SHARED_DEPS = {
-  react: { requiredVersion: '^19.2.6', singleton: true },
-  'react/': { requiredVersion: '^19.2.6', singleton: true },
-  'react-dom': { requiredVersion: '^19.2.6', singleton: true },
-  'react-dom/': { requiredVersion: '^19.2.6', singleton: true },
-  '@tanstack/react-router': { requiredVersion: '^1.170.11', singleton: true },
-  '@tanstack/react-query': { requiredVersion: '^5.101.0', singleton: true },
+  react: { requiredVersion: '19.2.7', singleton: true },
+  'react/': { requiredVersion: '19.2.7', singleton: true },
+  'react-dom': { requiredVersion: '19.2.7', singleton: true },
+  'react-dom/': { requiredVersion: '19.2.7', singleton: true },
+  '@tanstack/react-router': { requiredVersion: '1.170.32', singleton: true },
+  '@tanstack/react-query': { requiredVersion: '5.101.0', singleton: true },
   '@inhouse/auth': { singleton: true },
   '@interior/react': { singleton: true },
   '@exterior/layout': { singleton: true },
