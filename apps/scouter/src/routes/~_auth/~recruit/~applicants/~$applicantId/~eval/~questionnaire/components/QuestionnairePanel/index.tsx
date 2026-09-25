@@ -70,11 +70,8 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
   const { invalidate: invalidateAssignedQuestions } = useQueryInvalidation(
     interviewQuestionsQueryKeys.applicant(applicantId),
   );
-  const { invalidate: invalidateMyEvaluation } = useQueryInvalidation(
-    interviewEvaluationsQueryKeys.my(applicantId),
-  );
-  const { invalidate: invalidateEvaluatorStatuses } = useQueryInvalidation(
-    interviewEvaluationsQueryKeys.statuses(applicantId),
+  const { invalidate: invalidateEvaluations } = useQueryInvalidation(
+    interviewEvaluationsQueryKeys.applicant(applicantId),
   );
   const trackQuestionnaireEvent = useQuestionnaireAnalytics();
   const toast = useToast();
@@ -169,7 +166,32 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
   });
 
   const { isPending, mutate: mutateAssignedQuestions } = useMutation({
-    mutationFn: saveAssignedQuestions,
+    mutationFn: (values: QuestionnaireFormValues) =>
+      saveAssignedQuestions({
+        applicantId,
+        data: {
+          questions: toSaveAssignedQuestions(values),
+        },
+      }),
+    onSuccess: (_, values) => {
+      const cultureSelectedCount = values.CULTURE.filter(
+        ({ isSelected }) => isSelected === true,
+      ).length;
+
+      trackQuestionnaireEvent('questionnaire_save_complete', {
+        culture_selected_count: cultureSelectedCount,
+        part_question_count: values.PART.length,
+        personal_question_count: values.PERSONAL.length,
+        question_count:
+          values.INTRO.length +
+          values.OUTRO.length +
+          cultureSelectedCount +
+          values.PART.length +
+          values.PERSONAL.length,
+      });
+
+      return invalidateAssignedQuestions();
+    },
     onError: async (error) => {
       // 질문지는 입력량이 많아, 모든 오류에서 캐시를 갱신하면 저장하지 못한 작업이 초기화될 수 있어요.
       // 작성 중인 내용을 보존하기 위해 서버 상태와의 불일치가 확인되는 응답에서만 관련 데이터를 갱신해요.
@@ -183,15 +205,7 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
       }
 
       if (error.response.status === 409) {
-        await Promise.all([invalidateMyEvaluation(), invalidateEvaluatorStatuses()]);
-        const latestAssignedQuestions = await queryClient.fetchQuery({
-          ...assignedQuestionsOption(applicantId),
-          staleTime: 0,
-        });
-        reset(toQuestionnaireFormValues(latestAssignedQuestions));
-        trackQuestionnaireEvent('questionnaire_save_error_view', {
-          error_codes: ['locked'],
-        });
+        await Promise.all([invalidateEvaluations(), invalidateAssignedQuestions()]);
       }
     },
   });
@@ -201,39 +215,28 @@ export const QuestionnairePanel = ({ applicantId, partId, semester }: Questionna
       return;
     }
 
-    mutateAssignedQuestions(
-      {
-        applicantId,
-        data: {
-          questions: toSaveAssignedQuestions(values),
-        },
+    mutateAssignedQuestions(values, {
+      onSuccess: () => {
+        toast.success('질문지를 저장했어요.');
       },
-      {
-        onSuccess: () => {
-          toast.success('질문지를 저장했어요.');
-          invalidateAssignedQuestions();
+      onError: (error) => {
+        toast.error(questionnaireSaveErrorMessage);
 
-          const cultureSelectedCount = values.CULTURE.filter(
-            ({ isSelected }) => isSelected === true,
-          ).length;
+        if (isKyHTTPError(error) && error.response.status === 409) {
+          // 서버 데이터가 이전과 같으면 values 변경에 의한 자동 reset이 일어나지 않아, 작성 중인 내용을 직접 되돌려요.
+          const latestAssignedQuestions = queryClient.getQueryData(
+            assignedQuestionsOption(applicantId).queryKey,
+          );
 
-          trackQuestionnaireEvent('questionnaire_save_complete', {
-            culture_selected_count: cultureSelectedCount,
-            part_question_count: values.PART.length,
-            personal_question_count: values.PERSONAL.length,
-            question_count:
-              values.INTRO.length +
-              values.OUTRO.length +
-              cultureSelectedCount +
-              values.PART.length +
-              values.PERSONAL.length,
+          if (latestAssignedQuestions) {
+            reset(toQuestionnaireFormValues(latestAssignedQuestions));
+          }
+          trackQuestionnaireEvent('questionnaire_save_error_view', {
+            error_codes: ['locked'],
           });
-        },
-        onError: () => {
-          toast.error(questionnaireSaveErrorMessage);
-        },
+        }
       },
-    );
+    });
   };
 
   const onInvalid: SubmitErrorHandler<QuestionnaireFormValues> = (fieldErrors) => {
