@@ -16,14 +16,14 @@ shell·remote 등록, plugin manifest, route graft, preview, shared dependency, 
 | 계약                                             | 단일 출처                                                     |
 | ------------------------------------------------ | ------------------------------------------------------------- |
 | remote id·dev port·plugin source·shell CSS entry | `mfa.config.ts`                                               |
-| shell과 remote의 federation 설정                 | `packages/@inhouse-mfa/vite/src/plugin.ts`                             |
-| remote entry 파일명·plugin 기본 경로             | `packages/@inhouse-mfa/vite/src/config.ts`                             |
-| shared·singleton dependency 정책                 | `packages/@inhouse-mfa/vite/src/shared.ts`                             |
-| remote load retry 정책                           | `packages/@inhouse-mfa/vite/src/retryPlugin.ts`                        |
-| 고정 plugin expose key                           | `packages/@inhouse-mfa/core/src/config.ts`                             |
+| shell과 remote의 federation 설정                 | `packages/@inhouse-mfa/vite/src/plugin.ts`                    |
+| remote entry 파일명·plugin 기본 경로             | `packages/@inhouse-mfa/vite/src/config.ts`                    |
+| shared·singleton dependency 정책                 | `packages/@inhouse-mfa/vite/src/shared.ts`                    |
+| remote load retry 정책                           | `packages/@inhouse-mfa/vite/src/retryPlugin.ts`               |
+| 고정 plugin expose key                           | `packages/@inhouse-mfa/core/src/config.ts`                    |
 | shell build 선행 remote                          | `turbo.json`의 `@yourssu-inhouse/shell#build.dependsOn`       |
 | remote route·lifecycle manifest                  | `apps/<remote>/src/plugin.ts`                                 |
-| runtime load·graft·실패 격리                     | `packages/@inhouse-mfa/shell/src/`                                     |
+| runtime load·graft·실패 격리                     | `packages/@inhouse-mfa/shell/src/`                            |
 | shell이 조합할 runtime spec                      | `mfa.config.ts`에서 파생된 `apps/shell/src/plugins.config.ts` |
 
 포트, remote 목록, retry 횟수와 구체적인 shared 버전은 바뀔 수 있으므로 위 구현을 확인하고 문서의 숫자를 기억해 사용하지 않는다.
@@ -56,7 +56,8 @@ remote별로 routeTree를 직접 탐색하거나 `AnyRoute` 단언과 검증 로
 - shell의 `/_auth`가 graft anchor이며 실제 인증 guard와 공통 layout을 소유한다.
 - remote의 `/_auth` 인스턴스 자체는 shell에 추가하지 않고 그 children만 shell anchor 아래에 graft한다.
 - graft 후에도 remote route id와 full path 계약이 유지되어야 한다.
-- `RouteRegistry`가 plugin basePath와 route id 충돌을 검사한다.
+- `RouteRegistry`가 plugin 이름과 basePath 충돌을 검사한다.
+- graft는 원본에 반영하기 전에 후보 트리를 실제 Router로 검증한다. shell과의 최종 route id 충돌, plugin 내부 중복, basePath 불일치를 잡고 실패하면 후보만 버려 기존 트리와 실패한 plugin의 원본 라우트를 보존한다.
 - 같은 plugin을 중복 graft하지 않는다.
 - remote load 또는 graft 실패는 해당 plugin만 failures에 기록하고 다른 plugin과 shell은 계속 동작한다.
 - `loadRemote` 호출 id는 `remoteName/expose` 형식이며 expose 앞의 `./`는 제거한다.
