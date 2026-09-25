@@ -20,8 +20,7 @@ description: >-
 1. `git status --short --branch`, unstaged diff, staged diff를 확인한다.
 2. 사용자 요청과 diff를 대조해 이번 작업 경로와 범위 밖 변경을 분리한다.
 3. 제품·기능 작업인지 이슈 없는 저장소 관리 작업인지 분류한다.
-4. 제품 작업이면 명시된 요청, 이미 제공되는 Linear 문맥, 현재 브랜치 순으로
-   `SCO-번호`를 식별한다. Linear CLI가 없으면 설치하지 않는다.
+4. 제품 작업이면 명시된 요청과 현재 브랜치 순으로 `SCO-번호`를 식별한다.
 5. 브랜치와 base를 확정한다. 기본 base는 `main`이고 stacked PR은 실제 선행
    브랜치를 base로 사용한다.
 
