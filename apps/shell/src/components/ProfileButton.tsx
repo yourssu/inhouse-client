@@ -26,7 +26,10 @@ export const ProfileButton = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { api, logout } = useAuth();
+  const {
+    client: { api },
+    logout,
+  } = useAuth();
   const { data: me } = useQuery(meOption(api));
 
   const profileImageUrl = me?.profileImageUrl || undefined;

@@ -1,7 +1,9 @@
+import { useAuth } from '@yourssu-inhouse/auth';
 import { type ReactNode, useCallback, useState } from 'react';
 
-import { useAuth } from '../contexts/AuthProvider';
-import { useGoogleOAuthPopup } from '../hooks/useGoogleOAuthPopup';
+import { config } from '@/config';
+
+import { useGoogleOAuthPopup } from './useGoogleOAuthPopup';
 
 interface LoginRenderProps {
   isLoading: boolean;
@@ -10,8 +12,7 @@ interface LoginRenderProps {
 
 interface LoginProps {
   /**
-   * headless 렌더 프로퍼티예요. 실제 UI(버튼·로고·카피)는 사용하는 쪽에서
-   * `isLoading`/`login` 을 받아 렌더해요. 인증 로직은 패키지가 책임져요.
+   * 로그인 상태와 동작을 화면에 전달해요.
    */
   children: (props: LoginRenderProps) => ReactNode;
   onError?: (error: unknown) => void;
@@ -22,7 +23,7 @@ const POPUP_WIDTH = 580;
 const POPUP_HEIGHT = 720;
 
 export const Login = ({ onSuccess, onError, children }: LoginProps) => {
-  const { login: loginWithCode, config } = useAuth();
+  const { login: loginWithCode } = useAuth();
   const open = useGoogleOAuthPopup();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,7 +41,7 @@ export const Login = ({ onSuccess, onError, children }: LoginProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [config.googleOAuthURL, loginWithCode, onSuccess, onError, open]);
+  }, [loginWithCode, onSuccess, onError, open]);
 
   return <>{children({ isLoading, login })}</>;
 };

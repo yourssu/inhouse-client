@@ -3,6 +3,7 @@ import type { RouteContext } from '@yourssu-inhouse/exterior';
 import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router';
 import { AuthProvider } from '@yourssu-inhouse/auth';
 
+import { authClient } from '@/apis/authClient';
 import { authConfig } from '@/config';
 
 export const Route = createRootRouteWithContext<RouteContext>()({
@@ -10,7 +11,7 @@ export const Route = createRootRouteWithContext<RouteContext>()({
     meta: [{ title: '유어슈 인하우스' }],
   }),
   component: () => (
-    <AuthProvider config={authConfig}>
+    <AuthProvider client={authClient} config={authConfig}>
       <HeadContent />
       <Outlet />
     </AuthProvider>
