@@ -1,10 +1,11 @@
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
-import { Login } from '@yourssu-inhouse/auth';
 import { Button, useTheme, useToast } from '@yourssu-inhouse/interior';
 import { images } from '@yourssu-inhouse/resources';
 import { FcGoogle } from 'react-icons/fc';
 
 import { AdaptiveLogo } from '@/components';
+
+import { Login } from './Login';
 
 const Signin = () => {
   const navigate = useNavigate();
