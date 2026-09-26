@@ -12,20 +12,28 @@ export interface PluginSpec {
 export interface MfaRemoteEntry {
   /** Shell Tailwind build에 포함할 remote CSS source의 절대 경로. */
   cssEntry?: string;
-  /** Module Federation remote name이자 shell registry key. */
-  id: string;
   /** Plugin manifest 설정. */
   plugin?: PluginSpec;
   /** Remote dev server port. */
   port: number;
+  /** 이 remote를 소유한 workspace package name이자 Module Federation remote id. */
+  workspace: string;
+}
+
+export interface MfaSharedDependency {
+  singleton?: boolean;
+  /** pnpm workspace catalog에서 requiredVersion을 읽는다. */
+  version?: 'catalog';
 }
 
 export interface MfaConfig {
   remotes: readonly MfaRemoteEntry[];
+  sharedDependencies: Record<string, MfaSharedDependency>;
 }
 
 export const remoteEntryDevUrl = (remote: MfaRemoteEntry): string =>
   `http://localhost:${remote.port}/${REMOTE_ENTRY_FILENAME}`;
 
+/** env var key에는 '@'·'/'를 쓸 수 없어 마지막 세그먼트만 써요. */
 export const envKeyForRemote = (remote: MfaRemoteEntry): string =>
-  `VITE_${remote.id.toUpperCase()}_URL`;
+  `VITE_${remote.workspace.slice(remote.workspace.lastIndexOf('/') + 1).toUpperCase()}_URL`;

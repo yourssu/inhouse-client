@@ -8,6 +8,6 @@ export const plugin: RemotePlugin = defineRemotePlugin({
     init: ({ router }) => initScouterAnalytics(router),
     mocks: async () => [],
   },
-  name: 'scouter',
+  name: '@yourssu-inhouse/scouter',
   routes: { basePath: '/recruit', entry: '/_auth', routeTree },
 });

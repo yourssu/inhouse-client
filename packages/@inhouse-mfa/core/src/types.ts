@@ -33,7 +33,7 @@ interface RemotePluginLifecycle {
 
 export interface RemotePlugin {
   lifecycle?: RemotePluginLifecycle;
-  /** Module Federation remote 이름. mfa.config 의 remote id 와 일치해야 해요. */
+  /** Module Federation remote 이름. mfa.config workspace name과 일치해야 해요. */
   name: string;
   routes: RemotePluginRoutes;
 }

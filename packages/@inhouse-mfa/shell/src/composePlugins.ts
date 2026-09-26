@@ -6,7 +6,7 @@ import { loadRemote } from '@module-federation/runtime';
 import { graftPlugin } from './graft';
 
 export interface RemotePluginSpec {
-  /** Module Federation remote 이름(mfa.config remote id 와 일치). */
+  /** Module Federation remote 이름(mfa.config workspace name과 일치). */
   name: string;
 }
 
