@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { removeAuthTokens } from '@yourssu-inhouse/auth';
 import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { MdPerson, MdPersonSearch } from 'react-icons/md';
 
@@ -20,6 +21,12 @@ const AuthLayout = () => {
 };
 
 export const Route = createFileRoute('/_auth')({
-  beforeLoad: requireAuth(),
+  beforeLoad: async () => {
+    const isAuthenticated = await requireAuth();
+    if (!isAuthenticated) {
+      removeAuthTokens();
+      throw redirect({ to: '/signin' });
+    }
+  },
   component: AuthLayout,
 });
