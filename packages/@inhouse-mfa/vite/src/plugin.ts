@@ -9,11 +9,11 @@ import {
   DEFAULT_PLUGIN_PATH,
   envKeyForRemote,
   type MfaConfig,
-  type MfaRemoteEntry,
   REMOTE_ENTRY_FILENAME,
   remoteEntryDevUrl,
 } from './config';
 import { ensureGlobalModulesPlugin } from './ensureGlobalModules';
+import { loadRemoteConfig } from './loadMfaConfig';
 import { buildFederationShared } from './shared';
 
 /** shell Tailwind build에 remote CSS import를 생성하는 파일 이름. */
@@ -35,10 +35,10 @@ const buildRemoteCssContent = (root: string, config: MfaConfig): string => {
 
     const cssEntryAbs = remote.cssEntry;
     if (!path.isAbsolute(cssEntryAbs)) {
-      throw new Error(`[mfa-vite] '${remote.id}' cssEntry must be absolute: ${cssEntryAbs}`);
+      throw new Error(`[mfa-vite] '${remote.workspace}' cssEntry must be absolute: ${cssEntryAbs}`);
     }
     if (!fs.existsSync(cssEntryAbs)) {
-      throw new Error(`[mfa-vite] '${remote.id}' cssEntry not found: ${cssEntryAbs}`);
+      throw new Error(`[mfa-vite] '${remote.workspace}' cssEntry not found: ${cssEntryAbs}`);
     }
     lines.push(`@import '${toPosix(path.relative(genDir, cssEntryAbs))}';`);
   }
@@ -73,7 +73,7 @@ const remoteIdsPlugin = (config: MfaConfig): PluginOption => ({
   name: 'mfa-shell-remote-ids',
   config: () => ({
     define: {
-      MFA_REMOTE_IDS: JSON.stringify(config.remotes.map((remote) => remote.id)),
+      MFA_REMOTE_IDS: JSON.stringify(config.remotes.map((remote) => remote.workspace)),
     },
   }),
 });
@@ -89,12 +89,13 @@ interface ShellPluginOptions {
 const SHELL_FEDERATION_NAME = 'shell';
 
 const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): PluginOption => {
+  const shared = buildFederationShared(config.sharedDependencies);
   const remotes: ModuleFederationOptions['remotes'] = Object.fromEntries(
     config.remotes.map((remote) => [
-      remote.id,
+      remote.workspace,
       {
         type: 'module',
-        name: remote.id,
+        name: remote.workspace,
         entry: env[envKeyForRemote(remote)] ?? remoteEntryDevUrl(remote),
       },
     ]),
@@ -106,35 +107,53 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       name: SHELL_FEDERATION_NAME,
       remotes,
       runtimePlugins: ['@inhouse-mfa/vite/retry-plugin'],
-      shared: buildFederationShared(),
+      shared,
+      // remote DTS 산출물을 소비하는 곳이 없어 tsc 자식 프로세스 비용만 발생해요.
+      dts: false,
       dev: { remoteHmr: true },
       ...federationOptions,
     }),
     remoteCssGenPlugin(config),
-    ensureGlobalModulesPlugin(),
+    ensureGlobalModulesPlugin(shared),
   ];
 };
 
-interface RemotePluginOptions {
-  federationOptions?: Partial<ModuleFederationOptions>;
-  remote: MfaRemoteEntry;
-}
-
-const remote = ({ remote, federationOptions }: RemotePluginOptions): PluginOption => {
+const remote = async (): Promise<PluginOption[]> => {
+  const {
+    config,
+    configFiles,
+    remote: entry,
+    workspaceRoot,
+  } = await loadRemoteConfig(process.cwd());
+  const shared = buildFederationShared(config.sharedDependencies, workspaceRoot);
   const exposes: ModuleFederationOptions['exposes'] = {
-    [PLUGIN_EXPOSE_KEY]: remote.plugin?.path ?? DEFAULT_PLUGIN_PATH,
+    [PLUGIN_EXPOSE_KEY]: entry.plugin?.path ?? DEFAULT_PLUGIN_PATH,
   };
+  const watchedFiles = new Set(configFiles.map((file) => path.resolve(file)));
 
   return [
+    {
+      name: 'mfa-remote-config',
+      config: () => ({ server: { port: entry.port } }),
+      configureServer(server) {
+        server.watcher.add([...watchedFiles]);
+      },
+      async hotUpdate({ file, server }) {
+        if (watchedFiles.has(path.resolve(file))) {
+          await server.restart();
+          return [];
+        }
+      },
+    },
     federation({
-      name: remote.id,
+      name: entry.workspace,
       filename: REMOTE_ENTRY_FILENAME,
       exposes,
-      shared: buildFederationShared(),
+      shared,
+      dts: false,
       dev: { remoteHmr: true },
-      ...federationOptions,
     }),
-    ensureGlobalModulesPlugin(),
+    ensureGlobalModulesPlugin(shared),
   ];
 };
 

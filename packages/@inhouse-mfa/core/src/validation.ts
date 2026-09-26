@@ -106,6 +106,16 @@ export const assertGraftCandidate = (hostEntry: AnyRoute, plugin: RemotePlugin):
 
   const clones = children.map((child) => cloneRouteTree(child, hostEntry));
   const candidateRouteTree = createRootRoute().addChildren([hostEntry, ...clones] as never);
+  /*
+    Router 생성자는 브라우저에서 self.__TSR_ROUTER__ 에 마지막으로 만든 Router를 기록해요.
+    remote route module 의 dev HMR guard가 이 전역을 읽어 shell route 를 갱신하러
+    오므로, 검증 Router가 전역에 남으면 다음 remote 로드가 이미 graft된 원본과 검증
+    clone 이 함께 들어간 실패 후보로 route 를 해석해 Duplicate routes 로 실패해요.
+  */
+  // Router 전역 이름은 TanStack Router가 정해요.
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const globalScope = globalThis as typeof globalThis & { __TSR_ROUTER__?: unknown };
+  const prevGlobalRouter = globalScope.__TSR_ROUTER__;
   try {
     // RootRoute의 구체 타입이 AnyRoute로 좁혀지지 않는 라이브러리 타입 한계로 unknown을 경유한다.
     createRouter({
@@ -117,6 +127,8 @@ export const assertGraftCandidate = (hostEntry: AnyRoute, plugin: RemotePlugin):
     throw new Error(`[mfa-core] '${plugin.name}': graft candidate rejected: ${reason}`, {
       cause: error,
     });
+  } finally {
+    globalScope.__TSR_ROUTER__ = prevGlobalRouter;
   }
 
   const basePath = plugin.routes.basePath.replace(/\/$/, '');
