@@ -13,18 +13,18 @@ shell·remote 등록, plugin manifest, route graft, preview, shared dependency, 
 
 ## 단일 출처
 
-| 계약                                             | 단일 출처                                                     |
-| ------------------------------------------------ | ------------------------------------------------------------- |
-| remote id·dev port·plugin source·shell CSS entry | `mfa.config.ts`                                               |
-| shell과 remote의 federation 설정                 | `packages/@inhouse-mfa/vite/src/plugin.ts`                    |
-| remote entry 파일명·plugin 기본 경로             | `packages/@inhouse-mfa/vite/src/config.ts`                    |
-| shared·singleton dependency 정책                 | `packages/@inhouse-mfa/vite/src/shared.ts`                    |
-| remote load retry 정책                           | `packages/@inhouse-mfa/vite/src/retryPlugin.ts`               |
-| 고정 plugin expose key                           | `packages/@inhouse-mfa/core/src/config.ts`                    |
-| shell build 선행 remote                          | `turbo.json`의 `@yourssu-inhouse/shell#build.dependsOn`       |
-| remote route·lifecycle manifest                  | `apps/<remote>/src/plugin.ts`                                 |
-| runtime load·graft·실패 격리                     | `packages/@inhouse-mfa/shell/src/`                            |
-| shell이 조합할 runtime spec                      | `mfa.config.ts`에서 파생된 `apps/shell/src/plugins.config.ts` |
+| 계약                                                         | 단일 출처                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------- |
+| remote id·dev port·plugin source·shell CSS entry·shared 정책 | `mfa.config.ts`                                               |
+| shell과 remote의 federation 설정                             | `packages/@inhouse-mfa/vite/src/plugin.ts`                    |
+| remote entry 파일명·plugin 기본 경로                         | `packages/@inhouse-mfa/vite/src/config.ts`                    |
+| shared 설정 변환·catalog 버전 조회                           | `packages/@inhouse-mfa/vite/src/shared.ts`                    |
+| remote load retry 정책                                       | `packages/@inhouse-mfa/vite/src/retryPlugin.ts`               |
+| 고정 plugin expose key                                       | `packages/@inhouse-mfa/core/src/config.ts`                    |
+| shell build 선행 remote                                      | `turbo.json`의 `@yourssu-inhouse/shell#build.dependsOn`       |
+| remote route·lifecycle manifest                              | `apps/<remote>/src/plugin.ts`                                 |
+| runtime load·graft·실패 격리                                 | `packages/@inhouse-mfa/shell/src/`                            |
+| shell이 조합할 runtime spec                                  | `mfa.config.ts`에서 파생된 `apps/shell/src/plugins.config.ts` |
 
 포트, remote 목록, retry 횟수와 구체적인 shared 버전은 바뀔 수 있으므로 위 구현을 확인하고 문서의 숫자를 기억해 사용하지 않는다.
 
@@ -64,9 +64,9 @@ remote별로 routeTree를 직접 탐색하거나 `AnyRoute` 단언과 검증 로
 
 ## Shared dependency
 
-- `packages/@inhouse-mfa/vite/src/shared.ts`가 shell과 모든 remote의 shared 정책 단일 출처다.
+- `mfa.config.ts`의 `sharedDependencies`가 shell과 모든 remote의 shared 목록과 singleton 정책의 단일 출처다. `singleton`은 선택 사항이다.
 - React, React DOM, TanStack Router, TanStack Query와 Context·store를 소유하는 패키지는 plugin 경계에서 인스턴스가 달라지지 않도록 singleton을 유지한다.
-- singleton 의존성의 `requiredVersion`과 catalog 버전은 exact로 고정한다. version-first 공유 전략에서 범위를 허용하면 앱마다 버전이 갈라져도 협상이 통과하므로, workspace 전체에서 같은 버전만 쓴다.
+- 버전이 필요한 shared 항목은 `version: 'catalog'`로 선언한다. `shared.ts`가 pnpm workspace catalog의 exact 버전을 읽어 `requiredVersion`을 구성하며, `react/` 같은 subpath는 끝의 `/`를 제거한 패키지 키를 사용한다. 버전 선언은 catalog 한 곳이며, version-first 공유 전략에서 범위를 허용하면 앱마다 버전이 갈라져도 협상이 통과하므로 workspace 전체에서 같은 버전만 쓴다.
 - 순수 유틸리티·UI·애니메이션 라이브러리(`es-toolkit`, `react-simplikit`, `motion`, `zod`)는 shared에 두지 않는다. 각 앱이 선언한 버전을 자기 번들에 포함하고, workspace 패키지가 쓰는 부분은 해당 패키지의 shared 청크에 함께 번들된다.
 - 공개 subpath가 별도 모듈 인스턴스를 만들 수 있으면 필요한 subpath도 shared에 포함한다.
 - `mfaVitePlugin`이 shell·remote 구동 시점에 앱에 실제 설치된 의존성 버전이 shared `requiredVersion`과 맞는지 검사하고 어긋나면 build를 실패한다. runtime 버전 협상 실패가 화면 장애로 번지기 전에 차단한다.

@@ -18,10 +18,19 @@ export interface MfaRemoteEntry {
   plugin?: PluginSpec;
   /** Remote dev server port. */
   port: number;
+  /** 이 remote를 소유한 workspace package name. */
+  workspace: string;
+}
+
+export interface MfaSharedDependency {
+  singleton?: boolean;
+  /** pnpm workspace catalog에서 requiredVersion을 읽는다. */
+  version?: 'catalog';
 }
 
 export interface MfaConfig {
   remotes: readonly MfaRemoteEntry[];
+  sharedDependencies: Record<string, MfaSharedDependency>;
 }
 
 export const remoteEntryDevUrl = (remote: MfaRemoteEntry): string =>

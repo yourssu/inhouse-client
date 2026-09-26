@@ -3,7 +3,7 @@ import type { Plugin, ResolvedConfig } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { buildFederationShared } from './shared';
+import type { FederationSharedConfig } from './shared';
 
 interface Semver {
   major: number;
@@ -67,10 +67,10 @@ const readInstalledVersion = (root: string, pkg: string): string | undefined => 
  * 검사한다. 어긋나면 build를 실패시켜 runtime 버전 협상 실패가 화면 장애로 번지는 일을
  * 사전에 차단한다. requiredVersion이 없는 workspace 의존성은 항상 같은 소스라 제외한다.
  */
-export const ensureGlobalModulesPlugin = (): Plugin => ({
+export const ensureGlobalModulesPlugin = (shared: FederationSharedConfig): Plugin => ({
   name: 'mfa-ensure-global-modules',
   configResolved(resolved: ResolvedConfig) {
-    for (const [dep, policy] of Object.entries(buildFederationShared())) {
+    for (const [dep, policy] of Object.entries(shared)) {
       if (!policy.requiredVersion) {
         continue;
       }

@@ -1,20 +1,68 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+import type { MfaConfig } from './config';
+
+import { findWorkspaceRoot } from './loadMfaConfig';
+
 interface SharedDepPolicy {
   requiredVersion?: string;
-  singleton: true;
+  singleton?: boolean;
 }
 
-type FederationSharedConfig = Record<string, SharedDepPolicy>;
+export type FederationSharedConfig = Record<string, SharedDepPolicy>;
 
-const SHARED_DEPS = {
-  react: { requiredVersion: '19.2.7', singleton: true },
-  'react/': { requiredVersion: '19.2.7', singleton: true },
-  'react-dom': { requiredVersion: '19.2.7', singleton: true },
-  'react-dom/': { requiredVersion: '19.2.7', singleton: true },
-  '@tanstack/react-router': { requiredVersion: '1.170.32', singleton: true },
-  '@tanstack/react-query': { requiredVersion: '5.101.0', singleton: true },
-  '@inhouse/auth': { singleton: true },
-  '@interior/react': { singleton: true },
-  '@exterior/layout': { singleton: true },
-} as const satisfies Record<string, SharedDepPolicy>;
+/** catalog 블록의 평평한 key: value만 파싱한다. ponytail: named catalog·주석이 필요해지면 yaml 파서로 교체한다. */
+const parseCatalog = (workspaceYaml: string): Record<string, string> => {
+  const lines = workspaceYaml.split('\n');
+  const catalogStart = lines.findIndex((line) => line.trim() === 'catalog:');
+  if (catalogStart === -1) {
+    throw new Error('[mfa-vite] pnpm-workspace.yaml has no catalog block');
+  }
+  const catalog: Record<string, string> = {};
+  for (const line of lines.slice(catalogStart + 1)) {
+    if (line.trim() && !line.startsWith(' ')) {
+      break;
+    }
+    const entry = /^\s+'?([^':]+)'?:\s*'?(.+?)'?\s*$/.exec(line);
+    if (entry) {
+      catalog[entry[1].trim()] = entry[2].trim();
+    }
+  }
+  return catalog;
+};
 
-export const buildFederationShared = (): FederationSharedConfig => ({ ...SHARED_DEPS });
+/** shared 버전의 단일 원천인 pnpm workspace catalog를 읽는다. */
+const readWorkspaceCatalog = (startDir: string = process.cwd()): Record<string, string> => {
+  const workspaceRoot = findWorkspaceRoot(startDir);
+  return parseCatalog(fs.readFileSync(path.join(workspaceRoot, 'pnpm-workspace.yaml'), 'utf8'));
+};
+
+export const buildFederationShared = (
+  sharedDependencies: MfaConfig['sharedDependencies'],
+  startDir: string = process.cwd(),
+): FederationSharedConfig => {
+  const needsCatalog = Object.values(sharedDependencies).some(
+    (policy) => policy.version === 'catalog',
+  );
+  const catalog = needsCatalog ? readWorkspaceCatalog(startDir) : undefined;
+  const shared: FederationSharedConfig = {};
+  for (const [dep, policy] of Object.entries(sharedDependencies)) {
+    const entry: SharedDepPolicy = {};
+    if (policy.version === 'catalog') {
+      const catalogKey = dep.replace(/\/+$/, '');
+      const requiredVersion = catalog?.[catalogKey];
+      if (!requiredVersion) {
+        throw new Error(
+          `[mfa-vite] pnpm workspace catalog has no '${catalogKey}' entry required by shared dep '${dep}'`,
+        );
+      }
+      entry.requiredVersion = requiredVersion;
+    }
+    if (policy.singleton !== undefined) {
+      entry.singleton = policy.singleton;
+    }
+    shared[dep] = entry;
+  }
+  return shared;
+};

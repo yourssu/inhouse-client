@@ -9,11 +9,11 @@ import {
   DEFAULT_PLUGIN_PATH,
   envKeyForRemote,
   type MfaConfig,
-  type MfaRemoteEntry,
   REMOTE_ENTRY_FILENAME,
   remoteEntryDevUrl,
 } from './config';
 import { ensureGlobalModulesPlugin } from './ensureGlobalModules';
+import { loadRemoteConfig } from './loadMfaConfig';
 import { buildFederationShared } from './shared';
 
 /** shell Tailwind build에 remote CSS import를 생성하는 파일 이름. */
@@ -89,6 +89,7 @@ interface ShellPluginOptions {
 const SHELL_FEDERATION_NAME = 'shell';
 
 const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): PluginOption => {
+  const shared = buildFederationShared(config.sharedDependencies);
   const remotes: ModuleFederationOptions['remotes'] = Object.fromEntries(
     config.remotes.map((remote) => [
       remote.id,
@@ -106,35 +107,51 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       name: SHELL_FEDERATION_NAME,
       remotes,
       runtimePlugins: ['@inhouse-mfa/vite/retry-plugin'],
-      shared: buildFederationShared(),
+      shared,
       dev: { remoteHmr: true },
       ...federationOptions,
     }),
     remoteCssGenPlugin(config),
-    ensureGlobalModulesPlugin(),
+    ensureGlobalModulesPlugin(shared),
   ];
 };
 
-interface RemotePluginOptions {
-  federationOptions?: Partial<ModuleFederationOptions>;
-  remote: MfaRemoteEntry;
-}
-
-const remote = ({ remote, federationOptions }: RemotePluginOptions): PluginOption => {
+const remote = async (): Promise<PluginOption[]> => {
+  const {
+    config,
+    configFiles,
+    remote: entry,
+    workspaceRoot,
+  } = await loadRemoteConfig(process.cwd());
+  const shared = buildFederationShared(config.sharedDependencies, workspaceRoot);
   const exposes: ModuleFederationOptions['exposes'] = {
-    [PLUGIN_EXPOSE_KEY]: remote.plugin?.path ?? DEFAULT_PLUGIN_PATH,
+    [PLUGIN_EXPOSE_KEY]: entry.plugin?.path ?? DEFAULT_PLUGIN_PATH,
   };
+  const watchedFiles = new Set(configFiles.map((file) => path.resolve(file)));
 
   return [
+    {
+      name: 'mfa-remote-config',
+      config: () => ({ server: { port: entry.port } }),
+      configureServer(server) {
+        server.watcher.add([...watchedFiles]);
+      },
+      async hotUpdate({ file, server }) {
+        if (watchedFiles.has(path.resolve(file))) {
+          await server.restart();
+          return [];
+        }
+      },
+    },
     federation({
-      name: remote.id,
+      name: entry.id,
       filename: REMOTE_ENTRY_FILENAME,
       exposes,
-      shared: buildFederationShared(),
+      shared,
+      dts: { tsConfigPath: './tsconfig.app.json' },
       dev: { remoteHmr: true },
-      ...federationOptions,
     }),
-    ensureGlobalModulesPlugin(),
+    ensureGlobalModulesPlugin(shared),
   ];
 };
 
