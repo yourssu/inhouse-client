@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 
-import { DatePicker, DateRangePicker } from '@yourssu-inhouse/interior';
+import { DatePicker, DateRangePicker } from '@interior/react';
 import { useState } from 'react';
 
 export const DatePickerView = () => {

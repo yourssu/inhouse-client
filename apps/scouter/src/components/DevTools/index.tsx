@@ -1,4 +1,4 @@
-import { IconButton } from '@yourssu-inhouse/interior';
+import { IconButton } from '@interior/react';
 import { MdBuild } from 'react-icons/md';
 
 import { useTabDialog } from '@/hooks/useTabDialog';

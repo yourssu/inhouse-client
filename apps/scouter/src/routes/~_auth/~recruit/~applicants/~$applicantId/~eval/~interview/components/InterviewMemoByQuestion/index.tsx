@@ -1,5 +1,5 @@
+import { Divider, IconButton, useToast } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Divider, IconButton, useToast } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { MdRefresh } from 'react-icons/md';
 

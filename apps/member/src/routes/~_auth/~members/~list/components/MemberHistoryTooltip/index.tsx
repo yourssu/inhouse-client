@@ -1,6 +1,6 @@
-import { HoverTooltip } from '@yourssu-inhouse/interior';
-import { InlineButton } from '@yourssu-inhouse/interior';
-import { Table } from '@yourssu-inhouse/interior';
+import { HoverTooltip } from '@interior/react';
+import { InlineButton } from '@interior/react';
+import { Table } from '@interior/react';
 import { MdMoreHoriz, MdOutlineHistory } from 'react-icons/md';
 import { match, P } from 'ts-pattern';
 

@@ -1,4 +1,6 @@
-import { defineRemotePlugin, type RemotePlugin } from '@yourssu-inhouse/mfa-core';
+import './styles/index.css';
+
+import { defineRemotePlugin, type RemotePlugin } from '@inhouse-mfa/core';
 
 import { initScouterAnalytics } from './analytics/client';
 import { routeTree } from './routeTree.gen';
@@ -8,6 +10,6 @@ export const plugin: RemotePlugin = defineRemotePlugin({
     init: ({ router }) => initScouterAnalytics(router),
     mocks: async () => [],
   },
-  name: 'scouter',
+  name: '@yourssu-inhouse/scouter',
   routes: { basePath: '/recruit', entry: '/_auth', routeTree },
 });

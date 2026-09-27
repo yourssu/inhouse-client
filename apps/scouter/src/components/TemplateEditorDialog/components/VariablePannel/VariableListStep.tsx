@@ -1,5 +1,5 @@
-import { IconButton } from '@yourssu-inhouse/interior';
-import { TabButton } from '@yourssu-inhouse/interior';
+import { IconButton } from '@interior/react';
+import { TabButton } from '@interior/react';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
 

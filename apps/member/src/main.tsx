@@ -1,6 +1,6 @@
 import './styles/index.css';
 
-import { createRemotePreviewApp } from '@yourssu-inhouse/mfa-shell';
+import { createRemotePreviewApp } from '@inhouse-mfa/shell';
 
 import { authConfig } from '@/config';
 import { plugin } from '@/plugin';

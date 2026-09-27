@@ -1,4 +1,4 @@
-import { Combobox } from '@yourssu-inhouse/interior';
+import { Combobox } from '@interior/react';
 import { useState } from 'react';
 
 export const ComboboxView = () => {

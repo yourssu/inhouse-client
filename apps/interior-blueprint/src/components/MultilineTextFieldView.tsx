@@ -1,4 +1,4 @@
-import { MultilineTextField } from '@yourssu-inhouse/interior';
+import { MultilineTextField } from '@interior/react';
 import { useState } from 'react';
 
 export const MultilineTextFieldView = () => {

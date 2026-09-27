@@ -1,5 +1,5 @@
-import { HoverTooltip } from '@yourssu-inhouse/interior';
-import { tv } from '@yourssu-inhouse/interior-tailwind/utils';
+import { HoverTooltip } from '@interior/react';
+import { tv } from '@interior/tailwind/utils';
 import { RxQuestionMarkCircled } from 'react-icons/rx';
 
 import { Paper } from '@/components/Paper';

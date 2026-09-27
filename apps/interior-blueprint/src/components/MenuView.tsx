@@ -1,4 +1,4 @@
-import { Button, IconButton, Menu } from '@yourssu-inhouse/interior';
+import { Button, IconButton, Menu } from '@interior/react';
 import { MdDelete, MdEdit, MdMoreVert, MdShare } from 'react-icons/md';
 
 const Section = ({

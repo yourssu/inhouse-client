@@ -1,4 +1,4 @@
-import { Dialog } from '@yourssu-inhouse/interior';
+import { Dialog } from '@interior/react';
 
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 

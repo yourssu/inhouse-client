@@ -1,9 +1,11 @@
-import { defineRemotePlugin, type RemotePlugin } from '@yourssu-inhouse/mfa-core';
+import './styles/index.css';
+
+import { defineRemotePlugin, type RemotePlugin } from '@inhouse-mfa/core';
 
 import { routeTree } from '@/routeTree.gen';
 
 export const plugin: RemotePlugin = defineRemotePlugin({
-  name: 'member',
+  name: '@yourssu-inhouse/member',
   routes: { basePath: '/members', entry: '/_auth', routeTree },
   lifecycle: {
     // shell 안에서는 scouter 등 다른 remote가 같은 apiBaseURL(진짜 백엔드)을 쓰므로 mock을 등록하지 않는다.

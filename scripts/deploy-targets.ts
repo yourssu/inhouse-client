@@ -1,4 +1,6 @@
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
+import type { MfaRemoteEntry } from '@inhouse-mfa/vite';
+
 import { mfaConfig } from '../mfa.config';
 
 // mfa.config.ts 의 remotes 에서 배포 매트릭스를 파생한다. remote 추가 시 워크플로우 수정 없이 자동 편입.
@@ -22,6 +24,15 @@ const parseBase = (): string | undefined => {
 const env = parseEnv();
 const base = parseBase();
 
+/*
+  runtime 식별자는 workspace 전체 이름이지만, env var key·Cloudflare Pages 프로젝트명·
+  폴더 경로에는 '@'·'/'를 못 써서 마지막 세그먼트를 써요. 기존 배포 프로젝트와 env
+  이름을 그대로 유지하려는 선택이고, 이 스크립트는 CI matrix 단계에서 build 없이
+  돌아야 해서 패키지 dist를 runtime import 하지 않아요.
+*/
+const shortName = (remote: MfaRemoteEntry): string =>
+  remote.workspace.slice(remote.workspace.lastIndexOf('/') + 1);
+
 const projectName = (id: string): string => `inhouse-${id}-client${ENV_SUFFIX[env]}`;
 
 const remoteEntryUrl = (id: string): string => {
@@ -39,9 +50,10 @@ interface DeployTarget {
 }
 
 const shellTarget = (): DeployTarget => {
-  const envFileLines = mfaConfig.remotes.map(
-    (r) => `VITE_${r.id.toUpperCase()}_URL=${remoteEntryUrl(r.id)}`,
-  );
+  const envFileLines = mfaConfig.remotes.map((r) => {
+    const id = shortName(r);
+    return `VITE_${id.toUpperCase()}_URL=${remoteEntryUrl(id)}`;
+  });
 
   // NOTE: dev 환경에서 MSW 모킹을 사용할 수 있도록 환경 변수를 주입해줘요.
   if (env === 'dev') {
@@ -71,7 +83,7 @@ const remoteTarget = (id: string): DeployTarget => ({
 
 const allTargets = (): DeployTarget[] => [
   shellTarget(),
-  ...mfaConfig.remotes.map((r) => remoteTarget(r.id)),
+  ...mfaConfig.remotes.map((r) => remoteTarget(shortName(r))),
 ];
 
 // 공용/인프라 경로가 바뀌면 모든 앱이 영향받는다.
@@ -87,15 +99,23 @@ const SHARED_PREFIXES = [
 ];
 
 const changedApps = (base: string): string[] | 'all' => {
-  const files = execSync(`git diff --name-only ${base} HEAD`, { encoding: 'utf8' })
-    .split('\n')
-    .filter(Boolean);
+  let diff: string;
+  try {
+    diff = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' });
+  } catch (error) {
+    throw new Error(
+      `[deploy-targets] git diff 실패: --base='${base}'가 유효한 ref인지 확인하세요.`,
+      { cause: error },
+    );
+  }
+  const files = diff.split('\n').filter(Boolean);
   const apps = new Set<string>();
   for (const file of files) {
     if (SHARED_PREFIXES.some((p) => file.startsWith(p))) return 'all';
     if (file.startsWith('apps/shell/')) apps.add('shell');
     for (const r of mfaConfig.remotes) {
-      if (file.startsWith(`apps/${r.id}/`)) apps.add(r.id);
+      const id = shortName(r);
+      if (file.startsWith(`apps/${id}/`)) apps.add(id);
     }
   }
   return [...apps];
@@ -107,10 +127,6 @@ const targets = !base
       const apps = changedApps(base);
       if (apps === 'all') return allTargets();
       const selected = new Set(apps);
-      // shell 이 host Tailwind 단일 빌드로 모든 remote 의 utility 까지 산출하는 CSS 단일 출처예요.
-      // remote 소스만 바뀌어도 새 utility 가 shell CSS 에 반영되어야 하므로, 변경 앱이 하나라도 있으면
-      // shell 을 항상 함께 배포해요. shell 자체가 바뀐 경우엔 이미 selected 에 있어 no-op예요.
-      if (selected.size > 0) selected.add('shell');
       return allTargets().filter((t) => selected.has(t.app));
     })();
 

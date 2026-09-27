@@ -1,4 +1,4 @@
-import { TabButton } from '@yourssu-inhouse/interior';
+import { TabButton } from '@interior/react';
 import { useState } from 'react';
 import { MdCheck } from 'react-icons/md';
 

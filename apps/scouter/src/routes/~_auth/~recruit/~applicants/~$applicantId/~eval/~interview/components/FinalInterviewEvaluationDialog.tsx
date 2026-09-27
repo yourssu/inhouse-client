@@ -1,5 +1,5 @@
+import { Dialog } from '@interior/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Dialog } from '@yourssu-inhouse/interior';
 import { IoMdAlert } from 'react-icons/io';
 
 import type { InterviewEvaluatorStatus } from '@/apis/interviews/evaluations/schema';

@@ -1,4 +1,4 @@
-import { Dialog } from '@yourssu-inhouse/interior';
+import { Dialog } from '@interior/react';
 import { merge } from 'es-toolkit';
 import { overlay } from 'overlay-kit';
 import React from 'react';

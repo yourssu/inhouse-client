@@ -1,4 +1,4 @@
-import { Badge, Divider } from '@yourssu-inhouse/interior';
+import { Badge, Divider } from '@interior/react';
 
 import type { AssignedQuestion } from '@/apis/interviews/questions/schema';
 

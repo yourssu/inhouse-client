@@ -1,6 +1,6 @@
 import './styles/index.css';
 
-import { bootstrapShell } from '@yourssu-inhouse/mfa-shell';
+import { bootstrapShell } from '@inhouse-mfa/shell';
 
 import { remotePluginSpecs } from '@/plugins.config';
 import { routeTree as shellRouteTree } from '@/routeTree.gen';

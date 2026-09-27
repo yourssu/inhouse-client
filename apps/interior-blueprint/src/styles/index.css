@@ -1,48 +1,17 @@
-@layer theme, base, interior, components, utilities;
+@layer properties, interior-reset, interior-token, theme, base, interior-component, exterior, components, utilities;
 
-@import 'tailwindcss';
-@import '@yourssu-inhouse/interior/index.css';
-@plugin '@yourssu-inhouse/interior-tailwind/plugin';
+@import '@interior/react/reset.css' layer(interior-reset);
+@import '@interior/react/token.css' layer(interior-token);
+@import '@interior/react/component.css' layer(interior-component);
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@import '@exterior/layout/index.css' layer(exterior);
 
-ul {
-  margin: 0;
-  margin-top: 6px;
-  list-style: none;
-}
+@import '@interior/tailwind/plugin.css';
+@source '../';
 
-ul li {
-  margin-top: 6px;
-  position: relative;
-  padding-left: 24px;
-}
-
-ul li:before {
-  content: '•';
-  display: inline-block;
-  min-width: 22px;
-  position: absolute;
-  left: 0;
-  text-align: center;
-}
-
-html {
-  width: 100%;
-  height: 100%;
-}
-
-body {
-  width: 100%;
-  height: 100%;
-
-  background-color: var(--background);
-  color: var(--neutral);
-
-  font-family: 'Pretendard Variable', sans-serif;
-}
-
-#root {
-  width: 100%;
-  height: 100%;
+@layer base {
+  #root {
+    width: 100%;
+    height: 100%;
+  }
 }

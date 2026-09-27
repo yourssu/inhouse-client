@@ -1,5 +1,5 @@
-import { Button } from '@yourssu-inhouse/interior';
-import { useToast } from '@yourssu-inhouse/interior';
+import { Button } from '@interior/react';
+import { useToast } from '@interior/react';
 
 export const ToastView = () => {
   const toast = useToast();

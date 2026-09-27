@@ -1,10 +1,10 @@
+import { Badge, Button, Divider, Result, useToast } from '@interior/react';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import {
   QueryErrorResetBoundary,
   useSuspenseQueries,
   useSuspenseQuery,
 } from '@tanstack/react-query';
-import { Badge, Button, Divider, Result, useToast } from '@yourssu-inhouse/interior';
 import { overlay } from 'overlay-kit';
 import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';

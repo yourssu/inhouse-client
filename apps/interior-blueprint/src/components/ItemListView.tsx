@@ -1,4 +1,4 @@
-import { InlineButton, ItemList } from '@yourssu-inhouse/interior';
+import { InlineButton, ItemList } from '@interior/react';
 
 export const ItemListView = () => {
   return (

@@ -1,7 +1,7 @@
+import { formatTemplates } from '@inhouse/utils/date';
+import { isKyHTTPError } from '@inhouse/utils/ky';
+import { Button } from '@interior/react';
 import { QueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { isKyHTTPError } from '@yourssu-inhouse/inhouse-utils/ky';
-import { Button } from '@yourssu-inhouse/interior';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 

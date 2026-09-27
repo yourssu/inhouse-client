@@ -1,0 +1,51 @@
+{
+  "name": "@inhouse-mfa/vite",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./retry-plugin": {
+      "types": "./src/retryPlugin.ts",
+      "import": "./dist/retryPlugin.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check:type": "tsc -b",
+    "check:lint": "eslint .",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write ."
+  },
+  "dependencies": {
+    "@inhouse-mfa/core": "workspace:*",
+    "@module-federation/retry-plugin": "^2.9.0",
+    "postcss": "^8.5.28",
+    "postcss-import": "^17.0.0",
+    "postcss-value-parser": "^4.2.0"
+  },
+  "devDependencies": {
+    "@module-federation/vite": "^1.20.8",
+    "@types/node": "^24.13.0",
+    "@types/postcss-import": "^14.0.3",
+    "@yourssu-inhouse/eslint-config": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "^3.9.6",
+    "tsdown": "^0.22.14",
+    "typescript": "catalog:",
+    "vite": "^8.2.2"
+  },
+  "peerDependencies": {
+    "@module-federation/vite": "^1.16.12",
+    "vite": "^8.0.12"
+  }
+}

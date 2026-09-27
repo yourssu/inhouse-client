@@ -1,4 +1,4 @@
-import { Dialog, IconButton } from '@yourssu-inhouse/interior';
+import { Dialog, IconButton } from '@interior/react';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { MdClose } from 'react-icons/md';

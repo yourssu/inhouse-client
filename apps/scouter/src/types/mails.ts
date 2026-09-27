@@ -1,4 +1,4 @@
-import { objectValues } from '@yourssu-inhouse/inhouse-utils/object';
+import { objectValues } from '@inhouse/utils/object';
 
 import type { MailReservationStatusType, VariableTypeName } from '@/apis/mails/schema';
 

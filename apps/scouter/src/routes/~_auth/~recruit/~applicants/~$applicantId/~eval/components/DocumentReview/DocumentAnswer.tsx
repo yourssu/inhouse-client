@@ -1,4 +1,4 @@
-import { Button } from '@yourssu-inhouse/interior';
+import { Button } from '@interior/react';
 import clsx from 'clsx';
 import { PiPlus } from 'react-icons/pi';
 

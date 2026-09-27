@@ -1,5 +1,5 @@
+import { Button, Combobox } from '@interior/react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Combobox } from '@yourssu-inhouse/interior';
 import { useMemo, useState } from 'react';
 
 import { applicantsOption, applicantsQueryKeys } from '@/apis/applicants/query';

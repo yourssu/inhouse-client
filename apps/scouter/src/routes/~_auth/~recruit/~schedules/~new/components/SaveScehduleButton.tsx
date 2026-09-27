@@ -1,9 +1,9 @@
+import { formatTemplates } from '@inhouse/utils/date';
+import { Button } from '@interior/react';
+import { Dialog } from '@interior/react';
+import { useToast } from '@interior/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { Button } from '@yourssu-inhouse/interior';
-import { Dialog } from '@yourssu-inhouse/interior';
-import { useToast } from '@yourssu-inhouse/interior';
 import { compareAsc } from 'date-fns';
 import { assert } from 'es-toolkit';
 import { useMemo } from 'react';
