@@ -22,7 +22,7 @@ type PageLayoutComponent = ((props: PageLayoutProps) => ReactElement) &
 export const PageLayout = (({ menu, profile, children }: PageLayoutProps) => {
   return (
     <PageLayoutProvider>
-      <div className="flex size-full flex-col overflow-auto md:flex-row">
+      <div className="flex size-full flex-col overflow-auto md:flex-row!">
         <Sidebar menu={menu} profile={profile} />
         {children}
       </div>

@@ -4,7 +4,7 @@
 @import '@interior/react/token.css' layer(interior-token);
 @import '@interior/react/component.css' layer(interior-component);
 
-@import '@exterior/layout/index.css' layer(exterior);
+@import '@exterior/layout/index.css';
 
 @import '@interior/tailwind/plugin.css';
 @source '../';
