@@ -2,7 +2,6 @@ import type { PluginOption } from 'vite';
 
 import { PLUGIN_EXPOSE_KEY } from '@inhouse-mfa/core';
 import { federation, type ModuleFederationOptions } from '@module-federation/vite';
-import fs from 'node:fs';
 import path from 'node:path';
 
 import {
@@ -15,59 +14,7 @@ import {
 import { ensureGlobalModulesPlugin } from './ensureGlobalModules';
 import { loadRemoteConfig } from './loadMfaConfig';
 import { buildFederationShared } from './shared';
-
-/** shell Tailwind build에 remote CSS import를 생성하는 파일 이름. */
-const REMOTE_CSS_GEN_FILENAME = 'mfa-remotes.gen.css';
-
-/** CSS @import 경로는 POSIX 슬래시여야 해요. Windows 백슬래시를 정규화해요. */
-const toPosix = (p: string): string => p.split(path.sep).join('/');
-
-const buildRemoteCssContent = (root: string, config: MfaConfig): string => {
-  const genDir = path.resolve(root, 'src/styles');
-  const lines: string[] = [
-    '/* 자동 생성 파일 — 직접 수정하지 마세요. mfa.config.ts의 cssEntry로 생성해요. */',
-  ];
-
-  for (const remote of config.remotes) {
-    if (!remote.cssEntry) {
-      continue;
-    }
-
-    const cssEntryAbs = remote.cssEntry;
-    if (!path.isAbsolute(cssEntryAbs)) {
-      throw new Error(`[mfa-vite] '${remote.workspace}' cssEntry must be absolute: ${cssEntryAbs}`);
-    }
-    if (!fs.existsSync(cssEntryAbs)) {
-      throw new Error(`[mfa-vite] '${remote.workspace}' cssEntry not found: ${cssEntryAbs}`);
-    }
-    lines.push(`@import '${toPosix(path.relative(genDir, cssEntryAbs))}';`);
-  }
-
-  return `${lines.join('\n')}\n`;
-};
-
-/**
- * configResolved 에서 gen 파일을 (내용이 바뀐 경우만) 작성해요.
- * 내용이 같으면 write 를 skip 해 mtime 갱신으로 인한 파일 감시자 불필요 반응을 막아요.
- * gen 파일은 커밋 대상이라 신규 클론에도 존재하지만, 매 빌드/dev 시작에 최신 상태로 보정해요.
- */
-const writeRemoteCssGen = (root: string, config: MfaConfig): void => {
-  const genPath = path.resolve(root, 'src/styles', REMOTE_CSS_GEN_FILENAME);
-  const next = buildRemoteCssContent(root, config);
-  const prev = fs.existsSync(genPath) ? fs.readFileSync(genPath, 'utf8') : null;
-  if (next === prev) {
-    return;
-  }
-  fs.mkdirSync(path.dirname(genPath), { recursive: true });
-  fs.writeFileSync(genPath, next);
-};
-
-const remoteCssGenPlugin = (config: MfaConfig): PluginOption => ({
-  name: 'mfa-shell-remote-css',
-  configResolved(resolved) {
-    writeRemoteCssGen(resolved.root, config);
-  },
-});
+import { sharedCssPlugin } from './sharedCss';
 
 const remoteIdsPlugin = (config: MfaConfig): PluginOption => ({
   name: 'mfa-shell-remote-ids',
@@ -113,7 +60,6 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       dev: { remoteHmr: true },
       ...federationOptions,
     }),
-    remoteCssGenPlugin(config),
     ensureGlobalModulesPlugin(shared),
   ];
 };
@@ -132,9 +78,17 @@ const remote = async (): Promise<PluginOption[]> => {
   const watchedFiles = new Set(configFiles.map((file) => path.resolve(file)));
 
   return [
+    sharedCssPlugin(config.sharedCSS ?? [], entry.workspace),
     {
       name: 'mfa-remote-config',
-      config: () => ({ server: { port: entry.port } }),
+      config(viteConfig) {
+        if (viteConfig.build?.cssCodeSplit === false) {
+          throw new Error(
+            '[mfa] cssCodeSplit must remain enabled to load remote CSS through the Vite module graph.',
+          );
+        }
+        return { server: { port: viteConfig.server?.port ?? entry.port } };
+      },
       configureServer(server) {
         server.watcher.add([...watchedFiles]);
       },

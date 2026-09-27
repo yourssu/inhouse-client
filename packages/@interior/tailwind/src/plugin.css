@@ -1,0 +1,8 @@
+/* tailwind를 사용하는 앱들이 이 설정을 공유해요. */
+
+@import 'tailwindcss/theme.css' layer(theme) theme(inline);
+@import 'tailwindcss/utilities.css' source(none);
+
+@plugin './plugin.ts';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

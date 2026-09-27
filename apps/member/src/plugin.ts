@@ -1,3 +1,5 @@
+import './styles/index.css';
+
 import { defineRemotePlugin, type RemotePlugin } from '@inhouse-mfa/core';
 
 import { routeTree } from '@/routeTree.gen';

@@ -1,10 +1,7 @@
-import { vars as varsSource } from '@interior/vars';
-import { createGlobalTheme, createGlobalThemeContract } from '@vanilla-extract/css';
+import { createGlobalTheme } from '@vanilla-extract/css';
 
-import { vars } from './color.css';
-import { interiorContract } from './utils/contract.ts';
-
-export const shadows = createGlobalThemeContract(varsSource.shadow, interiorContract);
+import { vars } from '../color/contract';
+import { shadows } from './contract';
 
 const semanticShadowTokens = {
   dialog: `0 0 0 1px ${shadows.shadowLarge00}, 0 10px 40px 0 ${shadows.shadowLarge01}, 0 20px 50px 0 ${shadows.shadowLarge02}, 2px 70px 80px 0 ${shadows.shadowLarge02}`,

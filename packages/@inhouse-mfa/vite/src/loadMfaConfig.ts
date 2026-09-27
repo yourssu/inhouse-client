@@ -17,6 +17,9 @@ const isMfaConfig = (value: unknown): value is MfaConfig =>
     (remote: unknown) =>
       isRecord(remote) && typeof remote.port === 'number' && typeof remote.workspace === 'string',
   ) &&
+  (value.sharedCSS === undefined ||
+    (Array.isArray(value.sharedCSS) &&
+      value.sharedCSS.every((css: unknown) => typeof css === 'string'))) &&
   isRecord(value.sharedDependencies) &&
   Object.values(value.sharedDependencies).every(
     (policy) =>

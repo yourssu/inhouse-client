@@ -1,7 +1,7 @@
 import { globalStyle } from '@vanilla-extract/css';
 
-import { vars } from './color.css';
-import { shadows } from './shadow.css';
+import { vars } from '../tokens/color/contract';
+import { shadows } from '../tokens/shadow/contract';
 
 globalStyle('*', {
   scrollbarWidth: 'thin',

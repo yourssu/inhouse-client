@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./utils": "./src/utils.ts",
     "./plugin": "./src/plugin.ts",
-    "./utils": "./src/utils.ts"
+    "./plugin.css": "./src/plugin.css"
   },
   "scripts": {
     "check:type": "tsc --noEmit",

@@ -1,3 +1,5 @@
+import './styles/index.css';
+
 import { defineRemotePlugin, type RemotePlugin } from '@inhouse-mfa/core';
 
 import { initScouterAnalytics } from './analytics/client';
