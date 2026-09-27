@@ -1,13 +1,3 @@
-/**
- * Color token taxonomy.
- * 3계층으로 분리해요.
- * - `palette` : 원색 스케일(색 패밀리 50–900 + opacity)과 `scrollbar`. 테마별 값이 주입돼요.
- * - `fg`      : 전경(텍스트/아이콘) semantic. palette 의 grey 계열 alias라 테마를 자동 추종해요.
- * - `bg`      : 표면/배경 semantic( named surfaces + backgroundLevel). 테마별 값이 주입돼요.
- *
- * CSS 변수명(`--grey500`, `--neutral`, …)은 그대로고, JS 객체 구조만 중첩돼요.
- * 값 주입은 interior 패키지의 styles/color.css.ts 가 담당해요.
- */
 const palette = {
   scrollbar: 'var(--scrollbar)',
   grey50: 'var(--grey50)',

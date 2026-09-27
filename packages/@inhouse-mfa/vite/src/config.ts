@@ -10,8 +10,6 @@ export interface PluginSpec {
 }
 
 export interface MfaRemoteEntry {
-  /** Shell Tailwind build에 포함할 remote CSS source의 절대 경로. */
-  cssEntry?: string;
   /** Plugin manifest 설정. */
   plugin?: PluginSpec;
   /** Remote dev server port. */
@@ -28,6 +26,7 @@ export interface MfaSharedDependency {
 
 export interface MfaConfig {
   remotes: readonly MfaRemoteEntry[];
+  sharedCSS?: readonly string[];
   sharedDependencies: Record<string, MfaSharedDependency>;
 }
 

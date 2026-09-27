@@ -1,9 +1,6 @@
-import { vars as varsSource } from '@interior/vars';
-import { createGlobalTheme, createGlobalThemeContract } from '@vanilla-extract/css';
+import { createGlobalTheme } from '@vanilla-extract/css';
 
-import { interiorContract } from './utils/contract';
-
-export const vars = createGlobalThemeContract(varsSource.color, interiorContract);
+import { vars } from './contract';
 
 const fgAliases = {
   neutral: vars.palette.grey800,

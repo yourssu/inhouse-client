@@ -1,8 +1,8 @@
 import { vars } from '@interior/vars';
 import { style } from '@vanilla-extract/css';
 
-import { shadows } from '../../styles/shadow.css.ts';
-import { typography } from '../../styles/typography.css.ts';
+import { shadows } from '../../tokens/shadow/contract';
+import { typography } from '../../tokens/typography/contract';
 
 export const overlay = style({
   position: 'fixed',
@@ -22,7 +22,7 @@ export const content = style({
 
 export const dialogWrapper = style({
   backgroundColor: vars.color.bg.backgroundLevel02,
-  // 인라인 조립 대신 semantic shadow 토큰을 사용해요(styles/shadow.css.ts 의 shadows.dialog).
+  // 인라인 조립 대신 semantic shadow 토큰을 사용해요(tokens/shadow/contract.ts 의 shadows.dialog).
   boxShadow: shadows.dialog,
   height: '100%',
   overflow: 'hidden',

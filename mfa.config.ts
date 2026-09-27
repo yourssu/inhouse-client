@@ -1,10 +1,8 @@
 import type { MfaConfig } from '@inhouse-mfa/vite';
-import { resolve } from 'node:path';
 
 export const mfaConfig: MfaConfig = {
   remotes: [
     {
-      cssEntry: resolve(import.meta.dirname, 'apps/scouter/src/styles/runtime.css'),
       port: 5174,
       workspace: '@yourssu-inhouse/scouter',
     },
@@ -12,6 +10,12 @@ export const mfaConfig: MfaConfig = {
       port: 5175,
       workspace: '@yourssu-inhouse/member',
     },
+  ],
+  sharedCSS: [
+    '@interior/react/reset.css',
+    '@interior/react/token.css',
+    '@interior/react/component.css',
+    '@exterior/layout/index.css',
   ],
   sharedDependencies: {
     react: { version: 'catalog', singleton: true },

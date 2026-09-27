@@ -15,7 +15,9 @@
       "types": "./src/index.ts",
       "import": "./dist/index.mjs"
     },
-    "./index.css": "./dist/index.css"
+    "./reset.css": "./src/css/reset.css",
+    "./token.css": "./dist/token.css",
+    "./component.css": "./dist/component.css"
   },
   "scripts": {
     "build": "tsdown",
