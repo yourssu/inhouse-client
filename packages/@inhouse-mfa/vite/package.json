@@ -12,7 +12,7 @@
       "import": "./dist/index.mjs"
     },
     "./retry-plugin": {
-      "types": "./src/retryPlugin.ts",
+      "types": "./src/plugins/retryPlugin.ts",
       "import": "./dist/retryPlugin.mjs"
     }
   },
@@ -23,26 +23,38 @@
     "check:lint": "eslint .",
     "check:format": "prettier --check .",
     "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write ."
+    "fix:format": "prettier --write .",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@babel/core": "^7.29.7",
     "@inhouse-mfa/core": "workspace:*",
     "@module-federation/retry-plugin": "^2.9.0",
+    "@tailwindcss-mangle/shared": "5.0.1",
+    "@tailwindcss/node": "4.3.3",
+    "es-toolkit": "^1.47.0",
+    "magic-string": "^1.4.2",
     "postcss": "^8.5.28",
     "postcss-import": "^17.0.0",
+    "postcss-selector-parser": "^7.1.6",
     "postcss-value-parser": "^4.2.0"
   },
   "devDependencies": {
+    "@jridgewell/trace-mapping": "^0.3.31",
     "@module-federation/vite": "^1.20.8",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/babel__core": "^7.20.5",
     "@types/node": "^24.13.0",
     "@types/postcss-import": "^14.0.3",
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
+    "babel-plugin-react-compiler": "1.0.0",
     "eslint": "catalog:",
     "prettier": "^3.9.6",
     "tsdown": "^0.22.14",
     "typescript": "catalog:",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "vitest": "5.0.3"
   },
   "peerDependencies": {
     "@module-federation/vite": "^1.16.12",
