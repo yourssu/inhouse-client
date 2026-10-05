@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { queryClient } from '@inhouse/query-client';
 import { lotties } from '@inhouse/resources';
 import {
   Badge,
@@ -10,7 +11,7 @@ import {
   Select,
 } from '@interior/react';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
 import { invert } from 'es-toolkit';
@@ -117,8 +118,6 @@ export const EvalForm = () => {
   const quantitativeScore = watchedItems.reduce((sum, item) => sum + (Number(item.score) || 0), 0);
 
   const [loading, startLoading] = useLoading();
-
-  const queryClient = useQueryClient();
 
   const mutation = useToastedMutation({
     mutationFn: putApplicantDocumentEvaluations,

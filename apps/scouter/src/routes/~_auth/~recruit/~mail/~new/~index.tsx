@@ -1,6 +1,7 @@
 import { PageLayout } from '@exterior/layout';
+import { queryClient } from '@inhouse/query-client';
 import { Button } from '@interior/react';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { overlay } from 'overlay-kit';
 import { Suspense, useCallback, useState } from 'react';
@@ -217,7 +218,6 @@ const ResolvedMailContent = ({
 };
 
 const RouteComponent = () => {
-  const queryClient = useQueryClient();
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/mail/new/' });
   const { data: me } = useSuspenseQuery(meOption());
   const { loading: isLoadTemplateLoading, openLoadTemplateDialog } = useLoadTemplate();

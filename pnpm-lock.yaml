@@ -172,15 +172,12 @@ importers:
       '@exterior/utils':
         specifier: workspace:*
         version: link:../../packages/@exterior/utils
-      '@inhouse-mfa/core':
-        specifier: workspace:*
-        version: link:../../packages/@inhouse-mfa/core
-      '@inhouse-mfa/shell':
-        specifier: workspace:*
-        version: link:../../packages/@inhouse-mfa/shell
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth
+      '@inhouse/query-client':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse/query-client
       '@inhouse/react':
         specifier: workspace:*
         version: link:../../packages/@inhouse/react
@@ -254,30 +251,9 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
-      '@babel/core':
-        specifier: ^7.29.0
-        version: 7.29.7
       '@inhouse-mfa/vite':
         specifier: workspace:*
         version: link:../../packages/@inhouse-mfa/vite
-      '@module-federation/runtime':
-        specifier: ^2.9.0
-        version: 2.9.0
-      '@module-federation/vite':
-        specifier: ^1.20.8
-        version: 1.20.8(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@rolldown/plugin-babel':
-        specifier: ^0.2.3
-        version: 0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@tailwindcss/vite':
-        specifier: ^4.3.3
-        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@tanstack/router-plugin':
-        specifier: 'catalog:'
-        version: 1.168.35(@tanstack/react-router@1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@types/babel__core':
-        specifier: ^7.20.5
-        version: 7.20.5
       '@types/node':
         specifier: ^24.13.0
         version: 24.13.2
@@ -287,18 +263,12 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.17)
-      '@vitejs/plugin-react':
-        specifier: ^6.1.0
-        version: 6.1.0(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)))(babel-plugin-react-compiler@1.0.0)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      babel-plugin-react-compiler:
-        specifier: ^1.0.0
-        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 10.4.1(jiti@2.7.0)
@@ -314,9 +284,6 @@ importers:
       vite:
         specifier: ^8.2.2
         version: 8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
-      vite-tsconfig-paths:
-        specifier: ^6.1.1
-        version: 6.1.1(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
 
   apps/scouter:
     dependencies:
@@ -332,15 +299,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.82.0(react@19.2.7))
-      '@inhouse-mfa/core':
-        specifier: workspace:*
-        version: link:../../packages/@inhouse-mfa/core
-      '@inhouse-mfa/shell':
-        specifier: workspace:*
-        version: link:../../packages/@inhouse-mfa/shell
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth
+      '@inhouse/query-client':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse/query-client
       '@inhouse/react':
         specifier: workspace:*
         version: link:../../packages/@inhouse/react
@@ -501,27 +465,9 @@ importers:
         specifier: ^4.3.5
         version: 4.4.3
     devDependencies:
-      '@babel/core':
-        specifier: ^7.29.0
-        version: 7.29.7
       '@inhouse-mfa/vite':
         specifier: workspace:*
         version: link:../../packages/@inhouse-mfa/vite
-      '@module-federation/runtime':
-        specifier: ^2.9.0
-        version: 2.9.0
-      '@module-federation/vite':
-        specifier: ^1.20.8
-        version: 1.20.8(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@rolldown/plugin-babel':
-        specifier: ^0.2.3
-        version: 0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@tailwindcss/vite':
-        specifier: ^4.3.3
-        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@tanstack/router-plugin':
-        specifier: 'catalog:'
-        version: 1.168.35(@tanstack/react-router@1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@types/node':
         specifier: ^24.10.1
         version: 24.13.2
@@ -531,18 +477,12 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.17)
-      '@vitejs/plugin-react':
-        specifier: ^6.1.0
-        version: 6.1.0(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)))(babel-plugin-react-compiler@1.0.0)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      babel-plugin-react-compiler:
-        specifier: ^1.0.0
-        version: 1.0.0
       concurrently:
         specifier: ^9.2.1
         version: 9.2.3
@@ -570,9 +510,6 @@ importers:
       vite:
         specifier: ^8.2.2
         version: 8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
-      vite-tsconfig-paths:
-        specifier: ^6.1.1
-        version: 6.1.1(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       zx:
         specifier: ^8.8.5
         version: 8.8.5
@@ -591,6 +528,9 @@ importers:
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth
+      '@inhouse/query-client':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse/query-client
       '@inhouse/resources':
         specifier: workspace:*
         version: link:../../packages/@inhouse/resources
@@ -643,9 +583,6 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
-      '@babel/core':
-        specifier: ^7.29.0
-        version: 7.29.7
       '@inhouse-mfa/vite':
         specifier: workspace:*
         version: link:../../packages/@inhouse-mfa/vite
@@ -655,18 +592,6 @@ importers:
       '@module-federation/vite':
         specifier: ^1.20.8
         version: 1.20.8(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@rolldown/plugin-babel':
-        specifier: ^0.2.3
-        version: 0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@tailwindcss/vite':
-        specifier: ^4.3.3
-        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@tanstack/router-plugin':
-        specifier: 'catalog:'
-        version: 1.168.35(@tanstack/react-router@1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@types/babel__core':
-        specifier: ^7.20.5
-        version: 7.20.5
       '@types/node':
         specifier: ^24.13.0
         version: 24.13.2
@@ -676,18 +601,12 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.17)
-      '@vitejs/plugin-react':
-        specifier: ^6.1.0
-        version: 6.1.0(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)))(babel-plugin-react-compiler@1.0.0)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      babel-plugin-react-compiler:
-        specifier: ^1.0.0
-        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 10.4.1(jiti@2.7.0)
@@ -703,9 +622,6 @@ importers:
       vite:
         specifier: ^8.2.2
         version: 8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
-      vite-tsconfig-paths:
-        specifier: ^6.1.1
-        version: 6.1.1(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
 
   packages/@exterior/core:
     dependencies:
@@ -713,9 +629,6 @@ importers:
         specifier: workspace:*
         version: link:../../@interior/react
     devDependencies:
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.101.0(react@19.2.7)
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -873,9 +786,6 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 10.4.1(jiti@2.7.0)
-      msw:
-        specifier: ^2.14.6
-        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
@@ -894,10 +804,10 @@ importers:
       '@inhouse-mfa/core':
         specifier: workspace:*
         version: link:../core
-      '@inhouse/auth':
-        specifier: workspace:*
-        version: link:../../@inhouse/auth
     devDependencies:
+      '@inhouse/query-client':
+        specifier: workspace:*
+        version: link:../../@inhouse/query-client
       '@module-federation/runtime':
         specifier: ^2.9.0
         version: 2.9.0
@@ -925,9 +835,6 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 10.4.1(jiti@2.7.0)
-      msw:
-        specifier: ^2.14.6
-        version: 2.14.6(@types/node@24.13.2)(typescript@6.0.3)
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
@@ -937,6 +844,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.2.7(react@19.2.7)
+      tsx:
+        specifier: ^4.21.0
+        version: 4.22.4
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -952,12 +862,30 @@ importers:
       '@module-federation/retry-plugin':
         specifier: ^2.9.0
         version: 2.9.0(@module-federation/runtime@2.9.0)
+      '@module-federation/vite':
+        specifier: ^1.20.8
+        version: 1.20.8(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+      '@rolldown/plugin-babel':
+        specifier: ^0.2.3
+        version: 0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@tailwindcss-mangle/shared':
         specifier: 5.0.1
         version: 5.0.1
       '@tailwindcss/node':
         specifier: 4.3.3
         version: 4.3.3
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+      '@tanstack/router-plugin':
+        specifier: 'catalog:'
+        version: 1.168.35(@tanstack/react-router@1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+      '@vitejs/plugin-react':
+        specifier: ^6.1.0
+        version: 6.1.0(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)))(babel-plugin-react-compiler@1.0.0)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+      babel-plugin-react-compiler:
+        specifier: ^1.0.0
+        version: 1.0.0
       es-toolkit:
         specifier: ^1.47.0
         version: 1.47.0
@@ -976,16 +904,25 @@ importers:
       postcss-value-parser:
         specifier: ^4.2.0
         version: 4.2.0
+      vite-tsconfig-paths:
+        specifier: ^6.1.1
+        version: 6.1.1(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
     devDependencies:
+      '@exterior/core':
+        specifier: workspace:*
+        version: link:../../@exterior/core
+      '@inhouse/query-client':
+        specifier: workspace:*
+        version: link:../../@inhouse/query-client
       '@jridgewell/trace-mapping':
         specifier: ^0.3.31
         version: 0.3.31
-      '@module-federation/vite':
-        specifier: ^1.20.8
-        version: 1.20.8(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
-      '@tailwindcss/vite':
-        specifier: 4.3.3
-        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.101.0(react@19.2.7)
+      '@tanstack/react-router':
+        specifier: 'catalog:'
+        version: 1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@types/babel__core':
         specifier: ^7.20.5
         version: 7.20.5
@@ -995,21 +932,30 @@ importers:
       '@types/postcss-import':
         specifier: ^14.0.3
         version: 14.0.3
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.17)
       '@yourssu-inhouse/eslint-config':
         specifier: workspace:*
         version: link:../../eslint-config
       '@yourssu-inhouse/typescript-config':
         specifier: workspace:*
         version: link:../../typescript-config
-      babel-plugin-react-compiler:
-        specifier: 1.0.0
-        version: 1.0.0
       eslint:
         specifier: 'catalog:'
         version: 10.4.1(jiti@2.7.0)
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.7(react@19.2.7)
       tsdown:
         specifier: ^0.22.14
         version: 0.22.14(publint@0.3.21)(tsx@4.22.4)(typescript@6.0.3)(unrun@0.3.1)
@@ -1077,6 +1023,37 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.4.3
+
+  packages/@inhouse/query-client:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.101.0(react@19.2.7)
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.0
+        version: 24.13.2
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.17
+      '@yourssu-inhouse/eslint-config':
+        specifier: workspace:*
+        version: link:../../eslint-config
+      '@yourssu-inhouse/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.4.1(jiti@2.7.0)
+      prettier:
+        specifier: ^3.9.6
+        version: 3.9.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.7
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
 
   packages/@inhouse/react:
     dependencies:
@@ -4626,10 +4603,6 @@ packages:
     resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
     engines: {node: '>=8.6'}
 
-  picomatch@4.0.4:
-    resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
-    engines: {node: '>=12'}
-
   picomatch@4.0.7:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
@@ -6562,7 +6535,7 @@ snapshots:
   '@rolldown/plugin-babel@0.2.3(@babel/core@7.29.7)(@babel/runtime@7.29.7)(rolldown@1.2.5)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))':
     dependencies:
       '@babel/core': 7.29.7
-      picomatch: 4.0.4
+      picomatch: 4.0.7
       rolldown: 1.2.5
     optionalDependencies:
       '@babel/runtime': 7.29.7
@@ -8602,8 +8575,6 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@2.3.2: {}
-
-  picomatch@4.0.4: {}
 
   picomatch@4.0.7: {}
 

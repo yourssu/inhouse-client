@@ -1,5 +1,5 @@
+import { queryClient } from '@inhouse/query-client';
 import { Dialog } from '@interior/react';
-import { useQueryClient } from '@tanstack/react-query';
 import { IoMdAlert } from 'react-icons/io';
 
 import type { InterviewEvaluatorStatus } from '@/apis/interviews/evaluations/schema';
@@ -29,7 +29,6 @@ export const FinalInterviewEvaluationDialog = ({
   submittedEvaluatorCount,
   unsubmittedEvaluators,
 }: FinalInterviewEvaluationDialogProps) => {
-  const queryClient = useQueryClient();
   const trackInterviewEvent = useInterviewAnalytics();
 
   const invalidateApplicants = () =>

@@ -5,6 +5,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "inhouse-mfa"],
   "exclude": ["node_modules", "dist"]
 }

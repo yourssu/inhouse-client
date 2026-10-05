@@ -1,19 +1,5 @@
-import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
-import type { RequestHandler } from 'msw';
-
-export type ExteriorAppMode = 'preview' | 'shell';
-
-interface PluginRuntimeContext {
-  /** plugin 이 어디서 실행 중인지. */
-  mode: ExteriorAppMode;
-  /** plugin 식별자. */
-  name: string;
-}
-
-interface PluginInitContext extends PluginRuntimeContext {
-  /** shell 또는 preview 가 생성한 단일 router 인스턴스. */
-  router: AnyRouter;
-}
+import type { AnyRoute } from '@tanstack/react-router';
+import type { ComponentType } from 'react';
 
 interface RemotePluginRoutes {
   /** plugin 기능 라우트의 base path(예: '/recruit', '/members'). */
@@ -24,15 +10,8 @@ interface RemotePluginRoutes {
   routeTree: AnyRoute;
 }
 
-interface RemotePluginLifecycle {
-  /** auth/analytics/queryClient 같은 side effect. */
-  init?: (ctx: PluginInitContext) => Promise<void> | void;
-  /** MSW RequestHandler 들을 반환해요. */
-  mocks?: (ctx: PluginRuntimeContext) => Promise<RequestHandler[]>;
-}
-
 export interface RemotePlugin {
-  lifecycle?: RemotePluginLifecycle;
+  global?: Partial<Record<'Global', ComponentType>>;
   /** Module Federation remote 이름. mfa.config workspace name과 일치해야 해요. */
   name: string;
   routes: RemotePluginRoutes;

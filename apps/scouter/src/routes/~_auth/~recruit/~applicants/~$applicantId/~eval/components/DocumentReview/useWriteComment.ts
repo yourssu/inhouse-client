@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { queryClient } from '@inhouse/query-client';
 import { type KeyboardEvent, useState } from 'react';
 
 import { postApplicantDocumentComment } from '@/apis/documents';
@@ -25,7 +25,6 @@ export const useWriteComment = ({
   parentCommentId,
   sectionId,
 }: UseWriteCommentParams) => {
-  const queryClient = useQueryClient();
   const [content, setContent] = useState('');
   const trimmedContent = content.trim();
   const isContentEmpty = trimmedContent === '';

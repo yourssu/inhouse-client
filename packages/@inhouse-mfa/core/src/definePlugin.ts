@@ -3,14 +3,14 @@ import type { RemotePlugin } from './types';
 import { validatePlugin } from './validation';
 
 interface DefineRemotePluginOptions {
-  lifecycle?: RemotePlugin['lifecycle'];
+  global?: RemotePlugin['global'];
   name: string;
   routes: RemotePlugin['routes'];
 }
 
 export const defineRemotePlugin = (options: DefineRemotePluginOptions): RemotePlugin => {
   const plugin: RemotePlugin = {
-    lifecycle: options.lifecycle,
+    global: options.global,
     name: options.name,
     routes: options.routes,
   };

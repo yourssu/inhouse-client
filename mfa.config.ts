@@ -25,6 +25,7 @@ export const mfaConfig: MfaConfig = {
     '@tanstack/react-router': { version: 'catalog', singleton: true },
     '@tanstack/react-query': { version: 'catalog', singleton: true },
     '@inhouse/auth': { singleton: true },
+    '@inhouse/query-client': { singleton: true },
     '@interior/react': { singleton: true },
     '@exterior/layout': { singleton: true },
   },

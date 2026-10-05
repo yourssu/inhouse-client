@@ -1,6 +1,7 @@
+import { queryClient } from '@inhouse/query-client';
 import { useEffectOnce } from '@inhouse/react/hooks';
 import { Badge, Button, useToast } from '@interior/react';
-import { useMutation, useQueryClient, useSuspenseQueries } from '@tanstack/react-query';
+import { useMutation, useSuspenseQueries } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import {
   FieldArray,
@@ -66,7 +67,6 @@ interface QuestionnairePanelProps {
 
 export const QuestionnairePanel = ({ applicantId, partId, semester }: QuestionnairePanelProps) => {
   const openAlertDialog = useAlertDialog();
-  const queryClient = useQueryClient();
   const { invalidate: invalidateAssignedQuestions } = useQueryInvalidation(
     interviewQuestionsQueryKeys.applicant(applicantId),
   );

@@ -1,17 +1,9 @@
-/** remote plugin manifest source의 기본 경로. */
-export const DEFAULT_PLUGIN_PATH = './src/plugin.ts' as const;
+export const DEFAULT_ROUTE_PATH = './inhouse-mfa/route.ts' as const;
 
 /** remoteEntry 산출물 파일명. */
 export const REMOTE_ENTRY_FILENAME = 'remoteEntry.js' as const;
 
-export interface PluginSpec {
-  /** Plugin manifest source path. 기본값은 './src/plugin.ts'. */
-  path?: string;
-}
-
 export interface MfaRemoteEntry {
-  /** Plugin manifest 설정. */
-  plugin?: PluginSpec;
   /** Remote dev server port. */
   port: number;
   /** 이 remote를 소유한 workspace package name이자 Module Federation remote id. */

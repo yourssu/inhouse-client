@@ -1,5 +1,6 @@
+import { queryClient } from '@inhouse/query-client';
 import { Dialog } from '@interior/react';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { IoMdAlert } from 'react-icons/io';
 
@@ -21,7 +22,6 @@ interface FinalEvalDialogProps {
 }
 
 export const FinalEvalDialog = ({ isOpen, close, applicantId }: FinalEvalDialogProps) => {
-  const queryClient = useQueryClient();
   const trackDocumentEvent = useDocumentAnalytics();
 
   const mutation = useToastedMutation({

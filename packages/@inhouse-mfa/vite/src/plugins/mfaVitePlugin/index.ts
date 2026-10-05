@@ -4,7 +4,7 @@ import { PLUGIN_EXPOSE_KEY } from '@inhouse-mfa/core';
 import { federation, type ModuleFederationOptions } from '@module-federation/vite';
 
 import {
-  DEFAULT_PLUGIN_PATH,
+  DEFAULT_ROUTE_PATH,
   envKeyForRemote,
   type MfaConfig,
   REMOTE_ENTRY_FILENAME,
@@ -12,7 +12,10 @@ import {
 } from '../../core/config';
 import { loadRemoteConfig } from '../../core/loadMfaConfig';
 import { buildFederationShared } from '../../core/shared';
+import { remoteAssetsPlugin } from '../remoteAssetsPlugin';
+import { remoteContractPlugin } from '../remoteContractPlugin';
 import { sharedCssPlugin } from '../sharedCssPlugin';
+import { appPlugins } from './appPlugins';
 import { ensureGlobalModulesPlugin } from './ensureGlobalModulesPlugin';
 import { remoteConfigPlugin } from './remoteConfigPlugin';
 import { remoteIdsPlugin } from './remoteIdsPlugin';
@@ -54,6 +57,7 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       ...federationOptions,
     }),
     ensureGlobalModulesPlugin(shared),
+    ...appPlugins('shell'),
   ];
 };
 
@@ -66,16 +70,24 @@ const remote = async (): Promise<PluginOption[]> => {
   } = await loadRemoteConfig(process.cwd());
   const shared = buildFederationShared(config.sharedDependencies, workspaceRoot);
   return [
+    remoteAssetsPlugin(),
+    remoteContractPlugin(),
     sharedCssPlugin(config.sharedCSS ?? [], entry.workspace),
-    remoteConfigPlugin(entry, configFiles),
+    remoteConfigPlugin(entry, [
+      ...configFiles,
+      ...['route.ts', 'global.ts', 'global.tsx'].map(
+        (file) => `${process.cwd()}/inhouse-mfa/${file}`,
+      ),
+    ]),
     federation({
       ...federationDefaults,
       name: entry.workspace,
       filename: REMOTE_ENTRY_FILENAME,
-      exposes: { [PLUGIN_EXPOSE_KEY]: entry.plugin?.path ?? DEFAULT_PLUGIN_PATH },
+      exposes: { [PLUGIN_EXPOSE_KEY]: DEFAULT_ROUTE_PATH },
       shared,
     }),
     ensureGlobalModulesPlugin(shared),
+    ...appPlugins(entry.workspace.slice(entry.workspace.lastIndexOf('/') + 1)),
   ];
 };
 

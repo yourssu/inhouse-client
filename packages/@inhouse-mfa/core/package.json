@@ -29,13 +29,11 @@
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
     "eslint": "catalog:",
-    "msw": "^2.14.6",
     "prettier": "^3.9.6",
     "tsdown": "^0.22.14",
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@tanstack/react-router": "^1.170.11",
-    "msw": "^2.14.6"
+    "@tanstack/react-router": "^1.170.11"
   }
 }

@@ -1,28 +1,41 @@
 import './styles/index.css';
 
-import { createRemotePreviewApp } from '@inhouse-mfa/shell';
+import { AppProviders } from '@exterior/core';
+import { AuthProvider } from '@inhouse/auth';
+import { queryClient } from '@inhouse/query-client';
+import { initializeTheme } from '@interior/react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { createRoot } from 'react-dom/client';
 
 import { authConfig } from '@/config';
-import { plugin } from '@/plugin';
 import { routeTree } from '@/routeTree.gen';
 
-const app = createRemotePreviewApp({
-  authConfig,
-  plugin,
-  queryClientConfig: {
-    defaultOptions: {
-      queries: {
-        throwOnError: true,
-      },
-    },
-  },
+export const router = createRouter({
   routeTree,
+  defaultPreloadStaleTime: 0,
 });
-
-export const router = app.router;
 
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
 }
+
+initializeTheme();
+
+const container = document.getElementById('root');
+
+if (!container) {
+  throw new Error('Root element #root를 찾을 수 없어요.');
+}
+
+createRoot(container).render(
+  <AppProviders>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider config={authConfig}>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </QueryClientProvider>
+  </AppProviders>,
+);
