@@ -1,7 +1,6 @@
 import { useSetStateSelector } from '@inhouse/react/hooks';
 import { objectEntries } from '@inhouse/utils/object';
 import { InlineButton } from '@interior/react';
-import { cn } from '@interior/tailwind/utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { startTransition } from 'react';
 
@@ -10,6 +9,7 @@ import { useSearchState } from '@/hooks/useSearchState';
 import { useScheduleAnalytics } from '@/routes/~_auth/~recruit/~schedules/analytics';
 import { divisionColorMap } from '@/types/divisions';
 import { partColorMap, partNameKo } from '@/types/parts';
+import { cn } from '@/utils/tailwind';
 
 export const PartLegend = () => {
   const [search, setSearch] = useSearchState({ from: '/_auth/recruit/schedules/' });

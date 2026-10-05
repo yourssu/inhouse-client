@@ -1,7 +1,8 @@
-import { cn } from '@interior/tailwind/utils';
 import { useEffect, useRef } from 'react';
 
 import type { VariableTypeName } from '@/apis/mails/schema';
+
+import { cn } from '@/utils/tailwind';
 
 const useRawHTMLRenderer = (html: string, onVariableClick?: (type: string) => void) => {
   const ref = useRef<HTMLDivElement>(null);

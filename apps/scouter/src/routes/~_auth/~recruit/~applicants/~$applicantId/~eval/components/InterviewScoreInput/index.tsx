@@ -1,4 +1,4 @@
-import { cn } from '@interior/tailwind/utils';
+import { cn } from '@/utils/tailwind';
 
 interface InterviewScoreInputProps {
   ariaLabel: string;

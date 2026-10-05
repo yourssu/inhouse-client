@@ -1,4 +1,4 @@
-import { mfaVitePlugin } from '@inhouse-mfa/vite';
+import { mfaVitePlugin, tailwindcssPrefix } from '@inhouse-mfa/vite';
 import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
@@ -20,9 +20,10 @@ export default defineConfig(({ mode }) => {
         autoCodeSplitting: true,
       }),
       react(),
-      babel({ presets: [reactCompilerPreset()] }),
       tailwindcss(),
+      tailwindcssPrefix({ prefix: 'shell' }),
       tsconfigPaths(),
+      babel({ presets: [reactCompilerPreset()] }),
     ],
     server: {
       port: 5173,

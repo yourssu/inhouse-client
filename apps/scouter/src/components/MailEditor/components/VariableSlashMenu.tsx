@@ -1,10 +1,10 @@
-import { cn } from '@interior/tailwind/utils';
 import { DismissableLayer } from '@radix-ui/react-dismissable-layer';
 import * as PopperPrimitive from '@radix-ui/react-popper';
 import { Portal } from '@radix-ui/react-portal';
 import { type Editor, useEditorState } from '@tiptap/react';
 
 import { variableIconMap, type VariableItem } from '@/components/TemplateEditorDialog/type';
+import { cn } from '@/utils/tailwind';
 import {
   executeDeactivateSlash,
   executeInsertVariable,

@@ -1,11 +1,11 @@
 import { Dialog } from '@interior/react';
 import { useToast } from '@interior/react';
-import { cn } from '@interior/tailwind/utils';
 import { useDropzone } from 'react-dropzone';
 import { MdCloudUpload } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
 import { toMailImageUrl, uploadMailFiles } from '@/apis/mails';
+import { cn } from '@/utils/tailwind';
 
 interface ImageUploadDialogProps {
   close: () => void;

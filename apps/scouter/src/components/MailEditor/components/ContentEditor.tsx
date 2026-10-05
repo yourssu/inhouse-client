@@ -1,5 +1,4 @@
 import { useEffectOnce } from '@inhouse/react/hooks';
-import { cn } from '@interior/tailwind/utils';
 import Image from '@tiptap/extension-image';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -11,6 +10,7 @@ import { useEffect, useMemo } from 'react';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 
+import { cn } from '@/utils/tailwind';
 import { InlineVariableExtension } from '@/utils/tiptap/extensions/InlineVariable';
 import {
   SlashCommandExtension,

@@ -1,7 +1,7 @@
 import { PageLayout } from '@exterior/layout';
-import { cn } from '@interior/tailwind/utils';
 
 import { Paper } from '@/components/Paper';
+import { cn } from '@/utils/tailwind';
 
 export const DocumentReferencePanelSkeleton = () => {
   return (

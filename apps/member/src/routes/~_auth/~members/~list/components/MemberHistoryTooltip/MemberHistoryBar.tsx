@@ -1,10 +1,10 @@
 import { objectEntries } from '@inhouse/utils/object';
-import { tv } from '@interior/tailwind/utils';
 
 import type { Member } from '@/apis/members/schema';
 
 import { groupHistory } from '@/routes/~_auth/~members/~list/components/MemberHistoryTooltip/utils';
 import { memberStateKo } from '@/types/member';
+import { tv } from '@/utils/tailwind';
 
 interface MemberHistoryBarProps {
   history: Member['history'];

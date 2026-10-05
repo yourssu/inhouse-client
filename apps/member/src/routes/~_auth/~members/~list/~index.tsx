@@ -10,7 +10,6 @@ import { Pagination } from '@interior/react';
 import { Result } from '@interior/react';
 import { SearchField } from '@interior/react';
 import { Table } from '@interior/react';
-import { tv } from '@interior/tailwind/utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Lottie } from '@toss/lottie';
@@ -24,6 +23,7 @@ import { type MemberState, memberStateSchema, partNameSchema } from '@/apis/memb
 import { useSearchState } from '@/hooks/useSearchState';
 import { MemberHistoryTooltip } from '@/routes/~_auth/~members/~list/components/MemberHistoryTooltip';
 import { memberPositionKo, memberStateKo, partNameKo } from '@/types/member';
+import { tv } from '@/utils/tailwind';
 
 const memberPosition = tv({
   base: 'text-13 mr-3 min-w-10 text-center font-semibold',

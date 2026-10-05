@@ -1,8 +1,9 @@
 import { formatTemplates } from '@inhouse/utils/date';
 import { IconButton } from '@interior/react';
-import { cn } from '@interior/tailwind/utils';
 import { addMonths, addWeeks, endOfWeek, startOfWeek, subMonths, subWeeks } from 'date-fns';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+
+import { cn } from '@/utils/tailwind';
 
 interface DateIndicatorProps {
   disableNext?: boolean;
