@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import { assert } from 'es-toolkit';
-import { startTransition, useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, useTransition } from 'react';
 
 import { TabContext, TabListContext, useTabContext, useTabListContext } from './context';
 import * as styles from './Tab.css';
@@ -50,14 +50,12 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
 
   const baseId = useId();
   const [innerValue, setInnerValue] = useState(defaultValue);
+  // TODO: transition은 쓰지 않기로 했어요. suspend 처리는 사용처에 위임해요 (#238).
+  const [isValueChangePending, startTransition] = useTransition();
   const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : innerValue;
 
   const handleValueChange = (nextValue: string) => {
-    if (nextValue === selectedValue) {
-      return;
-    }
-
     startTransition(() => {
       if (!isControlled) {
         setInnerValue(nextValue);
@@ -70,7 +68,13 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
 
   return (
     <TabContext.Provider
-      value={{ baseId, isControlled, onValueChange: handleValueChange, value: selectedValue }}
+      value={{
+        baseId,
+        isControlled,
+        isValueChangePending,
+        onValueChange: handleValueChange,
+        value: selectedValue,
+      }}
     >
       <Comp>{children}</Comp>
     </TabContext.Provider>
@@ -139,15 +143,16 @@ const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
 };
 
 const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
-  const { baseId, onValueChange, value: selectedValue } = useTabContext();
+  const { baseId, isValueChangePending, onValueChange, value: selectedValue } = useTabContext();
   const { fallbackTabId } = useTabListContext();
 
   const selected = value === selectedValue;
+  const isSelectionSettled = !isValueChangePending && selected;
   const tabId = getTabId(baseId, value);
   const isTabStop = selected || tabId === fallbackTabId;
 
   const handleClick = () => {
-    if (disabled || selected) {
+    if (disabled || isSelectionSettled) {
       return;
     }
     onValueChange(value);
