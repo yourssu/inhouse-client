@@ -24,16 +24,22 @@ interface ShellPluginOptions {
   config: MfaConfig;
   /** loadEnv 로 읽은 env(빈 값이면 dev 기본 URL 폴백). */
   env?: Record<string, string | undefined>;
-  /** shell 이 추가로 선언할 federation 옵션. */
-  federationOptions?: Partial<ModuleFederationOptions>;
 }
 
 const federationDefaults = {
   dts: false,
   dev: { remoteHmr: true },
+  shareStrategy: 'version-first',
 } satisfies Partial<ModuleFederationOptions>;
 
-const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): PluginOption => {
+const shell = (options: ShellPluginOptions): PluginOption => {
+  if ('federationOptions' in options) {
+    throw new Error(
+      '[mfa-vite] federationOptions is not supported. Configure shared dependencies and remotes through mfa.config.ts.',
+    );
+  }
+
+  const { config, env = {} } = options;
   const shared = buildFederationShared(config.sharedDependencies);
   const remotes: ModuleFederationOptions['remotes'] = Object.fromEntries(
     config.remotes.map((remote) => [
@@ -54,7 +60,6 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       remotes,
       runtimePlugins: ['@inhouse-mfa/vite/retry-plugin'],
       shared,
-      ...federationOptions,
     }),
     ensureGlobalModulesPlugin(shared),
     ...appPlugins(),
