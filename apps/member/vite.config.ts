@@ -1,6 +1,7 @@
-import { mfaVitePlugin } from '@inhouse-mfa/vite';
+import { mfaVitePlugin, tailwindcssPrefix } from '@inhouse-mfa/vite';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [mfaVitePlugin.remote()],
+  plugins: [tailwindcss(), tailwindcssPrefix({ prefix: 'member' }), mfaVitePlugin.remote()],
 });

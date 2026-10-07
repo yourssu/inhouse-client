@@ -254,6 +254,9 @@ importers:
       '@inhouse-mfa/vite':
         specifier: workspace:*
         version: link:../../packages/@inhouse-mfa/vite
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@types/node':
         specifier: ^24.13.0
         version: 24.13.2
@@ -468,6 +471,9 @@ importers:
       '@inhouse-mfa/vite':
         specifier: workspace:*
         version: link:../../packages/@inhouse-mfa/vite
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@types/node':
         specifier: ^24.10.1
         version: 24.13.2
@@ -592,6 +598,9 @@ importers:
       '@module-federation/vite':
         specifier: ^1.20.8
         version: 1.20.8(typescript@6.0.3)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@types/node':
         specifier: ^24.13.0
         version: 24.13.2
@@ -874,9 +883,6 @@ importers:
       '@tailwindcss/node':
         specifier: 4.3.3
         version: 4.3.3
-      '@tailwindcss/vite':
-        specifier: ^4.3.3
-        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@tanstack/router-plugin':
         specifier: 'catalog:'
         version: 1.168.35(@tanstack/react-router@1.170.32(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
@@ -917,6 +923,9 @@ importers:
       '@jridgewell/trace-mapping':
         specifier: ^0.3.31
         version: 0.3.31
+      '@tailwindcss/vite':
+        specifier: ^4.3.3
+        version: 4.3.3(patch_hash=abf89ce58bb4115f9c8fa74f4307058495f5eaebff565b8daca39207fdcfafa2)(vite@8.2.2(patch_hash=a340efae7537a33d0b8cf278e562a1a395e39ba3f73ec2cf8c504ff6047689c3)(@types/node@24.13.2)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.0(react@19.2.7)

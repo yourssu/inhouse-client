@@ -42,7 +42,6 @@
     "postcss-selector-parser": "^7.1.6",
     "postcss-value-parser": "^4.2.0",
     "@rolldown/plugin-babel": "^0.2.3",
-    "@tailwindcss/vite": "^4.3.3",
     "@tanstack/router-plugin": "catalog:",
     "@vitejs/plugin-react": "^6.1.0",
     "vite-tsconfig-paths": "^6.1.1",
@@ -69,7 +68,8 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@inhouse/query-client": "workspace:*",
-    "@tanstack/react-query": "catalog:"
+    "@tanstack/react-query": "catalog:",
+    "@tailwindcss/vite": "^4.3.3"
   },
   "peerDependencies": {
     "vite": "^8.0.12"

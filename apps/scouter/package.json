@@ -91,7 +91,8 @@
     "tsx": "^4.21.0",
     "typescript": "catalog:",
     "vite": "^8.2.2",
-    "zx": "^8.8.5"
+    "zx": "^8.8.5",
+    "@tailwindcss/vite": "^4.3.3"
   },
   "msw": {
     "workerDirectory": [

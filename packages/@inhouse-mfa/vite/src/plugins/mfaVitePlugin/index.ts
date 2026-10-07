@@ -57,7 +57,7 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       ...federationOptions,
     }),
     ensureGlobalModulesPlugin(shared),
-    ...appPlugins('shell'),
+    ...appPlugins(),
   ];
 };
 
@@ -87,7 +87,7 @@ const remote = async (): Promise<PluginOption[]> => {
       shared,
     }),
     ensureGlobalModulesPlugin(shared),
-    ...appPlugins(entry.workspace.slice(entry.workspace.lastIndexOf('/') + 1)),
+    ...appPlugins(),
   ];
 };
 
