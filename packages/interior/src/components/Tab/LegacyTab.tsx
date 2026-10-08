@@ -14,6 +14,10 @@ interface TabProps<TTab extends string> {
   value?: TTab;
 }
 
+/**
+ * @deprecated 새 `Tab`(Tab.Root / Tab.List / Tab.Item / Tab.Panel)으로 교체해 주세요.
+ * 접근성(aria 연결, 키보드 탐색)을 갖춘 compound 구조로 바뀌었어요.
+ */
 export const Tab = <TTab extends string>({
   defaultTab,
   value,
