@@ -58,21 +58,22 @@ export const useWriteComment = ({
         sectionId: data.sectionId,
       };
       onOptimisticCommentCreate(comment);
-      return comment;
+      setContent('');
+      return { comment, content: data.content };
     },
     onError: (_error, _variables, context) => {
       if (context) {
-        onOptimisticCommentCreateSettled(context.commentId);
+        onOptimisticCommentCreateSettled(context.comment.commentId);
+        setContent(context.content);
       }
     },
     onSuccess: (_data, { applicantId: targetApplicantId }, context) => {
-      setContent('');
       onCommentCreated?.({ parentCommentId, sectionId });
       void queryClient
         .invalidateQueries({ queryKey: commentsQueryKey(targetApplicantId) })
         .then(() => {
           if (context) {
-            onOptimisticCommentCreateSettled(context.commentId);
+            onOptimisticCommentCreateSettled(context.comment.commentId);
           }
         });
     },
