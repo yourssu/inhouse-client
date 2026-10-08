@@ -1,4 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
+import { assert } from 'es-toolkit';
 import { useId, useState } from 'react';
 
 import { TabContext, useTabContext } from './context';
@@ -39,9 +40,17 @@ interface TabPanelProps {
 }
 
 const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRootProps) => {
+  const isControlled = value !== undefined;
+  const isUncontrolled = defaultValue !== undefined
+  const hasOnlyOneOfValueAndDefaultValue = isControlled !== isUncontrolled;
+
+  assert(
+    hasOnlyOneOfValueAndDefaultValue,
+    'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.',
+  );
+
   const baseId = useId();
   const [innerValue, setInnerValue] = useState(defaultValue);
-  const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : innerValue;
 
   const handleValueChange = (nextValue: string) => {
