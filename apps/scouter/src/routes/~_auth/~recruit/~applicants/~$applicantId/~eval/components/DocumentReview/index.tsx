@@ -11,7 +11,7 @@ import type { CommentCreatedMetadata } from './useWriteComment';
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
 import { DocumentAnswer } from './DocumentAnswer';
-import { groupCommentThreads } from './groupCommentThreads';
+import { getCommentThreadCommentIds, groupCommentThreads } from './groupCommentThreads';
 
 export const DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS =
   'grid-cols-[minmax(36rem,1fr)_minmax(17.5rem,25rem)]';
@@ -95,13 +95,19 @@ export const DocumentReview = ({
   };
 
   const handleOptimisticCommentDelete = (commentId: number) => {
-    setOptimisticallyDeletedCommentIds((commentIds) => new Set(commentIds).add(commentId));
+    const commentIds = getCommentThreadCommentIds(displayedComments, commentId);
+    setOptimisticallyDeletedCommentIds(
+      (deletedCommentIds) => new Set([...deletedCommentIds, ...commentIds]),
+    );
+    return commentIds;
   };
 
-  const handleOptimisticCommentDeleteSettled = (commentId: number) => {
-    setOptimisticallyDeletedCommentIds((commentIds) => {
-      const nextCommentIds = new Set(commentIds);
-      nextCommentIds.delete(commentId);
+  const handleOptimisticCommentDeleteSettled = (settledCommentIds: readonly number[]) => {
+    setOptimisticallyDeletedCommentIds((deletedCommentIds) => {
+      const nextCommentIds = new Set(deletedCommentIds);
+      for (const commentId of settledCommentIds) {
+        nextCommentIds.delete(commentId);
+      }
       return nextCommentIds;
     });
   };

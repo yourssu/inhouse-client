@@ -17,8 +17,8 @@ interface CommentThreadProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
   onOptimisticCommentCreate: (comment: CommentType) => void;
   onOptimisticCommentCreateSettled: (commentId: number) => void;
-  onOptimisticCommentDelete: (commentId: number) => void;
-  onOptimisticCommentDeleteSettled: (commentId: number) => void;
+  onOptimisticCommentDelete: (commentId: number) => number[];
+  onOptimisticCommentDeleteSettled: (commentIds: readonly number[]) => void;
   onOptimisticCommentUpdate: (commentId: number, content: string) => void;
   onOptimisticCommentUpdateSettled: (commentId: number) => void;
   thread: CommentType[];

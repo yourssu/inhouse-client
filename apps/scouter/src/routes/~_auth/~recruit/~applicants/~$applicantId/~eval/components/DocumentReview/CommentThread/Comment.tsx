@@ -18,8 +18,8 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface CommentProps extends CommentType {
   applicantId: number;
-  onOptimisticCommentDelete: (commentId: number) => void;
-  onOptimisticCommentDeleteSettled: (commentId: number) => void;
+  onOptimisticCommentDelete: (commentId: number) => number[];
+  onOptimisticCommentDeleteSettled: (commentIds: readonly number[]) => void;
   onOptimisticCommentUpdate: (commentId: number, content: string) => void;
   onOptimisticCommentUpdateSettled: (commentId: number) => void;
 }
@@ -126,14 +126,19 @@ export const Comment = ({
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
       onMutate: () => {
-        onOptimisticCommentDelete(commentId);
+        const commentIds = onOptimisticCommentDelete(commentId);
+        return { commentIds };
       },
-      onError: () => {
-        onOptimisticCommentDeleteSettled(commentId);
+      onError: (_error, _variables, context) => {
+        if (context) {
+          onOptimisticCommentDeleteSettled(context.commentIds);
+        }
       },
-      onSuccess: () => {
+      onSuccess: (_data, _variables, context) => {
         void queryClient.invalidateQueries({ queryKey }).then(() => {
-          onOptimisticCommentDeleteSettled(commentId);
+          if (context) {
+            onOptimisticCommentDeleteSettled(context.commentIds);
+          }
         });
       },
     });
