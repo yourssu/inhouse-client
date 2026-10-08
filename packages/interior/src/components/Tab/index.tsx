@@ -40,17 +40,11 @@ interface TabPanelProps {
 }
 
 const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRootProps) => {
-  const isControlled = value !== undefined;
-  const isUncontrolled = defaultValue !== undefined
-  const hasOnlyOneOfValueAndDefaultValue = isControlled !== isUncontrolled;
-
-  assert(
-    hasOnlyOneOfValueAndDefaultValue,
-    'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.',
-  );
+  assert(xor(value != null, defaultValue != null), 'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.')
 
   const baseId = useId();
   const [innerValue, setInnerValue] = useState(defaultValue);
+  const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : innerValue;
 
   const handleValueChange = (nextValue: string) => {
@@ -143,3 +137,7 @@ const getTabId = (baseId: string, value: string) => `${baseId}-tab-${encodeURICo
 
 const getPanelId = (baseId: string, value: string) =>
   `${baseId}-panel-${encodeURIComponent(value)}`;
+
+const xor = (a: boolean, b: boolean) => {
+  return a !== b
+}
