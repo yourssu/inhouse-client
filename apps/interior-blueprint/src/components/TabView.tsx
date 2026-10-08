@@ -1,4 +1,5 @@
 import { Tab } from '@yourssu-inhouse/interior';
+import clsx from 'clsx';
 
 export const TabView = () => (
   <div className="flex w-full flex-col gap-4">
@@ -23,5 +24,6 @@ export const TabView = () => (
   </div>
 );
 
-const panelClassName =
-  'border-greyOpacity100 text-15 text-greyOpacity500 mt-4 flex min-h-[100px] items-center justify-center rounded-lg border-2 border-dashed font-medium';
+const panelClassName = clsx(
+  'border-greyOpacity100 text-15 text-greyOpacity500 mt-4 flex min-h-[100px] items-center justify-center rounded-lg border-2 border-dashed font-medium',
+);
