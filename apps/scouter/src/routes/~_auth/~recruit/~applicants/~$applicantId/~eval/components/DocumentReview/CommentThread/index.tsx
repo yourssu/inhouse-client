@@ -15,6 +15,12 @@ interface CommentThreadProps {
   applicantId: number;
   isSelected: boolean;
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
+  onOptimisticCommentCreate: (comment: CommentType) => void;
+  onOptimisticCommentCreateSettled: (commentId: number) => void;
+  onOptimisticCommentDelete: (commentId: number) => void;
+  onOptimisticCommentDeleteSettled: (commentId: number) => void;
+  onOptimisticCommentUpdate: (commentId: number, content: string) => void;
+  onOptimisticCommentUpdateSettled: (commentId: number) => void;
   thread: CommentType[];
 }
 
@@ -22,6 +28,12 @@ export const CommentThread = ({
   applicantId,
   isSelected,
   onCommentCreated,
+  onOptimisticCommentCreate,
+  onOptimisticCommentCreateSettled,
+  onOptimisticCommentDelete,
+  onOptimisticCommentDeleteSettled,
+  onOptimisticCommentUpdate,
+  onOptimisticCommentUpdateSettled,
   thread,
 }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
@@ -39,6 +51,8 @@ export const CommentThread = ({
     applicantId,
     onClose: () => setIsReplying(false),
     onCommentCreated,
+    onOptimisticCommentCreate,
+    onOptimisticCommentCreateSettled,
     parentCommentId: currentThreadId,
     sectionId,
   });
@@ -60,7 +74,15 @@ export const CommentThread = ({
         onClick={() => setIsReplying(true)}
       >
         {thread.map((comment) => (
-          <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
+          <Comment
+            {...comment}
+            applicantId={applicantId}
+            key={comment.commentId}
+            onOptimisticCommentDelete={onOptimisticCommentDelete}
+            onOptimisticCommentDeleteSettled={onOptimisticCommentDeleteSettled}
+            onOptimisticCommentUpdate={onOptimisticCommentUpdate}
+            onOptimisticCommentUpdateSettled={onOptimisticCommentUpdateSettled}
+          />
         ))}
         {isReplying && (
           <div className="flex items-end gap-1">

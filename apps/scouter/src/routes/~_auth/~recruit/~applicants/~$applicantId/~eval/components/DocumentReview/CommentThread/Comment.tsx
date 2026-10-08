@@ -1,6 +1,6 @@
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef, useState } from 'react';
@@ -14,11 +14,14 @@ import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@
 import { commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface CommentProps extends CommentType {
   applicantId: number;
+  onOptimisticCommentDelete: (commentId: number) => void;
+  onOptimisticCommentDeleteSettled: (commentId: number) => void;
+  onOptimisticCommentUpdate: (commentId: number, content: string) => void;
+  onOptimisticCommentUpdateSettled: (commentId: number) => void;
 }
 
 interface CommentItemProps {
@@ -31,12 +34,20 @@ interface CommentBodyProps {
   children: ReactNode;
 }
 
-export const Comment = ({ applicantId, ...comment }: CommentProps) => {
+export const Comment = ({
+  applicantId,
+  onOptimisticCommentDelete,
+  onOptimisticCommentDeleteSettled,
+  onOptimisticCommentUpdate,
+  onOptimisticCommentUpdateSettled,
+  ...comment
+}: CommentProps) => {
   const { author, commentId, content } = comment;
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
   const isMyComment = userId === myData.userId;
-  const { invalidate: invalidateComments } = useQueryInvalidation(commentsQueryKey(applicantId));
+  const queryClient = useQueryClient();
+  const queryKey = commentsQueryKey(applicantId);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
@@ -46,9 +57,17 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     useToastedMutation({
       mutationFn: patchApplicantDocumentComment,
       successText: '코멘트를 수정했어요.',
+      onMutate: ({ data }) => {
+        onOptimisticCommentUpdate(commentId, data.content);
+      },
+      onError: () => {
+        onOptimisticCommentUpdateSettled(commentId);
+      },
       onSuccess: () => {
         setIsEditing(false);
-        invalidateComments();
+        void queryClient.invalidateQueries({ queryKey }).then(() => {
+          onOptimisticCommentUpdateSettled(commentId);
+        });
       },
     });
 
@@ -106,8 +125,16 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     useToastedMutation({
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
+      onMutate: () => {
+        onOptimisticCommentDelete(commentId);
+      },
+      onError: () => {
+        onOptimisticCommentDeleteSettled(commentId);
+      },
       onSuccess: () => {
-        invalidateComments();
+        void queryClient.invalidateQueries({ queryKey }).then(() => {
+          onOptimisticCommentDeleteSettled(commentId);
+        });
       },
     });
 

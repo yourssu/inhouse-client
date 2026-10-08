@@ -33,10 +33,32 @@ export const DocumentReview = ({
 }: DocumentReviewProps) => {
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
+  const [optimisticComments, setOptimisticComments] = useState<CommentType[]>([]);
+  const [optimisticCommentContents, setOptimisticCommentContents] = useState<Map<number, string>>(
+    new Map(),
+  );
+  const [optimisticallyDeletedCommentIds, setOptimisticallyDeletedCommentIds] = useState<
+    Set<number>
+  >(new Set());
+  const displayedComments = useMemo(
+    () => [
+      ...comments
+        .filter(({ commentId }) => !optimisticallyDeletedCommentIds.has(commentId))
+        .map((comment) => {
+          const content = optimisticCommentContents.get(comment.commentId);
+          return content === undefined ? comment : { ...comment, content, isEdited: true };
+        }),
+      ...optimisticComments,
+    ],
+    [comments, optimisticCommentContents, optimisticComments, optimisticallyDeletedCommentIds],
+  );
+  const threadsBySectionId = useMemo(
+    () => groupCommentThreads(displayedComments),
+    [displayedComments],
+  );
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
-  const showCommentPanel = comments.length > 0 || openCommentSectionId !== null;
+  const showCommentPanel = displayedComments.length > 0 || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -48,6 +70,40 @@ export const DocumentReview = ({
     onCommentAddClick?.();
     setSelectedSectionId(sectionId);
     setOpenCommentSectionId(sectionId);
+  };
+
+  const handleOptimisticCommentCreate = (comment: CommentType) => {
+    setOptimisticComments((comments) => [...comments, comment]);
+  };
+
+  const handleOptimisticCommentCreateSettled = (commentId: number) => {
+    setOptimisticComments((comments) =>
+      comments.filter((comment) => comment.commentId !== commentId),
+    );
+  };
+
+  const handleOptimisticCommentUpdate = (commentId: number, content: string) => {
+    setOptimisticCommentContents((contents) => new Map(contents).set(commentId, content));
+  };
+
+  const handleOptimisticCommentUpdateSettled = (commentId: number) => {
+    setOptimisticCommentContents((contents) => {
+      const nextContents = new Map(contents);
+      nextContents.delete(commentId);
+      return nextContents;
+    });
+  };
+
+  const handleOptimisticCommentDelete = (commentId: number) => {
+    setOptimisticallyDeletedCommentIds((commentIds) => new Set(commentIds).add(commentId));
+  };
+
+  const handleOptimisticCommentDeleteSettled = (commentId: number) => {
+    setOptimisticallyDeletedCommentIds((commentIds) => {
+      const nextCommentIds = new Set(commentIds);
+      nextCommentIds.delete(commentId);
+      return nextCommentIds;
+    });
   };
 
   const registerSectionRef = (sectionId: number) => (element: HTMLDivElement | null) => {
@@ -126,6 +182,8 @@ export const DocumentReview = ({
                       applicantId={applicantId}
                       onClose={() => setOpenCommentSectionId(null)}
                       onCommentCreated={onCommentCreated}
+                      onOptimisticCommentCreate={handleOptimisticCommentCreate}
+                      onOptimisticCommentCreateSettled={handleOptimisticCommentCreateSettled}
                       parentCommentId={null}
                       sectionId={sectionId}
                     />
@@ -136,6 +194,12 @@ export const DocumentReview = ({
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
                       onCommentCreated={onCommentCreated}
+                      onOptimisticCommentCreate={handleOptimisticCommentCreate}
+                      onOptimisticCommentCreateSettled={handleOptimisticCommentCreateSettled}
+                      onOptimisticCommentDelete={handleOptimisticCommentDelete}
+                      onOptimisticCommentDeleteSettled={handleOptimisticCommentDeleteSettled}
+                      onOptimisticCommentUpdate={handleOptimisticCommentUpdate}
+                      onOptimisticCommentUpdateSettled={handleOptimisticCommentUpdateSettled}
                       thread={thread}
                     />
                   ))}
