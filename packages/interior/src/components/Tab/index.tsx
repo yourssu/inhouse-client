@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import { startTransition, useId, useState } from 'react';
+import { useId, useState } from 'react';
 
 import { TabContext, useTabContext } from './context';
 import * as styles from './Tab.css';
@@ -45,12 +45,10 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
   const selectedValue = isControlled ? value : innerValue;
 
   const handleValueChange = (nextValue: string) => {
-    startTransition(() => {
-      if (!isControlled) {
-        setInnerValue(nextValue);
-      }
-      onValueChange?.(nextValue);
-    });
+    if (!isControlled) {
+      setInnerValue(nextValue);
+    }
+    onValueChange?.(nextValue);
   };
 
   const Comp = asChild ? Slot : 'div';
