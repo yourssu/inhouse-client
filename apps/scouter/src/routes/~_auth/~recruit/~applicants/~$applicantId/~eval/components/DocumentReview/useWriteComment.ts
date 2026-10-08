@@ -25,6 +25,10 @@ interface UseWriteCommentParams {
   sectionId: number;
 }
 
+function normalizeNickname(nickname: string) {
+  return nickname.replace(/\s*\([^)]*\)$/, '');
+}
+
 export const useWriteComment = ({
   applicantId,
   onClose,
@@ -46,7 +50,7 @@ export const useWriteComment = ({
     onMutate: ({ data }) => {
       const comment = {
         author: {
-          nickname: me.nickname,
+          nickname: normalizeNickname(me.nickname),
           part: me.parts[0]?.part ?? '',
           userId: me.userId,
         },
