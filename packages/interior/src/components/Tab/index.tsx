@@ -1,5 +1,4 @@
-import { Slot, Slottable } from '@radix-ui/react-slot';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { Slot } from '@radix-ui/react-slot';
 import { startTransition, useId, useState } from 'react';
 
 import { TabContext, useTabContext } from './context';
@@ -29,7 +28,6 @@ interface TabItemProps {
   asChild?: boolean;
   children?: React.ReactNode;
   disabled?: boolean;
-  redBean?: boolean;
   value: string;
 }
 
@@ -74,7 +72,7 @@ const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
   );
 };
 
-const Item = ({ asChild, children, disabled, redBean, value }: TabItemProps) => {
+const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
   const { baseId, onValueChange, value: selectedValue } = useTabContext();
   const isSelected = value === selectedValue;
   const tabId = getTabId(baseId, value);
@@ -100,8 +98,7 @@ const Item = ({ asChild, children, disabled, redBean, value }: TabItemProps) => 
       tabIndex={isSelected ? 0 : -1}
       type={asChild ? undefined : 'button'}
     >
-      <Slottable>{children}</Slottable>
-      {redBean && <VisuallyHidden>새 정보</VisuallyHidden>}
+      {children}
     </Comp>
   );
 };
@@ -133,8 +130,7 @@ const Panel = ({ asChild, children, forceMount = false, value }: TabPanelProps) 
 export const Tab = { Item, List, Panel, Root };
 
 // aria-controls는 공백으로 구분된 id 목록이라 value의 공백을 인코딩한다.
-const getTabId = (baseId: string, value: string) =>
-  `${baseId}-tab-${encodeURIComponent(value)}`;
+const getTabId = (baseId: string, value: string) => `${baseId}-tab-${encodeURIComponent(value)}`;
 
 const getPanelId = (baseId: string, value: string) =>
   `${baseId}-panel-${encodeURIComponent(value)}`;

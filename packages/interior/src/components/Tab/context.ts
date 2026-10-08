@@ -14,4 +14,3 @@ export const useTabContext = () => {
   assert(context !== null, 'useTabContext는 Tab.Root 하위에서 사용해야해요.');
   return context;
 };
-
