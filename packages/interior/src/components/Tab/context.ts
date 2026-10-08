@@ -15,9 +15,3 @@ export const useTabContext = () => {
   return context;
 };
 
-// aria-controls는 공백으로 구분된 id 목록이라 value의 공백을 인코딩한다.
-export const getTabId = (baseId: string, value: string) =>
-  `${baseId}-tab-${encodeURIComponent(value)}`;
-
-export const getPanelId = (baseId: string, value: string) =>
-  `${baseId}-panel-${encodeURIComponent(value)}`;

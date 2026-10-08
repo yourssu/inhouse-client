@@ -2,7 +2,7 @@ import { Slot, Slottable } from '@radix-ui/react-slot';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { startTransition, useId, useState } from 'react';
 
-import { getPanelId, getTabId, TabContext, useTabContext } from './context';
+import { TabContext, useTabContext } from './context';
 import * as styles from './Tab.css';
 
 export { Tab as LegacyTab } from './LegacyTab';
@@ -131,3 +131,10 @@ const Panel = ({ asChild, children, forceMount = false, value }: TabPanelProps) 
 };
 
 export const Tab = { Item, List, Panel, Root };
+
+// aria-controls는 공백으로 구분된 id 목록이라 value의 공백을 인코딩한다.
+const getTabId = (baseId: string, value: string) =>
+  `${baseId}-tab-${encodeURIComponent(value)}`;
+
+const getPanelId = (baseId: string, value: string) =>
+  `${baseId}-panel-${encodeURIComponent(value)}`;
