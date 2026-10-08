@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import { assert } from 'es-toolkit';
-import { useId, useState } from 'react';
+import { Activity, useId, useState } from 'react';
 
 import { TabContext, useTabContext } from './context';
 import * as styles from './Tab.css';
@@ -120,17 +120,19 @@ const Panel = ({ asChild, children, forceMount = false, value }: TabPanelProps) 
 
   const Comp = asChild ? Slot : 'div';
 
+  // 숨긴 Panel은 state와 DOM을 유지하되 effect는 정리하고, 낮은 우선순위로 렌더링한다.
   return (
-    <Comp
-      aria-labelledby={getTabId(baseId, value)}
-      className={styles.panel}
-      hidden={!isSelected}
-      id={getPanelId(baseId, value)}
-      role="tabpanel"
-      tabIndex={0}
-    >
-      {children}
-    </Comp>
+    <Activity mode={isSelected ? 'visible' : 'hidden'}>
+      <Comp
+        aria-labelledby={getTabId(baseId, value)}
+        className={styles.panel}
+        id={getPanelId(baseId, value)}
+        role="tabpanel"
+        tabIndex={0}
+      >
+        {children}
+      </Comp>
+    </Activity>
   );
 };
 
