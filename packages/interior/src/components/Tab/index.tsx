@@ -7,14 +7,15 @@ import * as styles from './Tab.css';
 
 export { Tab as LegacyTab } from './LegacyTab';
 
-type TabRootValueProps =
-  { defaultValue: string; value?: never } | { defaultValue?: never; value: string };
-
-type TabRootProps = TabRootValueProps & {
+interface TabRootProps {
   asChild?: boolean;
   children?: React.ReactNode;
+  /** `value`와 함께 쓸 수 없고, 둘 중 하나는 꼭 넘겨야 해요. */
+  defaultValue?: string;
   onValueChange?: (value: string) => void;
-};
+  /** `defaultValue`와 함께 쓸 수 없고, 둘 중 하나는 꼭 넘겨야 해요. */
+  value?: string;
+}
 
 interface TabListProps extends Pick<React.AriaAttributes, 'aria-label'> {
   asChild?: boolean;
@@ -40,10 +41,12 @@ interface TabPanelProps {
 }
 
 const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRootProps) => {
-  assert(
-    xor(value != null, defaultValue != null),
-    'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.',
-  );
+  if (process.env.NODE_ENV !== 'production') {
+    assert(
+      xor(value != null, defaultValue != null),
+      'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.',
+    );
+  }
 
   const baseId = useId();
   const [innerValue, setInnerValue] = useState(defaultValue);
