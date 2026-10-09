@@ -40,7 +40,10 @@ interface TabPanelProps {
 }
 
 const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRootProps) => {
-  assert(xor(value != null, defaultValue != null), 'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.')
+  assert(
+    xor(value != null, defaultValue != null),
+    'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.',
+  );
 
   const baseId = useId();
   const [innerValue, setInnerValue] = useState(defaultValue);
@@ -139,5 +142,5 @@ const getPanelId = (baseId: string, value: string) =>
   `${baseId}-panel-${encodeURIComponent(value)}`;
 
 const xor = (a: boolean, b: boolean) => {
-  return a !== b
-}
+  return a !== b;
+};
