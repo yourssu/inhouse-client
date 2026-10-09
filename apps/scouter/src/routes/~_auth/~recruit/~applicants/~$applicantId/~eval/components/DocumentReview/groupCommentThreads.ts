@@ -68,6 +68,12 @@ const isThreadStart = (comment: CommentType, commentById: Map<number, CommentTyp
   comment.parentCommentId === null || !commentById.has(comment.parentCommentId);
 
 const compareCommentCreatedAt = (a: CommentType, b: CommentType) => {
+  const isAOptimistic = a.commentId < 0;
+  const isBOptimistic = b.commentId < 0;
+
+  if (isAOptimistic !== isBOptimistic) {
+    return isAOptimistic ? 1 : -1;
+  }
   if (!a.createdAt) {
     return b.createdAt ? 1 : 0;
   }
