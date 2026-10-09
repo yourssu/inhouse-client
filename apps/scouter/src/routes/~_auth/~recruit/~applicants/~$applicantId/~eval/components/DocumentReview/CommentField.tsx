@@ -2,49 +2,31 @@ import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
-import type { CommentType } from '@/apis/documents/schema';
-
-import type { CommentCreatedMetadata } from './useWriteComment';
+import type { CommentWriteParams } from './useWriteComment';
 
 import { DetectOutsideClickArea } from './DetectOutsideClickArea';
 import { useWriteComment } from './useWriteComment';
 
 interface CommentFieldProps {
-  applicantId: number;
   onClose: () => void;
-  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
-  onOptimisticCommentCreate: (comment: CommentType) => void;
-  onOptimisticCommentCreateSettled: (commentId: number) => void;
+  onCommentSubmit: (params: CommentWriteParams) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
 
 export const CommentField = ({
-  applicantId,
   onClose,
-  onCommentCreated,
-  onOptimisticCommentCreate,
-  onOptimisticCommentCreateSettled,
+  onCommentSubmit,
   parentCommentId,
   sectionId,
 }: CommentFieldProps) => {
-  const {
-    content,
-    handleAddComment,
-    handleClose,
-    handleKeyDown,
-    isContentEmpty,
-    isWritePending,
-    setContent,
-  } = useWriteComment({
-    applicantId,
-    onClose,
-    onCommentCreated,
-    onOptimisticCommentCreate,
-    onOptimisticCommentCreateSettled,
-    parentCommentId,
-    sectionId,
-  });
+  const { content, handleAddComment, handleClose, handleKeyDown, isContentEmpty, setContent } =
+    useWriteComment({
+      onClose,
+      onCommentSubmit,
+      parentCommentId,
+      sectionId,
+    });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -59,7 +41,6 @@ export const CommentField = ({
         <MultilineTextField
           autoFocus
           className="min-h-fit overflow-hidden p-1.5"
-          disabled={isWritePending}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={'댓글 추가'}
@@ -70,7 +51,7 @@ export const CommentField = ({
         />
         <IconButton
           aria-label="댓글 등록"
-          disabled={isWritePending || isContentEmpty}
+          disabled={isContentEmpty}
           onClick={handleAddComment}
           size="md"
         >
