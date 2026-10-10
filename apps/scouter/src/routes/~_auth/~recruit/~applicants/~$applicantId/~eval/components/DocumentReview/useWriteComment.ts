@@ -1,58 +1,54 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { type KeyboardEvent, useState } from 'react';
-
-import { postApplicantDocumentComment } from '@/apis/documents';
-import { commentsQueryKey } from '@/apis/documents/query';
-import { useToastedMutation } from '@/hooks/useToastedMutation';
+import { type KeyboardEvent, useRef, useState } from 'react';
 
 export interface CommentCreatedMetadata {
   parentCommentId: null | number;
   sectionId: number;
 }
 
+export interface CommentWriteParams {
+  content: string;
+  onError: () => void;
+  parentCommentId: null | number;
+  sectionId: number;
+}
+
 interface UseWriteCommentParams {
-  applicantId: number;
   onClose: () => void;
-  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
+  onCommentSubmit: (params: CommentWriteParams) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
 
 export const useWriteComment = ({
-  applicantId,
   onClose,
-  onCommentCreated,
+  onCommentSubmit,
   parentCommentId,
   sectionId,
 }: UseWriteCommentParams) => {
-  const queryClient = useQueryClient();
   const [content, setContent] = useState('');
+  const latestSubmissionIdRef = useRef(0);
   const trimmedContent = content.trim();
   const isContentEmpty = trimmedContent === '';
 
-  const { isPending: isWritePending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
-    mutationFn: postApplicantDocumentComment,
-    successText: '코멘트를 작성했어요.',
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
-      setContent('');
-      onCommentCreated?.({ parentCommentId, sectionId });
-    },
-  });
-
-  const handleAddComment = async () => {
-    if (isContentEmpty || isWritePending) {
+  const handleAddComment = () => {
+    if (isContentEmpty) {
       return;
     }
 
-    await writeCommentWithToast({
-      applicantId,
-      data: {
-        content: trimmedContent,
-        ...(parentCommentId === null ? {} : { parentCommentId }),
-        sectionId,
+    const submissionId = latestSubmissionIdRef.current + 1;
+    latestSubmissionIdRef.current = submissionId;
+    onCommentSubmit({
+      content: trimmedContent,
+      onError: () => {
+        if (latestSubmissionIdRef.current !== submissionId) {
+          return;
+        }
+        setContent((currentContent) => (currentContent === '' ? trimmedContent : currentContent));
       },
+      parentCommentId,
+      sectionId,
     });
+    setContent('');
   };
 
   const handleClose = () => {
@@ -71,8 +67,8 @@ export const useWriteComment = ({
         return;
       }
       e.preventDefault();
-      if (!isContentEmpty && !isWritePending) {
-        void handleAddComment();
+      if (!isContentEmpty) {
+        handleAddComment();
       }
     }
     if (e.key === 'Escape') {
@@ -86,7 +82,6 @@ export const useWriteComment = ({
     handleClose,
     handleKeyDown,
     isContentEmpty,
-    isWritePending,
     setContent,
   };
 };

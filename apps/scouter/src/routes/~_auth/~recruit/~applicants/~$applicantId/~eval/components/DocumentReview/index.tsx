@@ -1,17 +1,22 @@
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
+import { postApplicantDocumentComment } from '@/apis/documents';
+import { commentsQueryKey } from '@/apis/documents/query';
+import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
+import { useToastedMutation } from '@/hooks/useToastedMutation';
 
-import type { CommentCreatedMetadata } from './useWriteComment';
+import type { CommentCreatedMetadata, CommentWriteParams } from './useWriteComment';
 
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
 import { DocumentAnswer } from './DocumentAnswer';
-import { groupCommentThreads } from './groupCommentThreads';
+import { getCommentThreadCommentIds, groupCommentThreads } from './groupCommentThreads';
 
 export const DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS =
   'grid-cols-[minmax(36rem,1fr)_minmax(17.5rem,25rem)]';
@@ -24,6 +29,13 @@ interface DocumentReviewProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
+interface CommentWriteJob {
+  comment: CommentType;
+  onError: () => void;
+}
+
+const normalizeNickname = (nickname: string) => nickname.replace(/\s*\([^)]*\)$/, '');
+
 export const DocumentReview = ({
   applicantId,
   answers,
@@ -31,12 +43,60 @@ export const DocumentReview = ({
   onCommentAddClick,
   onCommentCreated,
 }: DocumentReviewProps) => {
+  const queryClient = useQueryClient();
+  const { data: me } = useSuspenseQuery(meOption());
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
+  const [commentWriteJobs, setCommentWriteJobs] = useState<CommentWriteJob[]>([]);
+  const [optimisticCommentContents, setOptimisticCommentContents] = useState<Map<number, string>>(
+    new Map(),
+  );
+  const [optimisticallyDeletedCommentIds, setOptimisticallyDeletedCommentIds] = useState<
+    Set<number>
+  >(new Set());
+  const isWritingCommentRef = useRef(false);
+  const nextOptimisticCommentIdRef = useRef(-1);
+  const { mutateWithToast: writeCommentWithToast } = useToastedMutation({
+    mutationFn: postApplicantDocumentComment,
+    successText: '코멘트를 작성했어요.',
+  });
+  const optimisticComments = commentWriteJobs.map(({ comment }) => comment);
+  const displayedComments = useMemo(
+    () =>
+      [...comments, ...optimisticComments]
+        .filter(({ commentId }) => !optimisticallyDeletedCommentIds.has(commentId))
+        .map((comment) => {
+          const content = optimisticCommentContents.get(comment.commentId);
+          return content === undefined ? comment : { ...comment, content, isEdited: true };
+        }),
+    [comments, optimisticCommentContents, optimisticComments, optimisticallyDeletedCommentIds],
+  );
+  const pendingCommentIds = useMemo(() => {
+    const parentCommentIdByCommentId = new Map(
+      [...comments, ...optimisticComments].map(({ commentId, parentCommentId }) => [
+        commentId,
+        parentCommentId,
+      ]),
+    );
+    const commentIds = new Set(optimisticComments.map(({ commentId }) => commentId));
+
+    for (const optimisticComment of optimisticComments) {
+      let parentCommentId = optimisticComment.parentCommentId;
+      while (parentCommentId !== null) {
+        commentIds.add(parentCommentId);
+        parentCommentId = parentCommentIdByCommentId.get(parentCommentId) ?? null;
+      }
+    }
+
+    return commentIds;
+  }, [comments, optimisticComments]);
+  const threadsBySectionId = useMemo(
+    () => groupCommentThreads(displayedComments),
+    [displayedComments],
+  );
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
-  const showCommentPanel = comments.length > 0 || openCommentSectionId !== null;
+  const showCommentPanel = displayedComments.length > 0 || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -49,6 +109,109 @@ export const DocumentReview = ({
     setSelectedSectionId(sectionId);
     setOpenCommentSectionId(sectionId);
   };
+
+  const handleCommentSubmit = ({
+    content,
+    onError,
+    parentCommentId,
+    sectionId,
+  }: CommentWriteParams) => {
+    setCommentWriteJobs((jobs) => [
+      ...jobs,
+      {
+        comment: {
+          author: {
+            nickname: normalizeNickname(me.nickname),
+            part: me.parts[0]?.part ?? '',
+            userId: me.userId,
+          },
+          commentId: nextOptimisticCommentIdRef.current--,
+          content,
+          createdAt: new Date().toISOString(),
+          isEdited: false,
+          parentCommentId,
+          sectionId,
+        },
+        onError,
+      },
+    ]);
+  };
+
+  const handleOptimisticCommentUpdate = (commentId: number, content: string) => {
+    setOptimisticCommentContents((contents) => new Map(contents).set(commentId, content));
+  };
+
+  const handleOptimisticCommentUpdateSettled = (commentId: number) => {
+    setOptimisticCommentContents((contents) => {
+      const nextContents = new Map(contents);
+      nextContents.delete(commentId);
+      return nextContents;
+    });
+  };
+
+  const handleOptimisticCommentDelete = (commentId: number) => {
+    const commentIds = getCommentThreadCommentIds(displayedComments, commentId);
+    setOptimisticallyDeletedCommentIds(
+      (deletedCommentIds) => new Set([...deletedCommentIds, ...commentIds]),
+    );
+    return commentIds;
+  };
+
+  const handleOptimisticCommentDeleteSettled = (settledCommentIds: readonly number[]) => {
+    setOptimisticallyDeletedCommentIds((deletedCommentIds) => {
+      const nextCommentIds = new Set(deletedCommentIds);
+      for (const commentId of settledCommentIds) {
+        nextCommentIds.delete(commentId);
+      }
+      return nextCommentIds;
+    });
+  };
+
+  const nextCommentWriteJob = commentWriteJobs[0];
+
+  useEffect(() => {
+    if (!nextCommentWriteJob || isWritingCommentRef.current) {
+      return;
+    }
+
+    isWritingCommentRef.current = true;
+
+    const writeComment = async () => {
+      const { comment, onError } = nextCommentWriteJob;
+
+      try {
+        const result = await writeCommentWithToast({
+          applicantId,
+          data: {
+            content: comment.content,
+            ...(comment.parentCommentId === null
+              ? {}
+              : { parentCommentId: comment.parentCommentId }),
+            sectionId: comment.sectionId,
+          },
+        });
+
+        if (result.success) {
+          onCommentCreated?.({
+            parentCommentId: comment.parentCommentId,
+            sectionId: comment.sectionId,
+          });
+          await queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+        } else {
+          onError();
+        }
+      } finally {
+        setCommentWriteJobs((jobs) =>
+          jobs.filter(
+            ({ comment: queuedComment }) => queuedComment.commentId !== comment.commentId,
+          ),
+        );
+        isWritingCommentRef.current = false;
+      }
+    };
+
+    void writeComment();
+  }, [applicantId, nextCommentWriteJob, onCommentCreated, queryClient, writeCommentWithToast]);
 
   const registerSectionRef = (sectionId: number) => (element: HTMLDivElement | null) => {
     if (element) {
@@ -123,9 +286,8 @@ export const DocumentReview = ({
                   )}
                   {openCommentSectionId === sectionId && (
                     <CommentField
-                      applicantId={applicantId}
                       onClose={() => setOpenCommentSectionId(null)}
-                      onCommentCreated={onCommentCreated}
+                      onCommentSubmit={handleCommentSubmit}
                       parentCommentId={null}
                       sectionId={sectionId}
                     />
@@ -135,7 +297,12 @@ export const DocumentReview = ({
                       applicantId={applicantId}
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
-                      onCommentCreated={onCommentCreated}
+                      onCommentSubmit={handleCommentSubmit}
+                      onOptimisticCommentDelete={handleOptimisticCommentDelete}
+                      onOptimisticCommentDeleteSettled={handleOptimisticCommentDeleteSettled}
+                      onOptimisticCommentUpdate={handleOptimisticCommentUpdate}
+                      onOptimisticCommentUpdateSettled={handleOptimisticCommentUpdateSettled}
+                      pendingCommentIds={pendingCommentIds}
                       thread={thread}
                     />
                   ))}
