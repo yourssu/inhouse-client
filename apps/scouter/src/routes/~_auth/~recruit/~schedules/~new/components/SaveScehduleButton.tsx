@@ -1,8 +1,9 @@
+import { queryClient } from '@inhouse/query-client';
 import { formatTemplates } from '@inhouse/utils/date';
 import { Button } from '@interior/react';
 import { Dialog } from '@interior/react';
 import { useToast } from '@interior/react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { compareAsc } from 'date-fns';
 import { assert } from 'es-toolkit';
@@ -43,7 +44,6 @@ const SaveDialogContent = ({
   semester: string;
 }) => {
   const [isLoading, startLoading] = useLoading();
-  const queryClient = useQueryClient();
   const toast = useToast();
   const { mutateAsync: mutatePutPartSchedules } = useMutation({
     mutationFn: (schedules: CreateScheduleRequestType[]) =>

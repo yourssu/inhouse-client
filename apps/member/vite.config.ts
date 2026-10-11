@@ -1,30 +1,6 @@
-import { mfaVitePlugin, tailwindcssPrefix } from '@inhouse-mfa/vite';
-import babel from '@rolldown/plugin-babel';
-import tailwindcss from '@tailwindcss/vite';
-import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import { mfaVitePlugin } from '@inhouse-mfa/vite';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    mfaVitePlugin.remote(),
-    tanstackRouter({
-      target: 'react',
-      autoCodeSplitting: true,
-    }),
-    react(),
-    tailwindcss(),
-    tailwindcssPrefix({ prefix: 'member' }),
-    tsconfigPaths(),
-    babel({ presets: [reactCompilerPreset()] }),
-  ],
-  server: {
-    cors: true,
-    fs: {
-      // NOTE: Window에서 ~ 라우팅이 예약어인 이슈가 있어 우회합니다.
-      strict: false,
-    },
-  },
+  plugins: [mfaVitePlugin.remote()],
 });
