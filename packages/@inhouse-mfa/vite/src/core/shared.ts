@@ -1,3 +1,4 @@
+import { mapValues } from 'es-toolkit';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -46,8 +47,7 @@ export const buildFederationShared = (
     (policy) => policy.version === 'catalog',
   );
   const catalog = needsCatalog ? readWorkspaceCatalog(startDir) : undefined;
-  const shared: FederationSharedConfig = {};
-  for (const [dep, policy] of Object.entries(sharedDependencies)) {
+  return mapValues(sharedDependencies, (policy, dep): SharedDepPolicy => {
     const entry: SharedDepPolicy = {};
     if (policy.version === 'catalog') {
       const catalogKey = dep.replace(/\/+$/, '');
@@ -62,7 +62,6 @@ export const buildFederationShared = (
     if (policy.singleton !== undefined) {
       entry.singleton = policy.singleton;
     }
-    shared[dep] = entry;
-  }
-  return shared;
+    return entry;
+  });
 };

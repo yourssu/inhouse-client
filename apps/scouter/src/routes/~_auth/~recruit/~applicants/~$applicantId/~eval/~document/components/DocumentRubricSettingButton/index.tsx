@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Badge, Button, Dialog, Divider, useToast } from '@interior/react';
-import { cn } from '@interior/tailwind/utils';
 import { useQueryClient, useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import {
@@ -27,6 +26,7 @@ import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
+import { cn } from '@/utils/tailwind';
 
 import { DocumentAnalyticsContext, useDocumentAnalytics } from '../../analytics';
 import {

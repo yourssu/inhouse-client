@@ -1,9 +1,9 @@
-import { cn } from '@interior/tailwind/utils';
 import clsx from 'clsx';
 import { LayoutGroup, motion, useReducedMotion } from 'motion/react';
 import { Activity, useId, useState } from 'react';
 
 import { useInterviewAnalytics } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/~interview/analytics';
+import { cn } from '@/utils/tailwind';
 
 interface InterviewTabProps<TTab extends string> {
   children: (p: { tab: TTab }) => React.ReactNode;
