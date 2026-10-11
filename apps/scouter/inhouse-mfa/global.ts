@@ -1,1 +1,1 @@
-export { Global } from '../src/Global';
+export { bootstrap, GlobalComponent as Global } from '../src/global';

@@ -76,7 +76,7 @@ const remote = async (): Promise<PluginOption[]> => {
 
   return [
     remoteAssetsPlugin(),
-    remoteContractPlugin(),
+    remoteContractPlugin(entry.workspace),
     sharedCssPlugin(config.sharedCSS ?? []),
     remoteConfigPlugin(entry, [
       ...configFiles,

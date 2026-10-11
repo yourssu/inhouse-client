@@ -1,13 +1,14 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { build } from 'vite';
 import { expect, test } from 'vitest';
 
 import { remoteContractPlugin } from './remoteContractPlugin';
 
-test.each(['absent', 'init-only', 'component'])(
-  'loads the route contract and optional %s global module without an app manifest',
+test.each(['absent', 'init-only', 'bootstrap-only', 'component', 'both'])(
+  'defers the optional %s global module until its loader is called',
   async (kind) => {
     const root = await mkdtemp(path.join(os.tmpdir(), 'mfa-contract-'));
     const key = `mfa-contract:${root}`;
@@ -35,8 +36,16 @@ test.each(['absent', 'init-only', 'component'])(
         await writeFile(
           path.join(root, 'inhouse-mfa/global.tsx'),
           `
-globalThis[${JSON.stringify(key)}] = (globalThis[${JSON.stringify(key)}] ?? 0) + 1;
-${kind === 'component' ? 'export const Global = () => null;' : ''}
+globalThis[${JSON.stringify(key)}] = { imports: 1, starts: 0, stops: 0 };
+${kind === 'component' || kind === 'both' ? 'export const Global = () => null;' : ''}
+${
+  kind === 'bootstrap-only' || kind === 'both'
+    ? `export const bootstrap = () => {
+        globalThis[${JSON.stringify(key)}].starts += 1;
+        return () => { globalThis[${JSON.stringify(key)}].stops += 1; };
+      };`
+    : ''
+}
 `,
         );
       }
@@ -47,20 +56,21 @@ ${kind === 'component' ? 'export const Global = () => null;' : ''}
         logLevel: 'silent',
         plugins: [remoteContractPlugin()],
         build: {
-          write: false,
+          write: true,
+          rolldownOptions: { output: { chunkFileNames: '[name]-[hash].mjs' } },
           minify: false,
           lib: {
             entry: path.join(root, 'entry.ts'),
             formats: ['es'],
-            fileName: 'contract',
+            fileName: () => 'contract.mjs',
             cssFileName: 'contract',
           },
         },
       });
       const chunks = [result].flat().flatMap((bundle) => ('output' in bundle ? bundle.output : []));
-      const chunk = chunks.find((output) => output.type === 'chunk');
+      const chunk = chunks.find((output) => output.type === 'chunk' && output.isEntry);
       expect(chunk?.type).toBe('chunk');
-      const url = `data:text/javascript;base64,${Buffer.from(chunk!.code).toString('base64')}`;
+      const url = pathToFileURL(path.join(root, 'dist', chunk!.fileName)).href;
       const mod = await import(url);
       expect(mod.routeTree).toBe(root);
       expect(
@@ -69,10 +79,24 @@ ${kind === 'component' ? 'export const Global = () => null;' : ''}
       if (kind === 'absent') {
         expect(mod.global).toBeUndefined();
       } else {
-        expect(Reflect.get(globalThis, key)).toBe(1);
-        await import(url);
-        expect(Reflect.get(globalThis, key)).toBe(1);
-        expect(typeof mod.global.Global).toBe(kind === 'component' ? 'function' : 'undefined');
+        expect(Reflect.get(globalThis, key)).toBeUndefined();
+        expect(typeof mod.global).toBe('function');
+
+        const global = await mod.global();
+        expect(await mod.global()).toBe(global);
+        expect(Reflect.get(globalThis, key)).toEqual({ imports: 1, starts: 0, stops: 0 });
+        expect(typeof global.Global).toBe(
+          kind === 'component' || kind === 'both' ? 'function' : 'undefined',
+        );
+
+        const cleanup = global.bootstrap?.();
+        cleanup?.();
+        const expectedCalls = kind === 'bootstrap-only' || kind === 'both' ? 1 : 0;
+        expect(Reflect.get(globalThis, key)).toEqual({
+          imports: 1,
+          starts: expectedCalls,
+          stops: expectedCalls,
+        });
       }
     } finally {
       Reflect.deleteProperty(globalThis, key);

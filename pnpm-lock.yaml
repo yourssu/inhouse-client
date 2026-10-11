@@ -302,6 +302,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.82.0(react@19.2.7))
+      '@inhouse-mfa/core':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/core
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth
