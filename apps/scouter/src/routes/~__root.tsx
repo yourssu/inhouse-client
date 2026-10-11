@@ -14,7 +14,7 @@ export const Route = createRootRouteWithContext<RouteContext>()({
   ),
   errorComponent: ({ error, info }) => (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="bg-red100 rounded-2 flex w-[960px] flex-col gap-y-4 p-4">
+      <div className="bg-red100 rounded-2 flex w-240 flex-col gap-y-4 p-4">
         <div className="heading-large">{error.name}</div>
         {[error.message, error.stack, info?.componentStack]
           .filter((v) => !!v)
