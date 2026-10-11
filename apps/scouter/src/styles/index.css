@@ -8,7 +8,6 @@
 
 @import '@interior/tailwind/plugin.css';
 @import './utility.css';
-@import './tiptap.css';
 @source '../';
 
 @layer base {
