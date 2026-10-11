@@ -20,17 +20,17 @@
     },
     {
       "id": 2,
-      "prompt": "shell과 remote 인증 라우트 구조를 정리해줘. /members와 /recruit 아래는 계속 인증이 필요하고, remote preview도 shell 없는 미리보기라는 현재 정체성을 유지해야 해. Module Federation 결합 방식을 먼저 확인하고...",
-      "expected_output": "shell이 인증 가드와 공통 레이아웃을 소유하고 remote는 pathless 통과 라우트와 createRemotePreviewApp 계약을 유지한다.",
+      "prompt": "shell과 remote 인증·Global 연결을 검토하고 잘못 연결된 부분만 고쳐줘. /members와 /recruit 아래는 계속 shell 인증이 필요해. remote router.ts의 라우터와 타입 등록, global.tsx의 서비스 초기화를 유지해. remote에 main.tsx 부팅이나 독립 HTML·preview 기능은 추가하지 말고 현재 MFA 경계를 확인해줘. 자동 검증과 실제 UI 확인 여부를 구분해서 보고해줘.",
+      "expected_output": "shell 인증·공통 layout, remote route/global 계약과 root 처리를 확인하고 main 부팅을 계약에서 분리하며 HTML 없는 remote 구성을 보존한다.",
       "files": [],
-      "parallel_safe": false,
+      "parallel_safe": true,
       "expectations": [
-        "module-federation.md, auth.md, routing-url-state.md를 선택하고 실제 shell·remote·mfa-shell 구현을 확인한다.",
-        "shell의 /_auth에 requireAuth()를 유지하고 remote의 /_auth에는 인증 가드나 AuthProvider를 복제하지 않는다.",
-        "remote /_auth는 Outlet을 렌더링하는 통과 라우트로 유지한다.",
-        "remote main은 같은 plugin과 routeTree를 createRemotePreviewApp에 전달하고 자체 graft를 추가하지 않는다.",
-        "routeTree.gen.ts를 직접 수정하지 않는다.",
-        "변경한 shell과 remote의 type, lint, format, build 및 preview·shell 조합 확인 결과를 구분해 보고한다."
+        "module-federation.md, auth.md, routing-url-state.md와 실제 shell·remote·mfa-shell 구현을 확인한다.",
+        "shell /_auth의 requireAuth와 공통 layout을 보존하고 remote 인증 guard·AuthProvider를 추가하지 않는다.",
+        "remote 계약은 routeTree와 선택적인 global 모듈을 공개하고 앱을 별도로 mount하거나 remote router 인스턴스를 생성하지 않는다.",
+        "remote router.ts의 Register 타입 등록과 서비스 root·Global 초기화 동작을 근거 없이 제거하지 않는다.",
+        "remote index.html·HTML 생성·standalone preview helper를 추가하지 않고 routeTree.gen.ts를 직접 수정하지 않는다.",
+        "검토·변경 범위에 맞는 자동 검사 결과와 실제 UI 확인·미실행 검증을 구분해 보고한다."
       ]
     },
     {
@@ -90,17 +90,17 @@
     },
     {
       "id": 7,
-      "prompt": "새 remote인 ledger를 추가해줘. basePath는 /finance, dev port는 기존 포트와 겹치지 않게 정하고, shell 아래에서 동작하면서 remote preview도 제공해야 해. ledger에만 쓰는 Tailwind utility가 하나 있고 개발용 MSW hand...",
-      "expected_output": "mfa.config와 turbo build 순서를 갱신하고 고정 plugin expose, preview, pathless auth route, 중앙 mock과 host Tailwind 소유권을 지키는 remote를 구성한다.",
+      "prompt": "새 remote ledger를 추가해줘. basePath는 /finance이고 기존 포트와 겹치지 않는 dev port를 사용해. shell 아래에 제목과 간단한 잔액 안내가 있는 한 화면을 연결하고 ledger 전용 Tailwind utility 하나를 적용해줘. 별도 API·mock·인증 정책은 필요 없어. router.ts에 라우터 생성·export와 타입 등록을 두고 main.tsx·독립 HTML·preview 자동 지원은 추가하지 마. 서비스 초기화가 필요하면 global 계약을 사용해. 현재 route 계약과 서비스 CSS 로딩 방식을 재사용하고 관련 자동 검증 및 미실행 UI 검증을 보고해줘.",
+      "expected_output": "중앙 remote 등록과 inhouse-mfa/route.ts 계약을 통해 ledger를 연결하고 HTML 없는 remote 빌드·서비스 CSS namespace·shell 공통 CSS 소유권을 지킨다.",
       "files": [],
-      "parallel_safe": false,
+      "parallel_safe": true,
       "expectations": [
-        "module-federation.md, routing-url-state.md, workspace-packages.md, quality.md를 선택한다.",
-        "remote id·port는 mfa.config에, shell build 의존성은 turbo.json에 선언한다.",
-        "Vite federation remotes·exposes·shared 설정이나 shell runtime spec 목록을 수기로 복제하지 않는다.",
-        "defineRemotePlugin과 createRemotePreviewApp을 사용하고 remote /_auth는 Outlet 통과 라우트로 둔다.",
-        "mock은 plugin lifecycle에 제공하고 shell에 합칠 보조 CSS는 plugin manifest가 아니라 mfa.config의 cssEntry에 선언한다.",
-        "ledger, shell, 관련 MF package의 자동 검증과 preview·shell 조합 확인을 보고한다."
+        "module-federation.md, routing-url-state.md, workspace-packages.md, quality.md와 현재 MFA 공개 구현을 확인한다.",
+        "고유한 ledger workspace·port를 mfa.config.ts에 등록하고 Vite federation 설정·shell runtime spec을 수기로 복제하지 않는다.",
+        "inhouse-mfa/route.ts에서 routeTree를 공개하고 /_auth 아래 /finance 분기를 구성하며 remote 인증 guard·shell layout을 추가하지 않는다.",
+        "router.ts에 Router 생성·export와 Register 타입 등록을 두고 remote main.tsx·index.html·standalone preview helper를 추가하지 않는다.",
+        "ledger 전용 utility를 remote styles/index.css와 namespace로 처리하고 shell의 remote 소스 스캔·cssEntry·공통 CSS 중복을 추가하지 않는다.",
+        "ledger·shell 및 관련 MFA 자동 검증을 실제 workspace로 실행하고 UI 확인 여부·환경 제한을 구분해 보고한다."
       ]
     },
     {
