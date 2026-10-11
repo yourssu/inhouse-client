@@ -55,11 +55,6 @@ const shellTarget = (): DeployTarget => {
     return `VITE_${id.toUpperCase()}_URL=${remoteEntryUrl(id)}`;
   });
 
-  // NOTE: dev 환경에서 MSW 모킹을 사용할 수 있도록 환경 변수를 주입해줘요.
-  if (env === 'dev') {
-    envFileLines.push('VITE_USE_MSW=true');
-  }
-
   // NOTE: 빌드된 번들이 dev/prod API 엔드포인트를 선택하도록 STAGE 를 주입해요.
   envFileLines.push(`VITE_STAGE=${env}`);
 
@@ -90,6 +85,7 @@ const allTargets = (): DeployTarget[] => [
 const SHARED_PREFIXES = [
   'packages/',
   'pnpm-lock.yaml',
+  'pnpm-workspace.yaml',
   'mfa.config.ts',
   'turbo.json',
   'scripts/',

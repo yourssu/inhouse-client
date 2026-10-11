@@ -99,7 +99,7 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
     transform: {
       filter: { id: /\.css(?:\?.*)?$/ },
       async handler(code, id) {
-        if (!id.startsWith(`${root}/`) || id.endsWith('?mfa-shared')) {
+        if (!id.startsWith(`${root}/`)) {
           return;
         }
 
