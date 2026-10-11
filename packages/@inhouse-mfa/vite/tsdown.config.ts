@@ -18,7 +18,6 @@ export default defineConfig({
       'vite',
       '@inhouse-mfa/core',
       '@rolldown/plugin-babel',
-      '@tailwindcss/vite',
       '@tanstack/router-plugin',
       '@vitejs/plugin-react',
       'vite-tsconfig-paths',
