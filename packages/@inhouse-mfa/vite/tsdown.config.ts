@@ -17,6 +17,10 @@ export default defineConfig({
       '@module-federation/vite',
       'vite',
       '@inhouse-mfa/core',
+      '@rolldown/plugin-babel',
+      '@tanstack/router-plugin',
+      '@vitejs/plugin-react',
+      'vite-tsconfig-paths',
     ],
   },
 });

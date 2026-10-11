@@ -1,5 +1,6 @@
 import { PageLayout } from '@exterior/layout';
 import { useUnmountOverlaysOnRouteChange } from '@exterior/utils';
+import { queryClient } from '@inhouse/query-client';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
 import { overlay, OverlayProvider } from 'overlay-kit';
@@ -73,12 +74,12 @@ export const Route = createFileRoute('/_auth/recruit')({
   head: () => ({
     meta: [{ title: '유어슈 인하우스 | 스카우터' }],
   }),
-  loader: async ({ context }) => {
+  loader: async () => {
     await Promise.all([
-      context.queryClient.ensureQueryData(meOption()),
-      context.queryClient.ensureQueryData(partsOption()),
-      context.queryClient.ensureQueryData(semestersOption()),
-      context.queryClient.ensureQueryData(semestersNowOption()),
+      queryClient.ensureQueryData(meOption()),
+      queryClient.ensureQueryData(partsOption()),
+      queryClient.ensureQueryData(semestersOption()),
+      queryClient.ensureQueryData(semestersNowOption()),
     ]);
   },
   beforeLoad: ({ location }) => {

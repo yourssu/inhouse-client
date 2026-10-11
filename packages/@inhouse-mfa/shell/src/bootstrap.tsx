@@ -6,19 +6,15 @@ import {
   type CreateExteriorAppOptions,
 } from '@exterior/core';
 import { findRouteById } from '@inhouse-mfa/core';
-import {
-  createRouter,
-  type RouterConstructorOptions,
-  type RouterHistory,
-} from '@tanstack/react-router';
+import { type RouterConstructorOptions, type RouterHistory } from '@tanstack/react-router';
 
 import { RemoteUnavailable } from './components/RemoteUnavailable';
 import { composePlugins, type RemotePluginSpec } from './composePlugins';
-import { runPluginInits, setupPluginMocks } from './lifecycle';
+import { RemoteRuntime } from './RemoteRuntime';
 
 type SharedShellOptions = Pick<
-  CreateExteriorAppOptions<unknown>,
-  'appProvidersProps' | 'queryClientConfig' | 'rootElement' | 'rootElementId'
+  CreateExteriorAppOptions<AppRouteTree>,
+  'appProvidersProps' | 'rootElement' | 'rootElementId'
 >;
 
 interface BootstrapShellOptions extends SharedShellOptions {
@@ -33,10 +29,8 @@ interface BootstrapShellOptions extends SharedShellOptions {
   specs: readonly RemotePluginSpec[];
 }
 
-type ShellRouter = ReturnType<typeof createRouter<AppRouteTree>>;
-
 interface BootstrapShellResult {
-  app: ReturnType<typeof createExteriorApp<ShellRouter>>;
+  app: ReturnType<typeof createExteriorApp<AppRouteTree>>;
   /** 로드에 실패한 plugin 이름들(unavailable UI 참고용). */
   failures: readonly string[];
   /** 성공적으로 graft 된 plugin 들. */
@@ -53,25 +47,23 @@ export const bootstrapShell = async (
   }
 
   const { failures, plugins } = await composePlugins(shellAuth, options.specs);
+  const InnerWrap = options.routerOptions?.InnerWrap;
 
   const app = createExteriorApp({
     appProvidersProps: options.appProvidersProps,
-    beforeRender: async ({ router }) => {
-      await runPluginInits(plugins, { mode: 'shell', router });
-      await setupPluginMocks(plugins, 'shell');
-    },
     children: () =>
       failures.length > 0 ? (
         <RemoteUnavailable availablePlugins={plugins.map((p) => p.name)} failedPlugins={failures} />
       ) : null,
-    createRouter: (queryClient) =>
-      createRouter({
-        routeTree: options.routeTree,
-        context: { queryClient },
-        defaultPreloadStaleTime: 0,
-        ...options.routerOptions,
-      }),
-    queryClientConfig: options.queryClientConfig,
+    routeTree: options.routeTree,
+    routerOptions: {
+      ...options.routerOptions,
+      InnerWrap: ({ children }) => (
+        <RemoteRuntime plugins={plugins}>
+          {InnerWrap ? <InnerWrap>{children}</InnerWrap> : children}
+        </RemoteRuntime>
+      ),
+    },
     rootElement: options.rootElement,
     rootElementId: options.rootElementId,
   });

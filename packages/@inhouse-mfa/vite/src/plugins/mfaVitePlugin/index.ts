@@ -4,7 +4,7 @@ import { PLUGIN_EXPOSE_KEY } from '@inhouse-mfa/core';
 import { federation, type ModuleFederationOptions } from '@module-federation/vite';
 
 import {
-  DEFAULT_PLUGIN_PATH,
+  DEFAULT_ROUTE_PATH,
   envKeyForRemote,
   type MfaConfig,
   REMOTE_ENTRY_FILENAME,
@@ -12,7 +12,10 @@ import {
 } from '../../core/config';
 import { loadRemoteConfig } from '../../core/loadMfaConfig';
 import { buildFederationShared } from '../../core/shared';
+import { remoteAssetsPlugin } from '../remoteAssetsPlugin';
+import { remoteContractPlugin } from '../remoteContractPlugin';
 import { sharedCssPlugin } from '../sharedCssPlugin';
+import { appPlugins } from './appPlugins';
 import { ensureGlobalModulesPlugin } from './ensureGlobalModulesPlugin';
 import { remoteConfigPlugin } from './remoteConfigPlugin';
 import { remoteIdsPlugin } from './remoteIdsPlugin';
@@ -21,16 +24,22 @@ interface ShellPluginOptions {
   config: MfaConfig;
   /** loadEnv 로 읽은 env(빈 값이면 dev 기본 URL 폴백). */
   env?: Record<string, string | undefined>;
-  /** shell 이 추가로 선언할 federation 옵션. */
-  federationOptions?: Partial<ModuleFederationOptions>;
 }
 
 const federationDefaults = {
   dts: false,
   dev: { remoteHmr: true },
+  shareStrategy: 'version-first',
 } satisfies Partial<ModuleFederationOptions>;
 
-const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): PluginOption => {
+const shell = (options: ShellPluginOptions): PluginOption => {
+  if ('federationOptions' in options) {
+    throw new Error(
+      '[mfa-vite] federationOptions is not supported. Configure shared dependencies and remotes through mfa.config.ts.',
+    );
+  }
+
+  const { config, env = {} } = options;
   const shared = buildFederationShared(config.sharedDependencies);
   const remotes: ModuleFederationOptions['remotes'] = Object.fromEntries(
     config.remotes.map((remote) => [
@@ -51,9 +60,9 @@ const shell = ({ config, env = {}, federationOptions }: ShellPluginOptions): Plu
       remotes,
       runtimePlugins: ['@inhouse-mfa/vite/retry-plugin'],
       shared,
-      ...federationOptions,
     }),
     ensureGlobalModulesPlugin(shared),
+    ...appPlugins(),
   ];
 };
 
@@ -66,16 +75,24 @@ const remote = async (): Promise<PluginOption[]> => {
   } = await loadRemoteConfig(process.cwd());
   const shared = buildFederationShared(config.sharedDependencies, workspaceRoot);
   return [
+    remoteAssetsPlugin(),
+    remoteContractPlugin(),
     sharedCssPlugin(config.sharedCSS ?? [], entry.workspace),
-    remoteConfigPlugin(entry, configFiles),
+    remoteConfigPlugin(entry, [
+      ...configFiles,
+      ...['route.ts', 'global.ts', 'global.tsx'].map(
+        (file) => `${process.cwd()}/inhouse-mfa/${file}`,
+      ),
+    ]),
     federation({
       ...federationDefaults,
       name: entry.workspace,
       filename: REMOTE_ENTRY_FILENAME,
-      exposes: { [PLUGIN_EXPOSE_KEY]: entry.plugin?.path ?? DEFAULT_PLUGIN_PATH },
+      exposes: { [PLUGIN_EXPOSE_KEY]: DEFAULT_ROUTE_PATH },
       shared,
     }),
     ensureGlobalModulesPlugin(shared),
+    ...appPlugins(),
   ];
 };
 

@@ -16,24 +16,26 @@ const scouterBasePath = '/recruit';
 /** Scouter 페이지의 라우팅이 완료됐을 때 발생해요. */
 const scouterPageViewEventName = 'scouter_page_view';
 
-export const initScouterAnalytics = (router: AnyRouter) => {
-  if (!mixpanelToken) {
-    return;
-  }
-
+if (mixpanelToken) {
   mixpanel.init(mixpanelToken, {
     autocapture: false,
     debug: true,
     persistence: 'localStorage',
     record_sessions_percent: 100,
   });
+}
 
-  router.subscribe('onResolved', ({ pathChanged, toLocation }) => {
+export const subscribeScouterAnalytics = (router: AnyRouter) => {
+  if (!mixpanelToken) {
+    return;
+  }
+
+  const trackPageView = () => {
+    const pathname = router.state.location.pathname;
     const isScouterPath =
-      toLocation.pathname === scouterBasePath ||
-      toLocation.pathname.startsWith(`${scouterBasePath}/`);
+      pathname === scouterBasePath || pathname.startsWith(`${scouterBasePath}/`);
 
-    if (!pathChanged || !isScouterPath) {
+    if (!isScouterPath) {
       return;
     }
 
@@ -43,7 +45,28 @@ export const initScouterAnalytics = (router: AnyRouter) => {
     }
 
     mixpanel.track_pageview({ page: fullPath }, { event_name: scouterPageViewEventName });
+  };
+
+  let active = true;
+  let resolved = false;
+  const unsubscribe = router.subscribe('onResolved', ({ pathChanged }) => {
+    if (pathChanged) {
+      resolved = true;
+      trackPageView();
+    }
   });
+
+  // StrictMode's first Effect is cleaned up before this task runs.
+  queueMicrotask(() => {
+    if (active && !resolved) {
+      trackPageView();
+    }
+  });
+
+  return () => {
+    active = false;
+    unsubscribe();
+  };
 };
 
 export const identifyScouterUser = (userId: number) => {

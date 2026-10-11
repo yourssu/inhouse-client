@@ -1,8 +1,9 @@
+import { queryClient } from '@inhouse/query-client';
 import { formatTemplates } from '@inhouse/utils/date';
 import { Button } from '@interior/react';
 import { Dialog } from '@interior/react';
 import { useToast } from '@interior/react';
-import { useQueryClient, useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useLoading } from 'react-simplikit';
 
@@ -26,7 +27,6 @@ interface TemplateListProps {
 }
 
 const TemplateList = ({ onClose, requireConfirm, currentTemplateId }: TemplateListProps) => {
-  const queryClient = useQueryClient();
   const toast = useToast();
   const openAlertDialog = useAlertDialog();
   const [isLoadingDetail, startLoadingDetail] = useLoading();

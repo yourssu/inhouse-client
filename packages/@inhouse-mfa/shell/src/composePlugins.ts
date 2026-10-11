@@ -1,6 +1,12 @@
 import type { AnyRoute } from '@tanstack/react-router';
 
-import { PLUGIN_EXPOSE_KEY, type RemotePlugin, RouteRegistry } from '@inhouse-mfa/core';
+import {
+  defineRemotePlugin,
+  findRouteById,
+  PLUGIN_EXPOSE_KEY,
+  type RemotePlugin,
+  RouteRegistry,
+} from '@inhouse-mfa/core';
 import { loadRemote } from '@module-federation/runtime';
 
 import { graftPlugin } from './graft';
@@ -13,7 +19,7 @@ export interface RemotePluginSpec {
 interface ComposedPluginsResult {
   /** 로드에 실패한 plugin 이름들. shell 이 unavailable UI 로 노출해요. */
   failures: readonly string[];
-  /** 성공적으로 graft 된 plugin 들. lifecycle 을 태울 대상이에요. */
+  /** 성공적으로 graft 된 plugin 들. */
   plugins: readonly RemotePlugin[];
 }
 
@@ -28,17 +34,25 @@ export const composePlugins = async (
   for (const spec of specs) {
     const expose = PLUGIN_EXPOSE_KEY.replace(/^\.?\//, '');
     try {
-      const mod = await loadRemote<{ plugin: RemotePlugin }>(`${spec.name}/${expose}`);
-      if (!mod?.plugin) {
-        throw new Error(`[mfa-shell] '${spec.name}' did not expose a plugin manifest`);
+      const mod = await loadRemote<{ global?: RemotePlugin['global']; routeTree: AnyRoute }>(
+        `${spec.name}/${expose}`,
+      );
+      if (!mod?.routeTree) {
+        throw new Error(`[mfa-shell] '${spec.name}' did not expose routeTree`);
       }
-      if (mod.plugin.name !== spec.name) {
-        throw new Error(
-          `[mfa-shell] loaded '${spec.name}' but plugin manifest declared '${mod.plugin.name}'`,
-        );
+      const entry = findRouteById(mod.routeTree, '/_auth');
+      const child = (entry?.children as AnyRoute[] | undefined)?.[0];
+      const basePath = child && 'path' in child.options ? child.options.path : undefined;
+      if (!basePath) {
+        throw new Error(`[mfa-shell] '${spec.name}' has no route branch to graft`);
       }
-      if (graftPlugin(hostEntry, mod.plugin, registry)) {
-        plugins.push(mod.plugin);
+      const plugin = defineRemotePlugin({
+        name: spec.name,
+        global: mod.global,
+        routes: { basePath, entry: '/_auth', routeTree: mod.routeTree },
+      });
+      if (graftPlugin(hostEntry, plugin, registry)) {
+        plugins.push(plugin);
       }
     } catch (error) {
       console.error(`[mfa-shell] plugin '${spec.name}' unavailable`, error);

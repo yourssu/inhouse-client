@@ -1,5 +1,6 @@
+import { queryClient } from '@inhouse/query-client';
 import { Select } from '@interior/react';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import type { PartType } from '@/apis/parts/schema';
@@ -17,7 +18,6 @@ import { DevToolActionCard } from './DevToolActionCard';
 import { openDevToolConfirmation } from './openDevToolConfirmation';
 
 export const RubricDevTools = () => {
-  const queryClient = useQueryClient();
   const [selectedPart, setSelectedPart] = useState<PartType>();
   const [selectedSemester, setSelectedSemester] = useState<SemesterType>();
   const { data: semesters } = useSuspenseQuery(semestersOption());
