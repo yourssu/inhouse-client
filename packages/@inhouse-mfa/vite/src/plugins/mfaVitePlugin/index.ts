@@ -15,6 +15,7 @@ import { loadRemoteConfig } from '../../core/loadMfaConfig';
 import { buildFederationShared } from '../../core/shared';
 import { remoteAssetsPlugin } from '../remoteAssetsPlugin';
 import { remoteContractPlugin } from '../remoteContractPlugin';
+import { remoteHmrPlugin } from '../remoteHmrPlugin';
 import { sharedCssPlugin } from '../sharedCssPlugin';
 import { appPlugins } from './appPlugins';
 import { ensureGlobalModulesPlugin } from './ensureGlobalModulesPlugin';
@@ -93,6 +94,7 @@ const remote = async (): Promise<PluginOption[]> => {
     }),
     ensureGlobalModulesPlugin(shared),
     ...appPlugins(),
+    remoteHmrPlugin(),
   ];
 };
 

@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { build, createServer } from 'vite';
-import { assert, expect, test } from 'vitest';
+import { assert, expect, test, vi } from 'vitest';
 
 import { appPlugins } from '../mfaVitePlugin/appPlugins';
 import { tailwindcssPrefix } from './index';
@@ -279,6 +279,10 @@ test('refreshes source mappings when stylesheets or imported constants change in
       path.join(root, 'src/index.ts'),
       "import './styles/index.css'; import { display } from './constants'; export const props = { className: 'fresh-util', title: 'fresh-util' }; export const imported = { className: display, title: display };",
     );
+    await writeFile(
+      path.join(root, 'src/unrelated.ts'),
+      "export const props = { className: 'grid' };",
+    );
     const prefixPlugins = tailwindcssPrefix({ prefix: 'fixture' });
     server = await createServer({
       root,
@@ -292,23 +296,38 @@ test('refreshes source mappings when stylesheets or imported constants change in
     expect(before.code).not.toMatch(/fixture__fresh-util/);
     expect(before.code).toMatch(/className: "fixture__flex"/);
     await server.transformRequest('/src/styles/index.css');
+    const unrelated = await server.transformRequest('/src/unrelated.ts');
+    const send = vi.spyOn(server.ws, 'send');
 
-    await writeFile(cssFile, `${stylesheet}\n@utility fresh-util { display: flex; }`);
     const hook = prefixPlugins[0].hotUpdate;
     const handler = typeof hook === 'function' ? hook : hook?.handler;
     if (!handler) {
       throw new Error('Expected the source plugin to register a hotUpdate hook.');
     }
-    await Reflect.apply(handler, { environment: server.environments.client }, [
-      {
-        type: 'update',
-        file: cssFile,
-        server,
-        timestamp: Date.now(),
-        modules: [],
-        read: () => readFile(cssFile, 'utf8'),
-      } satisfies HotUpdateOptions,
-    ]);
+    const updateStylesheet = (): Promise<HotUpdateOptions['modules'] | void> =>
+      Reflect.apply(handler, { environment: server!.environments.client }, [
+        {
+          type: 'update',
+          file: cssFile,
+          server: server!,
+          timestamp: Date.now(),
+          modules: [],
+          read: () => readFile(cssFile, 'utf8'),
+        } satisfies HotUpdateOptions,
+      ]);
+    await writeFile(cssFile, `${stylesheet}\n.custom { color: red; }`);
+    expect(await updateStylesheet()).toBeUndefined();
+    expect(await server.transformRequest('/src/index.ts')).toBe(before);
+    expect(await server.transformRequest('/src/unrelated.ts')).toBe(unrelated);
+
+    await writeFile(cssFile, `${stylesheet}\n@utility fresh-util { display: flex; }`);
+    const updatedModules = await updateStylesheet();
+    expect(updatedModules?.some((module) => module.id === path.join(root, 'src/index.ts'))).toBe(
+      true,
+    );
+    expect(
+      updatedModules?.some((module) => module.id === path.join(root, 'src/unrelated.ts')),
+    ).toBe(false);
     const after = await server.transformRequest('/src/index.ts');
     assert.exists(after);
     expect(after.code).toMatch(/className: "fixture__fresh-util"/);
@@ -332,6 +351,18 @@ test('refreshes source mappings when stylesheets or imported constants change in
     assert.exists(updated);
     expect(updated.code).toMatch(/className: "fixture__block"/);
     expect(updated.code).toMatch(/title: display/);
+    expect(await server.transformRequest('/src/unrelated.ts')).toBe(unrelated);
+    expect(
+      send.mock.calls.some(([message]) => {
+        const payload: unknown = message;
+        return (
+          typeof payload === 'object' &&
+          payload !== null &&
+          'type' in payload &&
+          payload.type === 'full-reload'
+        );
+      }),
+    ).toBe(false);
   } finally {
     await server?.close();
     await rm(root, { recursive: true, force: true });
@@ -343,4 +374,94 @@ test('registers only prefix transforms so Tailwind can be configured separately'
     'mfa-tailwind-prefix-source',
     'mfa-tailwind-prefix-css',
   ]);
+});
+
+test('updates code-split route classes when a custom utility is added and removed', async () => {
+  const root = await realpath(await mkdtemp(path.join(os.tmpdir(), 'mfa-tailwind-split-hmr-')));
+  const cssFile = path.join(root, 'src/styles/index.css');
+  const stylesheet = `@import ${JSON.stringify(theme)} layer(theme);
+@import ${JSON.stringify(utilities)} layer(utilities) source(none);
+@source '../';`;
+  let server: undefined | ViteDevServer;
+
+  try {
+    await mkdir(path.join(root, 'src/styles'), { recursive: true });
+    await mkdir(path.join(root, 'src/routes'));
+    await writeFile(cssFile, stylesheet);
+    await writeFile(
+      path.join(root, 'src/routes/~__root.tsx'),
+      "import { createRootRoute } from '@tanstack/react-router'; export const Route = createRootRoute();",
+    );
+    await writeFile(
+      path.join(root, 'src/routes/~index.tsx'),
+      "import { createFileRoute } from '@tanstack/react-router'; export const Route = createFileRoute('/')({component: () => <div className='fresh-util'>page</div>});",
+    );
+    const prefixPlugins = tailwindcssPrefix({ prefix: 'fixture' });
+    server = await createServer({
+      root,
+      configFile: false,
+      logLevel: 'silent',
+      plugins: [tailwindcss(), prefixPlugins, appPlugins()],
+      optimizeDeps: { noDiscovery: true, include: [] },
+      resolve: {
+        alias: [
+          {
+            find: /^@tanstack\/react-router$/,
+            replacement: require.resolve('@tanstack/react-router'),
+          },
+          {
+            find: /^react\/jsx-dev-runtime$/,
+            replacement: require.resolve('react/jsx-dev-runtime'),
+          },
+          {
+            find: /^react\/compiler-runtime$/,
+            replacement: require.resolve('react/compiler-runtime'),
+          },
+          { find: /^react$/, replacement: require.resolve('react') },
+        ],
+      },
+      server: { middlewareMode: true, watch: null, hmr: false },
+    });
+
+    await server.transformRequest('/src/routes/~index.tsx');
+    const splitUrl = '/src/routes/~index.tsx?tsr-split=component';
+    const before = await server.transformRequest(splitUrl);
+    expect(before?.code).toContain('"fresh-util"');
+    expect(before?.code).not.toContain('fixture__fresh-util');
+    await server.transformRequest('/src/styles/index.css');
+    const hook = prefixPlugins[0].hotUpdate;
+    const handler = typeof hook === 'function' ? hook : hook?.handler;
+    assert.exists(handler);
+
+    const update = () =>
+      Reflect.apply(handler, { environment: server!.environments.client }, [
+        {
+          type: 'update',
+          file: cssFile,
+          server: server!,
+          timestamp: Date.now(),
+          modules: [],
+          read: () => readFile(cssFile, 'utf8'),
+        } satisfies HotUpdateOptions,
+      ]);
+
+    await writeFile(cssFile, `${stylesheet}\n@utility fresh-util { display: flex; }`);
+    await update();
+    expect((await server.transformRequest(splitUrl))?.code).toContain('fixture__fresh-util');
+    expect((await server.transformRequest('/src/styles/index.css'))?.code).toContain(
+      'fixture__fresh-util',
+    );
+
+    await writeFile(cssFile, stylesheet);
+    await update();
+    const after = await server.transformRequest(splitUrl);
+    expect(after?.code).toContain('"fresh-util"');
+    expect(after?.code).not.toContain('fixture__fresh-util');
+    expect((await server.transformRequest('/src/styles/index.css'))?.code).not.toContain(
+      'fresh-util',
+    );
+  } finally {
+    await server?.close();
+    await rm(root, { recursive: true, force: true });
+  }
 });
