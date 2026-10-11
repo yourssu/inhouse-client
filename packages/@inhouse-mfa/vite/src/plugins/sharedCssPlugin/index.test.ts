@@ -1,4 +1,6 @@
-import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import tailwindcss from '@tailwindcss/vite';
+import { mkdir, mkdtemp, readFile, realpath, rm, utimes, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { build, createServer } from 'vite';
@@ -6,6 +8,52 @@ import { expect, test } from 'vitest';
 
 import { sharedCssPlugin } from './index';
 import { partitionCss } from './partitionCss';
+
+test('invalidates the real Tailwind compiler when a nested local import changes', async () => {
+  const root = await fixture();
+  const require = createRequire(import.meta.url);
+  await writeFile(path.join(root, 'styles/nested/child.css'), '.nested { width: 133px; }');
+  const child = await realpath(path.join(root, 'styles/nested/child.css'));
+  await writeFile(
+    path.join(root, 'styles/nested/screen.css'),
+    "@import './child.css'; .service { color: red; }",
+  );
+  await writeFile(
+    path.join(root, 'styles/index.css'),
+    `@import '${require.resolve('tailwindcss/index.css')}';
+@import '../shared.css';
+@import './nested/screen.css';`,
+  );
+  const server = await createServer({
+    root,
+    configFile: false,
+    logLevel: 'silent',
+    plugins: [sharedCssPlugin(['../shared.css']), tailwindcss()],
+    server: { middlewareMode: true, watch: null },
+    optimizeDeps: { noDiscovery: true, include: [] },
+  });
+
+  try {
+    const before = await server.transformRequest('/styles/index.css?mfa-screen');
+    expect(before?.code).toContain('width: 133px');
+    expect(before?.code).not.toContain('shared-reset');
+    expect(server.moduleGraph.getModulesByFile(child)?.size).toBeGreaterThan(0);
+
+    await writeFile(child, '.nested { width: 173px; }');
+    // Tailwind uses filesystem mtimes; make the change deterministic on coarse clocks.
+    await utimes(child, new Date(), new Date(Date.now() + 1000));
+    server.moduleGraph.onFileChange(child);
+
+    const after = await server.transformRequest('/styles/index.css?mfa-screen');
+    expect(after?.code).toContain('width: 173px');
+    expect(after?.code).not.toContain('width: 133px');
+    expect(after?.code).not.toContain('shared-reset');
+    expect(after?.code).not.toContain('@reference');
+  } finally {
+    await server.close();
+    await rm(root, { recursive: true, force: true });
+  }
+});
 
 const fixture = async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'mfa-screen-css-'));

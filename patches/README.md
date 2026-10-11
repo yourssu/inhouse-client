@@ -4,7 +4,9 @@ inhouse 작업 중 외부 라이브러리 문제를 해결하기 위한 임시 �
 
 - @tailwindcss/vite@4.3.3
   - 외부 파일 변경 시 HMR Full Reload가 불필요하게 발생하는 문제 (tailwindlabs/tailwindlabs PR[#20414](https://github.com/tailwindlabs/tailwindcss/pull/20414)) 해결
-  - 현재 픽스가 배포되지 않은 상태로, 배포될 것으로 예상되는 @tailwindcss/vite@4.3.4 릴리즈 시 이 패치를 제거하여야 합니다.
+  - MFA가 local CSS import를 먼저 펼치므로 imported 파일만 바뀌면 entry 파일의 mtime은 그대로여도 Tailwind에 전달하는 CSS 입력이 달라집니다. 변환된 CSS 입력도 비교하여 compiler 캐시를 갱신하도록 보완합니다.
+  - `packages/@inhouse-mfa/vite/src/plugins/sharedCssPlugin/index.test.ts`에서 실제 Tailwind 파이프라인의 중첩 CSS 변경을 검증합니다.
+  - 업데이트 시 Full Reload 문제와 CSS 입력 변경에 따른 compiler 캐시 갱신이 모두 upstream에서 해결됐는지 확인한 뒤 패치를 제거합니다.
 
 - vite@8.2.2
   - **Upstream 확인: 2026-09-27.**
