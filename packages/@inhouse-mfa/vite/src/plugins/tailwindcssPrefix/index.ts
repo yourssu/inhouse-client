@@ -22,6 +22,10 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
   let root = '';
   let mapper: Promise<ReturnType<typeof createClassMapper>>;
   const values = createClassValueResolver((filename) => fs.readFile(filename, 'utf8'));
+  const sourceMappings = new Map<
+    string,
+    { classes: Map<string, string>; dependencies: Set<string> }
+  >();
 
   const reloadDesignSystem = () => {
     const filename = path.join(root, 'src/styles/index.css');
@@ -49,7 +53,7 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
       await reloadDesignSystem();
     },
 
-    async hotUpdate({ file, server }) {
+    async hotUpdate({ file, modules, timestamp }) {
       const stylesheetChanged = file.endsWith('.css');
       const importedValueChanged = values.invalidate(file);
 
@@ -61,8 +65,35 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
         await reloadDesignSystem();
       }
 
-      server.moduleGraph.invalidateAll();
-      server.ws.send({ type: 'full-reload' });
+      const classes = await mapper;
+      const affected = [...sourceMappings].flatMap(([id, source]) => {
+        const mappingChanged =
+          stylesheetChanged &&
+          [...source.classes].some(([value, mapped]) => classes.mapClassName(value) !== mapped);
+
+        if (!mappingChanged && !source.dependencies.has(file)) {
+          return [];
+        }
+
+        const module = this.environment.moduleGraph.getModuleById(id);
+        return module ? [module] : [];
+      });
+
+      if (affected.length === 0) {
+        return;
+      }
+
+      const updates = new Set([
+        ...modules,
+        ...(this.environment.moduleGraph.getModulesByFile(file) ?? []),
+        ...affected,
+      ]);
+
+      for (const module of updates) {
+        this.environment.moduleGraph.invalidateModule(module, new Set(), timestamp, true);
+      }
+
+      return [...updates];
     },
 
     transform: {
@@ -75,7 +106,15 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
         }
 
         const classes = await mapper;
-        const result = await namespaceSource(code, filename, classes.mapClassList, (valuePath) =>
+        const mappings = new Map<string, string>();
+        const dependencies = new Set<string>();
+        const mapClassList = (value: string) =>
+          value.replace(/\S+/g, (candidate) => {
+            const mapped = classes.mapClassName(candidate);
+            mappings.set(candidate, mapped);
+            return mapped;
+          });
+        const result = await namespaceSource(code, filename, mapClassList, (valuePath) =>
           values.resolveValue(valuePath, filename, async (source, importer) => {
             const resolved = await this.resolve(source, importer);
 
@@ -84,9 +123,12 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
             }
 
             this.addWatchFile(resolved.id);
+            dependencies.add(resolved.id);
             return resolved.id;
           }),
         );
+
+        sourceMappings.set(id, { classes: mappings, dependencies });
 
         return result?.code ? { code: result.code, map: result.map } : undefined;
       },
