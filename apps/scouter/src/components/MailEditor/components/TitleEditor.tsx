@@ -6,6 +6,7 @@ import { useEffect, useMemo } from 'react';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 
+import { VariableSlashMenu } from '@/components/MailEditor/components/VariableSlashMenu';
 import { parseBodyHtml, serializeSubject } from '@/components/TemplateEditorDialog/utils/variable';
 import { cn } from '@/utils/tailwind';
 import { InlineVariableExtension } from '@/utils/tiptap/extensions/InlineVariable';
@@ -16,8 +17,6 @@ import {
   type SlashCommandStorage,
 } from '@/utils/tiptap/extensions/SlashCommand';
 import { getEditorStorage } from '@/utils/tiptap/storage';
-
-import { VariableSlashMenu } from './VariableSlashMenu';
 
 interface TitleEditorProps {
   autoFocus?: boolean;

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { AttachmentUploadButton } from '@/components/MailEditor/components/AttachmentUploadButton';
-import { ContentEditor } from '@/components/MailEditor/components/ContentEditor';
+import { ContentEditor } from '@/components/MailEditor/components/ContentEditor/ContentEditor';
 import { EditorToolbar } from '@/components/MailEditor/components/EditorToolbar';
 import { TitleEditor } from '@/components/MailEditor/components/TitleEditor';
 import {
