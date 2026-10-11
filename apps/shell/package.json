@@ -17,6 +17,7 @@
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@inhouse/auth": "workspace:*",
+    "@inhouse/query-client": "workspace:*",
     "@exterior/core": "workspace:*",
     "@exterior/layout": "workspace:*",
     "@inhouse/utils": "workspace:*",
@@ -37,27 +38,19 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
     "@module-federation/runtime": "^2.9.0",
     "@module-federation/vite": "^1.20.8",
-    "@rolldown/plugin-babel": "^0.2.3",
-    "@tailwindcss/vite": "^4.3.3",
-    "@tanstack/router-plugin": "catalog:",
-    "@types/babel__core": "^7.20.5",
     "@types/node": "^24.13.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.1.0",
     "@yourssu-inhouse/eslint-config": "workspace:*",
     "@inhouse-mfa/vite": "workspace:*",
     "@yourssu-inhouse/typescript-config": "workspace:*",
-    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "catalog:",
     "eslint-plugin-react-refresh": "^0.5.2",
     "msw": "^2.14.6",
     "typescript": "catalog:",
-    "vite": "^8.2.2",
-    "vite-tsconfig-paths": "^6.1.1"
+    "vite": "^8.2.2"
   },
   "msw": {
     "workerDirectory": [

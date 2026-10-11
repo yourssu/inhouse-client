@@ -1,5 +1,6 @@
+import { queryClient } from '@inhouse/query-client';
 import { Button, Combobox } from '@interior/react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 
 import { applicantsOption, applicantsQueryKeys } from '@/apis/applicants/query';
@@ -15,7 +16,6 @@ import { DevToolActionCard } from './DevToolActionCard';
 import { openDevToolConfirmation } from './openDevToolConfirmation';
 
 export const EvaluationDevTools = () => {
-  const queryClient = useQueryClient();
   const [selectedApplicantId, setSelectedApplicantId] = useState<number>();
   const { data: applicants = [], isError, isPending, refetch } = useQuery(applicantsOption());
 

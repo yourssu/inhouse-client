@@ -1,4 +1,5 @@
 import { PageLayout } from '@exterior/layout';
+import { queryClient } from '@inhouse/query-client';
 import { lotties } from '@inhouse/resources';
 import { Button, Divider, Result } from '@interior/react';
 import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
@@ -171,13 +172,13 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
       <RouteComponent />
     </Suspense>
   ),
-  loader: ({ context, params }) => {
+  loader: ({ params }) => {
     const applicantId = Number(params.applicantId);
 
-    context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
-    context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
-    context.queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
-    context.queryClient.prefetchQuery(documentEvaluatorStatusesOption(applicantId));
-    context.queryClient.prefetchQuery(meOption());
+    queryClient.prefetchQuery(applicantByIdOption(applicantId));
+    queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
+    queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
+    queryClient.prefetchQuery(documentEvaluatorStatusesOption(applicantId));
+    queryClient.prefetchQuery(meOption());
   },
 });

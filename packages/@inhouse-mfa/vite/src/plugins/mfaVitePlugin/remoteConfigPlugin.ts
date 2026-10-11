@@ -18,7 +18,14 @@ export const remoteConfigPlugin = (
           '[mfa] cssCodeSplit must remain enabled to load remote CSS through the Vite module graph.',
         );
       }
-      return { server: { port: config.server?.port ?? remote.port } };
+      return {
+        server: {
+          port: config.server?.port ?? remote.port,
+          cors: true,
+          // Vite serves file routes containing '~' on Windows through the workspace file system.
+          fs: { strict: false },
+        },
+      };
     },
     configureServer(server) {
       server.watcher.add([...watchedFiles]);

@@ -1,4 +1,5 @@
 import { PageLayout } from '@exterior/layout';
+import { queryClient } from '@inhouse/query-client';
 import { Divider } from '@interior/react';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -182,16 +183,16 @@ export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eva
       <RouteComponent />
     </Suspense>
   ),
-  loader: ({ context, params }) => {
+  loader: ({ params }) => {
     const applicantId = Number(params.applicantId);
 
-    context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
-    context.queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
-    context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
-    context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
-    context.queryClient.prefetchQuery(interviewMemosOption(applicantId));
-    context.queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
-    context.queryClient.prefetchQuery(meOption());
+    queryClient.prefetchQuery(applicantByIdOption(applicantId));
+    queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
+    queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
+    queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
+    queryClient.prefetchQuery(interviewMemosOption(applicantId));
+    queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
+    queryClient.prefetchQuery(meOption());
   },
 });
 

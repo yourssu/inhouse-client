@@ -2,7 +2,7 @@
   "extends": "@yourssu-inhouse/typescript-config/base",
   "compilerOptions": {
     "noEmit": true,
-    "types": []
+    "types": ["node"]
   },
   "include": ["src/**/*"]
 }

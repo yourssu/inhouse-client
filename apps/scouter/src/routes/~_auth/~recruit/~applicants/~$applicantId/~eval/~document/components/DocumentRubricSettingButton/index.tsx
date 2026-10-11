@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { queryClient } from '@inhouse/query-client';
 import { Badge, Button, Dialog, Divider, useToast } from '@interior/react';
-import { useQueryClient, useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import {
   Controller,
@@ -45,7 +46,6 @@ interface DocumentRubricSettingButtonProps {
 export const DocumentRubricSettingButton = ({ applicant }: DocumentRubricSettingButtonProps) => {
   const { state, applicantId, partId } = applicant;
 
-  const queryClient = useQueryClient();
   const openRubricSettingDialog = useAlertDialog();
   const trackDocumentEvent = useDocumentAnalytics();
 
@@ -127,7 +127,6 @@ const DocumentRubricSettingForm = ({
     data: { rubrics },
   } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
-  const queryClient = useQueryClient();
   const toast = useToast();
   const trackDocumentEvent = useDocumentAnalytics();
 

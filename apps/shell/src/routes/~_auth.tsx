@@ -1,6 +1,7 @@
 import { PageLayout } from '@exterior/layout';
+import { RemoteOutlet } from '@inhouse-mfa/shell';
 import { removeAuthTokens } from '@inhouse/auth';
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { MdPerson, MdPersonSearch } from 'react-icons/md';
 
 import { ProfileButton } from '@/components/ProfileButton';
@@ -20,7 +21,7 @@ const AuthLayout = () => {
       ]}
       profile={<ProfileButton />}
     >
-      <Outlet />
+      <RemoteOutlet />
     </PageLayout>
   );
 };

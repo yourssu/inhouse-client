@@ -1,8 +1,6 @@
-import type { RouteContext } from '@exterior/core';
+import { createRootRoute, HeadContent, Outlet } from '@tanstack/react-router';
 
-import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router';
-
-export const Route = createRootRouteWithContext<RouteContext>()({
+export const Route = createRootRoute({
   head: () => ({
     meta: [{ title: '유어슈 인하우스' }],
   }),

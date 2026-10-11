@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { PageLayout } from '@exterior/layout';
+import { queryClient } from '@inhouse/query-client';
 import { Button, Result } from '@interior/react';
 import { QueryErrorResetBoundary, useSuspenseQueries } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -196,26 +197,26 @@ const RouteComponent = () => {
 export const Route = createFileRoute('/_auth/recruit/applicants/$applicantId/eval/questionnaire/')({
   component: RouteComponent,
   loaderDeps: ({ search }) => search,
-  loader: ({ context, deps, params }) => {
+  loader: ({ deps, params }) => {
     const applicantId = Number(params.applicantId);
 
-    context.queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
-    context.queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
-    context.queryClient.prefetchQuery(applicantByIdOption(applicantId));
-    context.queryClient.prefetchQuery(meOption());
-    context.queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
-    context.queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
-    context.queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
+    queryClient.prefetchQuery(applicantDocumentAnswersOption(applicantId));
+    queryClient.prefetchQuery(applicantDocumentCommentsOption(applicantId));
+    queryClient.prefetchQuery(applicantByIdOption(applicantId));
+    queryClient.prefetchQuery(meOption());
+    queryClient.prefetchQuery(assignedQuestionsOption(applicantId));
+    queryClient.prefetchQuery(interviewEvaluatorStatusesOption(applicantId));
+    queryClient.prefetchQuery(myInterviewEvaluationOption(applicantId));
 
     if (deps.partId !== undefined) {
-      context.queryClient.prefetchQuery(activeMembersOption({ partId: deps.partId }));
+      queryClient.prefetchQuery(activeMembersOption({ partId: deps.partId }));
     }
 
     if (deps.partId !== undefined && deps.semester !== undefined) {
-      context.queryClient.prefetchQuery(
+      queryClient.prefetchQuery(
         interviewRequirementsOption({ partId: deps.partId, semester: deps.semester }),
       );
-      context.queryClient.prefetchQuery(
+      queryClient.prefetchQuery(
         interviewRubricOption({ partId: deps.partId, semester: deps.semester }),
       );
     }
