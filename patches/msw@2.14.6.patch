@@ -1,0 +1,48 @@
+diff --git a/lib/browser/index.js b/lib/browser/index.js
+index 4f753610d35eec12d427f6d344bca29ecfa2a469..5dee79a8897467c3381f4ad64d7eb1e3b552a1f2 100644
+--- a/lib/browser/index.js
++++ b/lib/browser/index.js
+@@ -1630,7 +1630,10 @@ var getWorkerInstance = async (url, options = {}, findWorker) => {
+   }
+   const [existingRegistration] = mockRegistrations;
+   if (existingRegistration) {
+-    existingRegistration.update();
++    existingRegistration.update().catch(() => {
++      // A last-client stop can unregister this cached worker during a restart.
++      // Updating is best-effort; keep using the worker already controlling this page.
++    });
+     return [
+       getWorkerByRegistration(
+         existingRegistration,
+diff --git a/lib/browser/index.mjs b/lib/browser/index.mjs
+index 15e2b111db2c6206168deae296238b6e0556ae82..ab9c3b0cf3859bc0efbc802baead36c8bcca4dcf 100644
+--- a/lib/browser/index.mjs
++++ b/lib/browser/index.mjs
+@@ -1609,7 +1609,10 @@ var getWorkerInstance = async (url, options = {}, findWorker) => {
+   }
+   const [existingRegistration] = mockRegistrations;
+   if (existingRegistration) {
+-    existingRegistration.update();
++    existingRegistration.update().catch(() => {
++      // A last-client stop can unregister this cached worker during a restart.
++      // Updating is best-effort; keep using the worker already controlling this page.
++    });
+     return [
+       getWorkerByRegistration(
+         existingRegistration,
+diff --git a/src/browser/utils/get-worker-instance.ts b/src/browser/utils/get-worker-instance.ts
+index 536968ab41a494b2d61f45645a58478608afe947..f758698619e5399d9090fbc16fcc2f1e27afe765 100644
+--- a/src/browser/utils/get-worker-instance.ts
++++ b/src/browser/utils/get-worker-instance.ts
+@@ -38,7 +38,10 @@ export const getWorkerInstance = async (
+   if (existingRegistration) {
+     // Schedule the worker update in the background.
+     // Update ensures the existing worker is up-to-date.
+-    existingRegistration.update()
++    existingRegistration.update().catch(() => {
++      // A last-client stop can unregister this cached worker during a restart.
++      // Updating is best-effort; keep using the worker already controlling this page.
++    })
+ 
+     // Return the worker reference immediately.
+     return [
