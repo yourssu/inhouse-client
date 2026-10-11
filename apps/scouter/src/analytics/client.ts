@@ -21,9 +21,32 @@ if (mixpanelToken) {
     autocapture: false,
     debug: true,
     persistence: 'localStorage',
-    record_sessions_percent: 100,
+    record_sessions_percent: 0,
   });
 }
+
+export const bootstrapScouterAnalytics = async () => {
+  if (!mixpanelToken) {
+    return;
+  }
+
+  const cleanup = () => {
+    mixpanel.set_config({ record_sessions_percent: 0 });
+    mixpanel.stop_session_recording();
+  };
+
+  // reset() restarts replay according to this setting, including StrictMode cleanup.
+  mixpanel.set_config({ record_sessions_percent: 100 });
+
+  try {
+    await mixpanel.start_session_recording();
+
+    return cleanup;
+  } catch (error) {
+    cleanup();
+    throw error;
+  }
+};
 
 export const subscribeScouterAnalytics = (router: AnyRouter) => {
   if (!mixpanelToken) {
