@@ -1,9 +1,7 @@
 import type { HotUpdateOptions, ViteDevServer } from 'vite';
 
-import { transformAsync } from '@babel/core';
 import { originalPositionFor, TraceMap } from '@jridgewell/trace-mapping';
 import tailwindcss from '@tailwindcss/vite';
-import reactCompiler from 'babel-plugin-react-compiler';
 import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import os from 'node:os';
@@ -11,6 +9,7 @@ import path from 'node:path';
 import { build, createServer } from 'vite';
 import { assert, expect, test } from 'vitest';
 
+import { appPlugins } from '../mfaVitePlugin/appPlugins';
 import { tailwindcssPrefix } from './index';
 
 const require = createRequire(import.meta.url);
@@ -181,11 +180,16 @@ test('uses the same prefix format as createTailwindUtils', () => {
   }
 });
 
-test('namespaces conditional classes with React Compiler ordered last', async () => {
+test('namespaces conditional classes before the platform React Compiler without app TSR config', async () => {
   const root = await realpath(await mkdtemp(path.join(os.tmpdir(), 'mfa-tailwind-compiler-')));
 
   try {
     await mkdir(path.join(root, 'src/styles'), { recursive: true });
+    await mkdir(path.join(root, 'src/routes'));
+    await writeFile(
+      path.join(root, 'src/routes/~__root.tsx'),
+      "import { createRootRoute } from '@tanstack/react-router'; export const Route = createRootRoute();",
+    );
     await writeFile(
       path.join(root, 'src/styles/index.css'),
       `@import ${JSON.stringify(theme)} layer(theme);
@@ -223,29 +227,7 @@ export const CalendarCell = ({ today }) => (
           },
         ],
       },
-      plugins: [
-        tailwindcss(),
-        tailwindcssPrefix({ prefix: 'fixture' }),
-        {
-          name: 'react-compiler',
-          enforce: 'pre',
-          async transform(code, id) {
-            if (!id.endsWith('.tsx')) {
-              return;
-            }
-
-            const compiled = await transformAsync(code, {
-              filename: id,
-              babelrc: false,
-              configFile: false,
-              parserOpts: { plugins: ['typescript', 'jsx'] },
-              plugins: [[reactCompiler, { target: '19' }]],
-            });
-
-            return compiled?.code ? { code: compiled.code, map: compiled.map } : undefined;
-          },
-        },
-      ],
+      plugins: [tailwindcss(), tailwindcssPrefix({ prefix: 'fixture' }), appPlugins()],
       build: {
         write: false,
         minify: false,
@@ -260,6 +242,9 @@ export const CalendarCell = ({ today }) => (
     const outputs = [result].flat().flatMap((bundle) => ('output' in bundle ? bundle.output : []));
     const chunk = outputs.find((output) => output.type === 'chunk');
     assert.exists(chunk);
+    expect(await readFile(path.join(root, 'src/routeTree.gen.ts'), 'utf8')).toContain(
+      "'./routes/~__root'",
+    );
     expect(chunk.code).toContain('react.memo_cache_sentinel');
     const mod = await import(
       `data:text/javascript;base64,${Buffer.from(chunk.code).toString('base64')}`
