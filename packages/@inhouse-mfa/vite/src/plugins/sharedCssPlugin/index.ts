@@ -1,74 +1,94 @@
 import type { Plugin } from 'vite';
 
+import path from 'node:path';
+
 import { partitionCss } from './partitionCss';
 
-const screenQuery = '?mfa-screen';
-const sharedQuery = '?mfa-shared';
-const wrapperPrefix = '\0mfa-css:';
+const screenQuery = 'mfa-screen';
 
-export const sharedCssPlugin = (sharedCSS: readonly string[], workspace: string): Plugin => {
+export const sharedCssPlugin = (sharedCSS: readonly string[]): Plugin => {
   let root = '';
-  const wrappers = new Map<string, string>();
+  let sharedFiles: Promise<Set<string>> | undefined;
+  const dependencies = new Map<string, string[]>();
+  const excludedFiles = new Set<string>();
 
   return {
     name: 'mfa-shared-css',
     enforce: 'pre',
     configResolved(config) {
       root = config.root;
-    },
-    transformIndexHtml() {
-      return [
-        {
-          tag: 'meta',
-          attrs: { name: 'mfa-standalone', content: workspace },
-          injectTo: 'head-prepend',
-        },
-      ];
+      sharedFiles = undefined;
+      excludedFiles.clear();
+      dependencies.clear();
     },
     resolveId: {
-      filter: { id: /\.css$/ },
+      filter: { id: /\.css(?:\?.*)?$/ },
       async handler(source, importer) {
+        const [filename, query = ''] = source.split('?');
+
         if (
           !sharedCSS.length ||
           !importer ||
-          !source.endsWith('.css') ||
+          !filename.endsWith('.css') ||
+          new URLSearchParams(query).has(screenQuery) ||
           importer.split('?')[0].endsWith('.css')
         ) {
           return;
         }
+
         const resolved = await this.resolve(source, importer, { skipSelf: true });
-        if (!resolved || resolved.external || !resolved.id.startsWith(`${root}/`)) {
+
+        if (!resolved || resolved.external) {
           return;
         }
-        const id = `${wrapperPrefix}${encodeURIComponent(resolved.id)}.js`;
-        wrappers.set(id, resolved.id);
-        return id;
+
+        sharedFiles ??= Promise.all(
+          sharedCSS.map((css) =>
+            this.resolve(css, path.join(root, 'src/styles/index.css'), { skipSelf: true }),
+          ),
+        ).then((files) => new Set(files.flatMap((file) => (file ? [file.id.split('?')[0]] : []))));
+
+        const resolvedFile = resolved.id.split('?')[0];
+        const excluded = sharedCSS.includes(filename) || (await sharedFiles).has(resolvedFile);
+
+        if (!excluded && !resolvedFile.startsWith(`${root}/`)) {
+          return;
+        }
+
+        if (new URLSearchParams(query).has('raw') || new URLSearchParams(query).has('url')) {
+          this.error(
+            '[mfa] Import remote styles as CSS modules or with ?inline, not ?raw or ?url.',
+          );
+        }
+
+        if (excluded) {
+          excludedFiles.add(resolvedFile);
+        }
+
+        return {
+          ...resolved,
+          id: `${resolved.id}${resolved.id.includes('?') ? '&' : '?'}${screenQuery}`,
+        };
       },
     },
     load: {
-      filter: { id: [/\0mfa-css:/, /\?mfa-(screen|shared)$/] },
+      filter: { id: /[?&]mfa-screen$/ },
       async handler(id) {
-        const file = wrappers.get(id);
-        if (file) {
-          this.addWatchFile(file);
-          const cssModule = file.endsWith('.module.css');
-          return [
-            cssModule
-              ? `import classes from ${JSON.stringify(file + screenQuery)}; export default classes;`
-              : `import ${JSON.stringify(file + screenQuery)};`,
-            `if (typeof document !== 'undefined' && document.querySelector('meta[name="mfa-standalone"]')?.getAttribute('content') === ${JSON.stringify(workspace)}) {`,
-            `  await import(${JSON.stringify(file + sharedQuery)});`,
-            '}',
-          ].join('\n');
-        }
-        const isShared = id.endsWith(sharedQuery);
-        if (!isShared && !id.endsWith(screenQuery)) {
-          return;
-        }
         const filename = id.slice(0, id.indexOf('?'));
-        this.addWatchFile(filename);
-        const css = await partitionCss(filename, sharedCSS, (file) => this.addWatchFile(file));
-        return isShared ? css.shared : css.screen;
+        const files = [filename];
+        const css = excludedFiles.has(filename)
+          ? ''
+          : await partitionCss(filename, sharedCSS, (file) => files.push(file));
+        dependencies.set(id, files);
+
+        return css;
+      },
+    },
+    transform: {
+      filter: { id: /[?&]mfa-screen$/ },
+      handler(_code, id) {
+        // Vite attaches CSS dependency edges during transform, after creating the module node.
+        dependencies.get(id)?.forEach((file) => this.addWatchFile(file));
       },
     },
   };

@@ -5,6 +5,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "inhouse-mfa"],
+  "include": ["src", "inhouse-mfa", "vite-env.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

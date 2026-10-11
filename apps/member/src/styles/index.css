@@ -7,10 +7,3 @@
 @import '@exterior/layout/index.css' layer(exterior);
 
 @import '@interior/tailwind/plugin.css';
-
-@layer base {
-  #root {
-    width: 100%;
-    height: 100%;
-  }
-}
