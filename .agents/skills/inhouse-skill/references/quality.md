@@ -62,16 +62,16 @@ pnpm --filter @yourssu-inhouse/member check:format
 
 ## 변경 위협별 필수 검증
 
-| 변경 범위 | 추가 검증 |
-| --- | --- |
-| 일반 TypeScript·React 코드 | 대상 workspace type·lint·format, 관련 test |
-| route 파일·search schema·loader | 대상 앱 build, 생성된 route tree diff, 새로고침·뒤로가기·잘못된 URL |
-| API schema·fetcher·query·mutation | schema 실패, 네트워크 실패, query key 입력, mutation 뒤 cache 갱신 |
-| Dialog·form·overlay | 확인·취소·외부 닫기·Escape·중복 제출·성공·실패 |
-| 공용 JIT 패키지 | 패키지 검사, 모든 직접 소비 앱 type 검사 |
-| 공용 build·CSS 패키지 | 패키지 build, 소비 앱 type 또는 build, light·dark UI |
-| Module Federation | 관련 MF 패키지, shell·remote build, remote preview와 shell 조합 |
-| 인증 | `auth.md`의 로그인·복원·로그아웃·갱신 성공·실패 시나리오 |
+| 변경 범위                         | 추가 검증                                                           |
+| --------------------------------- | ------------------------------------------------------------------- |
+| 일반 TypeScript·React 코드        | 대상 workspace type·lint·format, 관련 test                          |
+| route 파일·search schema·loader   | 대상 앱 build, 생성된 route tree diff, 새로고침·뒤로가기·잘못된 URL |
+| API schema·fetcher·query·mutation | schema 실패, 네트워크 실패, query key 입력, mutation 뒤 cache 갱신  |
+| Dialog·form·overlay               | 확인·취소·외부 닫기·Escape·중복 제출·성공·실패                      |
+| 공용 JIT 패키지                   | 패키지 검사, 모든 직접 소비 앱 type 검사                            |
+| 공용 build·CSS 패키지             | 패키지 build, 소비 앱 type 또는 build, light·dark UI                |
+| Module Federation                 | 관련 MF 패키지, HTML 없는 remote build, shell build와 서비스 조합   |
+| 인증                              | `auth.md`의 로그인·복원·로그아웃·갱신 성공·실패 시나리오            |
 
 표의 모든 시나리오를 기계적으로 실행하지 않는다. 변경이 영향을 주는 행을 선택하고, 선택 이유와 실행하지 못한 항목을 결과에 남긴다.
 

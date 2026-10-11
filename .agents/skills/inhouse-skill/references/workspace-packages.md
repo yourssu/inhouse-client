@@ -34,7 +34,7 @@
 | Tailwind plugin·`cn`·`tv`                       | `@interior/tailwind`   |
 | 디자인 토큰 원천                                | `@interior/vars`       |
 | Module Federation plugin·route 계약             | `@inhouse-mfa/core`    |
-| shell·remote preview·plugin lifecycle 런타임    | `@inhouse-mfa/shell`   |
+| shell·remote route 조합·Global 런타임           | `@inhouse-mfa/shell`   |
 | Vite Module Federation 설정·shared·retry 정책   | `@inhouse-mfa/vite`    |
 | 이미지·Lottie 등 정적 리소스                    | `@inhouse/resources`   |
 

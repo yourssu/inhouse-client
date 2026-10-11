@@ -10,7 +10,7 @@ import { type RouterConstructorOptions, type RouterHistory } from '@tanstack/rea
 
 import { RemoteUnavailable } from './components/RemoteUnavailable';
 import { composePlugins, type RemotePluginSpec } from './composePlugins';
-import { RemoteRuntime } from './RemoteRuntime';
+import { connectRemoteRuntime } from './RemoteRuntime';
 
 type SharedShellOptions = Pick<
   CreateExteriorAppOptions<AppRouteTree>,
@@ -47,7 +47,7 @@ export const bootstrapShell = async (
   }
 
   const { failures, plugins } = await composePlugins(shellAuth, options.specs);
-  const InnerWrap = options.routerOptions?.InnerWrap;
+  let disconnect: (() => void) | undefined;
 
   const app = createExteriorApp({
     appProvidersProps: options.appProvidersProps,
@@ -56,19 +56,20 @@ export const bootstrapShell = async (
         <RemoteUnavailable availablePlugins={plugins.map((p) => p.name)} failedPlugins={failures} />
       ) : null,
     routeTree: options.routeTree,
-    routerOptions: {
-      ...options.routerOptions,
-      InnerWrap: ({ children }) => (
-        <RemoteRuntime plugins={plugins}>
-          {InnerWrap ? <InnerWrap>{children}</InnerWrap> : children}
-        </RemoteRuntime>
-      ),
+    routerOptions: options.routerOptions,
+    beforeRender: ({ router }) => {
+      disconnect = connectRemoteRuntime(router, plugins);
     },
     rootElement: options.rootElement,
     rootElementId: options.rootElementId,
   });
 
-  void app.mount();
+  try {
+    await app.mount();
+  } catch (error) {
+    disconnect?.();
+    throw error;
+  }
 
   return { app, failures, plugins };
 };

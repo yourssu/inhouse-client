@@ -3,13 +3,13 @@ import type { AnyRoute } from '@tanstack/react-router';
 import {
   defineRemotePlugin,
   findRouteById,
-  PLUGIN_EXPOSE_KEY,
   type RemotePlugin,
   RouteRegistry,
 } from '@inhouse-mfa/core';
 import { loadRemote } from '@module-federation/runtime';
 
 import { graftPlugin } from './graft';
+import { loadRemoteModules, type RemoteModule } from './loadRemoteModules';
 
 export interface RemotePluginSpec {
   /** Module Federation remote 이름(mfa.config workspace name과 일치). */
@@ -30,13 +30,17 @@ export const composePlugins = async (
   const registry = new RouteRegistry();
   const plugins: RemotePlugin[] = [];
   const failures: string[] = [];
+  const results = await loadRemoteModules(specs, (id) => loadRemote<RemoteModule>(id));
 
-  for (const spec of specs) {
-    const expose = PLUGIN_EXPOSE_KEY.replace(/^\.?\//, '');
+  for (const [index, spec] of specs.entries()) {
     try {
-      const mod = await loadRemote<{ global?: RemotePlugin['global']; routeTree: AnyRoute }>(
-        `${spec.name}/${expose}`,
-      );
+      const result = results[index];
+
+      if (result.status === 'rejected') {
+        throw result.reason;
+      }
+
+      const mod = result.value;
       if (!mod?.routeTree) {
         throw new Error(`[mfa-shell] '${spec.name}' did not expose routeTree`);
       }
@@ -63,5 +67,5 @@ export const composePlugins = async (
   return { failures, plugins };
 };
 
-export const buildRemoteSpecs = (remotes: readonly { id: string }[]): readonly RemotePluginSpec[] =>
+export const buildRemoteSpecs = (remotes: readonly { id: string }[]): RemotePluginSpec[] =>
   remotes.map((remote) => ({ name: remote.id }));

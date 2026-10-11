@@ -66,7 +66,6 @@ export const partitionCss = async (
   }
 
   const css = result.root;
-  const shared = postcss.root();
 
   css.walkDecls((declaration) => {
     const source = declaration.source?.input.file;
@@ -90,31 +89,18 @@ export const partitionCss = async (
     declaration.value = value.toString();
   });
 
-  for (const node of [...css.nodes]) {
-    if (node.type !== 'atrule') {
-      continue;
-    }
-    if (node.name === 'layer' && !node.nodes) {
-      shared.append(node.clone());
-    }
-    if (node.name !== 'import') {
-      continue;
+  css.walkAtRules('import', (node) => {
+    if (node.parent !== css) {
+      return;
     }
 
     const params = postcssValueParser(node.params);
     const specifier = importSpecifier(params);
 
     if (specifier && sharedCSS.includes(specifier.value)) {
-      const source = node.source?.input.file;
-
-      if (source && specifier.value.startsWith('.')) {
-        specifier.value = rebaseUrl(specifier.value, source, filename);
-      }
-
-      shared.append(node.clone({ params: params.toString() }));
       node.remove();
     }
-  }
+  });
 
-  return { screen: css.toString(), shared: shared.toString() };
+  return css.toString();
 };

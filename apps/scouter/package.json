@@ -73,7 +73,8 @@
     "tailwindcss": "^4.3.3",
     "ts-pattern": "^5.9.0",
     "uuid": "^13.0.0",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "@inhouse-mfa/core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

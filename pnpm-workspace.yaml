@@ -23,4 +23,5 @@ catalog:
 
 patchedDependencies:
   '@tailwindcss/vite@4.3.3': patches/@tailwindcss__vite@4.3.3.patch
+  msw@2.14.6: patches/msw@2.14.6.patch
   'vite@8.2.2': patches/vite@8.2.2.patch

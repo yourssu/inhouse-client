@@ -18,7 +18,7 @@
     "check:format": "prettier --check .",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write .",
-    "test": "node --import tsx --test src/*.test.tsx"
+    "test": "node --conditions=development --import tsx --test src/*.test.tsx"
   },
   "dependencies": {
     "@exterior/core": "workspace:*",

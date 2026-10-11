@@ -2,6 +2,7 @@ import type { PluginOption } from 'vite';
 
 import { PLUGIN_EXPOSE_KEY } from '@inhouse-mfa/core';
 import { federation, type ModuleFederationOptions } from '@module-federation/vite';
+import { keyBy, mapValues } from 'es-toolkit';
 
 import {
   DEFAULT_ROUTE_PATH,
@@ -41,15 +42,13 @@ const shell = (options: ShellPluginOptions): PluginOption => {
 
   const { config, env = {} } = options;
   const shared = buildFederationShared(config.sharedDependencies);
-  const remotes: ModuleFederationOptions['remotes'] = Object.fromEntries(
-    config.remotes.map((remote) => [
-      remote.workspace,
-      {
-        type: 'module',
-        name: remote.workspace,
-        entry: env[envKeyForRemote(remote)] ?? remoteEntryDevUrl(remote),
-      },
-    ]),
+  const remotes: ModuleFederationOptions['remotes'] = mapValues(
+    keyBy(config.remotes, (remote) => remote.workspace),
+    (remote) => ({
+      type: 'module',
+      name: remote.workspace,
+      entry: env[envKeyForRemote(remote)] ?? remoteEntryDevUrl(remote),
+    }),
   );
 
   return [
@@ -74,10 +73,11 @@ const remote = async (): Promise<PluginOption[]> => {
     workspaceRoot,
   } = await loadRemoteConfig(process.cwd());
   const shared = buildFederationShared(config.sharedDependencies, workspaceRoot);
+
   return [
     remoteAssetsPlugin(),
-    remoteContractPlugin(),
-    sharedCssPlugin(config.sharedCSS ?? [], entry.workspace),
+    remoteContractPlugin(entry.workspace),
+    sharedCssPlugin(config.sharedCSS ?? []),
     remoteConfigPlugin(entry, [
       ...configFiles,
       ...['route.ts', 'global.ts', 'global.tsx'].map(

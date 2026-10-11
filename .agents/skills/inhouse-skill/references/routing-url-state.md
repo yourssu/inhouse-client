@@ -38,7 +38,7 @@ const handlePartChange = (partId: number) => {
 
 ```tsx
 const [search, setSearch] = useSearchState({ from: '/_auth/recruit/applicants/' });
-const delayedKeyword = useDelayedValue(search.search ?? "");
+const delayedKeyword = useDelayedValue(search.search ?? '');
 ```
 
 ## 스키마와 공개 URL 계약
@@ -70,4 +70,4 @@ const delayedKeyword = useDelayedValue(search.search ?? "");
 - 잘못된 search param, param 없음, 기본값을 각각 확인한다.
 - 필터 변경 시 페이지 같은 종속 상태가 같은 update에서 초기화되는지 확인한다.
 - route 변경 후 대상 앱 build와 생성 파일 diff를 확인한다.
-- shell 아래의 최종 URL과 remote preview 양쪽에서 필요한 경로가 열리는지 확인한다.
+- shell 아래의 최종 URL에서 remote 경로가 열리는지 확인한다. remote 직접 접속용 HTML·preview는 요구하지 않는다.
