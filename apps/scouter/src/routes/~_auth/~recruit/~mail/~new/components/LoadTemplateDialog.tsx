@@ -2,7 +2,6 @@ import { formatTemplates } from '@inhouse/utils/date';
 import { Button } from '@interior/react';
 import { Dialog } from '@interior/react';
 import { useToast } from '@interior/react';
-import { cn } from '@interior/tailwind/utils';
 import { useQueryClient, useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useLoading } from 'react-simplikit';
@@ -11,6 +10,7 @@ import { mailTemplateDetailOption, mailTemplatesInfiniteOption } from '@/apis/ma
 import { type MailTemplateDetail, type MailTemplateType } from '@/apis/mails/schema';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { handleError } from '@/utils/error';
+import { cn } from '@/utils/tailwind';
 
 interface LoadTemplateDialogProps {
   currentTemplateId?: number;
