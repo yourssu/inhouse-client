@@ -4,8 +4,8 @@ import postcss from 'postcss';
 import postcssImport from 'postcss-import';
 import postcssValueParser from 'postcss-value-parser';
 
-const importSpecifier = (params: string) => {
-  const first = postcssValueParser(params).nodes[0];
+const importSpecifier = (params: postcssValueParser.ParsedValue) => {
+  const first = params.nodes[0];
   if (first?.type === 'string') {
     return first;
   }
@@ -15,6 +15,9 @@ const importSpecifier = (params: string) => {
 };
 
 const relativeUrl = (value: string) => !/^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(value);
+
+const rebaseUrl = (value: string, source: string, target: string): string =>
+  `./${path.relative(path.dirname(target), path.resolve(path.dirname(source), value)).replaceAll('\\', '/')}`;
 
 export const partitionCss = async (
   filename: string,
@@ -29,11 +32,12 @@ export const partitionCss = async (
     postcssPlugin: 'mfa-local-import-contract',
     Once(root: import('postcss').Root) {
       root.walkAtRules('import', (rule) => {
-        const specifier = importSpecifier(rule.params);
+        const params = postcssValueParser(rule.params);
+        const specifier = importSpecifier(params);
         if (
           specifier?.value.startsWith('.') &&
           !sharedCSS.includes(specifier.value) &&
-          postcssValueParser(rule.params).nodes.filter((node) => node.type !== 'space').length > 1
+          params.nodes.filter((node) => node.type !== 'space').length > 1
         ) {
           throw rule.error(
             'Put layer/supports/media on shared package imports directly; qualified local CSS imports cannot be partitioned safely.',
@@ -79,7 +83,7 @@ export const partitionCss = async (
 
       const url = node.nodes.find((part) => part.type === 'word' || part.type === 'string');
       if (url && relativeUrl(url.value)) {
-        url.value = `./${path.relative(path.dirname(filename), path.resolve(path.dirname(source), url.value)).replaceAll('\\', '/')}`;
+        url.value = rebaseUrl(url.value, source, filename);
       }
     });
 
@@ -97,27 +101,17 @@ export const partitionCss = async (
       continue;
     }
 
-    const specifier = importSpecifier(node.params);
+    const params = postcssValueParser(node.params);
+    const specifier = importSpecifier(params);
 
     if (specifier && sharedCSS.includes(specifier.value)) {
-      const imported = node.clone();
       const source = node.source?.input.file;
 
       if (source && specifier.value.startsWith('.')) {
-        const params = postcssValueParser(imported.params);
-        const first = params.nodes[0];
-        const target =
-          first?.type === 'function'
-            ? first.nodes.find((node) => node.type === 'string' || node.type === 'word')
-            : first;
-
-        if (target?.type === 'string' || target?.type === 'word') {
-          target.value = `./${path.relative(path.dirname(filename), path.resolve(path.dirname(source), specifier.value)).replaceAll('\\', '/')}`;
-          imported.params = params.toString();
-        }
+        specifier.value = rebaseUrl(specifier.value, source, filename);
       }
 
-      shared.append(imported);
+      shared.append(node.clone({ params: params.toString() }));
       node.remove();
     }
   }

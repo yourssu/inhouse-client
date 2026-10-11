@@ -7,7 +7,6 @@
 @import '@exterior/layout/index.css' layer(exterior);
 
 @import '@interior/tailwind/plugin.css';
-@source '../';
 
 @layer base {
   #root {

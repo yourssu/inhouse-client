@@ -1,5 +1,4 @@
 import { useEffectOnce } from '@inhouse/react/hooks';
-import { cn } from '@interior/tailwind/utils';
 import Image from '@tiptap/extension-image';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -11,6 +10,8 @@ import { useEffect, useMemo } from 'react';
 
 import type { VariableItem } from '@/components/TemplateEditorDialog/type';
 
+import { VariableSlashMenu } from '@/components/MailEditor/components/VariableSlashMenu';
+import { cn } from '@/utils/tailwind';
 import { InlineVariableExtension } from '@/utils/tiptap/extensions/InlineVariable';
 import {
   SlashCommandExtension,
@@ -19,7 +20,7 @@ import {
 } from '@/utils/tiptap/extensions/SlashCommand';
 import { getEditorStorage } from '@/utils/tiptap/storage';
 
-import { VariableSlashMenu } from './VariableSlashMenu';
+import styles from './ContentEditor.module.css';
 
 interface ContentEditorProps {
   className?: string;
@@ -118,7 +119,10 @@ export const ContentEditor = ({
       className={cn('relative flex min-h-0 flex-[1_1_0] flex-col pt-6', className)}
       data-content-editor
     >
-      <EditorContent className="flex min-h-0 flex-1 flex-col overflow-y-auto" editor={editor} />
+      <EditorContent
+        className={cn('flex min-h-0 flex-1 flex-col overflow-y-auto', styles.editor)}
+        editor={editor}
+      />
       <VariableSlashMenu editor={editor} variables={variables} />
     </div>
   );
