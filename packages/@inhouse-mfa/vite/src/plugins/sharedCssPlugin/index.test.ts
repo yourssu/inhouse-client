@@ -5,7 +5,6 @@ import { build, createServer } from 'vite';
 import { expect, test } from 'vitest';
 
 import { sharedCssPlugin } from './index';
-import { partitionCss } from './partitionCss';
 
 const fixture = async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'mfa-screen-css-'));
@@ -42,7 +41,7 @@ test('builds only service CSS and preserves CSS Modules and imported asset URLs'
       root,
       configFile: false,
       logLevel: 'silent',
-      plugins: [sharedCssPlugin(['../shared.css'])],
+      plugins: [sharedCssPlugin([path.join(root, 'shared.css')])],
       build: {
         write: false,
         minify: false,
@@ -85,25 +84,18 @@ test('builds only service CSS and preserves CSS Modules and imported asset URLs'
 
 test('watches local CSS dependencies and reloads their service styles', async () => {
   const root = await fixture();
-  const watched: string[] = [];
   const screen = await realpath(path.join(root, 'styles/nested/screen.css'));
   const server = await createServer({
     root,
     configFile: false,
     logLevel: 'silent',
-    plugins: [sharedCssPlugin(['../shared.css'])],
+    plugins: [sharedCssPlugin([path.join(root, 'shared.css')])],
     server: { middlewareMode: true, watch: null },
     optimizeDeps: { noDiscovery: true, include: [] },
   });
 
   try {
-    const css = await partitionCss(path.join(root, 'styles/index.css'), ['../shared.css'], (file) =>
-      watched.push(file),
-    );
-    expect(watched).toContain(screen);
-    expect(css).toContain("url('./nested/font.woff2')");
-
-    const before = await server.transformRequest('/styles/index.css?mfa-screen');
+    const before = await server.transformRequest('/styles/index.css');
     expect(before?.code).toContain('.service');
     expect(before?.code).not.toContain('shared-reset');
     expect(server.moduleGraph.getModulesByFile(screen)?.size).toBeGreaterThan(0);
@@ -111,7 +103,7 @@ test('watches local CSS dependencies and reloads their service styles', async ()
     await writeFile(screen, '.updated-service { display: flex; }');
     server.moduleGraph.onFileChange(screen);
 
-    const after = await server.transformRequest('/styles/index.css?mfa-screen');
+    const after = await server.transformRequest('/styles/index.css');
     expect(after?.code).toContain('.updated-service');
     expect(after?.code).not.toContain('.service {');
     expect(await readFile(path.join(root, 'shared.css'), 'utf8')).toContain('shared-reset');
@@ -121,19 +113,29 @@ test('watches local CSS dependencies and reloads their service styles', async ()
   }
 });
 
-test('rejects qualified local imports instead of silently changing their semantics', async () => {
+test('preserves native layer, supports and media imports', async () => {
   const root = await fixture();
+  const server = await createServer({
+    root,
+    configFile: false,
+    logLevel: 'silent',
+    plugins: [sharedCssPlugin([])],
+    server: { middlewareMode: true, watch: null },
+    optimizeDeps: { noDiscovery: true, include: [] },
+  });
 
   try {
     await writeFile(
       path.join(root, 'styles/index.css'),
-      "@import './nested/screen.css' layer(components);",
+      "@import './nested/screen.css' layer(components) supports(display: grid) screen and (min-width: 10px);",
     );
-
-    await expect(partitionCss(path.join(root, 'styles/index.css'), [], () => {})).rejects.toThrow(
-      'qualified local CSS imports cannot be partitioned safely',
-    );
+    const result = await server.transformRequest('/styles/index.css?inline');
+    expect(result?.code).toContain('@layer components');
+    expect(result?.code).toContain('@supports (display: grid)');
+    expect(result?.code).toContain('@media screen and (min-width: 10px)');
+    expect(result?.code).toContain('.service');
   } finally {
+    await server.close();
     await rm(root, { recursive: true, force: true });
   }
 });
@@ -149,7 +151,7 @@ test.each(['raw', 'url'])('rejects CSS exclusion bypass through ?%s', async (que
         root,
         configFile: false,
         logLevel: 'silent',
-        plugins: [sharedCssPlugin(['../shared.css'])],
+        plugins: [sharedCssPlugin([path.join(root, 'shared.css')])],
         build: { write: false, rolldownOptions: { input: path.join(root, 'entry.ts') } },
       }),
     ).rejects.toThrow('Import remote styles as CSS modules or with ?inline');
@@ -212,13 +214,13 @@ test.each(['', '?inline'])(
   },
 );
 
-test('partitions ?inline styles without injecting them and still updates local dependencies', async () => {
+test('processes ?inline styles without injecting them and still updates local dependencies', async () => {
   const root = await fixture();
   const server = await createServer({
     root,
     configFile: false,
     logLevel: 'silent',
-    plugins: [sharedCssPlugin(['../shared.css'])],
+    plugins: [sharedCssPlugin([path.join(root, 'shared.css')])],
     server: { middlewareMode: true, watch: null },
   });
 
@@ -227,8 +229,8 @@ test('partitions ?inline styles without injecting them and still updates local d
       './styles/index.css?inline',
       path.join(root, 'entry.ts'),
     );
-    expect(resolved?.id).toContain('?inline&mfa-screen');
-    const url = '/styles/index.css?inline&mfa-screen';
+    expect(resolved?.id).toContain('?inline');
+    const url = '/styles/index.css?inline';
     const before = await server.transformRequest(url);
     expect(before?.code).not.toContain('shared-reset');
     expect(before?.code).toContain('.service');

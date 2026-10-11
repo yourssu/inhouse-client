@@ -1,11 +1,13 @@
-import type { Plugin } from 'vite';
+import type { Plugin, ResolvedConfig } from 'vite';
 
-import { __unstable__loadDesignSystem as loadDesignSystem } from '@tailwindcss/node';
+import { loadModule } from '@tailwindcss/node';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import postcss from 'postcss';
 import selectorParser from 'postcss-selector-parser';
+import { __unstable__loadDesignSystem as loadDesignSystem } from 'tailwindcss';
 
+import { createCssResolver } from '../../cssResolver';
 import { createClassMapper } from './utils/createClassMapper';
 import { createClassValueResolver } from './utils/createClassValueResolver';
 import { namespaceSource } from './utils/namespaceSource';
@@ -20,7 +22,8 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
   }
 
   let root = '';
-  let mapper: Promise<ReturnType<typeof createClassMapper>>;
+  let config: ResolvedConfig;
+  let mapper: Promise<ReturnType<typeof createClassMapper>> | undefined;
   const values = createClassValueResolver((filename) => fs.readFile(filename, 'utf8'));
   const sourceMappings = new Map<
     string,
@@ -29,17 +32,40 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
 
   const reloadDesignSystem = () => {
     const filename = path.join(root, 'src/styles/index.css');
+    const resolve = createCssResolver(config);
 
     mapper = fs
       .readFile(filename, 'utf8')
-      .then((css) => loadDesignSystem(css, { base: path.dirname(filename) }))
+      .then((css) =>
+        loadDesignSystem(css, {
+          base: path.dirname(filename),
+          loadModule: (source, base) => loadModule(source, base, () => {}),
+          async loadStylesheet(source, base) {
+            const resolved = await resolve(source, path.join(base, 'index.css'));
+
+            if (!resolved) {
+              throw new Error(`[mfa] Cannot resolve stylesheet ${source} from ${base}.`);
+            }
+
+            return {
+              path: resolved,
+              base: path.dirname(resolved),
+              content: await fs.readFile(resolved, 'utf8'),
+            };
+          },
+        }),
+      )
       .then((system) =>
         createClassMapper(
           prefix,
           (value) =>
             /^(?:group|peer)(?:\/.+)?$/.test(value) || system.candidatesToCss([value])[0] !== null,
         ),
-      );
+      )
+      .catch((error: unknown) => {
+        mapper = undefined;
+        throw error;
+      });
 
     return mapper;
   };
@@ -47,10 +73,10 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
   const sourcePlugin: Plugin = {
     name: 'mfa-tailwind-prefix-source',
     enforce: 'pre',
-    async configResolved(config) {
-      root = config.root;
-
-      await reloadDesignSystem();
+    configResolved(resolved) {
+      config = resolved;
+      root = resolved.root;
+      mapper = undefined;
     },
 
     async hotUpdate({ file, modules, timestamp }) {
@@ -65,7 +91,7 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
         await reloadDesignSystem();
       }
 
-      const classes = await mapper;
+      const classes = await (mapper ?? reloadDesignSystem());
       const affected = [...sourceMappings].flatMap(([id, source]) => {
         const mappingChanged =
           stylesheetChanged &&
@@ -105,7 +131,7 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
           return;
         }
 
-        const classes = await mapper;
+        const classes = await (mapper ?? reloadDesignSystem());
         const mappings = new Map<string, string>();
         const dependencies = new Set<string>();
         const mapClassList = (value: string) =>
@@ -145,7 +171,7 @@ export const tailwindcssPrefix = ({ prefix }: TailwindcssPrefixOptions): Plugin[
           return;
         }
 
-        const classes = await mapper;
+        const classes = await (mapper ?? reloadDesignSystem());
         const css = postcss.parse(code, { from: id });
 
         css.walkAtRules('layer', (layer) => {

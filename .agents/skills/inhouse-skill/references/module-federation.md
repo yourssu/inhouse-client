@@ -82,8 +82,10 @@ shell·remote 등록, route·global 계약, graft, shared dependency, remote CSS
 
 - shell은 reset·token·component·layout 등 공통 CSS를 소유한다. `sharedCSS`는 remote에서 제외할 공통 CSS import 목록이다.
 - remote는 자신의 Tailwind·서비스 CSS를 빌드한다. shell이 remote 소스까지 스캔하거나 remote CSS를 대신 빌드하지 않는다.
-- `sharedCssPlugin`은 remote CSS에서 공통 import를 제외한다. standalone 메타 태그 감지·공통 CSS 재로딩 분기를 추가하지 않는다.
-- CSS Modules export, layer 순서, 상대 CSS URL과 import된 파일의 watch를 보존한다. 일반 local import는 펼치되 layer·supports·media가 붙은 local import는 조용히 의미를 변경하지 않고 거부한다.
+- `sharedCssPlugin`은 정상 resolver 결과를 `realpath`로 비교해 공통 CSS만 패키지에 포함된 실제 `empty.css`로 연결한다. Vite·Tailwind의 중첩 import와 namespace 분석에도 같은 판정을 적용하며 shell에는 치환을 적용하지 않는다. standalone 메타 태그 감지·공통 CSS 재로딩 분기를 추가하지 않는다.
+- `sharedCSS`에는 컴파일 정의가 없는 출력 CSS만 등록한다. CSS Modules·Tailwind compiler directive·public에서 그대로 복사되는 CSS는 등록하지 않는다. 필요한 Tailwind plugin·theme·utility·reference 파일은 별도로 유지한다.
+- 서비스 CSS 원문과 import를 유지하고 CSS Modules export, layer 순서, 상대 CSS URL과 의존성 HMR은 Vite·Tailwind에 맡긴다. `?inline`은 유지하고 remote 서비스·공통 CSS의 `?raw`·`?url` 우회는 거부한다. 중첩 CSS에도 remote asset 사용 규칙을 검사한다. 조건부 import는 기본 도구의 문법 제약을 따른다.
+- 내부 CSS resolver 연결은 Vite 8의 deprecated `createResolver` 호환 경로를 사용한다. Vite·Tailwind 업그레이드 시 실제 개발 서버·빌드·namespace·중첩 CSS HMR 통합 테스트를 실행한다. CSS 입력 문자열 비교 캐시 패치는 추가하지 않는다.
 - Tailwind namespace와 자동 스캔을 유지한다. 서비스 전용 utility·editor 스타일은 remote CSS에 둔다.
 - `public` 파일은 `@inhouse-mfa/vite/assets`의 `publicAsset()`으로 remote origin에서 참조한다. 소스 이미지·폰트는 import, CSS asset은 소스 상대 `url()`을 사용한다. 외부·data URL은 그대로 유지한다.
 - 배포 시 remote HTML은 생성되지 않는다. 기존 public의 MSW worker는 별도 배포 제외 처리를 유지한다.

@@ -4,9 +4,8 @@ import { traverse } from '@babel/core';
 import MagicString from 'magic-string';
 import fs from 'node:fs';
 import path from 'node:path';
-import postcss from 'postcss';
-import valueParser from 'postcss-value-parser';
 
+import { validateRemoteCssAssets } from '../validateRemoteCssAssets';
 import { parseClassSource } from './tailwindcssPrefix/utils/parseClassSource';
 
 const publicModule = '@inhouse-mfa/vite/assets';
@@ -77,20 +76,7 @@ export const publicAsset = (filename) => /^(?:[a-z][a-z\\d+.-]*:|\\/\\/)/i.test(
         }
 
         if (filename.endsWith('.css')) {
-          postcss.parse(code, { from: filename }).walkDecls((declaration) => {
-            valueParser(declaration.value).walk((node) => {
-              if (node.type !== 'function' || node.value !== 'url') {
-                return;
-              }
-
-              const url = node.nodes.find(
-                (entry) => entry.type === 'word' || entry.type === 'string',
-              );
-              if (url?.value.startsWith('/') && !externalUrl.test(url.value)) {
-                throw declaration.error('Use a source-relative CSS url() for remote assets.');
-              }
-            });
-          });
+          validateRemoteCssAssets(code, filename, config.root);
           return;
         }
 
