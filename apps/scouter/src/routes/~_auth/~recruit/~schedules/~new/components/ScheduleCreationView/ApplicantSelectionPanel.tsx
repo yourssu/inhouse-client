@@ -1,6 +1,6 @@
-import { Fieldset } from '@yourssu-inhouse/interior';
-import { Select } from '@yourssu-inhouse/interior';
-import { TabButton } from '@yourssu-inhouse/interior';
+import { Fieldset } from '@interior/react';
+import { Select } from '@interior/react';
+import { TabButton } from '@interior/react';
 import { useMemo } from 'react';
 import { MdCheck } from 'react-icons/md';
 

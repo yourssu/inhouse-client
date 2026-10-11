@@ -1,5 +1,5 @@
-import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
-import { SegmentedControl } from '@yourssu-inhouse/interior';
+import { useSetStateSelector } from '@inhouse/react/hooks';
+import { SegmentedControl } from '@interior/react';
 import { startTransition } from 'react';
 
 import { useSearchState } from '@/hooks/useSearchState';

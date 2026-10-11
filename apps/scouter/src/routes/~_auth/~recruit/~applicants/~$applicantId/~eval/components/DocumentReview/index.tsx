@@ -1,4 +1,4 @@
-import { Divider } from '@yourssu-inhouse/interior';
+import { Divider } from '@interior/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';

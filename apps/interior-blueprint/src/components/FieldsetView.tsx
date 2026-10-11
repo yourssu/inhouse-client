@@ -1,4 +1,4 @@
-import { Fieldset, Select, TextField } from '@yourssu-inhouse/interior';
+import { Fieldset, Select, TextField } from '@interior/react';
 
 export const FieldsetView = () => {
   return (

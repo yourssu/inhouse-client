@@ -1,4 +1,4 @@
-import { objectEntries } from '@yourssu-inhouse/inhouse-utils/object';
+import { objectEntries } from '@inhouse/utils/object';
 
 import type { Member } from '@/apis/members/schema';
 import type { GroupedHistoryItem } from '@/routes/~_auth/~members/~list/components/MemberHistoryTooltip/type';

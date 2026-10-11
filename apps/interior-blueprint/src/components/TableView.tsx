@@ -1,6 +1,6 @@
-import { Badge } from '@yourssu-inhouse/interior';
-import { InlineButton } from '@yourssu-inhouse/interior';
-import { Table } from '@yourssu-inhouse/interior';
+import { Badge } from '@interior/react';
+import { InlineButton } from '@interior/react';
+import { Table } from '@interior/react';
 // [Imports]
 import { useState } from 'react';
 

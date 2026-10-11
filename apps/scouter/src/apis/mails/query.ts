@@ -1,5 +1,5 @@
+import { createQueryKeyNamespace } from '@inhouse/utils/query';
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import type { MailTemplatesResponse } from '@/apis/mails/schema';
 

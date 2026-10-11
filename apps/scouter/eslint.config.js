@@ -17,4 +17,10 @@ export default defineConfig([
       ],
     },
   },
+  {
+    files: ['src/global.tsx'],
+    rules: {
+      'react-refresh/only-export-components': ['error', { allowExportNames: ['bootstrap'] }],
+    },
+  },
 ]);

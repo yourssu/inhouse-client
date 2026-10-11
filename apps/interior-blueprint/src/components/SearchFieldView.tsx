@@ -1,4 +1,4 @@
-import { SearchField } from '@yourssu-inhouse/interior';
+import { SearchField } from '@interior/react';
 
 export const SearchFieldView = () => {
   return (

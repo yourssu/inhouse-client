@@ -1,0 +1,76 @@
+{
+  "name": "@inhouse-mfa/vite",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./assets": {
+      "types": "./src/assets.d.ts"
+    },
+    "./retry-plugin": {
+      "types": "./src/plugins/retryPlugin.ts",
+      "import": "./dist/retryPlugin.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check:type": "tsc -b",
+    "check:lint": "eslint .",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@babel/core": "^7.29.7",
+    "@inhouse-mfa/core": "workspace:*",
+    "@module-federation/retry-plugin": "^2.9.0",
+    "@tailwindcss-mangle/shared": "5.0.1",
+    "@tailwindcss/node": "4.3.3",
+    "es-toolkit": "^1.47.0",
+    "magic-string": "^1.4.2",
+    "postcss": "^8.5.28",
+    "tailwindcss": "4.3.3",
+    "postcss-selector-parser": "^7.1.6",
+    "postcss-value-parser": "^4.2.0",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@tanstack/router-plugin": "catalog:",
+    "@vitejs/plugin-react": "^6.1.0",
+    "vite-tsconfig-paths": "^6.1.1",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "@module-federation/vite": "^1.20.8"
+  },
+  "devDependencies": {
+    "@jridgewell/trace-mapping": "^0.3.31",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^24.13.0",
+    "@yourssu-inhouse/eslint-config": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "^3.9.6",
+    "tsdown": "^0.22.14",
+    "typescript": "catalog:",
+    "vite": "^8.2.2",
+    "vitest": "5.0.3",
+    "@exterior/core": "workspace:*",
+    "@tanstack/react-router": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@inhouse/query-client": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "@tailwindcss/vite": "^4.3.3"
+  },
+  "peerDependencies": {
+    "vite": "^8.0.12"
+  }
+}

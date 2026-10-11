@@ -1,5 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { Menu } from '@yourssu-inhouse/interior';
+import { queryClient } from '@inhouse/query-client';
+import { Menu } from '@interior/react';
 import { MdDelete } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
 
@@ -13,7 +13,6 @@ interface TemplateDeleteButtonProps {
 }
 
 export const TemplateDeleteButton = ({ templateId }: TemplateDeleteButtonProps) => {
-  const queryClient = useQueryClient();
   const [loading, startLoading] = useLoading();
   const openAlert = useAlertDialog();
   const trackTemplateEvent = useTemplateAnalytics();

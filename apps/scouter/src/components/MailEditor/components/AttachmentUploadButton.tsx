@@ -1,7 +1,7 @@
-import { Badge } from '@yourssu-inhouse/interior';
-import { IconButton } from '@yourssu-inhouse/interior';
-import { InlineButton } from '@yourssu-inhouse/interior';
-import { useToast } from '@yourssu-inhouse/interior';
+import { Badge } from '@interior/react';
+import { IconButton } from '@interior/react';
+import { InlineButton } from '@interior/react';
+import { useToast } from '@interior/react';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { MdAttachment, MdClose } from 'react-icons/md';

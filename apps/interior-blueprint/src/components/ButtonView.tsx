@@ -1,4 +1,4 @@
-import { Button, InlineButton } from '@yourssu-inhouse/interior';
+import { Button, InlineButton } from '@interior/react';
 import { MdEdit } from 'react-icons/md';
 
 const variants = ['primary', 'secondary', 'subPrimary', 'danger', 'transparent'] as const;

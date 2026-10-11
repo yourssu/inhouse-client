@@ -1,7 +1,7 @@
 import './styles/index.css';
 
+import { initializeTheme, ThemeProvider, ToastProvider } from '@interior/react';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { initializeTheme, ThemeProvider, ToastProvider } from '@yourssu-inhouse/interior';
 import { OverlayProvider } from 'overlay-kit';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

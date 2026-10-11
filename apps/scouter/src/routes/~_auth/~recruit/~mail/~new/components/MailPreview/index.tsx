@@ -1,5 +1,5 @@
+import { lotties } from '@inhouse/resources';
 import { Lottie } from '@toss/lottie';
-import { lotties } from '@yourssu-inhouse/resources';
 
 import type { ApplicantType } from '@/apis/applicants/schema';
 import type { VariableTypeName } from '@/apis/mails/schema';

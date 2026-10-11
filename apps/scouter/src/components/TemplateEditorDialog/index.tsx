@@ -1,6 +1,6 @@
+import { useSetStateSelector } from '@inhouse/react/hooks';
+import { Dialog } from '@interior/react';
 import { type Editor } from '@tiptap/react';
-import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
-import { Dialog } from '@yourssu-inhouse/interior';
 import { josa } from 'es-hangul';
 import { useEffect, useRef, useState } from 'react';
 import { useLoading } from 'react-simplikit';

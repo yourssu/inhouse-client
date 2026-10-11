@@ -1,10 +1,10 @@
+import { useSetStateSelector } from '@inhouse/react/hooks';
+import { formatTemplates } from '@inhouse/utils/date';
+import { IconButton } from '@interior/react';
+import { Menu } from '@interior/react';
+import { Pagination } from '@interior/react';
+import { Table } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useSetStateSelector } from '@yourssu-inhouse/inhouse-react/hooks';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { IconButton } from '@yourssu-inhouse/interior';
-import { Menu } from '@yourssu-inhouse/interior';
-import { Pagination } from '@yourssu-inhouse/interior';
-import { Table } from '@yourssu-inhouse/interior';
 import { MdMoreHoriz } from 'react-icons/md';
 
 import { mailTemplatesOption } from '@/apis/mails/query';

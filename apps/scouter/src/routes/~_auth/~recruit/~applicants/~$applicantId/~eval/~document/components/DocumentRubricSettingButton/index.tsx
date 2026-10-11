@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient, useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
-import { Badge, Button, Dialog, Divider, useToast } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
+import { queryClient } from '@inhouse/query-client';
+import { Badge, Button, Dialog, Divider, useToast } from '@interior/react';
+import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import {
   Controller,
@@ -27,6 +27,7 @@ import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 import { InterviewScoreInput } from '@/routes/~_auth/~recruit/~applicants/~$applicantId/~eval/components/InterviewScoreInput';
 import { isDocumentEvalActionAllowed } from '@/types/applicants';
+import { cn } from '@/utils/tailwind';
 
 import { DocumentAnalyticsContext, useDocumentAnalytics } from '../../analytics';
 import {
@@ -45,7 +46,6 @@ interface DocumentRubricSettingButtonProps {
 export const DocumentRubricSettingButton = ({ applicant }: DocumentRubricSettingButtonProps) => {
   const { state, applicantId, partId } = applicant;
 
-  const queryClient = useQueryClient();
   const openRubricSettingDialog = useAlertDialog();
   const trackDocumentEvent = useDocumentAnalytics();
 
@@ -127,7 +127,6 @@ const DocumentRubricSettingForm = ({
     data: { rubrics },
   } = useSuspenseQuery(getPartDocumentsRubricsOption(part.partId));
 
-  const queryClient = useQueryClient();
   const toast = useToast();
   const trackDocumentEvent = useDocumentAnalytics();
 

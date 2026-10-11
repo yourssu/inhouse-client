@@ -1,6 +1,7 @@
-import { useTheme } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
-import { images } from '@yourssu-inhouse/resources';
+import { images } from '@inhouse/resources';
+import { useTheme } from '@interior/react';
+
+import { cn } from '@/utils/tailwind';
 
 interface AdaptiveLogoProps {
   className?: string;

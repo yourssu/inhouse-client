@@ -1,9 +1,9 @@
-import { Button } from '@yourssu-inhouse/interior';
-import { Fieldset } from '@yourssu-inhouse/interior';
-import { HoverTooltip } from '@yourssu-inhouse/interior';
-import { Switch } from '@yourssu-inhouse/interior';
-import { TextField } from '@yourssu-inhouse/interior';
-import { useToast } from '@yourssu-inhouse/interior';
+import { Button } from '@interior/react';
+import { Fieldset } from '@interior/react';
+import { HoverTooltip } from '@interior/react';
+import { Switch } from '@interior/react';
+import { TextField } from '@interior/react';
+import { useToast } from '@interior/react';
 import { useState } from 'react';
 import { MdHelpOutline } from 'react-icons/md';
 

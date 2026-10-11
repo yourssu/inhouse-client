@@ -1,4 +1,4 @@
-import { Pagination } from '@yourssu-inhouse/interior';
+import { Pagination } from '@interior/react';
 import { useState } from 'react';
 
 const Interactive = ({

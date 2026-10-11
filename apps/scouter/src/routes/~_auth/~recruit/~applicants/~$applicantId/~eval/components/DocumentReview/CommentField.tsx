@@ -1,4 +1,4 @@
-import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
+import { IconButton, MultilineTextField } from '@interior/react';
 import { useEffect, useRef } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 

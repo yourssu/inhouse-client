@@ -1,4 +1,4 @@
-import { Checkbox } from '@yourssu-inhouse/interior';
+import { Checkbox } from '@interior/react';
 
 export const CheckboxView = () => {
   return (

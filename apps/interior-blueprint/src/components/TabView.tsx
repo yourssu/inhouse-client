@@ -1,4 +1,4 @@
-import { Tab } from '@yourssu-inhouse/interior';
+import { Tab } from '@interior/react';
 import { useState } from 'react';
 
 export const TabView = () => {

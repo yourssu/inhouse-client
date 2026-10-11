@@ -1,4 +1,4 @@
-import { Select } from '@yourssu-inhouse/interior';
+import { Select } from '@interior/react';
 
 export const SelectView = () => {
   return (

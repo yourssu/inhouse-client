@@ -1,5 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { Menu } from '@yourssu-inhouse/interior';
+import { queryClient } from '@inhouse/query-client';
+import { Menu } from '@interior/react';
 import { overlay } from 'overlay-kit';
 import { MdEdit } from 'react-icons/md';
 import { useLoading } from 'react-simplikit';
@@ -13,7 +13,6 @@ interface TemplateEditButtonProps {
 }
 
 export const TemplateEditButton = ({ templateId }: TemplateEditButtonProps) => {
-  const queryClient = useQueryClient();
   const [loading, startLoading] = useLoading();
   const trackTemplateEvent = useTemplateAnalytics();
 

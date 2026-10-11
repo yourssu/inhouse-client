@@ -1,0 +1,56 @@
+diff --git a/dist/node/chunks/node.js b/dist/node/chunks/node.js
+index 87cfa480c3d4132f9dd1b74c6c1bbe2b90385d3f..f7a9fda33c276982c56dba6e7297f3bd1252dda8 100644
+--- a/dist/node/chunks/node.js
++++ b/dist/node/chunks/node.js
+@@ -28890,15 +28890,33 @@
+ 				import.meta.url
+ 			).href;
+ 		}
++		function waitForStylesheet(link, dep) {
++			return new Promise((resolve, reject) => {
++				const cleanup = () => {
++					link.removeEventListener("load", onLoad);
++					link.removeEventListener("error", onError);
++				};
++				const onLoad = () => { cleanup(); resolve(); };
++				const onError = () => {
++					cleanup();
++					delete seen[dep];
++					link.remove();
++					reject(new Error(`Unable to preload CSS for ${dep}`));
++				};
++				link.addEventListener("load", onLoad);
++				link.addEventListener("error", onError);
++			});
++		}
+ 		promise = allSettled(deps.map((dep) => {
+ 			dep = assetsURL(dep, importerUrl);
+ 			dep = importMetaResolve(dep);
+-			if (dep in seen) return;
+-			seen[dep] = true;
++			if (dep in seen) return seen[dep];
+ 			const isCss = dep.endsWith(".css");
+ 			for (let i = links.length - 1; i >= 0; i--) {
+ 				const link = links[i];
+-				if (link.href === dep && (!isCss || link.rel === "stylesheet")) return;
++				if (link.href === dep && (!isCss || link.rel === "stylesheet")) {
++					return seen[dep] = !isCss || link.sheet ? true : waitForStylesheet(link, dep);
++				}
+ 			}
+ 			const link = document.createElement("link");
+ 			link.rel = isCss ? "stylesheet" : scriptRel;
+@@ -28906,11 +28924,10 @@
+ 			link.crossOrigin = "";
+ 			link.href = dep;
+ 			if (cspNonce) link.setAttribute("nonce", cspNonce);
++			// Concurrent imports await the same CSS request; failures are retryable.
++			const pending = seen[dep] = isCss ? waitForStylesheet(link, dep) : true;
+ 			document.head.appendChild(link);
+-			if (isCss) return new Promise((res, rej) => {
+-				link.addEventListener("load", res);
+-				link.addEventListener("error", () => rej(/* @__PURE__ */ new Error(`Unable to preload CSS for ${dep}`)));
+-			});
++			return pending;
+ 		}));
+ 	}
+ 	function handlePreloadError(err) {

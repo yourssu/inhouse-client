@@ -1,5 +1,5 @@
+import { InlineButton, useTheme } from '@interior/react';
 import { createLazyFileRoute, Link } from '@tanstack/react-router';
-import { InlineButton, useTheme } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { useState } from 'react';
 

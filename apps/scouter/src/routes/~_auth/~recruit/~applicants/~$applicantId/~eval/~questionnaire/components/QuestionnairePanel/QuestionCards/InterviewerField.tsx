@@ -1,4 +1,4 @@
-import { Fieldset, Select } from '@yourssu-inhouse/interior';
+import { Fieldset, Select } from '@interior/react';
 import { type Control, Controller } from 'react-hook-form';
 
 import type { QuestionCategory } from '@/apis/interviews/questions/schema';

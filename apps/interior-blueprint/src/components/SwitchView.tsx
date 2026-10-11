@@ -1,4 +1,4 @@
-import { Switch } from '@yourssu-inhouse/interior';
+import { Switch } from '@interior/react';
 import { useState } from 'react';
 
 export const SwitchView = () => {

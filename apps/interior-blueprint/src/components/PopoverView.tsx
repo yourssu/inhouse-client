@@ -1,4 +1,4 @@
-import { Button, Popover } from '@yourssu-inhouse/interior';
+import { Button, Popover } from '@interior/react';
 
 const sides = ['top', 'right', 'bottom', 'left'] as const;
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { MultilineTextField } from '@yourssu-inhouse/interior';
+import { MultilineTextField } from '@interior/react';
 import { type Control, Controller } from 'react-hook-form';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';

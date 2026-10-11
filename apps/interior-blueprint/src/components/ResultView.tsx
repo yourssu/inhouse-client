@@ -1,4 +1,4 @@
-import { Result } from '@yourssu-inhouse/interior';
+import { Result } from '@interior/react';
 import { MdErrorOutline, MdInbox, MdSearchOff } from 'react-icons/md';
 
 const Frame = ({ children }: React.PropsWithChildren) => (
