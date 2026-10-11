@@ -10,6 +10,7 @@ export default defineConfig({
   format: ['esm'],
   dts: false,
   sourcemap: true,
+  copy: ['./src/empty.css'],
   clean: !process.argv.includes('--watch'),
   deps: {
     neverBundle: [

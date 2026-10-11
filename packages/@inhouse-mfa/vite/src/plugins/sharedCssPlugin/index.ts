@@ -1,95 +1,44 @@
-import type { Plugin } from 'vite';
+import type { Plugin, ResolvedConfig } from 'vite';
 
-import path from 'node:path';
-
-import { partitionCss } from './partitionCss';
-
-const screenQuery = 'mfa-screen';
+import { createRemoteCssPolicy } from '../../remoteCssPolicy';
 
 export const sharedCssPlugin = (sharedCSS: readonly string[]): Plugin => {
-  let root = '';
-  let sharedFiles: Promise<Set<string>> | undefined;
-  const dependencies = new Map<string, string[]>();
-  const excludedFiles = new Set<string>();
+  let policy: ReturnType<typeof createRemoteCssPolicy>;
 
   return {
     name: 'mfa-shared-css',
     enforce: 'pre',
     configResolved(config) {
-      root = config.root;
-      sharedFiles = undefined;
-      excludedFiles.clear();
-      dependencies.clear();
-    },
-    resolveId: {
-      filter: { id: /\.css(?:\?.*)?$/ },
-      async handler(source, importer) {
-        const [filename, query = ''] = source.split('?');
+      policy = createRemoteCssPolicy(config, sharedCSS);
 
-        if (
-          !sharedCSS.length ||
-          !importer ||
-          !filename.endsWith('.css') ||
-          new URLSearchParams(query).has(screenQuery) ||
-          importer.split('?')[0].endsWith('.css')
-        ) {
-          return;
-        }
+      // Vite's CSS imports and Tailwind bypass the normal plugin resolveId/load pipeline.
+      const createResolver: ResolvedConfig['createResolver'] = (options) => {
+        const resolve = policy.nativeCreateResolver(options);
 
-        const resolved = await this.resolve(source, importer, { skipSelf: true });
+        return async (...args) => {
+          const resolved = await resolve(...args);
 
-        if (!resolved || resolved.external) {
-          return;
-        }
-
-        sharedFiles ??= Promise.all(
-          sharedCSS.map((css) =>
-            this.resolve(css, path.join(root, 'src/styles/index.css'), { skipSelf: true }),
-          ),
-        ).then((files) => new Set(files.flatMap((file) => (file ? [file.id.split('?')[0]] : []))));
-
-        const resolvedFile = resolved.id.split('?')[0];
-        const excluded = sharedCSS.includes(filename) || (await sharedFiles).has(resolvedFile);
-
-        if (!excluded && !resolvedFile.startsWith(`${root}/`)) {
-          return;
-        }
-
-        if (new URLSearchParams(query).has('raw') || new URLSearchParams(query).has('url')) {
-          this.error(
-            '[mfa] Import remote styles as CSS modules or with ?inline, not ?raw or ?url.',
-          );
-        }
-
-        if (excluded) {
-          excludedFiles.add(resolvedFile);
-        }
-
-        return {
-          ...resolved,
-          id: `${resolved.id}${resolved.id.includes('?') ? '&' : '?'}${screenQuery}`,
+          return resolved ? policy.replace(resolved) : resolved;
         };
-      },
-    },
-    load: {
-      filter: { id: /[?&]mfa-screen$/ },
-      async handler(id) {
-        const filename = id.slice(0, id.indexOf('?'));
-        const files = [filename];
-        const css = excludedFiles.has(filename)
-          ? ''
-          : await partitionCss(filename, sharedCSS, (file) => files.push(file));
-        dependencies.set(id, files);
+      };
 
-        return css;
-      },
+      Object.defineProperty(config, 'createResolver', { value: createResolver });
     },
-    transform: {
-      filter: { id: /[?&]mfa-screen$/ },
-      handler(_code, id) {
-        // Vite attaches CSS dependency edges during transform, after creating the module node.
-        dependencies.get(id)?.forEach((file) => this.addWatchFile(file));
-      },
+    async buildStart() {
+      await policy.initialize();
+    },
+    async resolveId(source, importer, options) {
+      if (source.startsWith('\0')) {
+        return;
+      }
+
+      const resolved = await this.resolve(source, importer, { ...options, skipSelf: true });
+
+      if (!resolved || resolved.external) {
+        return resolved;
+      }
+
+      return { ...resolved, id: await policy.replace(resolved.id) };
     },
   };
 };
