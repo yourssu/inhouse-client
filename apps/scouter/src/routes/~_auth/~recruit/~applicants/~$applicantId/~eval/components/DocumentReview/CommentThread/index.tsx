@@ -93,7 +93,7 @@ export const CommentThread = ({
           <div className="flex items-end gap-1">
             <MultilineTextField
               autoFocus
-              className="read-only:border-grey50 read-only:bg-grey100 min-h-fit overflow-hidden p-1.5 read-only:cursor-not-allowed"
+              className="min-h-fit overflow-hidden p-1.5"
               disabled={isReplyDisabled}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}

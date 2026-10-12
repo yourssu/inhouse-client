@@ -33,6 +33,7 @@ interface CommentItemProps {
   actions?: ReactNode;
   children: ReactNode;
   comment: CommentType;
+  isCreatePending: boolean;
 }
 
 interface CommentBodyProps {
@@ -53,6 +54,11 @@ export const Comment = ({
   const queryClient = useQueryClient();
   const queryKey = commentsQueryKey(applicantId);
   const mutationKey = changeCommentMutationKey(applicantId, commentId);
+  const isCreatePending =
+    useIsMutating({
+      mutationKey: queryKey,
+      predicate: ({ state }) => (state.context as CommentType | undefined)?.commentId === commentId,
+    }) > 0;
   const isDeletePending =
     useIsMutating({
       mutationKey: changeCommentMutationKey(applicantId, commentId, 'delete'),
@@ -229,6 +235,7 @@ export const Comment = ({
         ) : undefined
       }
       comment={displayedComment}
+      isCreatePending={isCreatePending}
     >
       {isEditing ? (
         <div className="flex flex-col gap-0.5">
@@ -273,14 +280,14 @@ export const Comment = ({
   );
 };
 
-const CommentItem = ({ actions, children, comment }: CommentItemProps) => {
+const CommentItem = ({ actions, children, comment, isCreatePending }: CommentItemProps) => {
   const { author, createdAt, isEdited } = comment;
   const relativeTime = createdAt
     ? formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt))
     : null;
 
   return (
-    <div className="group">
+    <div className={isCreatePending ? 'group text-neutralSubtle' : 'group'}>
       <div className="flex items-center justify-between gap-1">
         <div className="flex min-w-0 items-center gap-1 whitespace-nowrap">
           <span className="text-13 truncate font-medium">
