@@ -94,10 +94,11 @@ export const CommentThread = ({
             <MultilineTextField
               autoFocus
               className="min-h-fit overflow-hidden p-1.5"
-              disabled={isWritePending || isReplyDisabled}
+              disabled={isReplyDisabled}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={'댓글 추가'}
+              readOnly={isWritePending}
               ref={textareaRef}
               rows={1}
               value={content}
@@ -107,6 +108,7 @@ export const CommentThread = ({
               aria-label="답글 등록"
               disabled={isContentEmpty || isWritePending || isReplyDisabled}
               onClick={handleAddComment}
+              onMouseDown={(e) => e.preventDefault()}
               size="md"
             >
               <BsArrowUpCircleFill className="size-5" />
