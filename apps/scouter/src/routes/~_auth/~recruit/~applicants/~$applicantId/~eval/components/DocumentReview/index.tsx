@@ -76,7 +76,7 @@ export const DocumentReview = ({
   }, [selectedSectionId]);
 
   return (
-    <Paper className="grid min-h-0 grid-cols-3 grid-rows-1 gap-4 overflow-hidden">
+    <Paper className="grid min-h-0 grid-cols-3 grid-rows-1 gap-4 overflow-hidden" key={applicantId}>
       <div className="col-span-2 flex min-h-0 min-w-0 flex-col gap-4 overflow-y-auto only:col-span-full">
         {answers.map((answer, index) => {
           const { sectionId } = answer;

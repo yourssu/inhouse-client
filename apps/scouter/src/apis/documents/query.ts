@@ -33,6 +33,18 @@ export const documentEvaluatorStatusesOption = (applicantId: number) =>
 export const commentsQueryKey = (applicantId: number) =>
   qk.for('applicants', applicantId, 'documents', 'comments');
 
+export const createCommentMutationKey = (
+  applicantId: number,
+  sectionId: number,
+  parentCommentId: null | number,
+) => [...commentsQueryKey(applicantId), 'create', sectionId, parentCommentId] as const;
+
+export const changeCommentMutationKey = (
+  applicantId: number,
+  commentId: number,
+  operation?: 'delete' | 'update',
+) => [...commentsQueryKey(applicantId), 'change', commentId, ...(operation ? [operation] : [])];
+
 export const applicantDocumentCommentsOption = (applicantId: number) =>
   queryOptions({
     queryKey: commentsQueryKey(applicantId),
