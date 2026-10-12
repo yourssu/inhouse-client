@@ -1,6 +1,7 @@
 import type { UpdateApplicantDocumentEvaluationRequestType } from '@/apis/documents/schema';
 
 import { api } from '@/apis/api';
+import { create3, readAllByApplicantId } from '@/apis/documents/generated/comments.gen';
 import {
   ApplicantDocumentEvaluationsResponseSchema,
   ApplicantDocumentOthersEvaluationsSchema,
@@ -53,7 +54,7 @@ export const putApplicantDocumentEvaluations = async ({
 };
 
 export const getApplicantDocumentComments = async (applicantId: number) => {
-  const response = await api.get(`applicants/${applicantId}/documents/comments`).json();
+  const response = await readAllByApplicantId(applicantId).json<unknown>();
   return CommentSchema.array().parse(response);
 };
 
@@ -64,7 +65,7 @@ export type CreateCommentParams = {
 
 export const postApplicantDocumentComment = async ({ applicantId, data }: CreateCommentParams) => {
   const request = CreateCommentRequestSchema.parse(data);
-  await api.post(`applicants/${applicantId}/documents/comments`, { json: request });
+  await create3(applicantId, request);
 };
 export type DeleteCommentParams = {
   applicantId: number;
