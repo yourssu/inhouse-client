@@ -47,7 +47,7 @@ export const useWriteComment = ({
         ...data,
         commentId: -Date.now(),
         author: {
-          nickname: me.nickname,
+          nickname: me.nickname.split('(')[0].trim(),
           part: me.parts.map(({ part }) => part).join(', '),
           userId: me.userId,
         },

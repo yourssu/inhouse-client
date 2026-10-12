@@ -50,7 +50,7 @@ export const CommentField = ({
       <div className="flex items-end gap-1">
         <MultilineTextField
           autoFocus
-          className="min-h-fit overflow-hidden p-1.5"
+          className="read-only:border-grey50 read-only:bg-grey100 min-h-fit overflow-hidden p-1.5 read-only:cursor-not-allowed"
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={'댓글 추가'}
