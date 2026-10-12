@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import { assert } from 'es-toolkit';
-import { useEffect, useId, useRef, useState, useTransition } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import { TabContext, TabListContext, useTabContext, useTabListContext } from './context';
 import * as styles from './Tab.css';
@@ -50,18 +50,14 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
 
   const baseId = useId();
   const [innerValue, setInnerValue] = useState(defaultValue);
-  // TODO: transition은 쓰지 않기로 했어요. suspend 처리는 사용처에 위임해요 (#238).
-  const [isValueChangePending, startTransition] = useTransition();
   const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : innerValue;
 
   const handleValueChange = (nextValue: string) => {
-    startTransition(() => {
-      if (!isControlled) {
-        setInnerValue(nextValue);
-      }
-      onValueChange?.(nextValue);
-    });
+    if (!isControlled) {
+      setInnerValue(nextValue);
+    }
+    onValueChange?.(nextValue);
   };
 
   const Comp = asChild ? Slot : 'div';
@@ -71,7 +67,6 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
       value={{
         baseId,
         isControlled,
-        isValueChangePending,
         onValueChange: handleValueChange,
         value: selectedValue,
       }}
@@ -143,16 +138,16 @@ const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
 };
 
 const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
-  const { baseId, isValueChangePending, onValueChange, value: selectedValue } = useTabContext();
+  const { baseId, onValueChange, value: selectedValue } = useTabContext();
   const { fallbackTabId } = useTabListContext();
 
   const selected = value === selectedValue;
-  const isSelectionSettled = !isValueChangePending && selected;
   const tabId = getTabId(baseId, value);
   const isTabStop = selected || tabId === fallbackTabId;
 
   const handleClick = () => {
-    if (disabled || isSelectionSettled) {
+    // 전환 대기 처리는 Tab이 하지 않고, 사용처가 value로 최신 요청을 넘기는 것으로 위임한다 (#238).
+    if (disabled || selected) {
       return;
     }
     onValueChange(value);
