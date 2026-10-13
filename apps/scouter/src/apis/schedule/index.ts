@@ -1,4 +1,10 @@
-import { api } from '@/apis/api';
+import {
+  createSchedules,
+  deleteByPart,
+  getSchedules as getGeneratedSchedules,
+  updateByPart,
+  updateLocation,
+} from '@/apis/generated/schedule/client';
 import {
   CreateScheduleCommandSchema,
   CreateScheduleRequestSchema,
@@ -30,19 +36,15 @@ type PatchInterviewLocationParams = InterviewLocationType & {
 };
 
 export const getInterviewSchedules = async (params: GetSchedulesParams = {}) => {
-  const response = await api
-    .get('recruiter/schedule', {
-      searchParams: params.partId ? { partId: params.partId } : {},
-    })
-    .json();
-  return InterviewScheduleSchema.array().parse(response);
+  const { data } = await getGeneratedSchedules(params);
+  return InterviewScheduleSchema.array().parse(data);
 };
 
 export const postInterviewSchedules = async (schedules: CreateScheduleRequestType[]) => {
   const validated = CreateScheduleRequestSchema.array().parse(
     schedules.map(normalizeScheduleRequest),
   );
-  await api.post('recruiter/schedule', { json: validated });
+  await createSchedules(validated);
 };
 
 export const putInterviewSchedulesByPart = async (
@@ -55,12 +57,12 @@ export const putInterviewSchedulesByPart = async (
       locationType: locationTypeCommandMap[schedule.locationType],
     })),
   );
-  await api.put(`recruiter/schedule/part/${partId}`, { json: validated });
+  await updateByPart(partId, validated);
 };
 
 export const deleteInterviewSchedulesByPart = async (partId: number) => {
-  const response = await api.delete(`recruiter/schedule/part/${partId}`).json();
-  return DeleteSchedulesByPartResponseSchema.parse(response);
+  const { data } = await deleteByPart(partId);
+  return DeleteSchedulesByPartResponseSchema.parse(data);
 };
 
 export const patchInterviewLocation = async ({
@@ -72,5 +74,5 @@ export const patchInterviewLocation = async ({
     locationType,
     ...(locationDetail == null ? {} : { locationDetail }),
   });
-  await api.patch(`recruiter/schedule/${scheduleId}/location`, { json: validated });
+  await updateLocation(scheduleId, validated);
 };

@@ -1,12 +1,15 @@
-import { api } from '@/apis/api';
+import {
+  getSemesters as getGeneratedSemesters,
+  getSemestersNow as getGeneratedSemestersNow,
+} from '@/apis/generated/semesters/client';
 import { SemesterSchema } from '@/apis/semesters/schema';
 
 export const getSemesters = async () => {
-  const response = await api.get('semesters').json();
-  return SemesterSchema.array().parse(response);
+  const { data } = await getGeneratedSemesters();
+  return SemesterSchema.array().parse(data);
 };
 
 export const getSemestersNow = async () => {
-  const response = await api.get('semesters/now').json();
-  return SemesterSchema.parse(response);
+  const { data } = await getGeneratedSemestersNow();
+  return SemesterSchema.parse(data);
 };

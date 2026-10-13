@@ -1,7 +1,7 @@
-import { api } from '@/apis/api';
+import { getParts as getGeneratedParts } from '@/apis/generated/parts/client';
 import { PartSchema } from '@/apis/parts/schema';
 
 export const getParts = async () => {
-  const response = await api.get('parts').json();
-  return PartSchema.array().parse(response);
+  const { data } = await getGeneratedParts();
+  return PartSchema.array().parse(data);
 };

@@ -3,7 +3,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-  globalIgnores(['dist', 'node_modules', '**/*.d.ts', '**/*.gen.*']),
+  globalIgnores(['dist', 'node_modules', 'src/apis/generated', '**/*.d.ts', '**/*.gen.*']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [workspaceReactEslintConfig, reactRefresh.configs.vite],
