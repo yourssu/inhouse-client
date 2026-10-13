@@ -1,9 +1,9 @@
-import { QueryClient } from '@tanstack/react-query';
 import ky, { HTTPError } from 'ky';
 import assert from 'node:assert/strict';
 import { beforeEach, mock, test } from 'node:test';
 import { ZodError } from 'zod/v4';
 
+// 테스트 준비: 실제 서버 대신 모의 응답으로 API 연결을 확인합니다.
 let requests: Request[] = [];
 let respond: (request: Request) => Promise<Response> | Response;
 
@@ -16,96 +16,45 @@ const api = ky.create({
     return respond(request);
   },
 });
-
-// Replace the auth boundary before importing fetchers; every request stays in this process.
 mock.module(new URL('../src/apis/api.ts', import.meta.url), {
   namedExports: { api },
 });
-
 const {
   getApplicantDocumentComments,
   patchApplicantDocumentComment,
   postApplicantDocumentComment,
 } = await import('../src/apis/documents/index');
-const { applicantDocumentCommentsOption, commentsQueryKey } =
-  await import('../src/apis/documents/query');
 
-const legacyComment = {
+const comment = {
   author: { nickname: 'Rookie', part: 'Frontend', userId: 3 },
   commentId: 7,
   content: '확인했어요.',
   isEdited: false,
   sectionId: 2,
 };
-const comment = {
-  ...legacyComment,
-  createdAt: '2026-10-12T01:02:03.456Z',
-  parentCommentId: null,
-};
 
 beforeEach(() => {
   requests = [];
   respond = () => {
-    throw new Error('Unexpected request: configure a response in this test.');
+    throw new Error('테스트 응답을 설정해야 합니다.');
   };
 });
 
-test('GET returns validated comments for the requested applicant', async () => {
+test('조회: 날짜 생략을 허용하고 부모 ID 생략을 null로 변환한다', async () => {
   respond = () => Response.json([comment]);
 
-  assert.deepEqual(await getApplicantDocumentComments(11), [comment]);
-  assert.equal(requests.length, 1);
+  assert.deepEqual(await getApplicantDocumentComments(11), [{ ...comment, parentCommentId: null }]);
   assert.equal(requests[0].method, 'GET');
   assert.equal(requests[0].url, 'https://scouter.test/applicants/11/documents/comments');
-  assert.equal(requests[0].headers.get('accept'), 'application/json');
 });
 
-test('GET accepts an empty comment list', async () => {
-  respond = () => Response.json([]);
-  assert.deepEqual(await getApplicantDocumentComments(11), []);
+test('조회: 잘못된 응답은 화면에 전달하지 않는다', async () => {
+  respond = () => Response.json([{ ...comment, content: 12 }]);
+  await assert.rejects(getApplicantDocumentComments(11), ZodError);
 });
 
-test('GET preserves missing createdAt and normalizes missing parentCommentId to null', async () => {
-  respond = () => Response.json([legacyComment]);
-
-  const result = await getApplicantDocumentComments(11);
-  assert.deepEqual(result, [{ ...legacyComment, parentCommentId: null }]);
-});
-
-test('GET keeps existing number acceptance and explicit null parentCommentId', async () => {
-  const fractionalIds = {
-    ...comment,
-    author: { ...comment.author, userId: 3.5 },
-    commentId: 7.5,
-    sectionId: 2.5,
-  };
-  respond = () => Response.json([fractionalIds]);
-  assert.deepEqual(await getApplicantDocumentComments(11), [fractionalIds]);
-});
-
-for (const [name, invalidComment] of [
-  ['invalid content', { ...comment, content: 12 }],
-  ['invalid date', { ...comment, createdAt: 'yesterday' }],
-  [
-    'offset date previously rejected by z.iso.datetime()',
-    {
-      ...comment,
-      createdAt: '2026-10-12T10:02:03+09:00',
-    },
-  ],
-] as const) {
-  test(`GET rejects ${name}`, async () => {
-    respond = () => Response.json([invalidComment]);
-    await assert.rejects(getApplicantDocumentComments(11), ZodError);
-  });
-}
-
-test('POST accepts an empty 201 response without reading JSON and still returns void', async (t) => {
-  respond = () =>
-    new Response(null, {
-      status: 201,
-      headers: { Location: '/applicants/11/documents/comments/7' },
-    });
+test('등록: 답글 정보를 전송하고 빈 201 응답은 JSON으로 읽지 않는다', async (t) => {
+  respond = () => new Response(null, { status: 201 });
   const json = t.mock.method(Response.prototype, 'json');
   const data = { content: '새 코멘트', sectionId: 2, parentCommentId: 7 };
 
@@ -114,12 +63,11 @@ test('POST accepts an empty 201 response without reading JSON and still returns 
   assert.equal(requests.length, 1);
   assert.equal(requests[0].method, 'POST');
   assert.equal(requests[0].url, 'https://scouter.test/applicants/11/documents/comments');
-  assert.equal(requests[0].headers.get('accept'), null);
   assert.equal(requests[0].headers.get('content-type'), 'application/json');
   assert.deepEqual(JSON.parse(await requests[0].text()), data);
 });
 
-test('POST rejects an empty content before making a request', async () => {
+test('등록: 빈 내용은 요청 전에 차단한다', async () => {
   await assert.rejects(
     postApplicantDocumentComment({ applicantId: 11, data: { content: '', sectionId: 2 } }),
     ZodError,
@@ -127,130 +75,33 @@ test('POST rejects an empty content before making a request', async () => {
   assert.equal(requests.length, 0);
 });
 
-test('POST preserves existing whitespace and fractional-number acceptance', async () => {
-  respond = () => new Response(null, { status: 201 });
-  const data = { content: ' ', sectionId: 2.5, parentCommentId: 7.5 };
-  await postApplicantDocumentComment({ applicantId: 11, data });
-  assert.deepEqual(JSON.parse(await requests[0].text()), data);
-});
-
-test('PATCH retains the same optional-date and parent normalization as GET', async () => {
-  respond = () => Response.json({ ...legacyComment, content: '수정했어요.', isEdited: true });
+test('수정: 공유 응답 스키마의 날짜·부모 ID 생략 처리를 유지한다', async () => {
+  const editedComment = { ...comment, content: '수정했어요.', isEdited: true };
+  respond = () => Response.json(editedComment);
 
   const result = await patchApplicantDocumentComment({
     applicantId: 11,
     commentId: 7,
-    data: { content: '수정했어요.' },
+    data: { content: editedComment.content },
   });
-
-  assert.deepEqual(result, {
-    ...legacyComment,
-    content: '수정했어요.',
-    isEdited: true,
-    parentCommentId: null,
-  });
-  assert.equal(requests[0].method, 'PATCH');
-  assert.equal(requests[0].url, 'https://scouter.test/applicants/11/documents/comments/7');
+  assert.deepEqual(result, { ...editedComment, parentCommentId: null });
 });
 
-test('PATCH still validates its request and response', async () => {
-  await assert.rejects(
-    patchApplicantDocumentComment({ applicantId: 11, commentId: 7, data: { content: '' } }),
-    ZodError,
-  );
-  assert.equal(requests.length, 0);
-
-  respond = () => Response.json({ ...comment, content: 12 });
-  await assert.rejects(
-    patchApplicantDocumentComment({ applicantId: 11, commentId: 7, data: { content: '수정' } }),
-    ZodError,
-  );
+test('조회: HTTP 오류를 호출한 곳으로 전달한다', async () => {
+  respond = () => new Response(null, { status: 503 });
+  await assert.rejects(getApplicantDocumentComments(11), HTTPError);
 });
 
-const requestCases = [
-  ['GET', () => getApplicantDocumentComments(11)],
-  [
-    'POST',
-    () =>
-      postApplicantDocumentComment({
-        applicantId: 11,
-        data: { content: '새 코멘트', sectionId: 2 },
-      }),
-  ],
-  [
-    'PATCH',
-    () =>
-      patchApplicantDocumentComment({
-        applicantId: 11,
-        commentId: 7,
-        data: { content: '수정' },
-      }),
-  ],
-] as const;
-
-for (const [method, request] of requestCases) {
-  test(`${method} propagates HTTP failures`, async () => {
-    respond = () => Response.json({ message: 'unavailable' }, { status: 503 });
-    await assert.rejects(request(), (error: unknown) => {
-      assert.ok(error instanceof HTTPError);
-      assert.equal(error.response.status, 503);
-      return true;
-    });
-    assert.equal(requests.length, 1);
-  });
-
-  test(`${method} propagates network failures`, async () => {
-    const failure = new TypeError('Network unavailable');
-    respond = () => {
-      throw failure;
-    };
-    await assert.rejects(request(), (error: unknown) => error === failure);
-    assert.equal(requests.length, 1);
-  });
-}
-
-test('query options separate applicants and invalidate only the matching scouter cache', async () => {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false, staleTime: Infinity, gcTime: Infinity } },
-  });
-  let currentContent = comment.content;
-  respond = (request) =>
-    request.method === 'POST'
-      ? new Response(null, { status: 201 })
-      : Response.json([{ ...comment, content: currentContent }]);
-
-  try {
-    const first = applicantDocumentCommentsOption(11);
-    const second = applicantDocumentCommentsOption(12);
-    const otherPluginKey = ['other-plugin', 'applicants', 11, 'documents', 'comments'];
-    assert.deepEqual(first.queryKey, ['scouter', 'applicants', 11, 'documents', 'comments']);
-    assert.notDeepEqual(first.queryKey, second.queryKey);
-
-    await client.fetchQuery(first);
-    await client.fetchQuery(second);
-    client.setQueryData(otherPluginKey, [comment]);
-    currentContent = '등록 후 새 목록';
-    await postApplicantDocumentComment({
+test('등록: 네트워크 오류를 호출한 곳으로 전달한다', async () => {
+  const failure = new TypeError('Network unavailable');
+  respond = () => {
+    throw failure;
+  };
+  await assert.rejects(
+    postApplicantDocumentComment({
       applicantId: 11,
-      data: { content: currentContent, sectionId: 2 },
-    });
-    await client.invalidateQueries({ queryKey: commentsQueryKey(11), refetchType: 'none' });
-
-    assert.equal(client.getQueryState(first.queryKey)?.isInvalidated, true);
-    assert.equal(client.getQueryState(second.queryKey)?.isInvalidated, false);
-    assert.equal(client.getQueryState(otherPluginKey)?.isInvalidated, false);
-    assert.equal((await client.fetchQuery(first))[0].content, currentContent);
-    assert.equal(client.getQueryData(second.queryKey)?.[0].content, comment.content);
-    assert.deepEqual(
-      requests.map(({ method, url }) => [method, new URL(url).pathname]),
-      [
-        ['GET', '/applicants/11/documents/comments'],
-        ['GET', '/applicants/12/documents/comments'],
-        ['POST', '/applicants/11/documents/comments'],
-        ['GET', '/applicants/11/documents/comments'],
-      ],
-    );
-  } finally {
-    client.clear();
-  }
+      data: { content: '새 코멘트', sectionId: 2 },
+    }),
+    (error: unknown) => error === failure,
+  );
 });

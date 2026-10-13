@@ -112,7 +112,7 @@ export type DocumentEvaluatorStatusValue = z.infer<typeof DocumentEvaluatorStatu
 export type DocumentEvaluatorStatus = z.infer<typeof DocumentEvaluatorStatusSchema>;
 export type DocumentEvaluatorStatuses = z.infer<typeof DocumentEvaluatorStatusesSchema>;
 
-// 명세의 정수 제약을 새로 강제하지 않고 기존 z.number()의 허용 범위를 유지합니다.
+// 호환 규칙: 자동 생성 도입과 기존 검증 정책 변경을 분리합니다.
 export const CommentAuthorSchema = ReadDocumentCommentAuthorResponse.extend({
   userId: z.number(),
 });
