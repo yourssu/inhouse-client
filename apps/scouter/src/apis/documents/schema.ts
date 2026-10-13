@@ -1,5 +1,11 @@
 import z from 'zod/v4';
 
+import {
+  CreateDocumentCommentRequest,
+  ReadDocumentCommentAuthorResponse,
+  ReadDocumentCommentResponse,
+} from '@/apis/documents/generated/comments.schema.gen';
+
 const documentResults = ['PENDING', 'DOCUMENT_PASS', 'DOCUMENT_FAIL'] as const;
 const DocumentResultSchema = z.enum(documentResults);
 
@@ -106,18 +112,16 @@ export type DocumentEvaluatorStatusValue = z.infer<typeof DocumentEvaluatorStatu
 export type DocumentEvaluatorStatus = z.infer<typeof DocumentEvaluatorStatusSchema>;
 export type DocumentEvaluatorStatuses = z.infer<typeof DocumentEvaluatorStatusesSchema>;
 
-export const CommentAuthorSchema = z.object({
-  nickname: z.string(),
-  part: z.string(),
+// 호환 규칙: 자동 생성 도입과 기존 검증 정책 변경을 분리합니다.
+export const CommentAuthorSchema = ReadDocumentCommentAuthorResponse.extend({
   userId: z.number(),
 });
 
-export const CommentSchema = z.object({
+export const CommentSchema = ReadDocumentCommentResponse.extend({
   author: CommentAuthorSchema,
   commentId: z.number(),
-  content: z.string(),
+  // 기존처럼 작성 시각 생략을 허용하며, 날짜는 UTC 형식으로 검증합니다.
   createdAt: z.iso.datetime().optional(),
-  isEdited: z.boolean(),
   parentCommentId: z
     .number()
     .nullish()
@@ -125,8 +129,7 @@ export const CommentSchema = z.object({
   sectionId: z.number(),
 });
 
-export const CreateCommentRequestSchema = z.object({
-  content: z.string().min(1),
+export const CreateCommentRequestSchema = CreateDocumentCommentRequest.extend({
   parentCommentId: z.number().optional(),
   sectionId: z.number(),
 });
