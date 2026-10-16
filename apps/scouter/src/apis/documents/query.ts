@@ -36,6 +36,12 @@ export const commentsQueryKey = (applicantId: number) =>
 export const commentCreateMutationKey = (applicantId: number) =>
   qk.for('applicants', applicantId, 'documents', 'comments', 'create');
 
+export const commentUpdateMutationKey = (applicantId: number) =>
+  qk.for('applicants', applicantId, 'documents', 'comments', 'update');
+
+export const commentDeleteMutationKey = (applicantId: number) =>
+  qk.for('applicants', applicantId, 'documents', 'comments', 'delete');
+
 export const applicantDocumentCommentsOption = (applicantId: number) =>
   queryOptions({
     queryKey: commentsQueryKey(applicantId),

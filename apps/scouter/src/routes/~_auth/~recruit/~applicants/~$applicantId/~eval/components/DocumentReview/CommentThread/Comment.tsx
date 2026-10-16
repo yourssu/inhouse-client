@@ -11,7 +11,11 @@ import { MdCancel, MdEdit } from 'react-icons/md';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
-import { commentsQueryKey } from '@/apis/documents/query';
+import {
+  commentDeleteMutationKey,
+  commentsQueryKey,
+  commentUpdateMutationKey,
+} from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -19,10 +23,6 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 interface CommentProps extends CommentType {
   applicantId: number;
   isOperationPending: boolean;
-  onOptimisticCommentDelete: (commentId: number) => number[];
-  onOptimisticCommentDeleteSettled: (commentIds: readonly number[]) => void;
-  onOptimisticCommentUpdate: (commentId: number, content: string) => void;
-  onOptimisticCommentUpdateSettled: (commentId: number) => void;
 }
 
 interface CommentItemProps {
@@ -36,15 +36,7 @@ interface CommentBodyProps {
   children: ReactNode;
 }
 
-export const Comment = ({
-  applicantId,
-  isOperationPending,
-  onOptimisticCommentDelete,
-  onOptimisticCommentDeleteSettled,
-  onOptimisticCommentUpdate,
-  onOptimisticCommentUpdateSettled,
-  ...comment
-}: CommentProps) => {
+export const Comment = ({ applicantId, isOperationPending, ...comment }: CommentProps) => {
   const { author, commentId, content } = comment;
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
@@ -60,17 +52,10 @@ export const Comment = ({
     useToastedMutation({
       mutationFn: patchApplicantDocumentComment,
       successText: '코멘트를 수정했어요.',
-      onMutate: ({ data }) => {
-        onOptimisticCommentUpdate(commentId, data.content);
-      },
-      onError: () => {
-        onOptimisticCommentUpdateSettled(commentId);
-      },
-      onSuccess: () => {
+      mutationKey: commentUpdateMutationKey(applicantId),
+      onSuccess: async () => {
         setIsEditing(false);
-        void queryClient.invalidateQueries({ queryKey }).then(() => {
-          onOptimisticCommentUpdateSettled(commentId);
-        });
+        await queryClient.invalidateQueries({ queryKey });
       },
     });
 
@@ -128,22 +113,8 @@ export const Comment = ({
     useToastedMutation({
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
-      onMutate: () => {
-        const commentIds = onOptimisticCommentDelete(commentId);
-        return { commentIds };
-      },
-      onError: (_error, _variables, context) => {
-        if (context) {
-          onOptimisticCommentDeleteSettled(context.commentIds);
-        }
-      },
-      onSuccess: (_data, _variables, context) => {
-        void queryClient.invalidateQueries({ queryKey }).then(() => {
-          if (context) {
-            onOptimisticCommentDeleteSettled(context.commentIds);
-          }
-        });
-      },
+      mutationKey: commentDeleteMutationKey(applicantId),
+      onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     });
 
   const handleDelete = async () => {
@@ -170,7 +141,7 @@ export const Comment = ({
                 <IconButton
                   aria-label="댓글 메뉴"
                   className="rounded-4"
-                  disabled={isOperationPending}
+                  disabled={isOperationPending || isUpdatePending || isDeletePending}
                   size="xxs"
                   variant="inline"
                 >

@@ -1,13 +1,18 @@
 import { useMutationState, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { postApplicantDocumentComment } from '@/apis/documents';
-import { commentCreateMutationKey, commentsQueryKey } from '@/apis/documents/query';
-import { CommentSchema } from '@/apis/documents/schema';
+import {
+  commentCreateMutationKey,
+  commentDeleteMutationKey,
+  commentsQueryKey,
+  commentUpdateMutationKey,
+} from '@/apis/documents/query';
+import { CommentSchema, UpdateCommentRequestSchema } from '@/apis/documents/schema';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -37,6 +42,9 @@ type CommentWriteVariables = Omit<CommentType, 'commentId'> & {
 
 const pendingCommentSchema = CommentSchema.omit({ commentId: true });
 
+const commentIdSchema = CommentSchema.pick({ commentId: true });
+const commentUpdateSchema = commentIdSchema.extend({ data: UpdateCommentRequestSchema });
+
 const normalizeNickname = (nickname: string) => nickname.replace(/\s*\([^)]*\)$/, '');
 
 export const DocumentReview = ({
@@ -50,12 +58,6 @@ export const DocumentReview = ({
   const { data: me } = useSuspenseQuery(meOption());
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const [optimisticCommentContents, setOptimisticCommentContents] = useState<Map<number, string>>(
-    new Map(),
-  );
-  const [optimisticallyDeletedCommentIds, setOptimisticallyDeletedCommentIds] = useState<
-    Set<number>
-  >(new Set());
   const mutationKey = commentCreateMutationKey(applicantId);
   const { mutateWithToast: writeCommentWithToast } = useToastedMutation({
     mutationKey,
@@ -85,39 +87,41 @@ export const DocumentReview = ({
       commentId: -mutation.mutationId,
     }),
   });
-  const displayedComments = useMemo(
-    () =>
-      [...comments, ...optimisticComments]
-        .filter(({ commentId }) => !optimisticallyDeletedCommentIds.has(commentId))
-        .map((comment) => {
-          const content = optimisticCommentContents.get(comment.commentId);
-          return content === undefined ? comment : { ...comment, content, isEdited: true };
-        }),
-    [comments, optimisticCommentContents, optimisticComments, optimisticallyDeletedCommentIds],
+  const pendingUpdates = useMutationState({
+    filters: { mutationKey: commentUpdateMutationKey(applicantId), exact: true, status: 'pending' },
+    select: (mutation) => commentUpdateSchema.parse(mutation.state.variables),
+  });
+  const pendingDeletes = useMutationState({
+    filters: { mutationKey: commentDeleteMutationKey(applicantId), exact: true, status: 'pending' },
+    select: (mutation) => commentIdSchema.parse(mutation.state.variables).commentId,
+  });
+  const allComments = [...comments, ...optimisticComments];
+  const deletedIds = new Set(
+    pendingDeletes.flatMap((commentId) => getCommentThreadCommentIds(allComments, commentId)),
   );
-  const pendingCommentIds = useMemo(() => {
-    const parentCommentIdByCommentId = new Map(
-      [...comments, ...optimisticComments].map(({ commentId, parentCommentId }) => [
-        commentId,
-        parentCommentId,
-      ]),
-    );
-    const commentIds = new Set(optimisticComments.map(({ commentId }) => commentId));
+  const updatedContents = new Map(
+    pendingUpdates.map(({ commentId, data }) => [commentId, data.content]),
+  );
+  const displayedComments = allComments
+    .filter(({ commentId }) => !deletedIds.has(commentId))
+    .map((comment) => {
+      const content = updatedContents.get(comment.commentId);
+      return content === undefined ? comment : { ...comment, content, isEdited: true };
+    });
+  const parentCommentIdByCommentId = new Map(
+    allComments.map(({ commentId, parentCommentId }) => [commentId, parentCommentId]),
+  );
+  const pendingCommentIds = new Set(optimisticComments.map(({ commentId }) => commentId));
 
-    for (const optimisticComment of optimisticComments) {
-      let parentCommentId = optimisticComment.parentCommentId;
-      while (parentCommentId !== null) {
-        commentIds.add(parentCommentId);
-        parentCommentId = parentCommentIdByCommentId.get(parentCommentId) ?? null;
-      }
+  for (const optimisticComment of optimisticComments) {
+    let parentCommentId = optimisticComment.parentCommentId;
+    while (parentCommentId !== null) {
+      pendingCommentIds.add(parentCommentId);
+      parentCommentId = parentCommentIdByCommentId.get(parentCommentId) ?? null;
     }
+  }
 
-    return commentIds;
-  }, [comments, optimisticComments]);
-  const threadsBySectionId = useMemo(
-    () => groupCommentThreads(displayedComments),
-    [displayedComments],
-  );
+  const threadsBySectionId = groupCommentThreads(displayedComments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
   const showCommentPanel = displayedComments.length > 0 || openCommentSectionId !== null;
@@ -153,36 +157,6 @@ export const DocumentReview = ({
       onError,
       parentCommentId,
       sectionId,
-    });
-  };
-
-  const handleOptimisticCommentUpdate = (commentId: number, content: string) => {
-    setOptimisticCommentContents((contents) => new Map(contents).set(commentId, content));
-  };
-
-  const handleOptimisticCommentUpdateSettled = (commentId: number) => {
-    setOptimisticCommentContents((contents) => {
-      const nextContents = new Map(contents);
-      nextContents.delete(commentId);
-      return nextContents;
-    });
-  };
-
-  const handleOptimisticCommentDelete = (commentId: number) => {
-    const commentIds = getCommentThreadCommentIds(displayedComments, commentId);
-    setOptimisticallyDeletedCommentIds(
-      (deletedCommentIds) => new Set([...deletedCommentIds, ...commentIds]),
-    );
-    return commentIds;
-  };
-
-  const handleOptimisticCommentDeleteSettled = (settledCommentIds: readonly number[]) => {
-    setOptimisticallyDeletedCommentIds((deletedCommentIds) => {
-      const nextCommentIds = new Set(deletedCommentIds);
-      for (const commentId of settledCommentIds) {
-        nextCommentIds.delete(commentId);
-      }
-      return nextCommentIds;
     });
   };
 
@@ -271,10 +245,6 @@ export const DocumentReview = ({
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
                       onCommentSubmit={handleCommentSubmit}
-                      onOptimisticCommentDelete={handleOptimisticCommentDelete}
-                      onOptimisticCommentDeleteSettled={handleOptimisticCommentDeleteSettled}
-                      onOptimisticCommentUpdate={handleOptimisticCommentUpdate}
-                      onOptimisticCommentUpdateSettled={handleOptimisticCommentUpdateSettled}
                       pendingCommentIds={pendingCommentIds}
                       thread={thread}
                     />

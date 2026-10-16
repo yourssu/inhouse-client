@@ -15,10 +15,6 @@ interface CommentThreadProps {
   applicantId: number;
   isSelected: boolean;
   onCommentSubmit: (params: CommentWriteParams) => void;
-  onOptimisticCommentDelete: (commentId: number) => number[];
-  onOptimisticCommentDeleteSettled: (commentIds: readonly number[]) => void;
-  onOptimisticCommentUpdate: (commentId: number, content: string) => void;
-  onOptimisticCommentUpdateSettled: (commentId: number) => void;
   pendingCommentIds: ReadonlySet<number>;
   thread: CommentType[];
 }
@@ -27,10 +23,6 @@ export const CommentThread = ({
   applicantId,
   isSelected,
   onCommentSubmit,
-  onOptimisticCommentDelete,
-  onOptimisticCommentDeleteSettled,
-  onOptimisticCommentUpdate,
-  onOptimisticCommentUpdateSettled,
   pendingCommentIds,
   thread,
 }: CommentThreadProps) => {
@@ -71,10 +63,6 @@ export const CommentThread = ({
             applicantId={applicantId}
             isOperationPending={pendingCommentIds.has(comment.commentId)}
             key={comment.commentId}
-            onOptimisticCommentDelete={onOptimisticCommentDelete}
-            onOptimisticCommentDeleteSettled={onOptimisticCommentDeleteSettled}
-            onOptimisticCommentUpdate={onOptimisticCommentUpdate}
-            onOptimisticCommentUpdateSettled={onOptimisticCommentUpdateSettled}
           />
         ))}
         {isReplying && (
