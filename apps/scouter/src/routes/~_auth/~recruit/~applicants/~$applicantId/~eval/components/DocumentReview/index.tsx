@@ -1,4 +1,4 @@
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutationState, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -6,7 +6,8 @@ import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { postApplicantDocumentComment } from '@/apis/documents';
-import { commentsQueryKey } from '@/apis/documents/query';
+import { commentCreateMutationKey, commentsQueryKey } from '@/apis/documents/query';
+import { CommentSchema } from '@/apis/documents/schema';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -29,10 +30,12 @@ interface DocumentReviewProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
-interface CommentWriteJob {
-  comment: CommentType;
+type CommentWriteVariables = Omit<CommentType, 'commentId'> & {
+  applicantId: number;
   onError: () => void;
-}
+};
+
+const pendingCommentSchema = CommentSchema.omit({ commentId: true });
 
 const normalizeNickname = (nickname: string) => nickname.replace(/\s*\([^)]*\)$/, '');
 
@@ -47,20 +50,41 @@ export const DocumentReview = ({
   const { data: me } = useSuspenseQuery(meOption());
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const [commentWriteJobs, setCommentWriteJobs] = useState<CommentWriteJob[]>([]);
   const [optimisticCommentContents, setOptimisticCommentContents] = useState<Map<number, string>>(
     new Map(),
   );
   const [optimisticallyDeletedCommentIds, setOptimisticallyDeletedCommentIds] = useState<
     Set<number>
   >(new Set());
-  const isWritingCommentRef = useRef(false);
-  const nextOptimisticCommentIdRef = useRef(-1);
+  const mutationKey = commentCreateMutationKey(applicantId);
   const { mutateWithToast: writeCommentWithToast } = useToastedMutation({
-    mutationFn: postApplicantDocumentComment,
+    mutationKey,
+    scope: { id: JSON.stringify(mutationKey) },
+    mutationFn: ({ applicantId, content, parentCommentId, sectionId }: CommentWriteVariables) =>
+      postApplicantDocumentComment({
+        applicantId,
+        data: {
+          content,
+          ...(parentCommentId === null ? {} : { parentCommentId }),
+          sectionId,
+        },
+      }),
+    onError: (_error, { onError }) => {
+      onError();
+    },
+    onSuccess: async (_data, { applicantId, parentCommentId, sectionId }) => {
+      onCommentCreated?.({ parentCommentId, sectionId });
+      await queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+    },
     successText: '코멘트를 작성했어요.',
   });
-  const optimisticComments = commentWriteJobs.map(({ comment }) => comment);
+  const optimisticComments = useMutationState({
+    filters: { mutationKey, exact: true, status: 'pending' },
+    select: (mutation) => ({
+      ...pendingCommentSchema.parse(mutation.state.variables),
+      commentId: -mutation.mutationId,
+    }),
+  });
   const displayedComments = useMemo(
     () =>
       [...comments, ...optimisticComments]
@@ -116,25 +140,20 @@ export const DocumentReview = ({
     parentCommentId,
     sectionId,
   }: CommentWriteParams) => {
-    setCommentWriteJobs((jobs) => [
-      ...jobs,
-      {
-        comment: {
-          author: {
-            nickname: normalizeNickname(me.nickname),
-            part: me.parts[0]?.part ?? '',
-            userId: me.userId,
-          },
-          commentId: nextOptimisticCommentIdRef.current--,
-          content,
-          createdAt: new Date().toISOString(),
-          isEdited: false,
-          parentCommentId,
-          sectionId,
-        },
-        onError,
+    void writeCommentWithToast({
+      applicantId,
+      author: {
+        nickname: normalizeNickname(me.nickname),
+        part: me.parts[0]?.part ?? '',
+        userId: me.userId,
       },
-    ]);
+      content,
+      createdAt: new Date().toISOString(),
+      isEdited: false,
+      onError,
+      parentCommentId,
+      sectionId,
+    });
   };
 
   const handleOptimisticCommentUpdate = (commentId: number, content: string) => {
@@ -166,52 +185,6 @@ export const DocumentReview = ({
       return nextCommentIds;
     });
   };
-
-  const nextCommentWriteJob = commentWriteJobs[0];
-
-  useEffect(() => {
-    if (!nextCommentWriteJob || isWritingCommentRef.current) {
-      return;
-    }
-
-    isWritingCommentRef.current = true;
-
-    const writeComment = async () => {
-      const { comment, onError } = nextCommentWriteJob;
-
-      try {
-        const result = await writeCommentWithToast({
-          applicantId,
-          data: {
-            content: comment.content,
-            ...(comment.parentCommentId === null
-              ? {}
-              : { parentCommentId: comment.parentCommentId }),
-            sectionId: comment.sectionId,
-          },
-        });
-
-        if (result.success) {
-          onCommentCreated?.({
-            parentCommentId: comment.parentCommentId,
-            sectionId: comment.sectionId,
-          });
-          await queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
-        } else {
-          onError();
-        }
-      } finally {
-        setCommentWriteJobs((jobs) =>
-          jobs.filter(
-            ({ comment: queuedComment }) => queuedComment.commentId !== comment.commentId,
-          ),
-        );
-        isWritingCommentRef.current = false;
-      }
-    };
-
-    void writeComment();
-  }, [applicantId, nextCommentWriteJob, onCommentCreated, queryClient, writeCommentWithToast]);
 
   const registerSectionRef = (sectionId: number) => (element: HTMLDivElement | null) => {
     if (element) {

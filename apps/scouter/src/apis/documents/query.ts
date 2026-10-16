@@ -33,6 +33,9 @@ export const documentEvaluatorStatusesOption = (applicantId: number) =>
 export const commentsQueryKey = (applicantId: number) =>
   qk.for('applicants', applicantId, 'documents', 'comments');
 
+export const commentCreateMutationKey = (applicantId: number) =>
+  qk.for('applicants', applicantId, 'documents', 'comments', 'create');
+
 export const applicantDocumentCommentsOption = (applicantId: number) =>
   queryOptions({
     queryKey: commentsQueryKey(applicantId),
