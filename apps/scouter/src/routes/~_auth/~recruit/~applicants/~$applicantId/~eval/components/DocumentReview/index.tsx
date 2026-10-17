@@ -138,7 +138,7 @@ export const DocumentReview = ({
     setOpenCommentSectionId(sectionId);
   };
 
-  const handleCommentSubmit = ({
+  const handleCommentCreate = ({
     content,
     onError,
     parentCommentId,
@@ -234,7 +234,7 @@ export const DocumentReview = ({
                   {openCommentSectionId === sectionId && (
                     <CommentField
                       onClose={() => setOpenCommentSectionId(null)}
-                      onCommentSubmit={handleCommentSubmit}
+                      onCommentCreate={handleCommentCreate}
                       parentCommentId={null}
                       sectionId={sectionId}
                     />
@@ -244,7 +244,7 @@ export const DocumentReview = ({
                       applicantId={applicantId}
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
-                      onCommentSubmit={handleCommentSubmit}
+                      onCommentCreate={handleCommentCreate}
                       pendingCommentIds={pendingCommentIds}
                       thread={thread}
                     />

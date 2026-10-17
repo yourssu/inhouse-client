@@ -14,14 +14,14 @@ export interface CommentWriteParams {
 
 interface UseWriteCommentParams {
   onClose: () => void;
-  onCommentSubmit: (params: CommentWriteParams) => void;
+  onCommentCreate: (params: CommentWriteParams) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
 
 export const useWriteComment = ({
   onClose,
-  onCommentSubmit,
+  onCommentCreate,
   parentCommentId,
   sectionId,
 }: UseWriteCommentParams) => {
@@ -37,7 +37,7 @@ export const useWriteComment = ({
 
     const submissionId = latestSubmissionIdRef.current + 1;
     latestSubmissionIdRef.current = submissionId;
-    onCommentSubmit({
+    onCommentCreate({
       content: trimmedContent,
       onError: () => {
         if (latestSubmissionIdRef.current !== submissionId) {

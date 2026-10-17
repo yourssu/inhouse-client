@@ -14,7 +14,7 @@ import { Comment } from './Comment';
 interface CommentThreadProps {
   applicantId: number;
   isSelected: boolean;
-  onCommentSubmit: (params: CommentWriteParams) => void;
+  onCommentCreate: (params: CommentWriteParams) => void;
   pendingCommentIds: ReadonlySet<number>;
   thread: CommentType[];
 }
@@ -22,7 +22,7 @@ interface CommentThreadProps {
 export const CommentThread = ({
   applicantId,
   isSelected,
-  onCommentSubmit,
+  onCommentCreate,
   pendingCommentIds,
   thread,
 }: CommentThreadProps) => {
@@ -32,7 +32,7 @@ export const CommentThread = ({
   const { content, handleAddComment, handleClose, handleKeyDown, isContentEmpty, setContent } =
     useWriteComment({
       onClose: () => setIsReplying(false),
-      onCommentSubmit,
+      onCommentCreate,
       parentCommentId: currentThreadId,
       sectionId,
     });

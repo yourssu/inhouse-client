@@ -9,21 +9,21 @@ import { useWriteComment } from './useWriteComment';
 
 interface CommentFieldProps {
   onClose: () => void;
-  onCommentSubmit: (params: CommentWriteParams) => void;
+  onCommentCreate: (params: CommentWriteParams) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
 
 export const CommentField = ({
   onClose,
-  onCommentSubmit,
+  onCommentCreate,
   parentCommentId,
   sectionId,
 }: CommentFieldProps) => {
   const { content, handleAddComment, handleClose, handleKeyDown, isContentEmpty, setContent } =
     useWriteComment({
       onClose,
-      onCommentSubmit,
+      onCommentCreate,
       parentCommentId,
       sectionId,
     });
