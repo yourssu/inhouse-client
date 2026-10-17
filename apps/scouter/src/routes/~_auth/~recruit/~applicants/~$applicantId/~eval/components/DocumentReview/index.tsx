@@ -1,17 +1,28 @@
+import { useMutationState, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
+import { postApplicantDocumentComment } from '@/apis/documents';
+import {
+  commentCreateMutationKey,
+  commentDeleteMutationKey,
+  commentsQueryKey,
+  commentUpdateMutationKey,
+} from '@/apis/documents/query';
+import { CommentSchema, UpdateCommentRequestSchema } from '@/apis/documents/schema';
+import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
+import { useToastedMutation } from '@/hooks/useToastedMutation';
 
-import type { CommentCreatedMetadata } from './useWriteComment';
+import type { CommentCreatedMetadata, CommentWriteParams } from './useWriteComment';
 
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
 import { DocumentAnswer } from './DocumentAnswer';
-import { groupCommentThreads } from './groupCommentThreads';
+import { getCommentThreadCommentIds, groupCommentThreads } from './groupCommentThreads';
 
 export const DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS =
   'grid-cols-[minmax(36rem,1fr)_minmax(17.5rem,25rem)]';
@@ -24,6 +35,18 @@ interface DocumentReviewProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
+type CommentWriteVariables = Omit<CommentType, 'commentId'> & {
+  applicantId: number;
+  onError: () => void;
+};
+
+const pendingCommentSchema = CommentSchema.omit({ commentId: true });
+
+const commentIdSchema = CommentSchema.pick({ commentId: true });
+const commentUpdateSchema = commentIdSchema.extend({ data: UpdateCommentRequestSchema });
+
+const normalizeNickname = (nickname: string) => nickname.replace(/\s*\([^)]*\)$/, '');
+
 export const DocumentReview = ({
   applicantId,
   answers,
@@ -31,12 +54,77 @@ export const DocumentReview = ({
   onCommentAddClick,
   onCommentCreated,
 }: DocumentReviewProps) => {
+  const queryClient = useQueryClient();
+  const { data: me } = useSuspenseQuery(meOption());
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
+  const mutationKey = commentCreateMutationKey(applicantId);
+  const { mutateWithToast: writeCommentWithToast } = useToastedMutation({
+    mutationKey,
+    scope: { id: JSON.stringify(mutationKey) },
+    mutationFn: ({ applicantId, content, parentCommentId, sectionId }: CommentWriteVariables) =>
+      postApplicantDocumentComment({
+        applicantId,
+        data: {
+          content,
+          ...(parentCommentId === null ? {} : { parentCommentId }),
+          sectionId,
+        },
+      }),
+    onError: (_error, { onError }) => {
+      onError();
+    },
+    onSuccess: async (_data, { applicantId, parentCommentId, sectionId }) => {
+      onCommentCreated?.({ parentCommentId, sectionId });
+      await queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+    },
+    successText: '코멘트를 작성했어요.',
+  });
+  const optimisticComments = useMutationState({
+    filters: { mutationKey, exact: true, status: 'pending' },
+    select: (mutation) => ({
+      ...pendingCommentSchema.parse(mutation.state.variables),
+      commentId: -mutation.mutationId,
+    }),
+  });
+  const pendingUpdates = useMutationState({
+    filters: { mutationKey: commentUpdateMutationKey(applicantId), exact: true, status: 'pending' },
+    select: (mutation) => commentUpdateSchema.parse(mutation.state.variables),
+  });
+  const pendingDeletes = useMutationState({
+    filters: { mutationKey: commentDeleteMutationKey(applicantId), exact: true, status: 'pending' },
+    select: (mutation) => commentIdSchema.parse(mutation.state.variables).commentId,
+  });
+  const allComments = [...comments, ...optimisticComments];
+  const deletedIds = new Set(
+    pendingDeletes.flatMap((commentId) => getCommentThreadCommentIds(allComments, commentId)),
+  );
+  const updatedContents = new Map(
+    pendingUpdates.map(({ commentId, data }) => [commentId, data.content]),
+  );
+  const displayedComments = allComments
+    .filter(({ commentId }) => !deletedIds.has(commentId))
+    .map((comment) => {
+      const content = updatedContents.get(comment.commentId);
+      return content === undefined ? comment : { ...comment, content, isEdited: true };
+    });
+  const parentCommentIdByCommentId = new Map(
+    allComments.map(({ commentId, parentCommentId }) => [commentId, parentCommentId]),
+  );
+  const pendingCommentIds = new Set(optimisticComments.map(({ commentId }) => commentId));
+
+  for (const optimisticComment of optimisticComments) {
+    let parentCommentId = optimisticComment.parentCommentId;
+    while (parentCommentId !== null) {
+      pendingCommentIds.add(parentCommentId);
+      parentCommentId = parentCommentIdByCommentId.get(parentCommentId) ?? null;
+    }
+  }
+
+  const threadsBySectionId = groupCommentThreads(displayedComments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
-  const showCommentPanel = comments.length > 0 || openCommentSectionId !== null;
+  const showCommentPanel = displayedComments.length > 0 || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -48,6 +136,28 @@ export const DocumentReview = ({
     onCommentAddClick?.();
     setSelectedSectionId(sectionId);
     setOpenCommentSectionId(sectionId);
+  };
+
+  const handleCommentCreate = ({
+    content,
+    onError,
+    parentCommentId,
+    sectionId,
+  }: CommentWriteParams) => {
+    void writeCommentWithToast({
+      applicantId,
+      author: {
+        nickname: normalizeNickname(me.nickname),
+        part: me.parts[0]?.part ?? '',
+        userId: me.userId,
+      },
+      content,
+      createdAt: new Date().toISOString(),
+      isEdited: false,
+      onError,
+      parentCommentId,
+      sectionId,
+    });
   };
 
   const registerSectionRef = (sectionId: number) => (element: HTMLDivElement | null) => {
@@ -123,9 +233,8 @@ export const DocumentReview = ({
                   )}
                   {openCommentSectionId === sectionId && (
                     <CommentField
-                      applicantId={applicantId}
                       onClose={() => setOpenCommentSectionId(null)}
-                      onCommentCreated={onCommentCreated}
+                      onCommentCreate={handleCommentCreate}
                       parentCommentId={null}
                       sectionId={sectionId}
                     />
@@ -135,7 +244,8 @@ export const DocumentReview = ({
                       applicantId={applicantId}
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
-                      onCommentCreated={onCommentCreated}
+                      onCommentCreate={handleCommentCreate}
+                      pendingCommentIds={pendingCommentIds}
                       thread={thread}
                     />
                   ))}

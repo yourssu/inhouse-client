@@ -40,10 +40,40 @@ export const groupCommentThreads = (
   return threadsBySection;
 };
 
+export const getCommentThreadCommentIds = (
+  comments: readonly CommentType[],
+  commentId: number,
+): number[] => {
+  const repliesByParentId = new Map<number, number[]>();
+
+  for (const comment of comments) {
+    if (comment.parentCommentId === null) {
+      continue;
+    }
+    const replyIds = repliesByParentId.get(comment.parentCommentId) ?? [];
+    replyIds.push(comment.commentId);
+    repliesByParentId.set(comment.parentCommentId, replyIds);
+  }
+
+  const commentIds = [commentId];
+
+  for (const currentCommentId of commentIds) {
+    commentIds.push(...(repliesByParentId.get(currentCommentId) ?? []));
+  }
+
+  return commentIds;
+};
+
 const isThreadStart = (comment: CommentType, commentById: Map<number, CommentType>): boolean =>
   comment.parentCommentId === null || !commentById.has(comment.parentCommentId);
 
 const compareCommentCreatedAt = (a: CommentType, b: CommentType) => {
+  const isAOptimistic = a.commentId < 0;
+  const isBOptimistic = b.commentId < 0;
+
+  if (isAOptimistic !== isBOptimistic) {
+    return isAOptimistic ? 1 : -1;
+  }
   if (!a.createdAt) {
     return b.createdAt ? 1 : 0;
   }
