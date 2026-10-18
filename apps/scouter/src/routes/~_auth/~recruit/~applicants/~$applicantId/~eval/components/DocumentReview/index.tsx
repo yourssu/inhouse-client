@@ -1,15 +1,23 @@
+import { useMutationState, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
+import { postApplicantDocumentComment } from '@/apis/documents';
+import { commentCreateMutationKey, commentsQueryKey } from '@/apis/documents/query';
+import { CommentSchema } from '@/apis/documents/schema';
+import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
+import { useToastedMutation } from '@/hooks/useToastedMutation';
 
-import type { CommentCreatedMetadata } from './useWriteComment';
+import type { CommentCreatedMetadata, CommentWriteParams } from './useCommentComposer';
 
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
+import { PendingComment } from './CommentThread/Comment';
+import { CommentThreadCard } from './CommentThread/CommentThreadCard';
 import { DocumentAnswer } from './DocumentAnswer';
 import { groupCommentThreads } from './groupCommentThreads';
 
@@ -24,6 +32,15 @@ interface DocumentReviewProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
+type CommentWriteVariables = Omit<CommentType, 'commentId'> & {
+  applicantId: number;
+  onError: () => void;
+};
+
+const pendingCommentSchema = CommentSchema.omit({ commentId: true });
+
+const normalizeNickname = (nickname: string) => nickname.replace(/\s*\([^)]*\)$/, '');
+
 export const DocumentReview = ({
   applicantId,
   answers,
@@ -31,12 +48,57 @@ export const DocumentReview = ({
   onCommentAddClick,
   onCommentCreated,
 }: DocumentReviewProps) => {
+  const queryClient = useQueryClient();
+  const { data: me } = useSuspenseQuery(meOption());
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
+  const mutationKey = commentCreateMutationKey(applicantId);
+  const { mutateWithToast: writeCommentWithToast } = useToastedMutation({
+    mutationKey,
+    scope: { id: JSON.stringify(mutationKey) },
+    mutationFn: ({ applicantId, content, parentCommentId, sectionId }: CommentWriteVariables) =>
+      postApplicantDocumentComment({
+        applicantId,
+        data: {
+          content,
+          ...(parentCommentId === null ? {} : { parentCommentId }),
+          sectionId,
+        },
+      }),
+    onError: (_error, { onError }) => {
+      onError();
+    },
+    onSuccess: async (_data, { applicantId, parentCommentId, sectionId }) => {
+      onCommentCreated?.({ parentCommentId, sectionId });
+      await queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+    },
+    successText: '코멘트를 작성했어요.',
+  });
+  const optimisticComments = useMutationState({
+    filters: { mutationKey, exact: true, status: 'pending' },
+    select: (mutation) => ({
+      comment: pendingCommentSchema.parse(mutation.state.variables),
+      mutationId: mutation.mutationId,
+    }),
+  });
+  const parentCommentIdByCommentId = new Map(
+    comments.map(({ commentId, parentCommentId }) => [commentId, parentCommentId]),
+  );
+  const pendingCommentIds = new Set<number>();
+
+  for (const { comment: optimisticComment } of optimisticComments) {
+    let parentCommentId = optimisticComment.parentCommentId;
+    while (parentCommentId !== null) {
+      pendingCommentIds.add(parentCommentId);
+      parentCommentId = parentCommentIdByCommentId.get(parentCommentId) ?? null;
+    }
+  }
+
+  const threadsBySectionId = groupCommentThreads(comments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
-  const showCommentPanel = comments.length > 0 || openCommentSectionId !== null;
+  const showCommentPanel =
+    comments.length > 0 || optimisticComments.length > 0 || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -48,6 +110,28 @@ export const DocumentReview = ({
     onCommentAddClick?.();
     setSelectedSectionId(sectionId);
     setOpenCommentSectionId(sectionId);
+  };
+
+  const handleCommentCreate = ({
+    content,
+    onError,
+    parentCommentId,
+    sectionId,
+  }: CommentWriteParams) => {
+    void writeCommentWithToast({
+      applicantId,
+      author: {
+        nickname: normalizeNickname(me.nickname),
+        part: me.parts[0]?.part ?? '',
+        userId: me.userId,
+      },
+      content,
+      createdAt: new Date().toISOString(),
+      isEdited: false,
+      onError,
+      parentCommentId,
+      sectionId,
+    });
   };
 
   const registerSectionRef = (sectionId: number) => (element: HTMLDivElement | null) => {
@@ -106,6 +190,16 @@ export const DocumentReview = ({
               }
 
               const threads = threadsBySectionId.get(sectionId) ?? [];
+              const pendingComments = optimisticComments.filter(
+                ({ comment }) => comment.sectionId === sectionId,
+              );
+              const pendingThreads = pendingComments.filter(
+                ({ comment }) =>
+                  comment.parentCommentId === null ||
+                  !threads.some((thread) =>
+                    thread.some(({ commentId }) => commentId === comment.parentCommentId),
+                  ),
+              );
 
               return (
                 <div
@@ -113,7 +207,9 @@ export const DocumentReview = ({
                   key={sectionId}
                   ref={registerSectionRef(sectionId)}
                 >
-                  {(threads.length > 0 || openCommentSectionId === sectionId) && (
+                  {(threads.length > 0 ||
+                    pendingThreads.length > 0 ||
+                    openCommentSectionId === sectionId) && (
                     <div className="flex items-center gap-2">
                       <span className="text-neutralMuted shrink-0 text-sm font-medium">
                         {index + 1}번 문항
@@ -123,9 +219,8 @@ export const DocumentReview = ({
                   )}
                   {openCommentSectionId === sectionId && (
                     <CommentField
-                      applicantId={applicantId}
                       onClose={() => setOpenCommentSectionId(null)}
-                      onCommentCreated={onCommentCreated}
+                      onCommentCreate={handleCommentCreate}
                       parentCommentId={null}
                       sectionId={sectionId}
                     />
@@ -135,9 +230,26 @@ export const DocumentReview = ({
                       applicantId={applicantId}
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
-                      onCommentCreated={onCommentCreated}
+                      onCommentCreate={handleCommentCreate}
+                      pendingCommentIds={pendingCommentIds}
                       thread={thread}
-                    />
+                    >
+                      {pendingComments
+                        .filter(({ comment }) =>
+                          thread.some(({ commentId }) => commentId === comment.parentCommentId),
+                        )
+                        .map(({ comment, mutationId }) => (
+                          <PendingComment comment={comment} key={`pending:${mutationId}`} />
+                        ))}
+                    </CommentThread>
+                  ))}
+                  {pendingThreads.map(({ comment, mutationId }) => (
+                    <CommentThreadCard
+                      isSelected={sectionId === selectedSectionId}
+                      key={`pending:${mutationId}`}
+                    >
+                      <PendingComment comment={comment} />
+                    </CommentThreadCard>
                   ))}
                 </div>
               );
