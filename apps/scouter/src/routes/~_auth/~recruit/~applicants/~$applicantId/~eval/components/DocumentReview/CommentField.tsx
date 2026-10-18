@@ -2,10 +2,10 @@ import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
-import type { CommentWriteParams } from './useWriteComment';
+import type { CommentWriteParams } from './useCommentComposer';
 
 import { DetectOutsideClickArea } from './DetectOutsideClickArea';
-import { useWriteComment } from './useWriteComment';
+import { useCommentComposer } from './useCommentComposer';
 
 interface CommentFieldProps {
   onClose: () => void;
@@ -21,7 +21,7 @@ export const CommentField = ({
   sectionId,
 }: CommentFieldProps) => {
   const { content, handleAddComment, handleClose, handleKeyDown, isContentEmpty, setContent } =
-    useWriteComment({
+    useCommentComposer({
       onClose,
       onCommentCreate,
       parentCommentId,

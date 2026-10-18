@@ -6,10 +6,10 @@ import { BsArrowUpCircleFill } from 'react-icons/bs';
 
 import type { CommentType } from '@/apis/documents/schema';
 
-import type { CommentWriteParams } from '../useWriteComment';
+import type { CommentWriteParams } from '../useCommentComposer';
 
 import { DetectOutsideClickArea } from '../DetectOutsideClickArea';
-import { useWriteComment } from '../useWriteComment';
+import { useCommentComposer } from '../useCommentComposer';
 import { Comment } from './Comment';
 import { CommentThreadCard } from './CommentThreadCard';
 
@@ -34,7 +34,7 @@ export const CommentThread = ({
   const [isReplying, setIsReplying] = useState(false);
 
   const { content, handleAddComment, handleClose, handleKeyDown, isContentEmpty, setContent } =
-    useWriteComment({
+    useCommentComposer({
       onClose: () => setIsReplying(false),
       onCommentCreate,
       parentCommentId: currentThreadId,

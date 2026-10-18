@@ -12,19 +12,19 @@ export interface CommentWriteParams {
   sectionId: number;
 }
 
-interface UseWriteCommentParams {
+interface UseCommentComposerParams {
   onClose: () => void;
   onCommentCreate: (params: CommentWriteParams) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
 
-export const useWriteComment = ({
+export const useCommentComposer = ({
   onClose,
   onCommentCreate,
   parentCommentId,
   sectionId,
-}: UseWriteCommentParams) => {
+}: UseCommentComposerParams) => {
   const [content, setContent] = useState('');
   const latestSubmissionIdRef = useRef(0);
   const trimmedContent = content.trim();

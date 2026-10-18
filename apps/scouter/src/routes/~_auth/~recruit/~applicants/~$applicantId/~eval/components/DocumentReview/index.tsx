@@ -12,7 +12,7 @@ import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
-import type { CommentCreatedMetadata, CommentWriteParams } from './useWriteComment';
+import type { CommentCreatedMetadata, CommentWriteParams } from './useCommentComposer';
 
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
