@@ -1,6 +1,5 @@
 import { useMutationState, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
-import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
@@ -23,6 +22,7 @@ import type { CommentCreatedMetadata, CommentWriteParams } from './useWriteComme
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
 import { PendingComment } from './CommentThread/Comment';
+import { CommentThreadCard } from './CommentThread/CommentThreadCard';
 import { DocumentAnswer } from './DocumentAnswer';
 import { getCommentThreadCommentIds, groupCommentThreads } from './groupCommentThreads';
 
@@ -274,15 +274,12 @@ export const DocumentReview = ({
                     </CommentThread>
                   ))}
                   {pendingThreads.map(({ comment, mutationId }) => (
-                    <div
-                      className={clsx(
-                        'rounded-8 hover:bg-grey50 relative left-0 z-10 flex flex-col gap-3 border p-4 transition-[left] hover:-left-1',
-                        sectionId === selectedSectionId ? 'border-violet300' : 'border-grey200',
-                      )}
+                    <CommentThreadCard
+                      isSelected={sectionId === selectedSectionId}
                       key={`pending:${mutationId}`}
                     >
                       <PendingComment comment={comment} />
-                    </div>
+                    </CommentThreadCard>
                   ))}
                 </div>
               );
