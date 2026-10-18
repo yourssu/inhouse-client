@@ -51,38 +51,44 @@ export const CommentThread = ({
   return (
     <DetectOutsideClickArea onClickOutside={handleClose}>
       <CommentThreadCard isSelected={isSelected} onClick={() => setIsReplying(true)}>
-        {thread.map((comment) => (
-          <Comment
-            {...comment}
-            applicantId={applicantId}
-            isOperationPending={pendingCommentIds.has(comment.commentId)}
-            key={comment.commentId}
-          />
-        ))}
-        {children}
-        {isReplying && (
-          <div className="flex items-end gap-1">
-            <MultilineTextField
-              autoFocus
-              className="min-h-fit overflow-hidden p-1.5"
-              onChange={(e) => setContent(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={'댓글 추가'}
-              ref={textareaRef}
-              rows={1}
-              value={content}
-              withHeightAutoResize={true}
+        <Comment
+          {...thread[0]}
+          applicantId={applicantId}
+          isOperationPending={pendingCommentIds.has(currentThreadId)}
+        >
+          {thread.slice(1).map((comment) => (
+            <Comment
+              {...comment}
+              applicantId={applicantId}
+              isOperationPending={pendingCommentIds.has(comment.commentId)}
+              key={comment.commentId}
             />
-            <IconButton
-              aria-label="답글 등록"
-              disabled={isContentEmpty}
-              onClick={handleAddComment}
-              size="md"
-            >
-              <BsArrowUpCircleFill className="size-5" />
-            </IconButton>
-          </div>
-        )}
+          ))}
+          {children}
+          {isReplying && (
+            <div className="flex items-end gap-1">
+              <MultilineTextField
+                autoFocus
+                className="min-h-fit overflow-hidden p-1.5"
+                onChange={(e) => setContent(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={'댓글 추가'}
+                ref={textareaRef}
+                rows={1}
+                value={content}
+                withHeightAutoResize={true}
+              />
+              <IconButton
+                aria-label="답글 등록"
+                disabled={isContentEmpty}
+                onClick={handleAddComment}
+                size="md"
+              >
+                <BsArrowUpCircleFill className="size-5" />
+              </IconButton>
+            </div>
+          )}
+        </Comment>
       </CommentThreadCard>
     </DetectOutsideClickArea>
   );

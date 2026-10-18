@@ -6,13 +6,8 @@ import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { postApplicantDocumentComment } from '@/apis/documents';
-import {
-  commentCreateMutationKey,
-  commentDeleteMutationKey,
-  commentsQueryKey,
-  commentUpdateMutationKey,
-} from '@/apis/documents/query';
-import { CommentSchema, UpdateCommentRequestSchema } from '@/apis/documents/schema';
+import { commentCreateMutationKey, commentsQueryKey } from '@/apis/documents/query';
+import { CommentSchema } from '@/apis/documents/schema';
 import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
@@ -24,7 +19,7 @@ import { CommentThread } from './CommentThread';
 import { PendingComment } from './CommentThread/Comment';
 import { CommentThreadCard } from './CommentThread/CommentThreadCard';
 import { DocumentAnswer } from './DocumentAnswer';
-import { getCommentThreadCommentIds, groupCommentThreads } from './groupCommentThreads';
+import { groupCommentThreads } from './groupCommentThreads';
 
 export const DOCUMENT_REVIEW_PAGE_GRID_TEMPLATE_COLUMNS =
   'grid-cols-[minmax(36rem,1fr)_minmax(17.5rem,25rem)]';
@@ -43,9 +38,6 @@ type CommentWriteVariables = Omit<CommentType, 'commentId'> & {
 };
 
 const pendingCommentSchema = CommentSchema.omit({ commentId: true });
-
-const commentIdSchema = CommentSchema.pick({ commentId: true });
-const commentUpdateSchema = commentIdSchema.extend({ data: UpdateCommentRequestSchema });
 
 const normalizeNickname = (nickname: string) => nickname.replace(/\s*\([^)]*\)$/, '');
 
@@ -89,26 +81,6 @@ export const DocumentReview = ({
       mutationId: mutation.mutationId,
     }),
   });
-  const pendingUpdates = useMutationState({
-    filters: { mutationKey: commentUpdateMutationKey(applicantId), exact: true, status: 'pending' },
-    select: (mutation) => commentUpdateSchema.parse(mutation.state.variables),
-  });
-  const pendingDeletes = useMutationState({
-    filters: { mutationKey: commentDeleteMutationKey(applicantId), exact: true, status: 'pending' },
-    select: (mutation) => commentIdSchema.parse(mutation.state.variables).commentId,
-  });
-  const deletedIds = new Set(
-    pendingDeletes.flatMap((commentId) => getCommentThreadCommentIds(comments, commentId)),
-  );
-  const updatedContents = new Map(
-    pendingUpdates.map(({ commentId, data }) => [commentId, data.content]),
-  );
-  const displayedComments = comments
-    .filter(({ commentId }) => !deletedIds.has(commentId))
-    .map((comment) => {
-      const content = updatedContents.get(comment.commentId);
-      return content === undefined ? comment : { ...comment, content, isEdited: true };
-    });
   const parentCommentIdByCommentId = new Map(
     comments.map(({ commentId, parentCommentId }) => [commentId, parentCommentId]),
   );
@@ -122,11 +94,11 @@ export const DocumentReview = ({
     }
   }
 
-  const threadsBySectionId = groupCommentThreads(displayedComments);
+  const threadsBySectionId = groupCommentThreads(comments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
   const showCommentPanel =
-    displayedComments.length > 0 || optimisticComments.length > 0 || openCommentSectionId !== null;
+    comments.length > 0 || optimisticComments.length > 0 || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -219,9 +191,7 @@ export const DocumentReview = ({
 
               const threads = threadsBySectionId.get(sectionId) ?? [];
               const pendingComments = optimisticComments.filter(
-                ({ comment }) =>
-                  comment.sectionId === sectionId &&
-                  (comment.parentCommentId === null || !deletedIds.has(comment.parentCommentId)),
+                ({ comment }) => comment.sectionId === sectionId,
               );
               const pendingThreads = pendingComments.filter(
                 ({ comment }) =>
