@@ -28,7 +28,7 @@ interface CommentProps extends CommentType {
 interface CommentItemProps {
   actions?: ReactNode;
   children: ReactNode;
-  comment: CommentType;
+  comment: Pick<CommentType, 'author' | 'createdAt' | 'isEdited'>;
   isProcessing: boolean;
 }
 
@@ -171,7 +171,7 @@ export const Comment = ({ applicantId, isOperationPending, ...comment }: Comment
         ) : undefined
       }
       comment={comment}
-      isProcessing={commentId < 0}
+      isProcessing={false}
     >
       {isEditing ? (
         <div className="flex flex-col gap-0.5">
@@ -216,6 +216,16 @@ export const Comment = ({ applicantId, isOperationPending, ...comment }: Comment
     </CommentItem>
   );
 };
+
+interface PendingCommentProps {
+  comment: Omit<CommentType, 'commentId'>;
+}
+
+export const PendingComment = ({ comment }: PendingCommentProps) => (
+  <CommentItem comment={comment} isProcessing>
+    <CommentBody>{comment.content}</CommentBody>
+  </CommentItem>
+);
 
 const CommentItem = ({ actions, children, comment, isProcessing }: CommentItemProps) => {
   const { author, createdAt, isEdited } = comment;

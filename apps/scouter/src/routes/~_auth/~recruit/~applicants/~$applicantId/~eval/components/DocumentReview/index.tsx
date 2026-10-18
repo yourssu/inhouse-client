@@ -1,5 +1,6 @@
 import { useMutationState, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
@@ -21,6 +22,7 @@ import type { CommentCreatedMetadata, CommentWriteParams } from './useWriteComme
 
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
+import { PendingComment } from './CommentThread/Comment';
 import { DocumentAnswer } from './DocumentAnswer';
 import { getCommentThreadCommentIds, groupCommentThreads } from './groupCommentThreads';
 
@@ -83,8 +85,8 @@ export const DocumentReview = ({
   const optimisticComments = useMutationState({
     filters: { mutationKey, exact: true, status: 'pending' },
     select: (mutation) => ({
-      ...pendingCommentSchema.parse(mutation.state.variables),
-      commentId: -mutation.mutationId,
+      comment: pendingCommentSchema.parse(mutation.state.variables),
+      mutationId: mutation.mutationId,
     }),
   });
   const pendingUpdates = useMutationState({
@@ -95,25 +97,24 @@ export const DocumentReview = ({
     filters: { mutationKey: commentDeleteMutationKey(applicantId), exact: true, status: 'pending' },
     select: (mutation) => commentIdSchema.parse(mutation.state.variables).commentId,
   });
-  const allComments = [...comments, ...optimisticComments];
   const deletedIds = new Set(
-    pendingDeletes.flatMap((commentId) => getCommentThreadCommentIds(allComments, commentId)),
+    pendingDeletes.flatMap((commentId) => getCommentThreadCommentIds(comments, commentId)),
   );
   const updatedContents = new Map(
     pendingUpdates.map(({ commentId, data }) => [commentId, data.content]),
   );
-  const displayedComments = allComments
+  const displayedComments = comments
     .filter(({ commentId }) => !deletedIds.has(commentId))
     .map((comment) => {
       const content = updatedContents.get(comment.commentId);
       return content === undefined ? comment : { ...comment, content, isEdited: true };
     });
   const parentCommentIdByCommentId = new Map(
-    allComments.map(({ commentId, parentCommentId }) => [commentId, parentCommentId]),
+    comments.map(({ commentId, parentCommentId }) => [commentId, parentCommentId]),
   );
-  const pendingCommentIds = new Set(optimisticComments.map(({ commentId }) => commentId));
+  const pendingCommentIds = new Set<number>();
 
-  for (const optimisticComment of optimisticComments) {
+  for (const { comment: optimisticComment } of optimisticComments) {
     let parentCommentId = optimisticComment.parentCommentId;
     while (parentCommentId !== null) {
       pendingCommentIds.add(parentCommentId);
@@ -124,7 +125,8 @@ export const DocumentReview = ({
   const threadsBySectionId = groupCommentThreads(displayedComments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
-  const showCommentPanel = displayedComments.length > 0 || openCommentSectionId !== null;
+  const showCommentPanel =
+    displayedComments.length > 0 || optimisticComments.length > 0 || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -216,6 +218,18 @@ export const DocumentReview = ({
               }
 
               const threads = threadsBySectionId.get(sectionId) ?? [];
+              const pendingComments = optimisticComments.filter(
+                ({ comment }) =>
+                  comment.sectionId === sectionId &&
+                  (comment.parentCommentId === null || !deletedIds.has(comment.parentCommentId)),
+              );
+              const pendingThreads = pendingComments.filter(
+                ({ comment }) =>
+                  comment.parentCommentId === null ||
+                  !threads.some((thread) =>
+                    thread.some(({ commentId }) => commentId === comment.parentCommentId),
+                  ),
+              );
 
               return (
                 <div
@@ -223,7 +237,9 @@ export const DocumentReview = ({
                   key={sectionId}
                   ref={registerSectionRef(sectionId)}
                 >
-                  {(threads.length > 0 || openCommentSectionId === sectionId) && (
+                  {(threads.length > 0 ||
+                    pendingThreads.length > 0 ||
+                    openCommentSectionId === sectionId) && (
                     <div className="flex items-center gap-2">
                       <span className="text-neutralMuted shrink-0 text-sm font-medium">
                         {index + 1}번 문항
@@ -247,7 +263,26 @@ export const DocumentReview = ({
                       onCommentCreate={handleCommentCreate}
                       pendingCommentIds={pendingCommentIds}
                       thread={thread}
-                    />
+                    >
+                      {pendingComments
+                        .filter(({ comment }) =>
+                          thread.some(({ commentId }) => commentId === comment.parentCommentId),
+                        )
+                        .map(({ comment, mutationId }) => (
+                          <PendingComment comment={comment} key={`pending:${mutationId}`} />
+                        ))}
+                    </CommentThread>
+                  ))}
+                  {pendingThreads.map(({ comment, mutationId }) => (
+                    <div
+                      className={clsx(
+                        'rounded-8 hover:bg-grey50 relative left-0 z-10 flex flex-col gap-3 border p-4 transition-[left] hover:-left-1',
+                        sectionId === selectedSectionId ? 'border-violet300' : 'border-grey200',
+                      )}
+                      key={`pending:${mutationId}`}
+                    >
+                      <PendingComment comment={comment} />
+                    </div>
                   ))}
                 </div>
               );
