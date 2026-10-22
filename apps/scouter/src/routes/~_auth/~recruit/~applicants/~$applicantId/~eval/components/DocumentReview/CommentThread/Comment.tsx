@@ -12,11 +12,7 @@ import { PulseLoader } from 'react-spinners';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
-import {
-  changeCommentMutationKey,
-  commentsQueryKey,
-  createCommentMutationKey,
-} from '@/apis/documents/query';
+import { commentsQueryKey, createCommentMutationKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
@@ -24,7 +20,6 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface CommentProps extends CommentType {
   applicantId: number;
-  isDeleteDisabled: boolean;
 }
 
 interface CommentItemProps {
@@ -38,7 +33,7 @@ interface CommentBodyProps {
   children: ReactNode;
 }
 
-export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentProps) => {
+export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   const { author, commentId, content } = comment;
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
@@ -46,7 +41,6 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
   const queryClient = useQueryClient();
   const queryKey = commentsQueryKey(applicantId);
   const { invalidate: invalidateComments } = useQueryInvalidation(queryKey);
-  const mutationKey = changeCommentMutationKey(applicantId, commentId);
   const isCreatePending =
     useIsMutating({
       mutationKey: createCommentMutationKey(applicantId),
@@ -58,7 +52,6 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
 
   const { isPending: isUpdatePending, mutateWithToast: updateCommentWithToast } =
     useToastedMutation({
-      mutationKey: changeCommentMutationKey(applicantId, commentId, 'update'),
       mutationFn: patchApplicantDocumentComment,
       successText: '코멘트를 수정했어요.',
       onSuccess: async (updatedComment) => {
@@ -96,7 +89,7 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
 
   const handleSubmitEdit = async (e?: MouseEvent<HTMLButtonElement>) => {
     e?.stopPropagation();
-    if (queryClient.isMutating({ mutationKey }) > 0) {
+    if (isUpdatePending) {
       return;
     }
 
@@ -127,7 +120,6 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
 
   const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
     useToastedMutation({
-      mutationKey: changeCommentMutationKey(applicantId, commentId, 'delete'),
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
       onSuccess: async () => {
@@ -144,7 +136,7 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
   const isChanging = commentId < 0 || isUpdatePending || isDeletePending;
 
   const handleDelete = async () => {
-    if (isChanging || isDeleteDisabled) {
+    if (isChanging) {
       return;
     }
     const isConfirm = await openAlertDialog({
@@ -155,7 +147,7 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
       secondaryButtonText: '취소',
     });
 
-    if (isConfirm && queryClient.isMutating({ mutationKey }) === 0) {
+    if (isConfirm) {
       deleteCommentWithToast({ applicantId, commentId });
     }
   };
@@ -196,7 +188,7 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
 
                 <Menu.ButtonItem
                   className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={isChanging || isDeleteDisabled}
+                  disabled={isChanging}
                   icon={<HiOutlineTrash className="text-red600 size-4" />}
                   onClick={handleDelete}
                 >
@@ -219,7 +211,7 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
             onChange={(e) => setEditedContent(e.target.value)}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={handleEditKeyDown}
-            readOnly={isChanging}
+            readOnly={isUpdatePending}
             ref={editTextareaRef}
             rows={1}
             value={editedContent}
@@ -229,7 +221,7 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
             <IconButton
               aria-label="댓글 수정 취소"
               className="rounded-full"
-              disabled={isChanging}
+              disabled={isUpdatePending}
               onClick={handleCancelEdit}
               onMouseDown={(e) => e.preventDefault()}
               size="xs"
@@ -240,7 +232,7 @@ export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentPr
               aria-busy={isUpdatePending}
               aria-label="댓글 수정 저장"
               className="rounded-full"
-              disabled={isChanging}
+              disabled={isUpdatePending}
               onClick={handleSubmitEdit}
               onMouseDown={(e) => e.preventDefault()}
               size="xs"

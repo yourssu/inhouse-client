@@ -29,14 +29,13 @@ export const useWriteComment = ({
   sectionId,
 }: UseWriteCommentParams) => {
   const queryClient = useQueryClient();
-  const mutationKey = createCommentMutationKey(applicantId, sectionId, parentCommentId);
   const { data: me } = useSuspenseQuery(meOption());
   const [content, setContent] = useState('');
   const trimmedContent = content.trim();
   const isContentEmpty = trimmedContent === '';
 
   const { isPending: isWritePending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
-    mutationKey,
+    mutationKey: createCommentMutationKey(applicantId),
     mutationFn: postApplicantDocumentComment,
     successText: '코멘트를 작성했어요.',
     onMutate: ({ data }): CommentType => {
@@ -69,12 +68,13 @@ export const useWriteComment = ({
       });
     },
     onSettled: (_, _error, { applicantId }) => {
+      // 성공·실패 후 목록은 갱신하되, 재조회가 끝날 때까지 입력을 막지는 않는다.
       void queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
     },
   });
 
   const handleAddComment = async () => {
-    if (isContentEmpty || queryClient.isMutating({ mutationKey }) > 0) {
+    if (isContentEmpty || isWritePending) {
       return;
     }
 

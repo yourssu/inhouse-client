@@ -1,12 +1,9 @@
-import { useIsMutating } from '@tanstack/react-query';
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
 import type { CommentType } from '@/apis/documents/schema';
-
-import { changeCommentMutationKey } from '@/apis/documents/query';
 
 import type { CommentCreatedMetadata } from '../useWriteComment';
 
@@ -28,12 +25,8 @@ export const CommentThread = ({
   thread,
 }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
-  // 부모 삭제로 답글 입력창이 사라질 수 있어 새 답글 작성을 막는다.
-  const isDeletingRoot =
-    useIsMutating({
-      mutationKey: changeCommentMutationKey(applicantId, currentThreadId, 'delete'),
-    }) > 0;
-  const isReplyDisabled = isDeletingRoot || currentThreadId < 0;
+  // 임시 ID는 서버에 보낼 수 없으므로 실제 댓글을 조회하기 전에는 답글을 막는다.
+  const isReplyDisabled = currentThreadId < 0;
   const [isReplying, setIsReplying] = useState(false);
 
   const {
@@ -73,12 +66,7 @@ export const CommentThread = ({
         }}
       >
         {thread.map((comment) => (
-          <Comment
-            key={comment.commentId}
-            {...comment}
-            applicantId={applicantId}
-            isDeleteDisabled={comment.commentId === currentThreadId && !isContentEmpty}
-          />
+          <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
         ))}
         {isReplying && (
           <div className="flex items-end gap-1">
