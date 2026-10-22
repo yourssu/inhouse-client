@@ -28,6 +28,7 @@ export const CommentThread = ({
   thread,
 }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
+  // 부모 삭제 중 답글 등록이나 자식 댓글 변경이 겹치지 않게 한다.
   const isDeletingRoot =
     useIsMutating({
       mutationKey: changeCommentMutationKey(applicantId, currentThreadId, 'delete'),
@@ -68,8 +69,7 @@ export const CommentThread = ({
     <DetectOutsideClickArea onClickOutside={handleClose}>
       <div
         className={clsx(
-          'rounded-8 hover:bg-grey50 relative left-0 z-10 flex-col gap-3 border p-4 transition-[left] hover:-left-1',
-          isDeletingRoot && thread.length === 1 ? 'hidden' : 'flex',
+          'rounded-8 hover:bg-grey50 relative left-0 z-10 flex flex-col gap-3 border p-4 transition-[left] hover:-left-1',
           isSelected ? 'border-violet300' : 'border-grey200',
         )}
         onClick={() => {

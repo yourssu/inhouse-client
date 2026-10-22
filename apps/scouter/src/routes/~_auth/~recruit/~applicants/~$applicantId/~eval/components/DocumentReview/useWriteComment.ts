@@ -39,11 +39,9 @@ export const useWriteComment = ({
     mutationKey,
     mutationFn: postApplicantDocumentComment,
     successText: '코멘트를 작성했어요.',
-    onMutate: async ({ applicantId, data }) => {
-      const queryKey = commentsQueryKey(applicantId);
-      await queryClient.cancelQueries({ queryKey });
+    onMutate: ({ data }): CommentType => {
       // 서버 ID와 구분해 조회로 확정되기 전의 수정·삭제·답글을 막는다.
-      const optimisticComment: CommentType = {
+      return {
         ...data,
         commentId: -Date.now(),
         author: {
@@ -54,18 +52,16 @@ export const useWriteComment = ({
         isEdited: false,
         parentCommentId: data.parentCommentId ?? null,
       };
-      queryClient.setQueryData<CommentType[]>(queryKey, (comments = []) => [
-        ...comments,
-        optimisticComment,
-      ]);
-      return optimisticComment;
     },
-    onError: (_, { applicantId }, optimisticComment) => {
-      queryClient.setQueryData<CommentType[]>(commentsQueryKey(applicantId), (comments) =>
-        comments?.filter(({ commentId }) => commentId !== optimisticComment?.commentId),
+    onSuccess: async (createdCommentId, { applicantId, data }, optimisticComment) => {
+      const queryKey = commentsQueryKey(applicantId);
+      await queryClient.cancelQueries({ queryKey });
+      // 저장이 확인된 댓글만 캐시에 남겨, 후속 목록 조회가 실패해도 표시를 유지한다.
+      queryClient.setQueryData<CommentType[]>(queryKey, (comments = []) =>
+        comments.some(({ commentId }) => commentId === createdCommentId)
+          ? comments
+          : [...comments, optimisticComment],
       );
-    },
-    onSuccess: (_, { data }) => {
       setContent('');
       onCommentCreated?.({
         parentCommentId: data.parentCommentId ?? null,
@@ -73,10 +69,7 @@ export const useWriteComment = ({
       });
     },
     onSettled: (_, _error, { applicantId }) => {
-      // 마지막 댓글 요청이 끝났을 때만 조회해 다른 임시 댓글이 지워지지 않게 한다.
-      if (queryClient.isMutating({ mutationKey: commentsQueryKey(applicantId) }) === 1) {
-        void queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
-      }
+      void queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
     },
   });
 

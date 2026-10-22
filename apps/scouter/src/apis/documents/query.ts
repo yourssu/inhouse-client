@@ -35,9 +35,8 @@ export const commentsQueryKey = (applicantId: number) =>
 
 export const createCommentMutationKey = (
   applicantId: number,
-  sectionId: number,
-  parentCommentId: null | number,
-) => [...commentsQueryKey(applicantId), 'create', sectionId, parentCommentId] as const;
+  ...scope: [] | [sectionId: number, parentCommentId: null | number]
+) => [...commentsQueryKey(applicantId), 'create', ...scope] as const;
 
 export const changeCommentMutationKey = (
   applicantId: number,
