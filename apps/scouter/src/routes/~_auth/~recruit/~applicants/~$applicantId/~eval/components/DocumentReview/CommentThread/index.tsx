@@ -1,4 +1,4 @@
-import { matchMutation, useIsMutating } from '@tanstack/react-query';
+import { useIsMutating } from '@tanstack/react-query';
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
@@ -28,18 +28,12 @@ export const CommentThread = ({
   thread,
 }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
-  // 부모 삭제 중 답글 등록이나 자식 댓글 변경이 겹치지 않게 한다.
+  // 부모 삭제로 답글 입력창이 사라질 수 있어 새 답글 작성을 막는다.
   const isDeletingRoot =
     useIsMutating({
       mutationKey: changeCommentMutationKey(applicantId, currentThreadId, 'delete'),
     }) > 0;
   const isReplyDisabled = isDeletingRoot || currentThreadId < 0;
-  const pendingChanges = useIsMutating({
-    predicate: (mutation) =>
-      thread.some(({ commentId }) =>
-        matchMutation({ mutationKey: changeCommentMutationKey(applicantId, commentId) }, mutation),
-      ),
-  });
   const [isReplying, setIsReplying] = useState(false);
 
   const {
@@ -83,10 +77,7 @@ export const CommentThread = ({
             key={comment.commentId}
             {...comment}
             applicantId={applicantId}
-            isDeleteDisabled={
-              comment.commentId === currentThreadId && (!isContentEmpty || pendingChanges > 0)
-            }
-            isParentDeleting={isDeletingRoot}
+            isDeleteDisabled={comment.commentId === currentThreadId && !isContentEmpty}
           />
         ))}
         {isReplying && (

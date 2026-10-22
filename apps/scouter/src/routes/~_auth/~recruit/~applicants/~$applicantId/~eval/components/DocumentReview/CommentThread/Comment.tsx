@@ -25,7 +25,6 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 interface CommentProps extends CommentType {
   applicantId: number;
   isDeleteDisabled: boolean;
-  isParentDeleting: boolean;
 }
 
 interface CommentItemProps {
@@ -39,12 +38,7 @@ interface CommentBodyProps {
   children: ReactNode;
 }
 
-export const Comment = ({
-  applicantId,
-  isDeleteDisabled,
-  isParentDeleting,
-  ...comment
-}: CommentProps) => {
+export const Comment = ({ applicantId, isDeleteDisabled, ...comment }: CommentProps) => {
   const { author, commentId, content } = comment;
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
@@ -102,7 +96,7 @@ export const Comment = ({
 
   const handleSubmitEdit = async (e?: MouseEvent<HTMLButtonElement>) => {
     e?.stopPropagation();
-    if (isParentDeleting || queryClient.isMutating({ mutationKey }) > 0) {
+    if (queryClient.isMutating({ mutationKey }) > 0) {
       return;
     }
 
@@ -147,7 +141,7 @@ export const Comment = ({
       },
     });
 
-  const isChanging = commentId < 0 || isUpdatePending || isDeletePending || isParentDeleting;
+  const isChanging = commentId < 0 || isUpdatePending || isDeletePending;
 
   const handleDelete = async () => {
     if (isChanging || isDeleteDisabled) {
