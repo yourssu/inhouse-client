@@ -1,9 +1,11 @@
+import { useMutationState } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
+import { createCommentMutationKey } from '@/apis/documents/query';
 import { Paper } from '@/components/Paper';
 
 import type { CommentCreatedMetadata } from './useWriteComment';
@@ -27,10 +29,27 @@ interface DocumentReviewProps {
 export const DocumentReview = ({
   applicantId,
   answers,
-  comments,
+  comments: savedComments,
   onCommentAddClick,
   onCommentCreated,
 }: DocumentReviewProps) => {
+  const pendingComments = useMutationState({
+    filters: { mutationKey: createCommentMutationKey(applicantId), status: 'pending' },
+    select: ({ state }) => state.context as CommentType | undefined,
+  });
+  // 재조회가 등록 중 표시를 지우지 않도록 임시 댓글을 별도로 합친다.
+  // 저장 성공 후 캐시에도 들어간 임시 댓글은 한 번만 표시한다.
+  const comments = useMemo(
+    () => [
+      ...savedComments,
+      ...pendingComments.filter(
+        (comment): comment is CommentType =>
+          comment !== undefined &&
+          !savedComments.some(({ commentId }) => commentId === comment.commentId),
+      ),
+    ],
+    [savedComments, pendingComments],
+  );
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
   const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
@@ -76,7 +95,7 @@ export const DocumentReview = ({
   }, [selectedSectionId]);
 
   return (
-    <Paper className="grid min-h-0 grid-cols-3 grid-rows-1 gap-4 overflow-hidden">
+    <Paper className="grid min-h-0 grid-cols-3 grid-rows-1 gap-4 overflow-hidden" key={applicantId}>
       <div className="col-span-2 flex min-h-0 min-w-0 flex-col gap-4 overflow-y-auto only:col-span-full">
         {answers.map((answer, index) => {
           const { sectionId } = answer;

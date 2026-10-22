@@ -64,7 +64,12 @@ export type CreateCommentParams = {
 
 export const postApplicantDocumentComment = async ({ applicantId, data }: CreateCommentParams) => {
   const request = CreateCommentRequestSchema.parse(data);
-  await api.post(`applicants/${applicantId}/documents/comments`, { json: request });
+  const response = await api.post(`applicants/${applicantId}/documents/comments`, {
+    json: request,
+  });
+  const commentId = Number(response.headers.get('Location')?.split('/').at(-1));
+  // 헤더를 읽지 못해도 성공한 저장을 실패로 처리하지 않는다.
+  return Number.isSafeInteger(commentId) && commentId > 0 ? commentId : undefined;
 };
 export type DeleteCommentParams = {
   applicantId: number;

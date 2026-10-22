@@ -25,6 +25,8 @@ export const CommentThread = ({
   thread,
 }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
+  // 임시 ID는 서버에 보낼 수 없으므로 실제 댓글을 조회하기 전에는 답글을 막는다.
+  const isReplyDisabled = currentThreadId < 0;
   const [isReplying, setIsReplying] = useState(false);
 
   const {
@@ -57,7 +59,11 @@ export const CommentThread = ({
           'rounded-8 hover:bg-grey50 relative left-0 z-10 flex flex-col gap-3 border p-4 transition-[left] hover:-left-1',
           isSelected ? 'border-violet300' : 'border-grey200',
         )}
-        onClick={() => setIsReplying(true)}
+        onClick={() => {
+          if (!isReplyDisabled) {
+            setIsReplying(true);
+          }
+        }}
       >
         {thread.map((comment) => (
           <Comment key={comment.commentId} {...comment} applicantId={applicantId} />
@@ -67,10 +73,11 @@ export const CommentThread = ({
             <MultilineTextField
               autoFocus
               className="min-h-fit overflow-hidden p-1.5"
-              disabled={isWritePending}
+              disabled={isReplyDisabled}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={'댓글 추가'}
+              readOnly={isWritePending}
               ref={textareaRef}
               rows={1}
               value={content}
@@ -78,8 +85,9 @@ export const CommentThread = ({
             />
             <IconButton
               aria-label="답글 등록"
-              disabled={isWritePending || isContentEmpty}
+              disabled={isContentEmpty || isWritePending || isReplyDisabled}
               onClick={handleAddComment}
+              onMouseDown={(e) => e.preventDefault()}
               size="md"
             >
               <BsArrowUpCircleFill className="size-5" />
