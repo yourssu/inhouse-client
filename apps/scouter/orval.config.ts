@@ -1,8 +1,11 @@
 // 면접 메모의 요청·응답 스키마만 생성합니다.
 import { defineConfig } from 'orval';
 
+import { sortGeneratedTypes } from './scripts/sort-generated-types';
+
 export default defineConfig({
   interviewMemos: {
+    hooks: { afterAllFilesWrite: sortGeneratedTypes },
     // 명세의 일부 Location 헤더에 schema가 없어 전체 명세 검증은 별도로 다룹니다.
     input: {
       target: './schema.json',
