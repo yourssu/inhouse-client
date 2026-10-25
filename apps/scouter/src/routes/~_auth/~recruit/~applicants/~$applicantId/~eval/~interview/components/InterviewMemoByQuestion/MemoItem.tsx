@@ -3,7 +3,7 @@ import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton } from '@yourssu-inhouse/interior';
 import { HiOutlineTrash } from 'react-icons/hi2';
 
-import type { InterviewMemoType } from '@/apis/interviews/memos/schema';
+import type { ReadInterviewCommentResponseOutput } from '@/apis/interviews/memos/generated/schema.gen';
 
 import { deleteApplicantInterviewMemo } from '@/apis/interviews/memos';
 import { interviewMemosQueryKey } from '@/apis/interviews/memos/query';
@@ -14,7 +14,7 @@ import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface MemoItemProps {
   applicantId: number;
-  memo: InterviewMemoType;
+  memo: ReadInterviewCommentResponseOutput;
 }
 
 export const MemoItem = ({ applicantId, memo }: MemoItemProps) => {
