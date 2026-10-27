@@ -1,9 +1,9 @@
 import z from 'zod/v4';
 
 import {
-  CreateDocumentCommentRequest,
+  ReadDocumentCommentResponse as GeneratedCommentResponse,
+  CreateDocumentCommentRequest as GeneratedCreateCommentRequest,
   ReadDocumentCommentAuthorResponse,
-  ReadDocumentCommentResponse,
 } from '@/apis/documents/generated/comments.schema.gen';
 
 const documentResults = ['PENDING', 'DOCUMENT_PASS', 'DOCUMENT_FAIL'] as const;
@@ -117,7 +117,7 @@ export const CommentAuthorSchema = ReadDocumentCommentAuthorResponse.extend({
   userId: z.number(),
 });
 
-export const CommentSchema = ReadDocumentCommentResponse.extend({
+export const CommentSchema = GeneratedCommentResponse.extend({
   author: CommentAuthorSchema,
   commentId: z.number(),
   // 기존처럼 작성 시각 생략을 허용하며, 날짜는 UTC 형식으로 검증합니다.
@@ -129,7 +129,7 @@ export const CommentSchema = ReadDocumentCommentResponse.extend({
   sectionId: z.number(),
 });
 
-export const CreateCommentRequestSchema = CreateDocumentCommentRequest.extend({
+export const CreateCommentRequestSchema = GeneratedCreateCommentRequest.extend({
   parentCommentId: z.number().optional(),
   sectionId: z.number(),
 });
@@ -142,6 +142,12 @@ export type CommentAuthorType = z.infer<typeof CommentAuthorSchema>;
 export type CommentType = z.infer<typeof CommentSchema>;
 export type CreateCommentRequestType = z.infer<typeof CreateCommentRequestSchema>;
 export type UpdateCommentRequestType = z.infer<typeof UpdateCommentRequestSchema>;
+
+// 생성 코드도 화면과 같은 호환 스키마를 사용합니다.
+export const ReadDocumentCommentResponse = CommentSchema;
+export type ReadDocumentCommentResponse = CommentType;
+export const CreateDocumentCommentRequest = CreateCommentRequestSchema;
+export type CreateDocumentCommentRequest = CreateCommentRequestType;
 
 export const PartDocumentRubricSchema = z.object({
   sectionId: z.number(),

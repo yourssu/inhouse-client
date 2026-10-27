@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { type KeyboardEvent, useState } from 'react';
 
-import { postApplicantDocumentComment } from '@/apis/documents';
+import { getCreate3MutationOptions } from '@/apis/documents/generated/comments.gen';
 import { commentsQueryKey } from '@/apis/documents/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
@@ -31,7 +31,7 @@ export const useWriteComment = ({
   const isContentEmpty = trimmedContent === '';
 
   const { isPending: isWritePending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
-    mutationFn: postApplicantDocumentComment,
+    ...getCreate3MutationOptions(),
     successText: '코멘트를 작성했어요.',
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });

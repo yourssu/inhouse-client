@@ -2,13 +2,13 @@ import { queryOptions } from '@tanstack/react-query';
 import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import {
-  getApplicantDocumentComments,
   getApplicantDocumentEvaluatorStatuses,
   getApplicantDocumentsEvaluations,
   getApplicantDocumentsOthersEvaluations,
   getPartDocumentsDeadline,
   getPartDocumentsRubrics,
 } from '@/apis/documents';
+import { getReadAllByApplicantIdSuspenseQueryOptions } from '@/apis/documents/generated/comments.gen';
 
 const qk = createQueryKeyNamespace('scouter');
 
@@ -34,9 +34,8 @@ export const commentsQueryKey = (applicantId: number) =>
   qk.for('applicants', applicantId, 'documents', 'comments');
 
 export const applicantDocumentCommentsOption = (applicantId: number) =>
-  queryOptions({
-    queryKey: commentsQueryKey(applicantId),
-    queryFn: () => getApplicantDocumentComments(applicantId),
+  getReadAllByApplicantIdSuspenseQueryOptions(applicantId, {
+    query: { queryKey: commentsQueryKey(applicantId) },
   });
 
 export const getPartDocumentsRubricsOption = (partId: number) =>

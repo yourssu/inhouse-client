@@ -1,13 +1,10 @@
 import type { UpdateApplicantDocumentEvaluationRequestType } from '@/apis/documents/schema';
 
 import { api } from '@/apis/api';
-import { create3, readAllByApplicantId } from '@/apis/documents/generated/comments.gen';
 import {
   ApplicantDocumentEvaluationsResponseSchema,
   ApplicantDocumentOthersEvaluationsSchema,
   CommentSchema,
-  CreateCommentRequestSchema,
-  type CreateCommentRequestType,
   DocumentEvaluatorStatusesSchema,
   PartDocumentsDeadlineSchema,
   PartDocumentsRubricsSchema,
@@ -53,22 +50,6 @@ export const putApplicantDocumentEvaluations = async ({
   await api.put(`/applicants/${applicantId}/documents/evaluations`, { json: request });
 };
 
-// API 연결: 기존 호출 방식과 응답 검증을 유지합니다.
-export const getApplicantDocumentComments = async (applicantId: number) => {
-  const response = await readAllByApplicantId(applicantId).json<unknown>();
-  return CommentSchema.array().parse(response);
-};
-
-export type CreateCommentParams = {
-  applicantId: number;
-  data: CreateCommentRequestType;
-};
-
-export const postApplicantDocumentComment = async ({ applicantId, data }: CreateCommentParams) => {
-  const request = CreateCommentRequestSchema.parse(data);
-  // 등록 성공 응답은 본문이 없을 수 있어 JSON으로 읽지 않습니다.
-  await create3(applicantId, request);
-};
 export type DeleteCommentParams = {
   applicantId: number;
   commentId: number;
