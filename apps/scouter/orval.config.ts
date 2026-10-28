@@ -65,24 +65,33 @@ export default defineConfig({
         query: { version: 5 },
         operations: {
           readAllByApplicantId: {
-            query: { useQuery: false, useSuspenseQuery: true, useMutation: false },
-          },
-          create_3: { query: { useQuery: false, useMutation: true } },
-        },
-        // JSON 본문 검사를 생성 함수에 포함해 API별 수동 검증 함수를 없앱니다.
-        transformer: (operation) => {
-          const { body } = operation;
-          if (!body.implementation) {
-            return operation;
-          }
-          return {
-            ...operation,
-            body: {
-              ...body,
-              implementation: `${body.definition}.parse(${body.implementation})`,
-              imports: body.imports.map((schema) => ({ ...schema, values: true })),
+            query: {
+              useQuery: false,
+              useSuspenseQuery: true,
+              useMutation: false,
+              shouldExportKeys: false,
+              queryOptions: {
+                path: './src/apis/documents/commentsQueryOptions.ts',
+                name: 'commentQueryOptions',
+                useHooks: false,
+              },
             },
-          };
+          },
+          create_3: {
+            query: { useQuery: false, useMutation: true },
+            // 코멘트 등록의 JSON 본문 검사만 생성합니다.
+            transformer: (operation) => {
+              const { body } = operation;
+              return {
+                ...operation,
+                body: {
+                  ...body,
+                  implementation: `${body.definition}.parse(${body.implementation})`,
+                  imports: body.imports.map((schema) => ({ ...schema, values: true })),
+                },
+              };
+            },
+          },
         },
         zod: { version: 4, generateReusableSchemas: true },
       },

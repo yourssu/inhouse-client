@@ -117,7 +117,7 @@ export const CommentAuthorSchema = ReadDocumentCommentAuthorResponse.extend({
   userId: z.number(),
 });
 
-export const CommentSchema = GeneratedCommentResponse.extend({
+export const ReadDocumentCommentResponse = GeneratedCommentResponse.extend({
   author: CommentAuthorSchema,
   commentId: z.number(),
   // 기존처럼 작성 시각 생략을 허용하며, 날짜는 UTC 형식으로 검증합니다.
@@ -128,26 +128,30 @@ export const CommentSchema = GeneratedCommentResponse.extend({
     .transform((parentCommentId) => parentCommentId ?? null),
   sectionId: z.number(),
 });
+export type ReadDocumentCommentResponse = z.infer<typeof ReadDocumentCommentResponse>;
 
-export const CreateCommentRequestSchema = GeneratedCreateCommentRequest.extend({
+export const CreateDocumentCommentRequest = GeneratedCreateCommentRequest.extend({
   parentCommentId: z.number().optional(),
   sectionId: z.number(),
 });
+export type CreateDocumentCommentRequest = z.infer<typeof CreateDocumentCommentRequest>;
 
 export const UpdateCommentRequestSchema = z.object({
   content: z.string().min(1),
 });
 
 export type CommentAuthorType = z.infer<typeof CommentAuthorSchema>;
-export type CommentType = z.infer<typeof CommentSchema>;
-export type CreateCommentRequestType = z.infer<typeof CreateCommentRequestSchema>;
 export type UpdateCommentRequestType = z.infer<typeof UpdateCommentRequestSchema>;
 
-// 생성 코드도 화면과 같은 호환 스키마를 사용합니다.
-export const ReadDocumentCommentResponse = CommentSchema;
-export type ReadDocumentCommentResponse = CommentType;
-export const CreateDocumentCommentRequest = CreateCommentRequestSchema;
-export type CreateDocumentCommentRequest = CreateCommentRequestType;
+// 기존 사용처의 이름도 같은 스키마와 타입으로 연결합니다.
+export {
+  ReadDocumentCommentResponse as CommentSchema,
+  CreateDocumentCommentRequest as CreateCommentRequestSchema,
+};
+export type {
+  ReadDocumentCommentResponse as CommentType,
+  CreateDocumentCommentRequest as CreateCommentRequestType,
+};
 
 export const PartDocumentRubricSchema = z.object({
   sectionId: z.number(),

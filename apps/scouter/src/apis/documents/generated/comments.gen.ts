@@ -3,11 +3,7 @@
  */
 import { CreateDocumentCommentRequest, ReadDocumentCommentResponse } from '@/apis/documents/schema';
 
-import {
-  queryOptions as queryOptionsBuilder,
-  useMutation,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import type {
   DataTag,
   MutationFunction,
@@ -23,6 +19,7 @@ import type {
 import * as zod from 'zod';
 
 import { generatedRequest } from '../../generatedRequest';
+import { commentQueryOptions } from '../commentsQueryOptions';
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
@@ -59,7 +56,7 @@ export const readAllByApplicantId = (
   });
 };
 
-export const getReadAllByApplicantIdQueryKey = (applicantId: number) => {
+const getReadAllByApplicantIdQueryKey = (applicantId: number) => {
   return [`/applicants/${applicantId}/documents/comments`] as const;
 };
 
@@ -82,15 +79,16 @@ export const getReadAllByApplicantIdSuspenseQueryOptions = <
   const queryFn: QueryFunction<Awaited<ReturnType<typeof readAllByApplicantId>>> = ({ signal }) =>
     readAllByApplicantId(applicantId, { signal, ...requestOptions });
 
-  return queryOptionsBuilder({
-    queryKey,
-    ...queryOptions,
-    queryFn: queryOptions?.queryFn ?? queryFn,
-  }) as UseSuspenseQueryOptions<Awaited<ReturnType<typeof readAllByApplicantId>>, TError, TData> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  } & {
-    throwOnError?: ((this: never, error: TError) => boolean) & { readonly __inferenceOnly: never };
-  };
+  const customOptions = commentQueryOptions(
+    { queryKey, queryFn, ...queryOptions },
+    { applicantId },
+  );
+
+  return customOptions as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof readAllByApplicantId>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
 export type ReadAllByApplicantIdSuspenseQueryResult = NonNullable<

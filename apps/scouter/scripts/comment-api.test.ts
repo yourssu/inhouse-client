@@ -21,8 +21,12 @@ mock.module(new URL('../src/apis/api.ts', import.meta.url), {
   namedExports: { api },
 });
 const { patchApplicantDocumentComment } = await import('../src/apis/documents/index');
-const { create3, getCreate3MutationOptions, readAllByApplicantId } =
-  await import('../src/apis/documents/generated/comments.gen');
+const {
+  create3,
+  getCreate3MutationOptions,
+  getReadAllByApplicantIdSuspenseQueryOptions,
+  readAllByApplicantId,
+} = await import('../src/apis/documents/generated/comments.gen');
 const { applicantDocumentCommentsOption, commentsQueryKey } =
   await import('../src/apis/documents/query');
 
@@ -124,11 +128,13 @@ test('등록: 생성 함수가 검사한 본문만 전송한다', async () => {
   assert.deepEqual(JSON.parse(await requests[0].text()), { content: data.content, sectionId: 2.5 });
 });
 
-test('Query: 생성 options를 사전 조회에 쓰고 기존 지원자별 캐시를 유지한다', async () => {
+test('Query: 기본 생성 options도 기존 키로 캐시를 갱신하고 지원자별로 구분한다', async () => {
   respond = () => Response.json([comment]);
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   try {
-    await client.prefetchQuery(applicantDocumentCommentsOption(11));
+    const generatedOptions = getReadAllByApplicantIdSuspenseQueryOptions(11);
+    assert.deepEqual(generatedOptions.queryKey, commentsQueryKey(11));
+    await client.prefetchQuery(generatedOptions);
     await client.prefetchQuery(applicantDocumentCommentsOption(12));
     assert.deepEqual(client.getQueryData(commentsQueryKey(11)), [
       { ...comment, parentCommentId: null },

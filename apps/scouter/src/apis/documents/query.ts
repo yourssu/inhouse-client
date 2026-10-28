@@ -8,7 +8,9 @@ import {
   getPartDocumentsDeadline,
   getPartDocumentsRubrics,
 } from '@/apis/documents';
-import { getReadAllByApplicantIdSuspenseQueryOptions } from '@/apis/documents/generated/comments.gen';
+
+export { commentsQueryKey } from './commentsQueryOptions';
+export { getReadAllByApplicantIdSuspenseQueryOptions as applicantDocumentCommentsOption } from '@/apis/documents/generated/comments.gen';
 
 const qk = createQueryKeyNamespace('scouter');
 
@@ -28,14 +30,6 @@ export const documentEvaluatorStatusesOption = (applicantId: number) =>
   queryOptions({
     queryKey: qk.for('applicants', applicantId, 'documents', 'evaluations', 'status'),
     queryFn: () => getApplicantDocumentEvaluatorStatuses(applicantId),
-  });
-
-export const commentsQueryKey = (applicantId: number) =>
-  qk.for('applicants', applicantId, 'documents', 'comments');
-
-export const applicantDocumentCommentsOption = (applicantId: number) =>
-  getReadAllByApplicantIdSuspenseQueryOptions(applicantId, {
-    query: { queryKey: commentsQueryKey(applicantId) },
   });
 
 export const getPartDocumentsRubricsOption = (partId: number) =>
