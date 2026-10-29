@@ -81,16 +81,13 @@ export const DocumentReview = ({
       mutationId: mutation.mutationId,
     }),
   });
-  const parentCommentIdByCommentId = new Map(
-    comments.map(({ commentId, parentCommentId }) => [commentId, parentCommentId]),
-  );
   const pendingCommentIds = new Set<number>();
 
-  for (const { comment: optimisticComment } of optimisticComments) {
-    let parentCommentId = optimisticComment.parentCommentId;
-    while (parentCommentId !== null) {
+  for (const {
+    comment: { parentCommentId },
+  } of optimisticComments) {
+    if (parentCommentId !== null) {
       pendingCommentIds.add(parentCommentId);
-      parentCommentId = parentCommentIdByCommentId.get(parentCommentId) ?? null;
     }
   }
 
