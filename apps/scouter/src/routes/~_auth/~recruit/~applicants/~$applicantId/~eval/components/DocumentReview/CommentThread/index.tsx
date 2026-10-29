@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef, useState } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
@@ -10,24 +8,27 @@ import type { CommentWriteParams } from '../useCommentComposer';
 
 import { DetectOutsideClickArea } from '../DetectOutsideClickArea';
 import { useCommentComposer } from '../useCommentComposer';
-import { Comment } from './Comment';
+import { Comment, PendingComment } from './Comment';
 import { CommentThreadCard } from './CommentThreadCard';
 
 interface CommentThreadProps {
   applicantId: number;
-  children?: ReactNode;
   isSelected: boolean;
   onCommentCreate: (params: CommentWriteParams) => void;
   pendingCommentIds: ReadonlySet<number>;
+  pendingComments: readonly {
+    comment: Omit<CommentType, 'commentId'>;
+    mutationId: number;
+  }[];
   thread: CommentType[];
 }
 
 export const CommentThread = ({
   applicantId,
-  children,
   isSelected,
   onCommentCreate,
   pendingCommentIds,
+  pendingComments,
   thread,
 }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
@@ -64,7 +65,11 @@ export const CommentThread = ({
               key={comment.commentId}
             />
           ))}
-          {children}
+          {pendingComments.map(({ comment, mutationId }) =>
+            comment.parentCommentId === currentThreadId ? (
+              <PendingComment comment={comment} key={`pending:${mutationId}`} />
+            ) : null,
+          )}
           {isReplying && (
             <div className="flex items-end gap-1">
               <MultilineTextField

@@ -229,16 +229,9 @@ export const DocumentReview = ({
                       key={thread[0].commentId}
                       onCommentCreate={handleCommentCreate}
                       pendingCommentIds={pendingCommentIds}
+                      pendingComments={pendingComments}
                       thread={thread}
-                    >
-                      {pendingComments
-                        .filter(({ comment }) =>
-                          thread.some(({ commentId }) => commentId === comment.parentCommentId),
-                        )
-                        .map(({ comment, mutationId }) => (
-                          <PendingComment comment={comment} key={`pending:${mutationId}`} />
-                        ))}
-                    </CommentThread>
+                    />
                   ))}
                   {pendingThreads.map(({ comment, mutationId }) => (
                     <CommentThreadCard
