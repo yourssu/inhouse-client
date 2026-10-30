@@ -1,4 +1,4 @@
-import { useMutationState, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutationState, useQueryClient } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,7 +8,6 @@ import type { CommentType } from '@/apis/documents/schema';
 import { postApplicantDocumentComment } from '@/apis/documents';
 import { commentCreateMutationKey, commentsQueryKey } from '@/apis/documents/query';
 import { CommentSchema } from '@/apis/documents/schema';
-import { meOption } from '@/apis/members/query';
 import { Paper } from '@/components/Paper';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
@@ -32,14 +31,15 @@ interface DocumentReviewProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
-type CommentWriteVariables = Omit<CommentType, 'commentId'> & {
+type CommentWriteVariables = CommentWriteParams & {
   applicantId: number;
-  onError: () => void;
 };
 
-const pendingCommentSchema = CommentSchema.omit({ commentId: true });
-
-const normalizeNickname = (nickname: string) => nickname.replace(/\s*\([^)]*\)$/, '');
+const pendingCommentSchema = CommentSchema.pick({
+  content: true,
+  parentCommentId: true,
+  sectionId: true,
+});
 
 export const DocumentReview = ({
   applicantId,
@@ -49,7 +49,6 @@ export const DocumentReview = ({
   onCommentCreated,
 }: DocumentReviewProps) => {
   const queryClient = useQueryClient();
-  const { data: me } = useSuspenseQuery(meOption());
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
   const mutationKey = commentCreateMutationKey(applicantId);
@@ -117,14 +116,7 @@ export const DocumentReview = ({
   }: CommentWriteParams) => {
     void writeCommentWithToast({
       applicantId,
-      author: {
-        nickname: normalizeNickname(me.nickname),
-        part: me.parts[0]?.part ?? '',
-        userId: me.userId,
-      },
       content,
-      createdAt: new Date().toISOString(),
-      isEdited: false,
       onError,
       parentCommentId,
       sectionId,
@@ -238,7 +230,7 @@ export const DocumentReview = ({
                       isSelected={sectionId === selectedSectionId}
                       key={`pending:${mutationId}`}
                     >
-                      <PendingComment comment={comment} />
+                      <PendingComment content={comment.content} />
                     </CommentThreadCard>
                   ))}
                 </div>

@@ -25,7 +25,7 @@ interface CommentProps extends CommentType {
 interface CommentItemProps {
   actions?: ReactNode;
   children: ReactNode;
-  comment: Pick<CommentType, 'author' | 'createdAt' | 'isEdited'>;
+  comment: Partial<Pick<CommentType, 'createdAt' | 'isEdited'>> & Pick<CommentType, 'author'>;
   isProcessing: boolean;
 }
 
@@ -241,14 +241,23 @@ export const Comment = ({
 };
 
 interface PendingCommentProps {
-  comment: Omit<CommentType, 'commentId'>;
+  content: string;
 }
 
-export const PendingComment = ({ comment }: PendingCommentProps) => (
-  <CommentItem comment={comment} isProcessing>
-    <CommentBody>{comment.content}</CommentBody>
-  </CommentItem>
-);
+export const PendingComment = ({ content }: PendingCommentProps) => {
+  const { data: me } = useSuspenseQuery(meOption());
+  const author = {
+    nickname: me.nickname.replace(/\s*\([^)]*\)$/, ''),
+    part: me.parts[0]?.part ?? '',
+    userId: me.userId,
+  };
+
+  return (
+    <CommentItem comment={{ author }} isProcessing>
+      <CommentBody>{content}</CommentBody>
+    </CommentItem>
+  );
+};
 
 const CommentItem = ({ actions, children, comment, isProcessing }: CommentItemProps) => {
   const { author, createdAt, isEdited } = comment;

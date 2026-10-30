@@ -17,7 +17,7 @@ interface CommentThreadProps {
   onCommentCreate: (params: CommentWriteParams) => void;
   pendingCommentIds: ReadonlySet<number>;
   pendingComments: readonly {
-    comment: Omit<CommentType, 'commentId'>;
+    comment: Pick<CommentType, 'content' | 'parentCommentId' | 'sectionId'>;
     mutationId: number;
   }[];
   thread: CommentType[];
@@ -67,7 +67,7 @@ export const CommentThread = ({
           ))}
           {pendingComments.map(({ comment, mutationId }) =>
             comment.parentCommentId === currentThreadId ? (
-              <PendingComment comment={comment} key={`pending:${mutationId}`} />
+              <PendingComment content={comment.content} key={`pending:${mutationId}`} />
             ) : null,
           )}
           {isReplying && (
