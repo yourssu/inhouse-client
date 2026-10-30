@@ -1,17 +1,15 @@
-import { useMutationState, useQueryClient } from '@tanstack/react-query';
+import { useMutationState } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
 import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
-import { postApplicantDocumentComment } from '@/apis/documents';
-import { commentCreateMutationKey, commentsQueryKey } from '@/apis/documents/query';
+import { commentCreateMutationKey } from '@/apis/documents/query';
 import { CommentSchema } from '@/apis/documents/schema';
 import { Paper } from '@/components/Paper';
-import { useToastedMutation } from '@/hooks/useToastedMutation';
 
-import type { CommentCreatedMetadata, CommentWriteParams } from './useCommentComposer';
+import type { CommentCreatedMetadata } from './useCommentComposer';
 
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
@@ -31,10 +29,6 @@ interface DocumentReviewProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
-type CommentWriteVariables = CommentWriteParams & {
-  applicantId: number;
-};
-
 const pendingCommentSchema = CommentSchema.pick({
   content: true,
   parentCommentId: true,
@@ -48,53 +42,19 @@ export const DocumentReview = ({
   onCommentAddClick,
   onCommentCreated,
 }: DocumentReviewProps) => {
-  const queryClient = useQueryClient();
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
   const mutationKey = commentCreateMutationKey(applicantId);
-  const { mutateWithToast: writeCommentWithToast } = useToastedMutation({
-    mutationKey,
-    scope: { id: JSON.stringify(mutationKey) },
-    mutationFn: ({ applicantId, content, parentCommentId, sectionId }: CommentWriteVariables) =>
-      postApplicantDocumentComment({
-        applicantId,
-        data: {
-          content,
-          ...(parentCommentId === null ? {} : { parentCommentId }),
-          sectionId,
-        },
-      }),
-    onError: (_error, { onError }) => {
-      onError();
-    },
-    onSuccess: async (_data, { applicantId, parentCommentId, sectionId }) => {
-      onCommentCreated?.({ parentCommentId, sectionId });
-      await queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
-    },
-    successText: '코멘트를 작성했어요.',
-  });
-  const optimisticComments = useMutationState({
+  const [pendingComment = null] = useMutationState({
     filters: { mutationKey, exact: true, status: 'pending' },
-    select: (mutation) => ({
-      comment: pendingCommentSchema.parse(mutation.state.variables),
-      mutationId: mutation.mutationId,
-    }),
+    select: (mutation) => pendingCommentSchema.parse(mutation.state.variables),
   });
-  const pendingCommentIds = new Set<number>();
-
-  for (const {
-    comment: { parentCommentId },
-  } of optimisticComments) {
-    if (parentCommentId !== null) {
-      pendingCommentIds.add(parentCommentId);
-    }
-  }
 
   const threadsBySectionId = groupCommentThreads(comments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
   const showCommentPanel =
-    comments.length > 0 || optimisticComments.length > 0 || openCommentSectionId !== null;
+    comments.length > 0 || pendingComment !== null || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -106,21 +66,6 @@ export const DocumentReview = ({
     onCommentAddClick?.();
     setSelectedSectionId(sectionId);
     setOpenCommentSectionId(sectionId);
-  };
-
-  const handleCommentCreate = ({
-    content,
-    onError,
-    parentCommentId,
-    sectionId,
-  }: CommentWriteParams) => {
-    void writeCommentWithToast({
-      applicantId,
-      content,
-      onError,
-      parentCommentId,
-      sectionId,
-    });
   };
 
   const registerSectionRef = (sectionId: number) => (element: HTMLDivElement | null) => {
@@ -179,16 +124,16 @@ export const DocumentReview = ({
               }
 
               const threads = threadsBySectionId.get(sectionId) ?? [];
-              const pendingComments = optimisticComments.filter(
-                ({ comment }) => comment.sectionId === sectionId,
-              );
-              const pendingThreads = pendingComments.filter(
-                ({ comment }) =>
-                  comment.parentCommentId === null ||
-                  !threads.some((thread) =>
-                    thread.some(({ commentId }) => commentId === comment.parentCommentId),
-                  ),
-              );
+              const pendingCommentInSection =
+                pendingComment?.sectionId === sectionId ? pendingComment : null;
+              const pendingThread =
+                pendingCommentInSection &&
+                (pendingCommentInSection.parentCommentId === null ||
+                  !threads.some(
+                    ([root]) => root.commentId === pendingCommentInSection.parentCommentId,
+                  ))
+                  ? pendingCommentInSection
+                  : null;
 
               return (
                 <div
@@ -197,7 +142,7 @@ export const DocumentReview = ({
                   ref={registerSectionRef(sectionId)}
                 >
                   {(threads.length > 0 ||
-                    pendingThreads.length > 0 ||
+                    pendingThread !== null ||
                     openCommentSectionId === sectionId) && (
                     <div className="flex items-center gap-2">
                       <span className="text-neutralMuted shrink-0 text-sm font-medium">
@@ -208,9 +153,9 @@ export const DocumentReview = ({
                   )}
                   {openCommentSectionId === sectionId && (
                     <CommentField
+                      applicantId={applicantId}
                       onClose={() => setOpenCommentSectionId(null)}
-                      onCommentCreate={handleCommentCreate}
-                      parentCommentId={null}
+                      onCommentCreated={onCommentCreated}
                       sectionId={sectionId}
                     />
                   )}
@@ -219,20 +164,16 @@ export const DocumentReview = ({
                       applicantId={applicantId}
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
-                      onCommentCreate={handleCommentCreate}
-                      pendingCommentIds={pendingCommentIds}
-                      pendingComments={pendingComments}
+                      onCommentCreated={onCommentCreated}
+                      pendingComment={pendingCommentInSection}
                       thread={thread}
                     />
                   ))}
-                  {pendingThreads.map(({ comment, mutationId }) => (
-                    <CommentThreadCard
-                      isSelected={sectionId === selectedSectionId}
-                      key={`pending:${mutationId}`}
-                    >
-                      <PendingComment content={comment.content} />
+                  {pendingThread && (
+                    <CommentThreadCard isSelected={sectionId === selectedSectionId}>
+                      <PendingComment content={pendingThread.content} />
                     </CommentThreadCard>
-                  ))}
+                  )}
                 </div>
               );
             })}

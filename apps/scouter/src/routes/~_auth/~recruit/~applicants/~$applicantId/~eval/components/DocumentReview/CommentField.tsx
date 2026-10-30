@@ -2,31 +2,39 @@ import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
-import type { CommentWriteParams } from './useCommentComposer';
+import type { CommentCreatedMetadata } from './useCommentComposer';
 
 import { DetectOutsideClickArea } from './DetectOutsideClickArea';
 import { useCommentComposer } from './useCommentComposer';
 
 interface CommentFieldProps {
+  applicantId: number;
   onClose: () => void;
-  onCommentCreate: (params: CommentWriteParams) => void;
-  parentCommentId: null | number;
+  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
   sectionId: number;
 }
 
 export const CommentField = ({
+  applicantId,
   onClose,
-  onCommentCreate,
-  parentCommentId,
+  onCommentCreated,
   sectionId,
 }: CommentFieldProps) => {
-  const { content, handleAddComment, handleClose, handleKeyDown, isContentEmpty, setContent } =
-    useCommentComposer({
-      onClose,
-      onCommentCreate,
-      parentCommentId,
-      sectionId,
-    });
+  const {
+    content,
+    handleAddComment,
+    handleClose,
+    handleKeyDown,
+    isContentEmpty,
+    isSubmitting,
+    setContent,
+  } = useCommentComposer({
+    applicantId,
+    onClose,
+    onCommentCreated,
+    parentCommentId: null,
+    sectionId,
+  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -51,7 +59,7 @@ export const CommentField = ({
         />
         <IconButton
           aria-label="댓글 등록"
-          disabled={isContentEmpty}
+          disabled={isContentEmpty || isSubmitting}
           onClick={handleAddComment}
           size="md"
         >

@@ -1,58 +1,67 @@
-import { type KeyboardEvent, useRef, useState } from 'react';
+import { useIsMutating, useQueryClient } from '@tanstack/react-query';
+import { type KeyboardEvent, useState } from 'react';
+
+import type { CreateCommentRequestType } from '@/apis/documents/schema';
+
+import { postApplicantDocumentComment } from '@/apis/documents';
+import { commentCreateMutationKey, commentsQueryKey } from '@/apis/documents/query';
+import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 export interface CommentCreatedMetadata {
   parentCommentId: null | number;
   sectionId: number;
 }
 
-export interface CommentWriteParams {
-  content: string;
-  onError: () => void;
-  parentCommentId: null | number;
-  sectionId: number;
-}
-
 interface UseCommentComposerParams {
+  applicantId: number;
   onClose: () => void;
-  onCommentCreate: (params: CommentWriteParams) => void;
+  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
   parentCommentId: null | number;
   sectionId: number;
 }
 
 export const useCommentComposer = ({
+  applicantId,
   onClose,
-  onCommentCreate,
+  onCommentCreated,
   parentCommentId,
   sectionId,
 }: UseCommentComposerParams) => {
+  const queryClient = useQueryClient();
   const [content, setContent] = useState('');
-  const latestSubmissionIdRef = useRef(0);
+  const mutationKey = commentCreateMutationKey(applicantId);
+  const isSubmitting = useIsMutating({ mutationKey, exact: true }) > 0;
+  const { isPending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
+    mutationKey,
+    mutationFn: (data: CreateCommentRequestType) =>
+      postApplicantDocumentComment({ applicantId, data }),
+    onError: (_error, { content: submittedContent }) => {
+      setContent((currentContent) => (currentContent === '' ? submittedContent : currentContent));
+    },
+    onSuccess: async (_data, { parentCommentId, sectionId }) => {
+      onCommentCreated?.({ parentCommentId: parentCommentId ?? null, sectionId });
+      await queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
+    },
+    successText: '코멘트를 작성했어요.',
+  });
   const trimmedContent = content.trim();
   const isContentEmpty = trimmedContent === '';
 
   const handleAddComment = () => {
-    if (isContentEmpty) {
+    if (isContentEmpty || queryClient.isMutating({ mutationKey, exact: true }) > 0) {
       return;
     }
 
-    const submissionId = latestSubmissionIdRef.current + 1;
-    latestSubmissionIdRef.current = submissionId;
-    onCommentCreate({
+    void writeCommentWithToast({
       content: trimmedContent,
-      onError: () => {
-        if (latestSubmissionIdRef.current !== submissionId) {
-          return;
-        }
-        setContent((currentContent) => (currentContent === '' ? trimmedContent : currentContent));
-      },
-      parentCommentId,
+      ...(parentCommentId === null ? {} : { parentCommentId }),
       sectionId,
     });
     setContent('');
   };
 
   const handleClose = () => {
-    if (!isContentEmpty) {
+    if (isPending || !isContentEmpty) {
       return;
     }
     onClose();
@@ -67,9 +76,7 @@ export const useCommentComposer = ({
         return;
       }
       e.preventDefault();
-      if (!isContentEmpty) {
-        handleAddComment();
-      }
+      handleAddComment();
     }
     if (e.key === 'Escape') {
       handleClose();
@@ -82,6 +89,7 @@ export const useCommentComposer = ({
     handleClose,
     handleKeyDown,
     isContentEmpty,
+    isSubmitting,
     setContent,
   };
 };

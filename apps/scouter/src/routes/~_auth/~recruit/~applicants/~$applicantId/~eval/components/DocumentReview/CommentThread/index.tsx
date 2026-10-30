@@ -4,7 +4,7 @@ import { BsArrowUpCircleFill } from 'react-icons/bs';
 
 import type { CommentType } from '@/apis/documents/schema';
 
-import type { CommentWriteParams } from '../useCommentComposer';
+import type { CommentCreatedMetadata } from '../useCommentComposer';
 
 import { DetectOutsideClickArea } from '../DetectOutsideClickArea';
 import { useCommentComposer } from '../useCommentComposer';
@@ -14,33 +14,37 @@ import { CommentThreadCard } from './CommentThreadCard';
 interface CommentThreadProps {
   applicantId: number;
   isSelected: boolean;
-  onCommentCreate: (params: CommentWriteParams) => void;
-  pendingCommentIds: ReadonlySet<number>;
-  pendingComments: readonly {
-    comment: Pick<CommentType, 'content' | 'parentCommentId' | 'sectionId'>;
-    mutationId: number;
-  }[];
+  onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
+  pendingComment: null | Pick<CommentType, 'content' | 'parentCommentId'>;
   thread: CommentType[];
 }
 
 export const CommentThread = ({
   applicantId,
   isSelected,
-  onCommentCreate,
-  pendingCommentIds,
-  pendingComments,
+  onCommentCreated,
+  pendingComment,
   thread,
 }: CommentThreadProps) => {
   const { sectionId, commentId: currentThreadId } = thread[0];
   const [isReplying, setIsReplying] = useState(false);
+  const pendingReply = pendingComment?.parentCommentId === currentThreadId ? pendingComment : null;
 
-  const { content, handleAddComment, handleClose, handleKeyDown, isContentEmpty, setContent } =
-    useCommentComposer({
-      onClose: () => setIsReplying(false),
-      onCommentCreate,
-      parentCommentId: currentThreadId,
-      sectionId,
-    });
+  const {
+    content,
+    handleAddComment,
+    handleClose,
+    handleKeyDown,
+    isContentEmpty,
+    isSubmitting,
+    setContent,
+  } = useCommentComposer({
+    applicantId,
+    onClose: () => setIsReplying(false),
+    onCommentCreated,
+    parentCommentId: currentThreadId,
+    sectionId,
+  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -55,21 +59,17 @@ export const CommentThread = ({
         <Comment
           {...thread[0]}
           applicantId={applicantId}
-          isOperationPending={pendingCommentIds.has(currentThreadId)}
+          isOperationPending={pendingReply !== null}
         >
           {thread.slice(1).map((comment) => (
             <Comment
               {...comment}
               applicantId={applicantId}
-              isOperationPending={pendingCommentIds.has(comment.commentId)}
+              isOperationPending={false}
               key={comment.commentId}
             />
           ))}
-          {pendingComments.map(({ comment, mutationId }) =>
-            comment.parentCommentId === currentThreadId ? (
-              <PendingComment content={comment.content} key={`pending:${mutationId}`} />
-            ) : null,
-          )}
+          {pendingReply && <PendingComment content={pendingReply.content} />}
           {isReplying && (
             <div className="flex items-end gap-1">
               <MultilineTextField
@@ -85,7 +85,7 @@ export const CommentThread = ({
               />
               <IconButton
                 aria-label="답글 등록"
-                disabled={isContentEmpty}
+                disabled={isContentEmpty || isSubmitting}
                 onClick={handleAddComment}
                 size="md"
               >
