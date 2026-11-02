@@ -52,25 +52,16 @@ export const useWriteComment = ({
         parentCommentId: data.parentCommentId ?? null,
       };
     },
-    onSuccess: async (createdCommentId, { applicantId, data }, optimisticComment) => {
-      const queryKey = commentsQueryKey(applicantId);
-      await queryClient.cancelQueries({ queryKey });
-      // 저장이 확인된 댓글만 캐시에 남겨, 후속 목록 조회가 실패해도 표시를 유지한다.
-      queryClient.setQueryData<CommentType[]>(queryKey, (comments = []) =>
-        comments.some(({ commentId }) => commentId === createdCommentId)
-          ? comments
-          : [...comments, optimisticComment],
-      );
+    onSuccess: (_, { data }) => {
       setContent('');
       onCommentCreated?.({
         parentCommentId: data.parentCommentId ?? null,
         sectionId: data.sectionId,
       });
     },
-    onSettled: (_, _error, { applicantId }) => {
-      // 성공·실패 후 목록은 갱신하되, 재조회가 끝날 때까지 입력을 막지는 않는다.
-      void queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
-    },
+    // 재조회가 끝날 때까지 pending을 유지해 임시 댓글이 먼저 사라지지 않게 한다.
+    onSettled: (_, _error, { applicantId }) =>
+      queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) }),
   });
 
   const handleAddComment = async () => {

@@ -1,8 +1,9 @@
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
-import { useIsMutating, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';
@@ -12,7 +13,7 @@ import { PulseLoader } from 'react-spinners';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
-import { commentsQueryKey, createCommentMutationKey } from '@/apis/documents/query';
+import { commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
@@ -38,14 +39,9 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
   const isMyComment = userId === myData.userId;
-  const queryClient = useQueryClient();
-  const queryKey = commentsQueryKey(applicantId);
-  const { invalidate: invalidateComments } = useQueryInvalidation(queryKey);
-  const isCreatePending =
-    useIsMutating({
-      mutationKey: createCommentMutationKey(applicantId),
-      predicate: ({ state }) => (state.context as CommentType | undefined)?.commentId === commentId,
-    }) > 0;
+  const { invalidate: invalidateComments } = useQueryInvalidation(commentsQueryKey(applicantId));
+  // 음수 ID인 임시 댓글은 pending mutation에서만 전달된다.
+  const isCreatePending = commentId < 0;
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -54,11 +50,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     useToastedMutation({
       mutationFn: patchApplicantDocumentComment,
       successText: '코멘트를 수정했어요.',
-      onSuccess: async (updatedComment) => {
-        await queryClient.cancelQueries({ queryKey });
-        queryClient.setQueryData<CommentType[]>(queryKey, (comments) =>
-          comments?.map((item) => (item.commentId === commentId ? updatedComment : item)),
-        );
+      onSuccess: async () => {
         await invalidateComments();
         setIsEditing(false);
       },
@@ -122,18 +114,10 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     useToastedMutation({
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
-      onSuccess: async () => {
-        await queryClient.cancelQueries({ queryKey });
-        queryClient.setQueryData<CommentType[]>(queryKey, (comments) =>
-          comments?.filter((item) => item.commentId !== commentId),
-        );
-      },
-      onSettled: () => {
-        void invalidateComments();
-      },
+      onSuccess: () => invalidateComments(),
     });
 
-  const isChanging = commentId < 0 || isUpdatePending || isDeletePending;
+  const isChanging = isCreatePending || isUpdatePending || isDeletePending;
 
   const handleDelete = async () => {
     if (isChanging) {
@@ -259,7 +243,7 @@ const CommentItem = ({ actions, children, comment, isCreatePending }: CommentIte
     : null;
 
   return (
-    <div className={isCreatePending ? 'group text-neutralSubtle' : 'group'}>
+    <div className={clsx('group', isCreatePending && 'text-neutralSubtle')}>
       <div className="flex items-center justify-between gap-1">
         <div className="flex min-w-0 items-center gap-1 whitespace-nowrap">
           <span className="text-13 truncate font-medium">

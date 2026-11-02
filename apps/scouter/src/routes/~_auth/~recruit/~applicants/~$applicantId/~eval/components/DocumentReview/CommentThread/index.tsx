@@ -73,7 +73,6 @@ export const CommentThread = ({
             <MultilineTextField
               autoFocus
               className="min-h-fit overflow-hidden p-1.5"
-              disabled={isReplyDisabled}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={'댓글 추가'}
@@ -85,7 +84,7 @@ export const CommentThread = ({
             />
             <IconButton
               aria-label="답글 등록"
-              disabled={isContentEmpty || isWritePending || isReplyDisabled}
+              disabled={isContentEmpty || isWritePending}
               onClick={handleAddComment}
               onMouseDown={(e) => e.preventDefault()}
               size="md"
