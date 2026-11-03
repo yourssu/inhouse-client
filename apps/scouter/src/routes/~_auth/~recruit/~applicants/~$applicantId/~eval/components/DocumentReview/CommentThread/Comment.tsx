@@ -40,8 +40,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   const { data: myData } = useSuspenseQuery(meOption());
   const isMyComment = userId === myData.userId;
   const { invalidate: invalidateComments } = useQueryInvalidation(commentsQueryKey(applicantId));
-  // 음수 ID인 임시 댓글은 pending mutation에서만 전달된다.
-  const isCreatePending = commentId < 0;
+  const openAlertDialog = useAlertDialog();
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -55,6 +54,16 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
         setIsEditing(false);
       },
     });
+
+  const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
+    useToastedMutation({
+      mutationFn: deleteApplicantDocumentComment,
+      successText: '코멘트를 삭제했어요.',
+      onSuccess: () => invalidateComments(),
+    });
+
+  // 음수 ID인 임시 댓글은 pending mutation에서만 전달된다.
+  const isCreatePending = commentId < 0;
 
   useEffect(() => {
     const textarea = editTextareaRef.current;
@@ -75,7 +84,6 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     if (isUpdatePending) {
       return;
     }
-    setEditedContent(content);
     setIsEditing(false);
   };
 
@@ -99,23 +107,14 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   };
 
   const handleEditKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
-      handleSubmitEdit();
+      void handleSubmitEdit();
     }
     if (e.key === 'Escape') {
       handleCancelEdit();
     }
   };
-
-  const openAlertDialog = useAlertDialog();
-
-  const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
-    useToastedMutation({
-      mutationFn: deleteApplicantDocumentComment,
-      successText: '코멘트를 삭제했어요.',
-      onSuccess: () => invalidateComments(),
-    });
 
   const handleDelete = async () => {
     const isConfirm = await openAlertDialog({

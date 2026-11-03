@@ -36,10 +36,7 @@ export const DocumentReview = ({
 }: DocumentReviewProps) => {
   const pendingComments = useMutationState({
     filters: { mutationKey: createCommentMutationKey(applicantId), status: 'pending' },
-    select: ({ state }) => {
-      const comment = CommentSchema.safeParse(state.context);
-      return comment.success ? comment.data : undefined;
-    },
+    select: ({ state }) => CommentSchema.optional().parse(state.context),
   });
   const comments = [
     ...savedComments,
