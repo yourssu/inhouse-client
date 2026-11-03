@@ -75,6 +75,7 @@ const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
   const { value } = useTabContext();
   const listRef = useRef<HTMLDivElement>(null);
   const [fallbackTabId, setFallbackTabId] = useState<string>();
+  const hasLoggedMismatchRef = useRef(false);
 
   useEffect(() => {
     const list = listRef.current;
@@ -93,6 +94,19 @@ const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
     // value는 바꾸지 않고, 사용처에서 오류를 가시적으로 확인하도록 한다.
     const firstEnabledTab = list.querySelector<HTMLElement>(enabledTabSelector);
     setFallbackTabId(firstEnabledTab?.id);
+
+    // value와 맞는 Tab.Item이 없을 때만 알린다.
+    const hasTab = list.querySelector('[role="tab"]') !== null;
+    const hasSelectedTab = list.querySelector('[role="tab"][aria-selected="true"]') !== null;
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      hasTab &&
+      !hasSelectedTab &&
+      !hasLoggedMismatchRef.current
+    ) {
+      hasLoggedMismatchRef.current = true;
+      console.error(`Tab: value "${value}"와 일치하는 Tab.Item이 없어요.`);
+    }
   }, [children, value]);
 
   // APG automatic activation: 화살표·Home·End로 포커스를 옮기면 바로 선택한다.
