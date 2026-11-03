@@ -117,12 +117,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
       onSuccess: () => invalidateComments(),
     });
 
-  const isChanging = isCreatePending || isUpdatePending || isDeletePending;
-
   const handleDelete = async () => {
-    if (isChanging) {
-      return;
-    }
     const isConfirm = await openAlertDialog({
       title: '코멘트를 삭제할까요?',
       content: '삭제한 코멘트는 복구할 수 없어요.',
@@ -147,7 +142,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   return (
     <CommentItem
       actions={
-        isMyComment && !isEditing ? (
+        isMyComment && !isEditing && !isCreatePending ? (
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Menu>
               <Menu.Trigger>
@@ -162,8 +157,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               </Menu.Trigger>
               <Menu.Content align="end">
                 <Menu.ButtonItem
-                  className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={isChanging}
+                  className="text-13"
                   icon={<MdEdit className="size-4" />}
                   onClick={handleEdit}
                 >
@@ -171,8 +165,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
                 </Menu.ButtonItem>
 
                 <Menu.ButtonItem
-                  className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={isChanging}
+                  className="text-13 text-red600"
                   icon={<HiOutlineTrash className="text-red600 size-4" />}
                   onClick={handleDelete}
                 >
