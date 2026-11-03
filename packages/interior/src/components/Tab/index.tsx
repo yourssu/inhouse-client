@@ -63,14 +63,7 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
   const Comp = asChild ? Slot : 'div';
 
   return (
-    <TabContext.Provider
-      value={{
-        baseId,
-        isControlled,
-        onValueChange: handleValueChange,
-        value: selectedValue,
-      }}
-    >
+    <TabContext.Provider value={{ baseId, onValueChange: handleValueChange, value: selectedValue }}>
       <Comp>{children}</Comp>
     </TabContext.Provider>
   );
@@ -79,7 +72,7 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
 const enabledTabSelector = '[role="tab"]:not([disabled]):not([aria-disabled="true"])';
 
 const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
-  const { isControlled, value } = useTabContext();
+  const { value } = useTabContext();
   const listRef = useRef<HTMLDivElement>(null);
   const [fallbackTabId, setFallbackTabId] = useState<string>();
 
@@ -96,16 +89,11 @@ const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
       return;
     }
 
-    // 선택된 탭이 없거나 비활성이면 첫 번째 활성 탭을 Tab 키 진입점으로 삼는다.
+    // 선택된 탭이 없거나 비활성이면 첫 활성 탭을 Tab 키 진입점으로 삼는다.
+    // value는 바꾸지 않고, 사용처에서 오류를 가시적으로 확인하도록 한다.
     const firstEnabledTab = list.querySelector<HTMLElement>(enabledTabSelector);
     setFallbackTabId(firstEnabledTab?.id);
-
-    // controlled는 사용처의 값을 존중해 진입점만 옮기고,
-    // uncontrolled는 선택도 옮기고 onValueChange로 알린다.
-    if (!isControlled) {
-      firstEnabledTab?.click();
-    }
-  }, [children, isControlled, value]);
+  }, [children, value]);
 
   // APG automatic activation: 화살표·Home·End로 포커스를 옮기면 바로 선택한다.
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {

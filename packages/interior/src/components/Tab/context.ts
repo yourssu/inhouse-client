@@ -3,7 +3,6 @@ import { createContext, useContext } from 'react';
 
 interface TabContextType {
   baseId: string;
-  isControlled: boolean;
   onValueChange: (value: string) => void;
   value: string | undefined;
 }
