@@ -5,8 +5,6 @@ import {
   ApplicantDocumentEvaluationsResponseSchema,
   ApplicantDocumentOthersEvaluationsSchema,
   CommentSchema,
-  CreateCommentRequestSchema,
-  type CreateCommentRequestType,
   DocumentEvaluatorStatusesSchema,
   PartDocumentsDeadlineSchema,
   PartDocumentsRubricsSchema,
@@ -52,20 +50,6 @@ export const putApplicantDocumentEvaluations = async ({
   await api.put(`/applicants/${applicantId}/documents/evaluations`, { json: request });
 };
 
-export const getApplicantDocumentComments = async (applicantId: number) => {
-  const response = await api.get(`applicants/${applicantId}/documents/comments`).json();
-  return CommentSchema.array().parse(response);
-};
-
-export type CreateCommentParams = {
-  applicantId: number;
-  data: CreateCommentRequestType;
-};
-
-export const postApplicantDocumentComment = async ({ applicantId, data }: CreateCommentParams) => {
-  const request = CreateCommentRequestSchema.parse(data);
-  await api.post(`applicants/${applicantId}/documents/comments`, { json: request });
-};
 export type DeleteCommentParams = {
   applicantId: number;
   commentId: number;

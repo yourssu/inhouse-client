@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "api:generate": "orval --config orval.config.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
@@ -12,7 +13,8 @@
     "check:format": "prettier --check .",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write .",
-    "fetch-schema": "pnpm tsx ./scripts/fetch-schema.ts"
+    "fetch-schema": "pnpm tsx ./scripts/fetch-schema.ts",
+    "test:api": "tsx --tsconfig tsconfig.app.json --experimental-test-module-mocks --test scripts/comment-api.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -93,6 +95,7 @@
     "eslint": "catalog:",
     "eslint-plugin-react-refresh": "^0.5.2",
     "msw": "^2.14.6",
+    "orval": "8.41.0",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tsx": "^4.21.0",

@@ -3,6 +3,7 @@ node_modules
 dist
 **/*.d.ts
 **/*.gen.ts
+!src/apis/documents/generated/*.gen.ts
 **/*.gen.css
 src/styles/__generated__
 .turbo
