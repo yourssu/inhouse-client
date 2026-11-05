@@ -1,7 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@inhouse/auth';
+import { queryClient } from '@inhouse/query-client';
+import { Button, Divider, Popover, useToast } from '@interior/react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useAuth } from '@yourssu-inhouse/auth';
-import { Button, Divider, Popover, useToast } from '@yourssu-inhouse/interior';
 import { MdArrowForwardIos, MdPerson } from 'react-icons/md';
 
 import { meOption, meQueryKey } from '@/apis/me';
@@ -25,7 +26,6 @@ const ProfileAvatar = ({ src, alt }: { alt: string; src?: string }) => {
 export const ProfileButton = () => {
   const toast = useToast();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const {
     client: { api },
     logout,

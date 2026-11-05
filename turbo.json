@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
+  "globalDependencies": ["mfa.config.ts"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

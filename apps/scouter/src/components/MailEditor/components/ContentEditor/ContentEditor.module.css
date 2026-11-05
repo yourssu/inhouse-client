@@ -1,0 +1,55 @@
+.editor [data-resize-container] {
+  display: inline-flex;
+}
+
+.editor [data-resize-wrapper] {
+  position: relative;
+  display: inline-block;
+}
+
+.editor [data-resize-handle] {
+  position: absolute;
+  z-index: 10;
+  background-color: white;
+  border: 1px solid black;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: auto;
+}
+
+.editor [data-resize-wrapper]:hover [data-resize-handle],
+.editor [data-resize-container][data-resize-state='true'] [data-resize-handle] {
+  opacity: 1;
+}
+
+.editor [data-resize-handle='top-left'],
+.editor [data-resize-handle='top-right'],
+.editor [data-resize-handle='bottom-left'],
+.editor [data-resize-handle='bottom-right'] {
+  width: 10px;
+  height: 10px;
+}
+
+.editor [data-resize-handle='top-left'] {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+
+.editor [data-resize-handle='top-right'] {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+
+.editor [data-resize-handle='bottom-left'] {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+
+.editor [data-resize-handle='bottom-right'] {
+  bottom: -5px;
+  right: -5px;
+  cursor: nwse-resize;
+}

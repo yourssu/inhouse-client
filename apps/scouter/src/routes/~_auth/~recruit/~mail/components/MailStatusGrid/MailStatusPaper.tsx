@@ -1,9 +1,9 @@
-import { HoverTooltip } from '@yourssu-inhouse/interior';
-import { tv } from '@yourssu-inhouse/interior-tailwind/utils';
+import { HoverTooltip } from '@interior/react';
 import { RxQuestionMarkCircled } from 'react-icons/rx';
 
 import { Paper } from '@/components/Paper';
 import { MailStatusPaperSkeleton } from '@/routes/~_auth/~recruit/~mail/components/MailStatusGrid/MailStatusPaperSkeleton';
+import { tv } from '@/utils/tailwind';
 
 interface MailStatusPaperProps {
   color: 'blue' | 'orange' | 'red';

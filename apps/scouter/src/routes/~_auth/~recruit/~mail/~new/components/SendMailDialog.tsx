@@ -1,11 +1,11 @@
+import { formatTemplates } from '@inhouse/utils/date';
+import { DatePicker } from '@interior/react';
+import { Dialog } from '@interior/react';
+import { Fieldset } from '@interior/react';
+import { SegmentedControl } from '@interior/react';
+import { TextField } from '@interior/react';
+import { useToast } from '@interior/react';
 import { useMutation } from '@tanstack/react-query';
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { DatePicker } from '@yourssu-inhouse/interior';
-import { Dialog } from '@yourssu-inhouse/interior';
-import { Fieldset } from '@yourssu-inhouse/interior';
-import { SegmentedControl } from '@yourssu-inhouse/interior';
-import { TextField } from '@yourssu-inhouse/interior';
-import { useToast } from '@yourssu-inhouse/interior';
 import {
   addMinutes,
   endOfDay,

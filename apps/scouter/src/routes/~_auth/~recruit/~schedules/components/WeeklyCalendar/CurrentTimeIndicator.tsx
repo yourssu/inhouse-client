@@ -1,4 +1,4 @@
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
+import { formatTemplates } from '@inhouse/utils/date';
 import { differenceInMinutes, getSeconds, setHours, setMinutes, startOfDay } from 'date-fns';
 import { clamp } from 'es-toolkit';
 import { useEffect, useRef, useState } from 'react';

@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 
-import { InlineButton } from '@yourssu-inhouse/interior';
+import { InlineButton } from '@interior/react';
 import { motion } from 'motion/react';
 import { IoMdArrowBack } from 'react-icons/io';
 

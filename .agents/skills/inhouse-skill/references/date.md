@@ -15,7 +15,7 @@
 - 날짜 계산, 비교, 달력 연산에는 이미 사용하는 `date-fns`를 우선한다.
 - 현재 시각 생성과 단순 timestamp 변환에는 표준 `Date`를 사용할 수 있다.
 - 날짜 정렬에는 의미가 드러나는 `compareAsc`, `compareDesc`를 우선한다. 숫자 timestamp 비교가 더 직접적이면 사용할 수 있다.
-- 공용 화면 포맷은 `@yourssu-inhouse/inhouse-utils/date`의 `formatTemplates`를 사용한다.
+- 공용 화면 포맷은 `@inhouse/utils/date`의 `formatTemplates`를 사용한다.
 - 앱 도메인에만 필요한 포맷은 해당 앱의 `src/utils/date.ts`에 둘 수 있다.
 
 ## 판단 기준
@@ -27,7 +27,7 @@
 
 ## 구현 확인 지점
 
-- 공용 포맷: `packages/inhouse-utils/src/date.ts`
+- 공용 포맷: `packages/@inhouse/utils/src/date.ts`
 - 앱 포맷: `apps/*/src/utils/date.ts`
 - API 날짜 스키마: `apps/*/src/apis/*/schema.ts`
 

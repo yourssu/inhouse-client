@@ -1,4 +1,4 @@
-import { useAuth } from '@yourssu-inhouse/auth';
+import { useAuth } from '@inhouse/auth';
 import { type ReactNode, useCallback, useState } from 'react';
 
 import { config } from '@/config';

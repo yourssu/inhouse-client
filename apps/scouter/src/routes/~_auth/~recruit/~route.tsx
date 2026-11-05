@@ -1,7 +1,8 @@
+import { PageLayout } from '@exterior/layout';
+import { useUnmountOverlaysOnRouteChange } from '@exterior/utils';
+import { queryClient } from '@inhouse/query-client';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Outlet, redirect, trimPathRight } from '@tanstack/react-router';
-import { useUnmountOverlaysOnRouteChange } from '@yourssu-inhouse/exterior';
-import { PageLayout } from '@yourssu-inhouse/exterior/layout';
 import { overlay, OverlayProvider } from 'overlay-kit';
 import { useEffect } from 'react';
 import { FcBusinessContact, FcCalendar, FcFeedback, FcPuzzle } from 'react-icons/fc';
@@ -69,16 +70,30 @@ const RouteComponent = () => {
 };
 
 export const Route = createFileRoute('/_auth/recruit')({
+  errorComponent: ({ error, info }) => (
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="bg-red100 rounded-2 flex w-240 flex-col gap-y-4 p-4">
+        <div className="heading-large">{error.name}</div>
+        {[error.message, error.stack, info?.componentStack]
+          .filter((v) => !!v)
+          .map((v) => (
+            <div className="body-xsmall-default w-full overflow-auto whitespace-pre-wrap" key={v}>
+              {v}
+            </div>
+          ))}
+      </div>
+    </div>
+  ),
   component: RouteComponent,
   head: () => ({
     meta: [{ title: '유어슈 인하우스 | 스카우터' }],
   }),
-  loader: async ({ context }) => {
+  loader: async () => {
     await Promise.all([
-      context.queryClient.ensureQueryData(meOption()),
-      context.queryClient.ensureQueryData(partsOption()),
-      context.queryClient.ensureQueryData(semestersOption()),
-      context.queryClient.ensureQueryData(semestersNowOption()),
+      queryClient.ensureQueryData(meOption()),
+      queryClient.ensureQueryData(partsOption()),
+      queryClient.ensureQueryData(semestersOption()),
+      queryClient.ensureQueryData(semestersNowOption()),
     ]);
   },
   beforeLoad: ({ location }) => {

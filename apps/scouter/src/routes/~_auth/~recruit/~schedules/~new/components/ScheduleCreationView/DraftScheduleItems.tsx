@@ -1,4 +1,4 @@
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
+import { formatTemplates } from '@inhouse/utils/date';
 import clsx from 'clsx';
 import { differenceInMinutes, isSameDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { assert } from 'es-toolkit';

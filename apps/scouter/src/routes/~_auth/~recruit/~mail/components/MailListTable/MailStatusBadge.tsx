@@ -1,4 +1,4 @@
-import { Badge } from '@yourssu-inhouse/interior';
+import { Badge } from '@interior/react';
 
 import type { MailReservationStatusType } from '@/apis/mails/schema';
 

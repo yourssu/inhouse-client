@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Dialog, Divider } from '@interior/react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Button, Dialog, Divider } from '@yourssu-inhouse/interior';
 import { Suspense, useEffect } from 'react';
 import {
   Controller,

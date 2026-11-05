@@ -1,6 +1,6 @@
 import type { Control } from 'react-hook-form';
 
-import { IconButton } from '@yourssu-inhouse/interior';
+import { IconButton } from '@interior/react';
 import { MdDeleteOutline } from 'react-icons/md';
 
 import type { InterviewRequirements } from '@/apis/interviews/requirements/schema';

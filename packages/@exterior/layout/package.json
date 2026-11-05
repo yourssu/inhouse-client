@@ -1,0 +1,60 @@
+{
+  "name": "@exterior/layout",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./index.css": "./dist/index.css"
+  },
+  "scripts": {
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i ./src/styles/index.css -o ./dist/index.css --minify",
+    "dev": "concurrently --kill-others \"tsdown --watch\" \"pnpm build:css --watch=always\"",
+    "check:type": "tsc -b",
+    "check:lint": "eslint .",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write ."
+  },
+  "dependencies": {
+    "@interior/react": "workspace:*",
+    "@interior/tailwind": "workspace:*",
+    "clsx": "^2.1.1",
+    "react-icons": "^5.6.0",
+    "react-simplikit": "^0.0.51"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "@tanstack/react-router": "catalog:",
+    "@types/node": "^24.13.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@yourssu-inhouse/eslint-config": "workspace:*",
+    "@yourssu-inhouse/typescript-config": "workspace:*",
+    "concurrently": "^9.2.3",
+    "eslint": "catalog:",
+    "motion": "^12.40.0",
+    "prettier": "^3.9.6",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "^4.3.3",
+    "tsdown": "^0.22.14",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-router": "^1.170.11",
+    "motion": "^12.40.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ]
+}

@@ -1,5 +1,5 @@
+import { createQueryKeyNamespace } from '@inhouse/utils/query';
 import { queryOptions } from '@tanstack/react-query';
-import { createQueryKeyNamespace } from '@yourssu-inhouse/inhouse-utils/query';
 
 import {
   getActiveMembers,

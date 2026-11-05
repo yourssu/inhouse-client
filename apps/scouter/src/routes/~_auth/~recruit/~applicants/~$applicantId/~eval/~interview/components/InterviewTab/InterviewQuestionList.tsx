@@ -1,4 +1,4 @@
-import { Badge, Divider, HoverTooltip } from '@yourssu-inhouse/interior';
+import { Badge, Divider, HoverTooltip } from '@interior/react';
 import clsx from 'clsx';
 import { groupBy } from 'es-toolkit';
 import { Fragment } from 'react';

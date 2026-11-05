@@ -1,7 +1,7 @@
-import { type QueryKey, useQueryClient } from '@tanstack/react-query';
+import { queryClient } from '@inhouse/query-client';
+import { type QueryKey } from '@tanstack/react-query';
 
 export const useQueryInvalidation = (queryKey: QueryKey) => {
-  const queryClient = useQueryClient();
   return {
     invalidate: () => queryClient.invalidateQueries({ queryKey }),
   };

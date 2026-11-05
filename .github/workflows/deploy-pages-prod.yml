@@ -58,10 +58,9 @@ jobs:
           VITE_SCOUTER_MIXPANEL_TOKEN: ${{ vars.SCOUTER_MIXPANEL_TOKEN }}
         run: pnpm exec turbo build --filter=@yourssu-inhouse/${{ matrix.target.app }}
 
-      - name: strip standalone preview (remotes only)
+      - name: exclude mock service worker (remotes only)
         if: ${{ !matrix.target.isShell }}
         run: |
-          rm -f apps/${{ matrix.target.app }}/dist/index.html
           rm -f apps/${{ matrix.target.app }}/dist/mockServiceWorker.js
 
       - name: deploy to Cloudflare Pages

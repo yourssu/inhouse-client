@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
-import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
-import { Badge } from '@yourssu-inhouse/interior';
+import { formatTemplates } from '@inhouse/utils/date';
+import { Badge } from '@interior/react';
 import { MdPerson } from 'react-icons/md';
 
 import type { ApplicantType } from '@/apis/applicants/schema';

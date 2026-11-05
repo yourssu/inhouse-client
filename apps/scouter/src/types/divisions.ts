@@ -1,4 +1,4 @@
-import { vars } from '@yourssu-inhouse/interior-vars';
+import { vars } from '@interior/vars';
 
 import type { DivisionNameType } from '@/apis/divisions/schema';
 

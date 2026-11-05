@@ -17,7 +17,7 @@
 - 컴포넌트 Props처럼 객체 계약을 직접 선언할 때는 `interface`를 기본으로 한다.
 - union, intersection, mapped type, `React.ComponentProps`, `Omit`, `Merge`, Zod 추론처럼 타입 연산이 필요한 경우 `type`을 사용한다.
 - API 타입은 스키마에서 `z.infer`로 파생하고 같은 구조를 수동으로 중복 선언하지 않는다.
-- 범용 유틸리티 타입은 `@yourssu-inhouse/inhouse-utils/type`을 먼저 확인한다.
+- 범용 유틸리티 타입은 `@inhouse/utils/type`을 먼저 확인한다.
 - 선언 병합이 필요하지 않은 일반 도메인 모델은 주변 코드와 결합 방식에 맞춰 `type` 또는 `interface`를 선택하되, 형식 통일만을 위해 기존 타입을 일괄 변경하지 않는다.
 
 ## 함수와 export 기본 선택

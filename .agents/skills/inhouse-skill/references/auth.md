@@ -6,7 +6,7 @@
 
 ## 필수 규칙
 
-- 토큰 저장과 삭제는 `@yourssu-inhouse/auth`가 공개한 `getAuthTokens`, `setAuthTokens`, `removeAuthTokens`를 사용한다.
+- 토큰 저장과 삭제는 `@inhouse/auth`가 공개한 `getAuthTokens`, `setAuthTokens`, `removeAuthTokens`를 사용한다.
 - 개별 fetcher나 컴포넌트에서 `Authorization` 헤더, 토큰 갱신, 인증 실패 redirect를 다시 구현하지 않는다.
 - 인증 API는 `createAuthApiClient`가 만든 `api`·`nativeApi`를 사용한다.
 - 컴포넌트 트리에서는 `AuthProvider`와 `useAuth`를 사용하고, 라우트 loader처럼 React Context 밖에서는 공개 storage·guard API를 사용한다.
@@ -44,11 +44,11 @@ remote에 `requireAuth()`나 shell 레이아웃을 복제하지 않고, 생성�
 
 ## 구현 확인 지점
 
-- 클라이언트 생성과 재시도: `packages/auth/src/apis/client.ts`
-- endpoint와 오류 코드: `packages/auth/src/apis/`
-- 토큰 저장: `packages/auth/src/storage/`
-- Context 계약: `packages/auth/src/contexts/AuthProvider.tsx`
-- 라우트 guard: `packages/auth/src/guards/`, `apps/shell/src/routes/~_auth.tsx`
+- 클라이언트 생성과 재시도: `packages/@inhouse/auth/src/apis/client.ts`
+- endpoint와 오류 코드: `packages/@inhouse/auth/src/apis/`
+- 토큰 저장: `packages/@inhouse/auth/src/storage/`
+- Context 계약: `packages/@inhouse/auth/src/contexts/AuthProvider.tsx`
+- 라우트 guard: `packages/@inhouse/auth/src/guards/`, `apps/shell/src/routes/~_auth.tsx`
 - 앱 클라이언트 설정: `apps/*/src/apis/api.ts`
 
 HTTP 상태 코드, 인증 오류 코드, retry limit, redirect 방식은 변경될 수 있으므로 위 구현을 확인하고 수정한다.

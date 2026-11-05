@@ -1,8 +1,8 @@
+import { lotties } from '@inhouse/resources';
+import { Badge, Divider, Result, useToast } from '@interior/react';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { Lottie } from '@toss/lottie';
-import { Badge, Divider, Result, useToast } from '@yourssu-inhouse/interior';
-import { lotties } from '@yourssu-inhouse/resources';
 import { useState } from 'react';
 import { MdLockOutline, MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
 import { SwitchCase } from 'react-simplikit';

@@ -1,14 +1,14 @@
-import type { Merge } from '@yourssu-inhouse/inhouse-utils/type';
+import type { Merge } from '@inhouse/utils/type';
 
+import { Select, type SelectProps } from '@interior/react';
 import { useSuspenseQueries } from '@tanstack/react-query';
-import { Select, type SelectProps } from '@yourssu-inhouse/interior';
-import { cn } from '@yourssu-inhouse/interior-tailwind/utils';
 import { assert } from 'es-toolkit';
 
 import type { SemesterType } from '@/apis/semesters/schema';
 
 import { semestersNowOption, semestersOption } from '@/apis/semesters/query';
 import { formatRecruitingSemester } from '@/utils/semester';
+import { cn } from '@/utils/tailwind';
 
 type SemesterSelectProps = Omit<
   Merge<SelectProps<string>, { onValueChange?: (v: SemesterType) => void }>,
