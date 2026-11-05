@@ -87,7 +87,13 @@ export const useWriteComment = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+    if (e.key === 'Enter') {
+      if (e.shiftKey) {
+        return;
+      }
+      if (e.nativeEvent.isComposing) {
+        return;
+      }
       e.preventDefault();
       void handleAddComment();
     }
