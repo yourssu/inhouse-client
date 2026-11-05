@@ -92,7 +92,7 @@ export const MailListTable = () => {
                           group_id: item.groupId,
                           recipient_count: item.mails.length,
                           status: item.status,
-                          template_id: item.templateId,
+                          ...(item.templateId != null && { template_id: item.templateId }),
                         });
                         overlay.open(({ isOpen, close }) => (
                           <MailDetailDialog close={close} group={item} isOpen={isOpen} />
@@ -107,7 +107,7 @@ export const MailListTable = () => {
                 <Table.Cell>
                   <MailStatusBadge status={item.status} />
                 </Table.Cell>
-                <Table.Cell>{item.reserverName}</Table.Cell>
+                <Table.Cell>{item.reserverName ?? '알 수 없음'}</Table.Cell>
                 <Table.Cell>
                   <MailReceiversText receivers={item.mails.map((mail) => mail.receiverEmail)} />
                 </Table.Cell>

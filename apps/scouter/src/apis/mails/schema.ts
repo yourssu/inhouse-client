@@ -69,7 +69,7 @@ export const DetailVariableSchema = z.object({
 });
 
 export const AttachmentReferenceSchema = z.object({
-  fileId: z.number().optional(),
+  fileId: z.number().nullish(),
   fileName: z.string(),
   contentType: z.string(),
   storageKey: z.string(),
@@ -140,7 +140,7 @@ export const MailReservationDetailSchema = z.object({
   reservationId: z.number(),
   reservationTime: z.iso.datetime(),
   status: z.enum(mailReservationStatus),
-  senderEmailAddress: z.string().optional(),
+  senderEmailAddress: z.string().nullish(),
   mailSubject: z.string(),
   mailBody: z.string(),
   bodyFormat: z.string(),
@@ -163,9 +163,9 @@ export const MailReservationStatusResponseSchema = z.object({
 
 export const MailReservationGroupsGroupSchema = z.object({
   groupId: z.number(),
-  reserverName: z.string(),
-  reserverEmail: z.string(),
-  templateId: z.number(),
+  reserverName: z.string().nullable(),
+  reserverEmail: z.string().nullable(),
+  templateId: z.number().nullable(),
   reservationTime: z.iso.datetime(),
   status: z.enum(mailReservationStatus),
   createdAt: z.iso.datetime(),

@@ -67,7 +67,6 @@ export const SaveInterviewEvaluationRequestSchema = z.object({
   items: z.array(SaveInterviewEvaluationItemSchema).min(1),
   overallComment: z.string(),
   result: InterviewEvaluationResultSchema,
-  submit: z.boolean(),
 });
 
 export type InterviewEvaluationResult = z.infer<typeof InterviewEvaluationResultSchema>;
