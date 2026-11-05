@@ -1,9 +1,12 @@
+import { useMutationState } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
+import { createCommentMutationKey } from '@/apis/documents/query';
+import { CommentSchema } from '@/apis/documents/schema';
 import { Paper } from '@/components/Paper';
 
 import type { CommentCreatedMetadata } from './useWriteComment';
@@ -27,13 +30,21 @@ interface DocumentReviewProps {
 export const DocumentReview = ({
   applicantId,
   answers,
-  comments,
+  comments: savedComments,
   onCommentAddClick,
   onCommentCreated,
 }: DocumentReviewProps) => {
+  const pendingComments = useMutationState({
+    filters: { mutationKey: createCommentMutationKey(applicantId), status: 'pending' },
+    select: ({ state }) => CommentSchema.optional().parse(state.context),
+  });
+  const comments = [
+    ...savedComments,
+    ...pendingComments.filter((comment) => comment !== undefined),
+  ];
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
+  const threadsBySectionId = groupCommentThreads(comments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
   const showCommentPanel = comments.length > 0 || openCommentSectionId !== null;
@@ -76,7 +87,7 @@ export const DocumentReview = ({
   }, [selectedSectionId]);
 
   return (
-    <Paper className="grid min-h-0 grid-cols-3 grid-rows-1 gap-4 overflow-hidden">
+    <Paper className="grid min-h-0 grid-cols-3 grid-rows-1 gap-4 overflow-hidden" key={applicantId}>
       <div className="col-span-2 flex min-h-0 min-w-0 flex-col gap-4 overflow-y-auto only:col-span-full">
         {answers.map((answer, index) => {
           const { sectionId } = answer;

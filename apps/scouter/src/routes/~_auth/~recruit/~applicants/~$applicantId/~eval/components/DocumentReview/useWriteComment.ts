@@ -1,8 +1,11 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { type KeyboardEvent, useState } from 'react';
 
+import type { CommentType } from '@/apis/documents/schema';
+
 import { postApplicantDocumentComment } from '@/apis/documents';
-import { commentsQueryKey } from '@/apis/documents/query';
+import { commentsQueryKey, createCommentMutationKey } from '@/apis/documents/query';
+import { meOption } from '@/apis/members/query';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 export interface CommentCreatedMetadata {
@@ -26,18 +29,39 @@ export const useWriteComment = ({
   sectionId,
 }: UseWriteCommentParams) => {
   const queryClient = useQueryClient();
+  const { data: me } = useSuspenseQuery(meOption());
   const [content, setContent] = useState('');
   const trimmedContent = content.trim();
   const isContentEmpty = trimmedContent === '';
 
   const { isPending: isWritePending, mutateWithToast: writeCommentWithToast } = useToastedMutation({
+    mutationKey: createCommentMutationKey(applicantId),
     mutationFn: postApplicantDocumentComment,
     successText: '코멘트를 작성했어요.',
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) });
-      setContent('');
-      onCommentCreated?.({ parentCommentId, sectionId });
+    onMutate: ({ data }): CommentType => {
+      // 서버 ID와 구분해 조회로 확정되기 전의 수정·삭제·답글을 막는다.
+      return {
+        ...data,
+        commentId: -Date.now(),
+        author: {
+          nickname: me.nickname.split('(')[0].trim(),
+          part: me.parts.map(({ part }) => part).join(', '),
+          userId: me.userId,
+        },
+        isEdited: false,
+        parentCommentId: data.parentCommentId ?? null,
+      };
     },
+    onSuccess: (_, { data }) => {
+      setContent('');
+      onCommentCreated?.({
+        parentCommentId: data.parentCommentId ?? null,
+        sectionId: data.sectionId,
+      });
+    },
+    // 재조회가 끝날 때까지 pending을 유지해 임시 댓글이 먼저 사라지지 않게 한다.
+    onSettled: (_, _error, { applicantId }) =>
+      queryClient.invalidateQueries({ queryKey: commentsQueryKey(applicantId) }),
   });
 
   const handleAddComment = async () => {
@@ -63,17 +87,9 @@ export const useWriteComment = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      if (e.shiftKey) {
-        return;
-      }
-      if (e.nativeEvent.isComposing) {
-        return;
-      }
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
-      if (!isContentEmpty && !isWritePending) {
-        void handleAddComment();
-      }
+      void handleAddComment();
     }
     if (e.key === 'Escape') {
       handleClose();

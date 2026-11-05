@@ -3,10 +3,12 @@ import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { IoIosCheckmarkCircle, IoIosMore } from 'react-icons/io';
 import { MdCancel, MdEdit } from 'react-icons/md';
+import { PulseLoader } from 'react-spinners';
 
 import type { CommentType } from '@/apis/documents/schema';
 
@@ -25,6 +27,7 @@ interface CommentItemProps {
   actions?: ReactNode;
   children: ReactNode;
   comment: CommentType;
+  isCreatePending: boolean;
 }
 
 interface CommentBodyProps {
@@ -37,7 +40,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   const { data: myData } = useSuspenseQuery(meOption());
   const isMyComment = userId === myData.userId;
   const { invalidate: invalidateComments } = useQueryInvalidation(commentsQueryKey(applicantId));
-
+  const openAlertDialog = useAlertDialog();
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -46,11 +49,21 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     useToastedMutation({
       mutationFn: patchApplicantDocumentComment,
       successText: '코멘트를 수정했어요.',
-      onSuccess: () => {
+      onSuccess: async () => {
+        await invalidateComments();
         setIsEditing(false);
-        invalidateComments();
       },
     });
+
+  const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
+    useToastedMutation({
+      mutationFn: deleteApplicantDocumentComment,
+      successText: '코멘트를 삭제했어요.',
+      onSuccess: () => invalidateComments(),
+    });
+
+  // 음수 ID인 임시 댓글은 pending mutation에서만 전달된다.
+  const isCreatePending = commentId < 0;
 
   useEffect(() => {
     const textarea = editTextareaRef.current;
@@ -67,7 +80,10 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
 
   const handleCancelEdit = (e?: MouseEvent<HTMLButtonElement>) => {
     e?.stopPropagation();
-    setEditedContent(content);
+    // 저장 중 포커스가 이동해도 편집창과 제출한 본문을 유지한다.
+    if (isUpdatePending) {
+      return;
+    }
     setIsEditing(false);
   };
 
@@ -91,25 +107,14 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   };
 
   const handleEditKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
-      handleSubmitEdit();
+      void handleSubmitEdit();
     }
     if (e.key === 'Escape') {
       handleCancelEdit();
     }
   };
-
-  const openAlertDialog = useAlertDialog();
-
-  const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
-    useToastedMutation({
-      mutationFn: deleteApplicantDocumentComment,
-      successText: '코멘트를 삭제했어요.',
-      onSuccess: () => {
-        invalidateComments();
-      },
-    });
 
   const handleDelete = async () => {
     const isConfirm = await openAlertDialog({
@@ -125,10 +130,18 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     }
   };
 
+  if (isDeletePending) {
+    return (
+      <p className="text-neutralMuted text-13" role="status">
+        삭제 중…
+      </p>
+    );
+  }
+
   return (
     <CommentItem
       actions={
-        isMyComment && !isEditing ? (
+        isMyComment && !isEditing && !isCreatePending ? (
           <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
             <Menu>
               <Menu.Trigger>
@@ -143,7 +156,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               </Menu.Trigger>
               <Menu.Content align="end">
                 <Menu.ButtonItem
-                  className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="text-13"
                   icon={<MdEdit className="size-4" />}
                   onClick={handleEdit}
                 >
@@ -151,8 +164,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
                 </Menu.ButtonItem>
 
                 <Menu.ButtonItem
-                  className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={isDeletePending}
+                  className="text-13 text-red600"
                   icon={<HiOutlineTrash className="text-red600 size-4" />}
                   onClick={handleDelete}
                 >
@@ -164,17 +176,18 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
         ) : undefined
       }
       comment={comment}
+      isCreatePending={isCreatePending}
     >
       {isEditing ? (
         <div className="flex flex-col gap-0.5">
           <MultilineTextField
             autoFocus
             className="text-13 min-h-fit overflow-hidden p-0 pl-1"
-            disabled={isUpdatePending}
             onBlur={() => handleCancelEdit()}
             onChange={(e) => setEditedContent(e.target.value)}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={handleEditKeyDown}
+            readOnly={isUpdatePending}
             ref={editTextareaRef}
             rows={1}
             value={editedContent}
@@ -184,6 +197,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
             <IconButton
               aria-label="댓글 수정 취소"
               className="rounded-full"
+              disabled={isUpdatePending}
               onClick={handleCancelEdit}
               onMouseDown={(e) => e.preventDefault()}
               size="xs"
@@ -191,6 +205,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               <MdCancel className="text-grey600 size-5" />
             </IconButton>
             <IconButton
+              aria-busy={isUpdatePending}
               aria-label="댓글 수정 저장"
               className="rounded-full"
               disabled={isUpdatePending}
@@ -198,7 +213,11 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
               onMouseDown={(e) => e.preventDefault()}
               size="xs"
             >
-              <IoIosCheckmarkCircle className="text-violet600 size-5" />
+              {isUpdatePending ? (
+                <PulseLoader color="currentColor" size={3} />
+              ) : (
+                <IoIosCheckmarkCircle className="text-violet600 size-5" />
+              )}
             </IconButton>
           </div>
         </div>
@@ -209,14 +228,14 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
   );
 };
 
-const CommentItem = ({ actions, children, comment }: CommentItemProps) => {
+const CommentItem = ({ actions, children, comment, isCreatePending }: CommentItemProps) => {
   const { author, createdAt, isEdited } = comment;
   const relativeTime = createdAt
     ? formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt))
     : null;
 
   return (
-    <div className="group">
+    <div className={clsx('group', isCreatePending && 'text-neutralSubtle')}>
       <div className="flex items-center justify-between gap-1">
         <div className="flex min-w-0 items-center gap-1 whitespace-nowrap">
           <span className="text-13 truncate font-medium">
