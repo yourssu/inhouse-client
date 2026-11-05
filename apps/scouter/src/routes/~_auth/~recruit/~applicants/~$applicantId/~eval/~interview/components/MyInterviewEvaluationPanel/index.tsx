@@ -150,8 +150,6 @@ export const MyInterviewEvaluationPanel = ({
         items: groups.flatMap(({ items }) => items.map(({ itemId, score }) => ({ itemId, score }))),
         overallComment,
         result: invert(interviewResultKo)[result],
-        // submit 필드는 추후 제거될 예정이에요. (SCO-239)
-        submit: true,
       },
     });
   };

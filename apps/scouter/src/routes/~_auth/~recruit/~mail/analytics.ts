@@ -31,7 +31,7 @@ export interface MailAnalyticsEventProperties {
     group_id: MailReservationGroup['groupId'];
     recipient_count: number;
     status: MailReservationGroup['status'];
-    template_id: MailReservationGroup['templateId'];
+    template_id?: NonNullable<MailReservationGroup['templateId']>;
   };
   /** 발송 다이얼로그에서 즉시 또는 예약 발송 요청을 실행했을 때 발생해요. */
   mail_send_click: MailSendProperties;

@@ -6,7 +6,7 @@ import {
 } from '@/apis/interviews/memos/schema';
 
 export const getApplicantInterviewMemos = async (applicantId: number) => {
-  const response = await api.get(`applicants/${applicantId}/interviews/memos`).json();
+  const response = await api.get(`applicants/${applicantId}/interviews/comments`).json();
   return InterviewMemosSchema.parse(response);
 };
 
@@ -20,7 +20,7 @@ export const postApplicantInterviewMemo = async ({
   data,
 }: CreateInterviewMemoParams) => {
   const request = CreateInterviewMemoRequestSchema.parse(data);
-  await api.post(`applicants/${applicantId}/interviews/memos`, { json: request });
+  await api.post(`applicants/${applicantId}/interviews/comments`, { json: request });
 };
 
 export type DeleteInterviewMemoParams = {
@@ -32,5 +32,5 @@ export const deleteApplicantInterviewMemo = async ({
   applicantId,
   commentId,
 }: DeleteInterviewMemoParams) => {
-  await api.delete(`applicants/${applicantId}/interviews/memos/${commentId}`);
+  await api.delete(`applicants/${applicantId}/interviews/comments/${commentId}`);
 };

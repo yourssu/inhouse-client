@@ -11,8 +11,8 @@ import { MailPreviewBody } from '@/routes/~_auth/~recruit/~mail/components/MailP
 
 interface MailReservationContentProps {
   reservationId: number;
-  reserverEmail: string;
-  reserverName: string;
+  reserverEmail: null | string;
+  reserverName: null | string;
 }
 
 export const MailReservationContent = (props: MailReservationContentProps) => (
@@ -39,16 +39,17 @@ const MailReservationDetail = ({
   reserverEmail,
 }: MailReservationContentProps) => {
   const { data } = useSuspenseQuery(mailReservationDetailOption(reservationId));
+  const senderEmail = data.senderEmailAddress ?? reserverEmail;
 
   return (
     <div className="flex min-h-full flex-col gap-6">
       <dl className="text-neutralSubtle grid w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-x-4 gap-y-2 text-sm">
         <dt className="text-neutralMuted py-1">예약자</dt>
         <dd className="py-1 break-words">
-          {reserverName}{' '}
-          <span className="text-neutralMuted break-all">
-            ({data.senderEmailAddress ?? reserverEmail})
-          </span>
+          {reserverName ?? '알 수 없음'}
+          {senderEmail != null && (
+            <span className="text-neutralMuted break-all"> ({senderEmail})</span>
+          )}
         </dd>
         <dt className="text-neutralMuted py-1">예약 시간</dt>
         <dd className="flex flex-wrap items-center gap-2 py-1">
