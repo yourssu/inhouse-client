@@ -2,16 +2,15 @@ import { IconButton, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef } from 'react';
 import { BsArrowUpCircleFill } from 'react-icons/bs';
 
-import type { CommentCreatedMetadata } from './useWriteComment';
+import type { CommentCreatedMetadata } from './useCommentComposer';
 
 import { DetectOutsideClickArea } from './DetectOutsideClickArea';
-import { useWriteComment } from './useWriteComment';
+import { useCommentComposer } from './useCommentComposer';
 
 interface CommentFieldProps {
   applicantId: number;
   onClose: () => void;
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
-  parentCommentId: null | number;
   sectionId: number;
 }
 
@@ -19,7 +18,6 @@ export const CommentField = ({
   applicantId,
   onClose,
   onCommentCreated,
-  parentCommentId,
   sectionId,
 }: CommentFieldProps) => {
   const {
@@ -28,13 +26,13 @@ export const CommentField = ({
     handleClose,
     handleKeyDown,
     isContentEmpty,
-    isWritePending,
+    isSubmitting,
     setContent,
-  } = useWriteComment({
+  } = useCommentComposer({
     applicantId,
     onClose,
     onCommentCreated,
-    parentCommentId,
+    parentCommentId: null,
     sectionId,
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -51,7 +49,6 @@ export const CommentField = ({
         <MultilineTextField
           autoFocus
           className="min-h-fit overflow-hidden p-1.5"
-          disabled={isWritePending}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={'댓글 추가'}
@@ -62,7 +59,7 @@ export const CommentField = ({
         />
         <IconButton
           aria-label="댓글 등록"
-          disabled={isWritePending || isContentEmpty}
+          disabled={isContentEmpty || isSubmitting}
           onClick={handleAddComment}
           size="md"
         >
