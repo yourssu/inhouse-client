@@ -3,7 +3,7 @@ import { Divider, IconButton, useToast } from '@yourssu-inhouse/interior';
 import clsx from 'clsx';
 import { MdRefresh } from 'react-icons/md';
 
-import type { ReadInterviewCommentResponseOutput } from '@/apis/interviews/memos/generated/schema.gen';
+import type { InterviewMemoType } from '@/apis/interviews/memos/schema';
 
 import { interviewMemosOption } from '@/apis/interviews/memos/query';
 
@@ -70,7 +70,5 @@ export const InterviewMemoByQuestion = ({
   );
 };
 
-const compareByCreatedAtAsc = (
-  a: ReadInterviewCommentResponseOutput,
-  b: ReadInterviewCommentResponseOutput,
-) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+const compareByCreatedAtAsc = (a: InterviewMemoType, b: InterviewMemoType) =>
+  new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();

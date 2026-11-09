@@ -1,31 +1,33 @@
 import { api } from '@/apis/api';
 import {
-  CreateInterviewCommentRequest,
-  DeleteById3Params,
-  QuestionInterviewCommentsResponse,
-} from '@/apis/interviews/memos/generated/schema.gen';
+  CreateInterviewMemoRequestSchema,
+  type CreateInterviewMemoRequestType,
+  DeleteInterviewMemoParamsSchema,
+  type DeleteInterviewMemoParamsType,
+  InterviewMemosSchema,
+} from '@/apis/interviews/memos/schema';
 
 export const getApplicantInterviewMemos = async (applicantId: number) => {
   const response = await api.get(`applicants/${applicantId}/interviews/memos`).json();
-  return QuestionInterviewCommentsResponse.array().parse(response);
+  return InterviewMemosSchema.parse(response);
 };
 
 export type CreateInterviewMemoParams = {
   applicantId: number;
-  data: CreateInterviewCommentRequest;
+  data: CreateInterviewMemoRequestType;
 };
 
 export const postApplicantInterviewMemo = async ({
   applicantId,
   data,
 }: CreateInterviewMemoParams) => {
-  const request = CreateInterviewCommentRequest.parse(data);
+  const request = CreateInterviewMemoRequestSchema.parse(data);
   await api.post(`applicants/${applicantId}/interviews/memos`, { json: request });
 };
 
-export type DeleteInterviewMemoParams = DeleteById3Params;
+export type DeleteInterviewMemoParams = DeleteInterviewMemoParamsType;
 
 export const deleteApplicantInterviewMemo = async (params: DeleteInterviewMemoParams) => {
-  const { applicantId, commentId } = DeleteById3Params.parse(params);
+  const { applicantId, commentId } = DeleteInterviewMemoParamsSchema.parse(params);
   await api.delete(`applicants/${applicantId}/interviews/memos/${commentId}`);
 };
