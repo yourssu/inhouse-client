@@ -145,7 +145,6 @@ const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
 
   const selected = value === selectedValue;
   const tabId = getTabId(baseId, value);
-  const isTabStop = selected || tabId === fallbackTabId;
 
   const handleClick = () => {
     // 전환 대기 처리는 Tab이 하지 않고, 사용처가 value로 최신 요청을 넘기는 것으로 위임한다 (#238).
@@ -167,7 +166,7 @@ const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
       id={tabId}
       onClick={handleClick}
       role="tab"
-      tabIndex={isTabStop ? 0 : -1}
+      tabIndex={selected || tabId === fallbackTabId ? 0 : -1}
       type={asChild ? undefined : 'button'}
     >
       {children}
