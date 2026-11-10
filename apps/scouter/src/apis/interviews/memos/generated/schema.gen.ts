@@ -38,14 +38,14 @@ export const CreateInterviewCommentRequest = zod
  * 지원자의 할당된 질문별로 코멘트를 그룹화하여 조회합니다.
  * @summary 면접 질문 메모 목록 조회
  */
-export const Read1Params = zod.object({
+export const GetInterviewsMemosByApplicantIdParams = zod.object({
   applicantId: zod.int(),
 });
 
 /**
  * @summary 면접 질문 메모 작성
  */
-export const Create2Params = zod.object({
+export const PostInterviewsMemosByApplicantIdParams = zod.object({
   applicantId: zod.int(),
 });
 
@@ -53,7 +53,7 @@ export const Create2Params = zod.object({
  * 본인이 작성한 코멘트만 삭제 가능합니다.
  * @summary 면접 질문 코멘트 삭제
  */
-export const DeleteById3Params = zod.object({
+export const DeleteInterviewsMemosByApplicantIdAndCommentIdParams = zod.object({
   applicantId: zod.int(),
   commentId: zod.int(),
 });
@@ -74,11 +74,23 @@ export type QuestionInterviewCommentsResponseOutput = zod.output<
 export type CreateInterviewCommentRequest = zod.input<typeof CreateInterviewCommentRequest>;
 export type CreateInterviewCommentRequestOutput = zod.output<typeof CreateInterviewCommentRequest>;
 
-export type Read1Params = zod.input<typeof Read1Params>;
-export type Read1ParamsOutput = zod.output<typeof Read1Params>;
+export type GetInterviewsMemosByApplicantIdParams = zod.input<
+  typeof GetInterviewsMemosByApplicantIdParams
+>;
+export type GetInterviewsMemosByApplicantIdParamsOutput = zod.output<
+  typeof GetInterviewsMemosByApplicantIdParams
+>;
 
-export type Create2Params = zod.input<typeof Create2Params>;
-export type Create2ParamsOutput = zod.output<typeof Create2Params>;
+export type PostInterviewsMemosByApplicantIdParams = zod.input<
+  typeof PostInterviewsMemosByApplicantIdParams
+>;
+export type PostInterviewsMemosByApplicantIdParamsOutput = zod.output<
+  typeof PostInterviewsMemosByApplicantIdParams
+>;
 
-export type DeleteById3Params = zod.input<typeof DeleteById3Params>;
-export type DeleteById3ParamsOutput = zod.output<typeof DeleteById3Params>;
+export type DeleteInterviewsMemosByApplicantIdAndCommentIdParams = zod.input<
+  typeof DeleteInterviewsMemosByApplicantIdAndCommentIdParams
+>;
+export type DeleteInterviewsMemosByApplicantIdAndCommentIdParamsOutput = zod.output<
+  typeof DeleteInterviewsMemosByApplicantIdAndCommentIdParams
+>;

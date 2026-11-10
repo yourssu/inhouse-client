@@ -1,6 +1,6 @@
 import {
   CreateInterviewCommentRequest,
-  DeleteById3Params,
+  DeleteInterviewsMemosByApplicantIdAndCommentIdParams,
   QuestionInterviewCommentsResponse,
   type QuestionInterviewCommentsResponseOutput,
   ReadDocumentCommentAuthorResponse,
@@ -12,11 +12,11 @@ export const InterviewMemoSchema = ReadInterviewCommentResponse;
 export const QuestionInterviewMemosSchema = QuestionInterviewCommentsResponse;
 export const InterviewMemosSchema = QuestionInterviewCommentsResponse.array();
 export const CreateInterviewMemoRequestSchema = CreateInterviewCommentRequest;
-export const DeleteInterviewMemoParamsSchema = DeleteById3Params;
+export const DeleteInterviewMemoParamsSchema = DeleteInterviewsMemosByApplicantIdAndCommentIdParams;
 
 export type {
   CreateInterviewCommentRequest as CreateInterviewMemoRequestType,
-  DeleteById3Params as DeleteInterviewMemoParamsType,
+  DeleteInterviewsMemosByApplicantIdAndCommentIdParams as DeleteInterviewMemoParamsType,
   ReadDocumentCommentAuthorResponseOutput as InterviewMemoAuthorType,
   ReadInterviewCommentResponseOutput as InterviewMemoType,
   QuestionInterviewCommentsResponseOutput as QuestionInterviewMemosType,
