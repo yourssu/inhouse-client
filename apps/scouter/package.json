@@ -13,7 +13,8 @@
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write .",
     "fetch-schema": "pnpm tsx ./scripts/fetch-schema.ts",
-    "codegen:api": "orval --config ./orval.config.ts"
+    "codegen:api": "orval --config ./orval.config.ts",
+    "test:codegen": "tsx --test ./scripts/test/*.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
