@@ -11,6 +11,11 @@ export const ReadDocumentCommentAuthorResponse = zod
   })
   .describe('코멘트 작성자 정보');
 
+export type ReadDocumentCommentAuthorResponse = zod.input<typeof ReadDocumentCommentAuthorResponse>;
+export type ReadDocumentCommentAuthorResponseOutput = zod.output<
+  typeof ReadDocumentCommentAuthorResponse
+>;
+
 export const ReadDocumentCommentResponse = zod.object({
   commentId: zod.int(),
   sectionId: zod.int(),
@@ -21,15 +26,24 @@ export const ReadDocumentCommentResponse = zod.object({
   createdAt: zod.iso.datetime({ offset: true }).optional(),
 });
 
+export type ReadDocumentCommentResponse = zod.input<typeof ReadDocumentCommentResponse>;
+export type ReadDocumentCommentResponseOutput = zod.output<typeof ReadDocumentCommentResponse>;
+
 export const CreateDocumentCommentRequest = zod.object({
   sectionId: zod.int(),
   content: zod.string().min(1),
   parentCommentId: zod.int().optional(),
 });
 
+export type CreateDocumentCommentRequest = zod.input<typeof CreateDocumentCommentRequest>;
+export type CreateDocumentCommentRequestOutput = zod.output<typeof CreateDocumentCommentRequest>;
+
 export const UpdateDocumentCommentRequest = zod.object({
   content: zod.string().min(1),
 });
+
+export type UpdateDocumentCommentRequest = zod.input<typeof UpdateDocumentCommentRequest>;
+export type UpdateDocumentCommentRequestOutput = zod.output<typeof UpdateDocumentCommentRequest>;
 /**
  * @summary 인라인 코멘트 조회
  */
@@ -37,12 +51,26 @@ export const GetDocumentsCommentsByApplicantIdParams = zod.object({
   applicantId: zod.int(),
 });
 
+export type GetDocumentsCommentsByApplicantIdParams = zod.input<
+  typeof GetDocumentsCommentsByApplicantIdParams
+>;
+export type GetDocumentsCommentsByApplicantIdParamsOutput = zod.output<
+  typeof GetDocumentsCommentsByApplicantIdParams
+>;
+
 /**
  * @summary 인라인 코멘트 작성
  */
 export const PostDocumentsCommentsByApplicantIdParams = zod.object({
   applicantId: zod.int(),
 });
+
+export type PostDocumentsCommentsByApplicantIdParams = zod.input<
+  typeof PostDocumentsCommentsByApplicantIdParams
+>;
+export type PostDocumentsCommentsByApplicantIdParamsOutput = zod.output<
+  typeof PostDocumentsCommentsByApplicantIdParams
+>;
 
 /**
  * 본인이 작성한 코멘트만 삭제 가능합니다.
@@ -53,6 +81,13 @@ export const DeleteDocumentsCommentsByApplicantIdAndCommentIdParams = zod.object
   commentId: zod.int(),
 });
 
+export type DeleteDocumentsCommentsByApplicantIdAndCommentIdParams = zod.input<
+  typeof DeleteDocumentsCommentsByApplicantIdAndCommentIdParams
+>;
+export type DeleteDocumentsCommentsByApplicantIdAndCommentIdParamsOutput = zod.output<
+  typeof DeleteDocumentsCommentsByApplicantIdAndCommentIdParams
+>;
+
 /**
  * 본인이 작성한 코멘트만 수정 가능합니다.
  * @summary 인라인 코멘트 수정
@@ -61,41 +96,6 @@ export const PatchDocumentsCommentsByApplicantIdAndCommentIdParams = zod.object(
   applicantId: zod.int(),
   commentId: zod.int(),
 });
-
-export type ReadDocumentCommentAuthorResponse = zod.input<typeof ReadDocumentCommentAuthorResponse>;
-export type ReadDocumentCommentAuthorResponseOutput = zod.output<
-  typeof ReadDocumentCommentAuthorResponse
->;
-
-export type ReadDocumentCommentResponse = zod.input<typeof ReadDocumentCommentResponse>;
-export type ReadDocumentCommentResponseOutput = zod.output<typeof ReadDocumentCommentResponse>;
-
-export type CreateDocumentCommentRequest = zod.input<typeof CreateDocumentCommentRequest>;
-export type CreateDocumentCommentRequestOutput = zod.output<typeof CreateDocumentCommentRequest>;
-
-export type UpdateDocumentCommentRequest = zod.input<typeof UpdateDocumentCommentRequest>;
-export type UpdateDocumentCommentRequestOutput = zod.output<typeof UpdateDocumentCommentRequest>;
-
-export type GetDocumentsCommentsByApplicantIdParams = zod.input<
-  typeof GetDocumentsCommentsByApplicantIdParams
->;
-export type GetDocumentsCommentsByApplicantIdParamsOutput = zod.output<
-  typeof GetDocumentsCommentsByApplicantIdParams
->;
-
-export type PostDocumentsCommentsByApplicantIdParams = zod.input<
-  typeof PostDocumentsCommentsByApplicantIdParams
->;
-export type PostDocumentsCommentsByApplicantIdParamsOutput = zod.output<
-  typeof PostDocumentsCommentsByApplicantIdParams
->;
-
-export type DeleteDocumentsCommentsByApplicantIdAndCommentIdParams = zod.input<
-  typeof DeleteDocumentsCommentsByApplicantIdAndCommentIdParams
->;
-export type DeleteDocumentsCommentsByApplicantIdAndCommentIdParamsOutput = zod.output<
-  typeof DeleteDocumentsCommentsByApplicantIdAndCommentIdParams
->;
 
 export type PatchDocumentsCommentsByApplicantIdAndCommentIdParams = zod.input<
   typeof PatchDocumentsCommentsByApplicantIdAndCommentIdParams

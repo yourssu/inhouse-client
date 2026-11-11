@@ -11,6 +11,11 @@ export const ReadDocumentCommentAuthorResponse = zod
   })
   .describe('코멘트 작성자 정보');
 
+export type ReadDocumentCommentAuthorResponse = zod.input<typeof ReadDocumentCommentAuthorResponse>;
+export type ReadDocumentCommentAuthorResponseOutput = zod.output<
+  typeof ReadDocumentCommentAuthorResponse
+>;
+
 export const ReadInterviewCommentResponse = zod
   .object({
     commentId: zod.int().describe('코멘트 ID'),
@@ -21,6 +26,9 @@ export const ReadInterviewCommentResponse = zod
   })
   .describe('면접 질문 코멘트 항목 응답');
 
+export type ReadInterviewCommentResponse = zod.input<typeof ReadInterviewCommentResponse>;
+export type ReadInterviewCommentResponseOutput = zod.output<typeof ReadInterviewCommentResponse>;
+
 export const QuestionInterviewCommentsResponse = zod
   .object({
     sectionId: zod.int().describe('할당된 면접 질문 ID (assignedQuestionId)'),
@@ -28,12 +36,20 @@ export const QuestionInterviewCommentsResponse = zod
   })
   .describe('질문 단위 면접 질문 코멘트 목록 응답');
 
+export type QuestionInterviewCommentsResponse = zod.input<typeof QuestionInterviewCommentsResponse>;
+export type QuestionInterviewCommentsResponseOutput = zod.output<
+  typeof QuestionInterviewCommentsResponse
+>;
+
 export const CreateInterviewCommentRequest = zod
   .object({
     sectionId: zod.int().describe('할당된 면접 질문 ID (assignedQuestionId)'),
     content: zod.string().min(1).describe('면접 질문 코멘트 내용'),
   })
   .describe('면접 질문 코멘트 생성 요청');
+
+export type CreateInterviewCommentRequest = zod.input<typeof CreateInterviewCommentRequest>;
+export type CreateInterviewCommentRequestOutput = zod.output<typeof CreateInterviewCommentRequest>;
 /**
  * 지원자의 할당된 질문별로 코멘트를 그룹화하여 조회합니다.
  * @summary 면접 질문 메모 목록 조회
@@ -42,12 +58,26 @@ export const GetInterviewsMemosByApplicantIdParams = zod.object({
   applicantId: zod.int(),
 });
 
+export type GetInterviewsMemosByApplicantIdParams = zod.input<
+  typeof GetInterviewsMemosByApplicantIdParams
+>;
+export type GetInterviewsMemosByApplicantIdParamsOutput = zod.output<
+  typeof GetInterviewsMemosByApplicantIdParams
+>;
+
 /**
  * @summary 면접 질문 메모 작성
  */
 export const PostInterviewsMemosByApplicantIdParams = zod.object({
   applicantId: zod.int(),
 });
+
+export type PostInterviewsMemosByApplicantIdParams = zod.input<
+  typeof PostInterviewsMemosByApplicantIdParams
+>;
+export type PostInterviewsMemosByApplicantIdParamsOutput = zod.output<
+  typeof PostInterviewsMemosByApplicantIdParams
+>;
 
 /**
  * 본인이 작성한 코멘트만 삭제 가능합니다.
@@ -57,36 +87,6 @@ export const DeleteInterviewsMemosByApplicantIdAndCommentIdParams = zod.object({
   applicantId: zod.int(),
   commentId: zod.int(),
 });
-
-export type ReadDocumentCommentAuthorResponse = zod.input<typeof ReadDocumentCommentAuthorResponse>;
-export type ReadDocumentCommentAuthorResponseOutput = zod.output<
-  typeof ReadDocumentCommentAuthorResponse
->;
-
-export type ReadInterviewCommentResponse = zod.input<typeof ReadInterviewCommentResponse>;
-export type ReadInterviewCommentResponseOutput = zod.output<typeof ReadInterviewCommentResponse>;
-
-export type QuestionInterviewCommentsResponse = zod.input<typeof QuestionInterviewCommentsResponse>;
-export type QuestionInterviewCommentsResponseOutput = zod.output<
-  typeof QuestionInterviewCommentsResponse
->;
-
-export type CreateInterviewCommentRequest = zod.input<typeof CreateInterviewCommentRequest>;
-export type CreateInterviewCommentRequestOutput = zod.output<typeof CreateInterviewCommentRequest>;
-
-export type GetInterviewsMemosByApplicantIdParams = zod.input<
-  typeof GetInterviewsMemosByApplicantIdParams
->;
-export type GetInterviewsMemosByApplicantIdParamsOutput = zod.output<
-  typeof GetInterviewsMemosByApplicantIdParams
->;
-
-export type PostInterviewsMemosByApplicantIdParams = zod.input<
-  typeof PostInterviewsMemosByApplicantIdParams
->;
-export type PostInterviewsMemosByApplicantIdParamsOutput = zod.output<
-  typeof PostInterviewsMemosByApplicantIdParams
->;
 
 export type DeleteInterviewsMemosByApplicantIdAndCommentIdParams = zod.input<
   typeof DeleteInterviewsMemosByApplicantIdAndCommentIdParams

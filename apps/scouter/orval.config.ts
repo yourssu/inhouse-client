@@ -2,7 +2,6 @@
 import { defineConfig, type Options } from 'orval';
 
 import { nameOperation } from './scripts/name-operation';
-import { sortGeneratedTypes } from './scripts/sort-generated-types';
 import { transformOpenApi } from './scripts/transform-openapi';
 
 const createSchemaConfig = (
@@ -10,7 +9,6 @@ const createSchemaConfig = (
   tag: string,
   target: string,
 ): Options => ({
-  hooks: { afterAllFilesWrite: sortGeneratedTypes },
   input: {
     target: './schema.json',
     filters: { tags: [tag] },
