@@ -3,7 +3,7 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "noEmit": true,
-    "types": [],
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"]
     }
