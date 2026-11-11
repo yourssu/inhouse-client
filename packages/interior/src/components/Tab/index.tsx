@@ -104,8 +104,7 @@ const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
 
   return (
     <Comp
-      // 비활성 Panel은 마운트되지 않을 수 있어 존재하지 않는 id를 가리키지 않도록 선택된 탭만 연결한다.
-      aria-controls={selected ? getPanelId(baseId, value) : undefined}
+      aria-controls={getPanelId(baseId, value)}
       aria-disabled={disabled}
       aria-selected={selected}
       disabled={disabled}
