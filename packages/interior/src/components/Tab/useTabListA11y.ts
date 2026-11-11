@@ -4,6 +4,8 @@ const enabledTabSelector = '[role="tab"]:not([disabled]):not([aria-disabled="tru
 
 export const useTabListA11y = (value: string | undefined, children: React.ReactNode) => {
   const listRef = useRef<HTMLDivElement>(null);
+  // APG: 탭 목록에 포커스가 들어오면 active 탭에 포커스가 가고, Tab 키 진입점(tabIndex=0)은 하나뿐이다.
+  // 평소엔 선택된 탭이 진입점이고, 선택된 active 탭이 없을 때만 이 id의 탭이 대신한다.
   const [fallbackTabId, setFallbackTabId] = useState<string>();
 
   useEffect(() => {
@@ -19,7 +21,7 @@ export const useTabListA11y = (value: string | undefined, children: React.ReactN
       return;
     }
 
-    // 선택된 탭이 없거나 비활성이면 첫 활성 탭을 Tab 키 진입점으로 삼는다.
+    // 선택된 탭이 없거나 비활성이면 첫 active 탭을 Tab 키 진입점으로 삼는다.
     // value는 바꾸지 않고, 사용처에서 오류를 가시적으로 확인하도록 한다.
     const firstEnabledTab = list.querySelector<HTMLElement>(enabledTabSelector);
     setFallbackTabId(firstEnabledTab?.id);
