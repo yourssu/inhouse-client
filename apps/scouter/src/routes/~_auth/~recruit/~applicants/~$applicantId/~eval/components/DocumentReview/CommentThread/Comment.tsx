@@ -11,14 +11,13 @@ import { MdCancel, MdEdit } from 'react-icons/md';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
-import { commentsQueryKey } from '@/apis/documents/query';
+import { commentDeleteMutationKey, commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface CommentProps extends CommentType {
   applicantId: number;
-  children?: ReactNode;
   isOperationPending: boolean;
 }
 
@@ -33,12 +32,7 @@ interface CommentBodyProps {
   children: ReactNode;
 }
 
-export const Comment = ({
-  applicantId,
-  children,
-  isOperationPending,
-  ...comment
-}: CommentProps) => {
+export const Comment = ({ applicantId, isOperationPending, ...comment }: CommentProps) => {
   const { author, commentId, content } = comment;
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
@@ -115,6 +109,7 @@ export const Comment = ({
 
   const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
     useToastedMutation({
+      mutationKey: commentDeleteMutationKey(applicantId, commentId),
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
       onSuccess: () => queryClient.invalidateQueries({ queryKey }),
@@ -135,15 +130,7 @@ export const Comment = ({
   };
 
   if (isDeletePending) {
-    return (
-      <p
-        className="text-neutralSubtle text-13"
-        onClick={(event) => event.stopPropagation()}
-        role="status"
-      >
-        삭제 중...
-      </p>
-    );
+    return <DeletingComment />;
   }
 
   const displayedComment =
@@ -152,93 +139,100 @@ export const Comment = ({
       : comment;
 
   return (
-    <>
-      <CommentItem
-        actions={
-          isMyComment && !isEditing ? (
-            <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-              <Menu>
-                <Menu.Trigger>
-                  <IconButton
-                    aria-label="댓글 메뉴"
-                    className="rounded-4"
-                    disabled={isOperationPending || isUpdatePending || isDeletePending}
-                    size="xxs"
-                    variant="inline"
-                  >
-                    <IoIosMore className="size-4" />
-                  </IconButton>
-                </Menu.Trigger>
-                <Menu.Content align="end">
-                  <Menu.ButtonItem
-                    className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
-                    icon={<MdEdit className="size-4" />}
-                    onClick={handleEdit}
-                  >
-                    수정하기
-                  </Menu.ButtonItem>
+    <CommentItem
+      actions={
+        isMyComment && !isEditing ? (
+          <div className="ease-ease opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <Menu>
+              <Menu.Trigger>
+                <IconButton
+                  aria-label="댓글 메뉴"
+                  className="rounded-4"
+                  disabled={isOperationPending || isUpdatePending || isDeletePending}
+                  size="xxs"
+                  variant="inline"
+                >
+                  <IoIosMore className="size-4" />
+                </IconButton>
+              </Menu.Trigger>
+              <Menu.Content align="end">
+                <Menu.ButtonItem
+                  className="text-13 disabled:cursor-not-allowed disabled:opacity-40"
+                  icon={<MdEdit className="size-4" />}
+                  onClick={handleEdit}
+                >
+                  수정하기
+                </Menu.ButtonItem>
 
-                  <Menu.ButtonItem
-                    className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
-                    disabled={isDeletePending}
-                    icon={<HiOutlineTrash className="text-red600 size-4" />}
-                    onClick={handleDelete}
-                  >
-                    삭제하기
-                  </Menu.ButtonItem>
-                </Menu.Content>
-              </Menu>
-            </div>
-          ) : undefined
-        }
-        comment={displayedComment}
-        isProcessing={false}
-      >
-        {isEditing && !isUpdatePending ? (
-          <div className="flex flex-col gap-0.5">
-            <MultilineTextField
-              autoFocus
-              className="text-13 min-h-fit overflow-hidden p-0 pl-1"
-              disabled={isUpdatePending}
-              onBlur={() => handleCancelEdit()}
-              onChange={(e) => setEditedContent(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={handleEditKeyDown}
-              ref={editTextareaRef}
-              rows={1}
-              value={editedContent}
-              withHeightAutoResize={true}
-            />
-            <div className="flex self-end">
-              <IconButton
-                aria-label="댓글 수정 취소"
-                className="rounded-full"
-                onClick={handleCancelEdit}
-                onMouseDown={(e) => e.preventDefault()}
-                size="xs"
-              >
-                <MdCancel className="text-grey600 size-5" />
-              </IconButton>
-              <IconButton
-                aria-label="댓글 수정 저장"
-                className="rounded-full"
-                disabled={isUpdatePending}
-                onClick={handleSubmitEdit}
-                onMouseDown={(e) => e.preventDefault()}
-                size="xs"
-              >
-                <IoIosCheckmarkCircle className="text-violet600 size-5" />
-              </IconButton>
-            </div>
+                <Menu.ButtonItem
+                  className="text-13 text-red600 disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={isDeletePending}
+                  icon={<HiOutlineTrash className="text-red600 size-4" />}
+                  onClick={handleDelete}
+                >
+                  삭제하기
+                </Menu.ButtonItem>
+              </Menu.Content>
+            </Menu>
           </div>
-        ) : (
-          <CommentBody>{displayedComment.content}</CommentBody>
-        )}
-      </CommentItem>
-      {children}
-    </>
+        ) : undefined
+      }
+      comment={displayedComment}
+      isProcessing={false}
+    >
+      {isEditing && !isUpdatePending ? (
+        <div className="flex flex-col gap-0.5">
+          <MultilineTextField
+            autoFocus
+            className="text-13 min-h-fit overflow-hidden p-0 pl-1"
+            disabled={isUpdatePending}
+            onBlur={() => handleCancelEdit()}
+            onChange={(e) => setEditedContent(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={handleEditKeyDown}
+            ref={editTextareaRef}
+            rows={1}
+            value={editedContent}
+            withHeightAutoResize={true}
+          />
+          <div className="flex self-end">
+            <IconButton
+              aria-label="댓글 수정 취소"
+              className="rounded-full"
+              onClick={handleCancelEdit}
+              onMouseDown={(e) => e.preventDefault()}
+              size="xs"
+            >
+              <MdCancel className="text-grey600 size-5" />
+            </IconButton>
+            <IconButton
+              aria-label="댓글 수정 저장"
+              className="rounded-full"
+              disabled={isUpdatePending}
+              onClick={handleSubmitEdit}
+              onMouseDown={(e) => e.preventDefault()}
+              size="xs"
+            >
+              <IoIosCheckmarkCircle className="text-violet600 size-5" />
+            </IconButton>
+          </div>
+        </div>
+      ) : (
+        <CommentBody>{displayedComment.content}</CommentBody>
+      )}
+    </CommentItem>
   );
 };
+
+export const DeletingComment = () => (
+  <p
+    className="text-neutralSubtle text-13"
+    onClick={(event) => event.stopPropagation()}
+    role="status"
+  >
+    삭제 중...
+  </p>
+);
 
 interface PendingCommentProps {
   content: string;
