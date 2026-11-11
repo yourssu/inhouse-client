@@ -53,12 +53,15 @@ test('서류 코멘트 정책은 두 계약만 보정하고 원본을 보존한�
   assert.deepEqual(source, original);
 });
 
-test('서버가 Location 정의를 수정하면 덮어쓰지 않고 실패한다', async () => {
+test('서버가 추가한 Location schema는 덮어쓰지 않는다', async () => {
   const changed = structuredClone(source);
   const response = changed.paths?.['/applicants']?.post?.responses?.['201'];
   assert(response && !('$ref' in response) && response.headers);
-  response.headers.Location = { schema: { type: 'string' } };
-  await assert.rejects(async () => repairOpenApi(changed), /Location 보정/);
+  const location = response.headers.Location;
+  assert(location && !('$ref' in location));
+  response.headers.Location = { ...location, schema: { type: 'string' } };
+  const result = await repairOpenApi(changed);
+  assert.deepEqual(result.paths?.['/applicants']?.post?.responses?.['201'], response);
 });
 
 test('서류 코멘트 원본이 바뀌면 정책 재검토를 요구한다', async () => {

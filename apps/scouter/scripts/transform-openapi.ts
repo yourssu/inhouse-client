@@ -1,37 +1,18 @@
 import { isDeepStrictEqual } from 'node:util';
 import { defineTransformer, type OpenApiSchemaObject } from 'orval';
 
-// 전체 검증에 필요한 Location 보완입니다. 서버 수정 후 해당 항목을 제거합니다.
-const locationHeaders = [
-  ['/members/include-from-applicants', '/members'],
-  ['/applicants', '/applicants/{applicantId}'],
-  [
-    '/applicants/{applicantId}/interviews/memos',
-    '/applicants/{applicantId}/interviews/memos/{commentId}',
-  ],
-  [
-    '/applicants/{applicantId}/documents/comments',
-    '/applicants/{applicantId}/documents/comments/{commentId}',
-  ],
-  ['/applicants/webhook', '/applicants'],
-  ['/applicants/include-from-forms', '/applicants'],
-  ['/applicants/include-from-forms/semesters/{semesterId}', '/applicants'],
-].map(([path, description]) => ({
-  path,
-  before: { description, style: 'simple' },
-  after: { description, style: 'simple' as const, schema: { type: 'string' as const } },
-}));
-
 // 서버 응답의 nullable 여부는 실제 응답으로 확인해야 합니다. 현재 클라이언트의 수용 범위를 보존합니다.
 const nullableParentCommentId = {
   type: ['integer', 'null'],
   format: 'int64',
 } satisfies OpenApiSchemaObject;
 const documentComment = {
+  // createdAt이 실제로 항상 오거나 서버 명세에서 required가 제거되면 이 보정을 삭제합니다.
   required: {
     before: ['author', 'commentId', 'content', 'createdAt', 'isEdited', 'sectionId'],
     after: ['author', 'commentId', 'content', 'isEdited', 'sectionId'],
   },
+  // 최상위 코멘트의 null 응답을 서버 명세가 허용하면 이 보정을 삭제합니다.
   parentCommentId: {
     before: { type: 'integer', format: 'int64' },
     after: nullableParentCommentId,
@@ -41,17 +22,24 @@ const documentComment = {
 export const transformOpenApi = (domain: 'documentComments' | 'interviewMemos') =>
   defineTransformer((source) => {
     const document = structuredClone(source);
-    for (const { path, before, after } of locationHeaders) {
-      const response = document.paths?.[path]?.post?.responses?.['201'];
+    // 서버 명세의 POST 201 Location 헤더에 schema: { type: 'string' }이 모두 추가되면 이 순회를 삭제합니다.
+    for (const [path, operation] of Object.entries(document.paths ?? {})) {
+      const response = operation.post?.responses?.['201'];
+      if (!response || '$ref' in response) {
+        continue;
+      }
+      const headers = response.headers;
+      const location = headers?.Location;
+      if (!location || '$ref' in location || 'schema' in location) {
+        continue;
+      }
       if (
-        !response ||
-        '$ref' in response ||
-        !response.headers ||
-        !isDeepStrictEqual(response.headers.Location, before)
+        typeof location.description !== 'string' ||
+        !isDeepStrictEqual(location, { description: location.description, style: 'simple' })
       ) {
         throw new Error(`Location 보정을 재검토하세요: POST ${path}`);
       }
-      response.headers.Location = structuredClone(after);
+      headers.Location = { ...location, schema: { type: 'string' } };
     }
     if (domain === 'documentComments') {
       const model = document.components?.schemas?.ReadDocumentCommentResponse;
