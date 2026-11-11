@@ -1,15 +1,20 @@
+import { useMutationState } from '@tanstack/react-query';
 import { Divider } from '@yourssu-inhouse/interior';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { ApplicantDocumentAnswersType } from '@/apis/applicants/schema';
 import type { CommentType } from '@/apis/documents/schema';
 
+import { commentCreateMutationKey } from '@/apis/documents/query';
+import { CommentSchema } from '@/apis/documents/schema';
 import { Paper } from '@/components/Paper';
 
-import type { CommentCreatedMetadata } from './useWriteComment';
+import type { CommentCreatedMetadata } from './useCommentComposer';
 
 import { CommentField } from './CommentField';
 import { CommentThread } from './CommentThread';
+import { PendingComment } from './CommentThread/Comment';
+import { CommentThreadCard } from './CommentThread/CommentThreadCard';
 import { DocumentAnswer } from './DocumentAnswer';
 import { groupCommentThreads } from './groupCommentThreads';
 
@@ -24,6 +29,12 @@ interface DocumentReviewProps {
   onCommentCreated?: (metadata: CommentCreatedMetadata) => void;
 }
 
+const pendingCommentSchema = CommentSchema.pick({
+  content: true,
+  parentCommentId: true,
+  sectionId: true,
+});
+
 export const DocumentReview = ({
   applicantId,
   answers,
@@ -33,10 +44,17 @@ export const DocumentReview = ({
 }: DocumentReviewProps) => {
   const [selectedSectionId, setSelectedSectionId] = useState<null | number>(null);
   const [openCommentSectionId, setOpenCommentSectionId] = useState<null | number>(null);
-  const threadsBySectionId = useMemo(() => groupCommentThreads(comments), [comments]);
+  const mutationKey = commentCreateMutationKey(applicantId);
+  const [pendingComment = null] = useMutationState({
+    filters: { mutationKey, exact: true, status: 'pending' },
+    select: (mutation) => pendingCommentSchema.parse(mutation.state.variables),
+  });
+
+  const threadsBySectionId = groupCommentThreads(comments);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef(new Map<number, HTMLDivElement>());
-  const showCommentPanel = comments.length > 0 || openCommentSectionId !== null;
+  const showCommentPanel =
+    comments.length > 0 || pendingComment !== null || openCommentSectionId !== null;
 
   const handleClickSection = (sectionId: number) => {
     setSelectedSectionId((previousSectionId) =>
@@ -106,6 +124,16 @@ export const DocumentReview = ({
               }
 
               const threads = threadsBySectionId.get(sectionId) ?? [];
+              const pendingCommentInSection =
+                pendingComment?.sectionId === sectionId ? pendingComment : null;
+              const pendingThread =
+                pendingCommentInSection &&
+                (pendingCommentInSection.parentCommentId === null ||
+                  !threads.some(
+                    ([root]) => root.commentId === pendingCommentInSection.parentCommentId,
+                  ))
+                  ? pendingCommentInSection
+                  : null;
 
               return (
                 <div
@@ -113,7 +141,9 @@ export const DocumentReview = ({
                   key={sectionId}
                   ref={registerSectionRef(sectionId)}
                 >
-                  {(threads.length > 0 || openCommentSectionId === sectionId) && (
+                  {(threads.length > 0 ||
+                    pendingThread !== null ||
+                    openCommentSectionId === sectionId) && (
                     <div className="flex items-center gap-2">
                       <span className="text-neutralMuted shrink-0 text-sm font-medium">
                         {index + 1}번 문항
@@ -126,7 +156,6 @@ export const DocumentReview = ({
                       applicantId={applicantId}
                       onClose={() => setOpenCommentSectionId(null)}
                       onCommentCreated={onCommentCreated}
-                      parentCommentId={null}
                       sectionId={sectionId}
                     />
                   )}
@@ -136,9 +165,15 @@ export const DocumentReview = ({
                       isSelected={sectionId === selectedSectionId}
                       key={thread[0].commentId}
                       onCommentCreated={onCommentCreated}
+                      pendingComment={pendingCommentInSection}
                       thread={thread}
                     />
                   ))}
+                  {pendingThread && (
+                    <CommentThreadCard isSelected={sectionId === selectedSectionId}>
+                      <PendingComment content={pendingThread.content} />
+                    </CommentThreadCard>
+                  )}
                 </div>
               );
             })}

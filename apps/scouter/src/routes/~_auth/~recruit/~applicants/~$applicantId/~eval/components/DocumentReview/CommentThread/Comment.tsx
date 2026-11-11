@@ -1,6 +1,6 @@
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { formatTemplates } from '@yourssu-inhouse/inhouse-utils/date';
 import { IconButton, Menu, MultilineTextField } from '@yourssu-inhouse/interior';
 import { useEffect, useRef, useState } from 'react';
@@ -11,46 +11,51 @@ import { MdCancel, MdEdit } from 'react-icons/md';
 import type { CommentType } from '@/apis/documents/schema';
 
 import { deleteApplicantDocumentComment, patchApplicantDocumentComment } from '@/apis/documents';
-import { commentsQueryKey } from '@/apis/documents/query';
+import { commentDeleteMutationKey, commentsQueryKey } from '@/apis/documents/query';
 import { meOption } from '@/apis/members/query';
 import { useAlertDialog } from '@/hooks/useAlertDialog';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { useToastedMutation } from '@/hooks/useToastedMutation';
 
 interface CommentProps extends CommentType {
   applicantId: number;
+  isOperationPending: boolean;
 }
 
 interface CommentItemProps {
   actions?: ReactNode;
   children: ReactNode;
-  comment: CommentType;
+  comment: Partial<Pick<CommentType, 'createdAt' | 'isEdited'>> & Pick<CommentType, 'author'>;
+  isProcessing: boolean;
 }
 
 interface CommentBodyProps {
   children: ReactNode;
 }
 
-export const Comment = ({ applicantId, ...comment }: CommentProps) => {
+export const Comment = ({ applicantId, isOperationPending, ...comment }: CommentProps) => {
   const { author, commentId, content } = comment;
   const { userId } = author;
   const { data: myData } = useSuspenseQuery(meOption());
   const isMyComment = userId === myData.userId;
-  const { invalidate: invalidateComments } = useQueryInvalidation(commentsQueryKey(applicantId));
+  const queryClient = useQueryClient();
+  const queryKey = commentsQueryKey(applicantId);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const { isPending: isUpdatePending, mutateWithToast: updateCommentWithToast } =
-    useToastedMutation({
-      mutationFn: patchApplicantDocumentComment,
-      successText: '코멘트를 수정했어요.',
-      onSuccess: () => {
-        setIsEditing(false);
-        invalidateComments();
-      },
-    });
+  const {
+    isPending: isUpdatePending,
+    mutateWithToast: updateCommentWithToast,
+    variables: updateVariables,
+  } = useToastedMutation({
+    mutationFn: patchApplicantDocumentComment,
+    successText: '코멘트를 수정했어요.',
+    onSuccess: async () => {
+      setIsEditing(false);
+      await queryClient.invalidateQueries({ queryKey });
+    },
+  });
 
   useEffect(() => {
     const textarea = editTextareaRef.current;
@@ -58,7 +63,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
       textarea.style.height = 'auto';
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  }, [isEditing]);
+  }, [isEditing, isUpdatePending]);
 
   const handleEdit = () => {
     setEditedContent(content);
@@ -104,11 +109,10 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
 
   const { isPending: isDeletePending, mutateWithToast: deleteCommentWithToast } =
     useToastedMutation({
+      mutationKey: commentDeleteMutationKey(applicantId, commentId),
       mutationFn: deleteApplicantDocumentComment,
       successText: '코멘트를 삭제했어요.',
-      onSuccess: () => {
-        invalidateComments();
-      },
+      onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     });
 
   const handleDelete = async () => {
@@ -125,6 +129,15 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
     }
   };
 
+  if (isDeletePending) {
+    return <DeletingComment />;
+  }
+
+  const displayedComment =
+    isUpdatePending && updateVariables
+      ? { ...comment, content: updateVariables.data.content, isEdited: true }
+      : comment;
+
   return (
     <CommentItem
       actions={
@@ -135,6 +148,7 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
                 <IconButton
                   aria-label="댓글 메뉴"
                   className="rounded-4"
+                  disabled={isOperationPending || isUpdatePending || isDeletePending}
                   size="xxs"
                   variant="inline"
                 >
@@ -163,9 +177,10 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
           </div>
         ) : undefined
       }
-      comment={comment}
+      comment={displayedComment}
+      isProcessing={false}
     >
-      {isEditing ? (
+      {isEditing && !isUpdatePending ? (
         <div className="flex flex-col gap-0.5">
           <MultilineTextField
             autoFocus
@@ -203,29 +218,62 @@ export const Comment = ({ applicantId, ...comment }: CommentProps) => {
           </div>
         </div>
       ) : (
-        <CommentBody>{content}</CommentBody>
+        <CommentBody>{displayedComment.content}</CommentBody>
       )}
     </CommentItem>
   );
 };
 
-const CommentItem = ({ actions, children, comment }: CommentItemProps) => {
+export const DeletingComment = () => (
+  <p
+    className="text-neutralSubtle text-13"
+    onClick={(event) => event.stopPropagation()}
+    role="status"
+  >
+    삭제 중...
+  </p>
+);
+
+interface PendingCommentProps {
+  content: string;
+}
+
+export const PendingComment = ({ content }: PendingCommentProps) => {
+  const { data: me } = useSuspenseQuery(meOption());
+  const author = {
+    nickname: me.nickname.replace(/\s*\([^)]*\)$/, ''),
+    part: me.parts[0]?.part ?? '',
+    userId: me.userId,
+  };
+
+  return (
+    <CommentItem comment={{ author }} isProcessing>
+      <CommentBody>{content}</CommentBody>
+    </CommentItem>
+  );
+};
+
+const CommentItem = ({ actions, children, comment, isProcessing }: CommentItemProps) => {
   const { author, createdAt, isEdited } = comment;
   const relativeTime = createdAt
     ? formatTemplates['방금 전 | 1(분/시간/일/주/개월/년) 전'](new Date(createdAt))
     : null;
 
   return (
-    <div className="group">
+    <div className="group" onClick={isProcessing ? (event) => event.stopPropagation() : undefined}>
       <div className="flex items-center justify-between gap-1">
         <div className="flex min-w-0 items-center gap-1 whitespace-nowrap">
           <span className="text-13 truncate font-medium">
             {author.nickname} [{author.part}]
           </span>
-          {relativeTime && (
-            <span className="text-neutralSubtle text-xs">
-              {isEdited ? `${relativeTime} (편집됨)` : relativeTime}
-            </span>
+          {isProcessing ? (
+            <span className="text-neutralSubtle text-xs">처리 중...</span>
+          ) : (
+            relativeTime && (
+              <span className="text-neutralSubtle text-xs">
+                {isEdited ? `${relativeTime} (편집됨)` : relativeTime}
+              </span>
+            )
           )}
         </div>
         {actions}
