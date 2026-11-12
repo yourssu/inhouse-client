@@ -21,9 +21,9 @@ export const ReadDocumentCommentResponse = zod.object({
   sectionId: zod.int(),
   content: zod.string(),
   author: ReadDocumentCommentAuthorResponse,
-  parentCommentId: zod.int().nullish(),
+  parentCommentId: zod.int().optional(),
   isEdited: zod.boolean(),
-  createdAt: zod.iso.datetime({ offset: true }).optional(),
+  createdAt: zod.iso.datetime({ offset: true }),
 });
 
 export type ReadDocumentCommentResponse = zod.input<typeof ReadDocumentCommentResponse>;

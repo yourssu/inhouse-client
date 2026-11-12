@@ -49,20 +49,17 @@ src/apis/documents/comments/generated/schema.gen.ts
 생성 파일은 직접 수정하지 않습니다. 앱 코드는 각 도메인의 `schema.ts`를 통해 스키마와 타입을
 사용합니다. UI 입력만을 위한 nullable 등은 별도 입력 스키마로 선언합니다.
 
-명세 보정은 `scripts/transform-openapi.ts`의 Orval input transformer에서 관리합니다. 각 정책은
-예상하는 원본(`before`)과 보정 결과(`after`)를 함께 선언하며, 원본 명세가 달라지면 생성에
-실패합니다.
+명세 보정은 `scripts/transform-openapi.ts`의 Orval input transformer에서 관리합니다. 예상과
+다른 Location 헤더를 만나면 생성에 실패합니다. 태그 필터는 생성 범위만 정하고, transformer는
+전체 명세에서 보정 대상을 직접 식별합니다.
 
 ### 현재 보정
 
-| 대상        | 내용                                                      |
-| ----------- | --------------------------------------------------------- |
-| 전체 명세   | POST 응답 7곳의 누락된 Location 헤더 schema 추가          |
-| 서류 코멘트 | 응답 `createdAt` 선택적 허용, `parentCommentId` null 허용 |
+POST 응답 7곳의 누락된 Location 헤더 schema를 추가합니다.
 
 서류 코멘트의 부모 ID를 `undefined → null`로 바꾸는 화면용 정규화는 `documents/schema.ts`에
-둡니다. 생성된 코멘트 ID는 명세의 정수 제약대로 검증합니다. 서류 코멘트의 실제 응답 계약이
-확정되면 두 보정을 재검토합니다.
+둡니다. 응답의 `parentCommentId`는 명세대로 생략 가능한 정수이며, `createdAt`은 필수로
+생성합니다.
 
 ### 후속 생성 시 확인할 보정
 

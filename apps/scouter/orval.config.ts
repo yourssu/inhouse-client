@@ -4,15 +4,11 @@ import { defineConfig, type Options } from 'orval';
 import { nameOperation } from './scripts/name-operation';
 import { transformOpenApi } from './scripts/transform-openapi';
 
-const createSchemaConfig = (
-  domain: Parameters<typeof transformOpenApi>[0],
-  tag: string,
-  target: string,
-): Options => ({
+const createSchemaConfig = (tag: string, target: string): Options => ({
   input: {
     target: './schema.json',
     filters: { tags: [tag] },
-    override: { transformer: transformOpenApi(domain) },
+    override: { transformer: transformOpenApi },
   },
   output: {
     target,
@@ -34,12 +30,10 @@ const createSchemaConfig = (
 
 export default defineConfig({
   interviewMemos: createSchemaConfig(
-    'interviewMemos',
     '면접 질문 코멘트',
     './src/apis/interviews/memos/generated/schema.gen.ts',
   ),
   documentComments: createSchemaConfig(
-    'documentComments',
     '서류 코멘트',
     './src/apis/documents/comments/generated/schema.gen.ts',
   ),
