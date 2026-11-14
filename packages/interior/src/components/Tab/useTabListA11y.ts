@@ -1,10 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 
-const enabledTabSelector = '[role="tab"]:not([disabled]):not([aria-disabled="true"])';
+const tabSelector = '[role="tab"]';
+const enabledTabSelector = `${tabSelector}:not([disabled]):not([aria-disabled="true"])`;
+const selectedSelector = '[aria-selected="true"]';
+
+const hasTab = (list: HTMLElement) => list.querySelector(tabSelector) !== null;
+const hasSelectedTab = (list: HTMLElement) =>
+  list.querySelector(`${tabSelector}${selectedSelector}`) !== null;
+const hasSelectedAndEnabledTab = (list: HTMLElement) =>
+  list.querySelector(`${enabledTabSelector}${selectedSelector}`) !== null;
+const findFirstEnabledTab = (list: HTMLElement) =>
+  list.querySelector<HTMLElement>(enabledTabSelector);
+const findEnabledTabs = (list: HTMLElement) => [
+  ...list.querySelectorAll<HTMLElement>(enabledTabSelector),
+];
 
 export const useTabListA11y = (value: string | undefined, children: React.ReactNode) => {
   const listRef = useRef<HTMLDivElement>(null);
-  // APG: 탭 목록에 포커스가 들어오면 active 탭에 포커스가 가고, Tab 키 진입점(tabIndex=0)은 하나뿐이다.
   // 평소엔 선택된 탭이 진입점이고, 선택된 active 탭이 없을 때만 이 id의 탭이 대신한다.
   const [fallbackTabId, setFallbackTabId] = useState<string>();
 
@@ -14,17 +26,8 @@ export const useTabListA11y = (value: string | undefined, children: React.ReactN
       return;
     }
 
-    const hasFocusableSelectedTab =
-      list.querySelector(`${enabledTabSelector}[aria-selected="true"]`) !== null;
-    if (hasFocusableSelectedTab) {
-      setFallbackTabId(undefined);
-      return;
-    }
-
     // 선택된 탭이 없거나 비활성이면 첫 active 탭을 Tab 키 진입점으로 삼는다.
-    // value는 바꾸지 않고, 사용처에서 오류를 가시적으로 확인하도록 한다.
-    const firstEnabledTab = list.querySelector<HTMLElement>(enabledTabSelector);
-    setFallbackTabId(firstEnabledTab?.id);
+    setFallbackTabId(hasSelectedAndEnabledTab(list) ? undefined : findFirstEnabledTab(list)?.id);
   }, [children, value]);
 
   useEffect(() => {
@@ -33,9 +36,7 @@ export const useTabListA11y = (value: string | undefined, children: React.ReactN
       return;
     }
 
-    const hasTab = list.querySelector('[role="tab"]') !== null;
-    const hasSelectedTab = list.querySelector('[role="tab"][aria-selected="true"]') !== null;
-    if (hasTab && !hasSelectedTab) {
+    if (hasTab(list) && !hasSelectedTab(list)) {
       console.error(`Tab: value "${value}"와 일치하는 Tab.Item이 없어요.`);
     }
   }, [value]);
@@ -46,11 +47,14 @@ export const useTabListA11y = (value: string | undefined, children: React.ReactN
       return;
     }
 
-    const tabs = [...event.currentTarget.querySelectorAll<HTMLElement>(enabledTabSelector)];
+    const tabs = findEnabledTabs(event.currentTarget);
     const index = tabs.findIndex((tab) => tab === event.target);
-    const nextIndex = getNextIndexOnKeyDown(event.key, index, tabs.length);
+    if (index === -1) {
+      return;
+    }
 
-    if (index === -1 || nextIndex === null) {
+    const nextIndex = getNextIndexOnKeyDown(event.key, index, tabs.length);
+    if (nextIndex === null) {
       return;
     }
 

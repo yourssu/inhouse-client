@@ -111,6 +111,7 @@ const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
       id={tabId}
       onClick={handleClick}
       role="tab"
+      // APG: 탭 목록에 포커스가 들어오면 active 탭에 포커스가 가고, Tab 키 진입점(tabIndex=0)은 하나뿐이다.
       tabIndex={selected || tabId === fallbackTabId ? 0 : -1}
       type={asChild ? undefined : 'button'}
     >
