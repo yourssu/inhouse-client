@@ -27,7 +27,7 @@
       "expectations": [
         "module-federation.md, auth.md, routing-url-state.md와 실제 shell·remote·mfa-shell 구현을 확인한다.",
         "shell /_auth의 requireAuth와 공통 layout을 보존하고 remote 인증 guard·AuthProvider를 추가하지 않는다.",
-        "remote 계약은 routeTree와 선택적인 global 모듈을 공개하고 앱을 별도로 mount하거나 remote router 인스턴스를 생성하지 않는다.",
+        "remote 계약은 routeTree와 선택적인 global 객체를 연결하고 앱을 별도로 mount하거나 remote router 인스턴스를 생성하지 않는다.",
         "remote router.ts의 Register 타입 등록과 서비스 root·Global 초기화 동작을 근거 없이 제거하지 않는다.",
         "remote index.html·HTML 생성·standalone preview helper를 추가하지 않고 routeTree.gen.ts를 직접 수정하지 않는다.",
         "검토·변경 범위에 맞는 자동 검사 결과와 실제 UI 확인·미실행 검증을 구분해 보고한다."
@@ -91,13 +91,13 @@
     {
       "id": 7,
       "prompt": "새 remote ledger를 추가해줘. basePath는 /finance이고 기존 포트와 겹치지 않는 dev port를 사용해. shell 아래에 제목과 간단한 잔액 안내가 있는 한 화면을 연결하고 ledger 전용 Tailwind utility 하나를 적용해줘. 별도 API·mock·인증 정책은 필요 없어. router.ts에 라우터 생성·export와 타입 등록을 두고 main.tsx·독립 HTML·preview 자동 지원은 추가하지 마. 서비스 초기화가 필요하면 global 계약을 사용해. 현재 route 계약과 서비스 CSS 로딩 방식을 재사용하고 관련 자동 검증 및 미실행 UI 검증을 보고해줘.",
-      "expected_output": "중앙 remote 등록과 inhouse-mfa/route.ts 계약을 통해 ledger를 연결하고 HTML 없는 remote 빌드·서비스 CSS namespace·shell 공통 CSS 소유권을 지킨다.",
+      "expected_output": "중앙 remote 등록과 루트 remotePlugin.ts 선언을 통해 ledger를 연결하고 HTML 없는 remote 빌드·서비스 CSS namespace·shell 공통 CSS 소유권을 지킨다.",
       "files": [],
       "parallel_safe": true,
       "expectations": [
         "module-federation.md, routing-url-state.md, workspace-packages.md, quality.md와 현재 MFA 공개 구현을 확인한다.",
         "고유한 ledger workspace·port를 mfa.config.ts에 등록하고 Vite federation 설정·shell runtime spec을 수기로 복제하지 않는다.",
-        "inhouse-mfa/route.ts에서 routeTree를 공개하고 /_auth 아래 /finance 분기를 구성하며 remote 인증 guard·shell layout을 추가하지 않는다.",
+        "루트 remotePlugin.ts에서 defineRemotePlugin({ routeTree })를 default export하고 /_auth 아래 /finance 분기를 구성하며 remote 인증 guard·shell layout을 추가하지 않는다.",
         "router.ts에 Router 생성·export와 Register 타입 등록을 두고 remote main.tsx·index.html·standalone preview helper를 추가하지 않는다.",
         "ledger 전용 utility를 remote styles/index.css와 namespace로 처리하고 shell의 remote 소스 스캔·cssEntry·공통 CSS 중복을 추가하지 않는다.",
         "ledger·shell 및 관련 MFA 자동 검증을 실제 workspace로 실행하고 UI 확인 여부·환경 제한을 구분해 보고한다."

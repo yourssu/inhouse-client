@@ -7,9 +7,9 @@ shell·remote 등록, route·global 계약, graft, shared dependency, remote CSS
 ## 시스템 경계
 
 - shell은 단일 router, 인증 진입 가드, 공통 PageLayout, QueryClient와 앱 전역 Provider를 소유한다.
-- remote는 shell에 route subtree와 선택적인 global 모듈을 제공한다. remote 개발 서버·빌드·배포는 독립적으로 유지한다.
+- remote는 루트 `remotePlugin.ts`에서 routeTree와 선택적인 global 객체를 선언한다. remote 개발 서버·빌드·배포는 독립적으로 유지한다.
 - 브라우저에서 개발 화면은 shell 주소로 확인한다. remote에는 `index.html`을 추가하지 않고 플랫폼도 HTML이나 standalone preview를 생성하지 않는다.
-- remote에는 앱을 mount하는 `main.tsx`를 두지 않는다. `src/routeTypes.ts`에서 router 생성·export와 `Register` 타입 등록을 관리한다. shell 실행 중에는 `useRouter()`로 shell의 router를 소비하고 remote router를 별도로 생성·mount하지 않는다. remote 실행·빌드 입력은 `inhouse-mfa/route.ts`다.
+- remote에는 앱을 mount하는 `main.tsx`를 두지 않는다. `src/routeTypes.ts`에서 router 생성·export와 `Register` 타입 등록을 관리한다. shell 실행 중에는 `useRouter()`로 shell의 router를 소비하고 remote router를 별도로 생성·mount하지 않는다. remote 실행·빌드 입력은 플랫폼의 계약 adapter이며, 기본 선언 진입점은 remote 루트의 `remotePlugin.ts`다.
 - shell은 remote 내부 폴더를 직접 import하지 않고 Federation 계약을 소비한다.
 
 ## 단일 출처
@@ -23,10 +23,10 @@ shell·remote 등록, route·global 계약, graft, shared dependency, remote CSS
 | shared 구성·catalog 버전 조회                            | `packages/@inhouse-mfa/vite/src/core/shared.ts`                              |
 | remote load retry                                        | `packages/@inhouse-mfa/vite/src/plugins/retryPlugin.ts`                      |
 | 고정 expose key                                          | `packages/@inhouse-mfa/core/src/config.ts`                                   |
-| remote route 공개                                        | `apps/<remote>/inhouse-mfa/route.ts`                                         |
-| 선택적인 remote global 공개                              | `apps/<remote>/inhouse-mfa/global.ts` 또는 `global.tsx`                      |
+| remote route 공개                                        | `apps/<remote>/remotePlugin.ts`의 `routeTree`                                |
+| 선택적인 remote global 공개                              | `apps/<remote>/remotePlugin.ts`의 `global` 객체                              |
 | runtime load·graft·실패 격리                             | `packages/@inhouse-mfa/shell/src/`                                           |
-| shell runtime spec                                       | `mfa.config.ts`에서 파생되는 `apps/shell/src/main.tsx`                        |
+| shell runtime spec                                       | `mfa.config.ts`에서 파생되는 `apps/shell/src/main.tsx`                       |
 | workspace build 순서                                     | `turbo.json`                                                                 |
 
 구체적인 포트·버전·build 의존성은 위 구현을 확인한다. shell build에 remote build를 추가하거나 remote CSS를 합치는 규칙을 추측하지 않는다.
@@ -35,19 +35,19 @@ shell·remote 등록, route·global 계약, graft, shared dependency, remote CSS
 
 1. `apps/<remote>` workspace와 package name을 만든다.
 2. `mfa.config.ts`에 고유한 `workspace`와 `port`를 추가한다. workspace package name이 remote id이며 env key·배포 이름은 마지막 세그먼트에서 파생한다.
-3. remote Vite config에서 인자 없는 `mfaVitePlugin.remote()`를 사용한다. Federation remotes·exposes·shared나 dev port를 복제하지 않는다.
-4. `inhouse-mfa/route.ts`에서 생성된 `src/routeTree.gen.ts`의 `routeTree`를 공개한다. `routeTree.gen.ts`는 직접 편집하지 않는다.
+3. remote Vite config에서 `mfaVitePlugin.remote()`를 사용한다. 기본 진입점은 Vite root의 `remotePlugin.ts`이며, 변경하려면 `mfaVitePlugin.remote({ pluginEntry: './integration/remotePlugin.ts' })`로 지정한다. Federation remotes·exposes·shared나 dev port를 복제하지 않는다.
+4. `remotePlugin.ts`에서 `defineRemotePlugin({ routeTree })`를 default export한다. `routeTree`는 생성된 `src/routeTree.gen.ts`에서 import한다. `routeTree.gen.ts`는 직접 편집하지 않는다.
 5. routeTree의 `/_auth` 아래에 서비스 basePath를 구성한다. 인증 guard·AuthProvider·shell layout을 remote 라우트에 복제하지 않는다.
-6. 서비스 초기화는 `src/global.tsx`의 `bootstrap`으로 구현하고 필요한 cleanup을 반환한다. React hook이 필요한 구독과 서비스 공통 Provider는 children을 받는 `GlobalComponent`에 둔다. Global은 반드시 children을 렌더링한다. `inhouse-mfa/global.ts`에서 `bootstrap`, `GlobalComponent as Global` 중 필요한 항목을 공개한다. module 최상위에서 `bootstrap()`을 직접 호출하지 않는다.
-7. `src/styles/index.css`에 서비스 스타일을 둔다. 계약 변환이 CSS와 선택적인 global 모듈을 연결하므로 앱에서 같은 MFA 조립 로직을 복제하지 않는다.
+6. 서비스 초기화는 `src/global.tsx`의 `bootstrap`으로 구현하고 필요한 cleanup을 반환한다. React hook이 필요한 구독과 서비스 공통 Provider는 children을 받는 `GlobalComponent`에 둔다. Global은 반드시 children을 렌더링한다. `remotePlugin.ts`에서 `global: { bootstrap, Global: GlobalComponent }` 중 필요한 항목만 연결한다. 구현 파일명은 컨벤션이 아니며 제품 코드는 일반 함수와 React 컴포넌트를 제공한다. module 최상위에서 `bootstrap()`을 직접 호출하지 않는다.
+7. `src/styles/index.css`에 서비스 스타일을 둔다. 계약 변환이 CSS와 선택적인 global 객체를 연결하므로 앱에서 같은 MFA 조립 로직을 복제하지 않는다.
 8. 제품 탐색에 필요하면 shell 메뉴를 추가한다. runtime spec 목록은 수기로 복제하지 않는다.
 9. remote·shell build와 shell 조합을 검증한다. 독립 HTML·preview helper·중앙 mock lifecycle을 추가하지 않는다.
 
 ## Route 계약과 graft
 
-- 모든 remote는 고정 expose key `./route`로 routeTree와 선택적인 global 모듈을 공개한다.
-- shell의 `composePlugins`가 공개 routeTree의 `/_auth`와 첫 서비스 분기에서 entry·basePath를 읽어 `defineRemotePlugin` 계약을 구성한다.
-- `defineRemotePlugin`은 entry와 children의 basePath를 검증한다. 앱마다 같은 탐색·검증을 구현하지 않는다.
+- 플랫폼 adapter는 고정 expose key `./route`로 routeTree와 선택적인 global getter를 공개한다. getter는 객체를 기존 런타임에 연결하는 용도이며 모듈 지연 로딩은 제공하지 않는다.
+- shell의 `composePlugins`가 공개 routeTree의 `/_auth`와 첫 서비스 분기에서 entry·basePath를 읽어 `createRuntimeRemotePlugin` 계약을 구성한다.
+- `defineRemotePlugin`은 작성용 객체의 타입을 제공하고, 플랫폼의 `createRuntimeRemotePlugin`은 entry와 children의 basePath를 검증한다. 앱마다 같은 탐색·검증을 구현하지 않는다.
 - shell의 `/_auth`가 인증 guard·공통 layout을 소유한다. remote `/_auth` 자체는 추가하지 않고 그 children만 graft한다.
 - remote `__root__`는 route tree 생성에 필요한 최소 root, `_auth`는 서비스 분기를 찾는 연결점으로 유지한다. 두 라우트의 옵션을 shell 실행에 적용하지 않는다.
 - 서비스 title·error/pending/notFound UI·loader·beforeLoad·레이아웃은 `/recruit`, `/members` 같은 실제 서비스 분기에 둔다. shell의 `HeadContent`가 서비스 head도 렌더링한다. `RemoteOutlet`은 일반 Outlet이다.
@@ -57,14 +57,14 @@ shell·remote 등록, route·global 계약, graft, shared dependency, remote CSS
 
 ## Global과 초기화
 
-- route 계약은 선택적인 global 모듈의 동적 import 함수만 공개한다. shell이 전체 route를 조합할 때 global 모듈을 실행하지 않는다.
-- shell 인증 가드가 통과한 서비스 분기의 beforeLoad 앞에서 global 모듈을 읽고 선택적인 `bootstrap()`을 기다린다. bootstrap 완료 후 서비스 beforeLoad·하위 loader가 실행되고, Global과 서비스 화면이 준비된 초기화를 사용한다. 컴포넌트 mount에서 bootstrap을 중복 호출하지 않는다.
-- `bootstrap`은 동기 또는 비동기 함수이며 cleanup 함수를 반환하거나 생략한다. 서비스 이탈 때 반환된 cleanup을 호출하고 재진입 때 bootstrap을 다시 호출한다. 모듈 import 캐시는 유지한다.
+- remotePlugin과 정적 의존성은 계약 로드 때 평가된다. 서비스 진입 전 bootstrap·Global Effect는 실행하지 않는다. module 최상위에서 서비스 초기화·구독을 실행하지 않고 bootstrap 또는 Global Effect에서 수행한다. 무거운 의존성은 bootstrap 안에서 동적으로 import할 수 있다.
+- shell 인증 가드가 통과한 서비스 분기의 beforeLoad 앞에서 연결된 global 객체의 선택적인 `bootstrap()`을 기다린다. bootstrap 완료 후 서비스 beforeLoad·하위 loader가 실행되고, Global과 서비스 화면이 준비된 초기화를 사용한다. 컴포넌트 mount에서 bootstrap을 중복 호출하지 않는다.
+- `bootstrap`은 동기 또는 비동기 함수이며 cleanup 함수를 반환하거나 생략한다. 서비스 이탈 때 반환된 cleanup을 호출하고 재진입 때 bootstrap을 다시 호출한다. 모듈과 연결된 객체는 유지한다.
 - 초기화 도중 이탈하면 완료 직후 cleanup을 호출한다. 아직 실행 중인 초기화와 cleanup이 끝난 뒤 다음 mount의 bootstrap을 시작해 겹치는 설치를 막는다. 개발 StrictMode에서도 취소된 mount의 결과를 화면에 반영하지 않는다.
-- `GlobalComponent as Global`은 `RemoteGlobalProps`의 children을 렌더링하는 서비스 wrapper다. shell Router·Auth·Query Context를 사용할 수 있고 서비스 공통 Provider로 children과 effect 컴포넌트를 감쌀 수 있다. Provider를 소비하는 hook은 그 Provider 하위에 둔다. 화면의 Suspense는 Global 안쪽에 두어 데이터 로딩으로 Provider와 effect를 해제하지 않는다.
+- `global.Global`은 `RemoteGlobalProps`의 children을 렌더링하는 서비스 wrapper다. shell Router·Auth·Query Context를 사용할 수 있고 서비스 공통 Provider로 children과 effect 컴포넌트를 감쌀 수 있다. Provider를 소비하는 hook은 그 Provider 하위에 둔다. 화면의 Suspense는 Global 안쪽에 두어 데이터 로딩으로 Provider와 effect를 해제하지 않는다.
 - 비활성 서비스의 preload는 건너뛰어 bootstrap이나 초기화에 의존하는 loader를 실행하지 않는다. 준비된 서비스 내부의 preload는 유지한다. 서비스 이탈·진입 취소·서비스 가드 실패 시 초기화를 정리하고 진행 중인 초기화도 완료 직후 cleanup한다.
-- 개발 global 계약의 HMR boundary가 최신 모듈을 전달한다. 활성 서비스의 bootstrap 변경은 기존 cleanup 후 새 bootstrap을 직렬로 설치한다. 비활성 서비스는 최신 모듈만 기억하고 다음 진입에 설치한다. bootstrap이 같은 컴포넌트 변경은 초기화를 유지한다. 서비스 bootstrap 변경은 해당 서비스의 재마운트를 허용하고 shell 전체 새로고침은 요구하지 않는다.
-- `inhouse-mfa/global.ts(x)` 자동 연결은 shell 계약을 위한 것이다. 서비스 초기화는 이 계약에서 `src/global.tsx`를 연결한다. mount·공통 Provider·테마 초기화는 shell이 담당한다.
+- 개발 계약 adapter가 remotePlugin entry의 HMR boundary에서 최신 global 객체를 전달한다. 활성 서비스의 bootstrap 변경은 기존 cleanup 후 새 bootstrap을 직렬로 설치한다. 비활성 서비스는 최신 객체만 기억하고 다음 진입에 설치한다. bootstrap이 같은 컴포넌트 변경은 초기화를 유지한다. 서비스 bootstrap 변경은 해당 서비스의 재마운트를 허용하고 shell 전체 새로고침은 요구하지 않는다. global 필드의 추가·제거 또는 routeTree 구조 변경은 전체 reload를 허용한다.
+- MFA 연결 선언은 src 밖의 `remotePlugin.ts`에 격리한다. `src/global.tsx` 같은 제품 구현의 위치는 remote가 정하고 plugin에서 명시적으로 연결한다. plugin을 Vite 설정의 Node 환경에서 import하지 않는다. mount·공통 Provider·테마 초기화는 shell이 담당한다.
 - `lifecycle.init`, `lifecycle.mocks`, `createRemotePreviewApp` 같은 과거 API를 다시 도입하지 않는다.
 - Member의 MSW는 `src/global.tsx`의 bootstrap에서 remote의 `STAGE === 'dev'`일 때 시작하고 cleanup에서 `worker.stop()`을 호출한다. 별도 MSW 환경 변수는 사용하지 않는다. worker script는 shell origin의 `/mockServiceWorker.js`를 사용한다. MSW는 shell origin 전체를 대상으로 하므로 Member URL 밖의 요청은 통과시킨다. shell 인증 요청 `/members/me`는 mock 상세 조회와 겹치므로 통과시키고 handler는 Member에 유지한다.
 

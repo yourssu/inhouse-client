@@ -74,5 +74,10 @@ test.each([
 
 test('does not expose federation options in either app API', () => {
   expectTypeOf<Parameters<typeof mfaVitePlugin.shell>[0]>().not.toHaveProperty('federationOptions');
-  expectTypeOf<Parameters<typeof mfaVitePlugin.remote>>().toEqualTypeOf<[]>();
+  expectTypeOf<NonNullable<Parameters<typeof mfaVitePlugin.remote>[0]>>().not.toHaveProperty(
+    'federationOptions',
+  );
+  expectTypeOf<NonNullable<Parameters<typeof mfaVitePlugin.remote>[0]>>().toHaveProperty(
+    'pluginEntry',
+  );
 });

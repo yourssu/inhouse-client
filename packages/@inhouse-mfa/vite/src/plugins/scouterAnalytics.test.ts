@@ -57,14 +57,15 @@ afterEach(() => vi.unstubAllEnvs());
 test('records only between Scouter bootstrap and cleanup, including re-entry', async () => {
   const { bootstrapScouterAnalytics, resetScouterAnalytics } = await loadAnalytics();
 
-  expect(mixpanel.init).toHaveBeenCalledWith(
-    'fixture-token',
-    expect.objectContaining({ record_sessions_percent: 0 }),
-  );
+  expect(mixpanel.init).not.toHaveBeenCalled();
   expect(mixpanel.start_session_recording).not.toHaveBeenCalled();
 
   for (let index = 0; index < 2; index += 1) {
     const cleanup = await bootstrapScouterAnalytics();
+    expect(mixpanel.init).toHaveBeenCalledWith(
+      'fixture-token',
+      expect.objectContaining({ record_sessions_percent: 0 }),
+    );
     expect(replay.active).toBe(true);
     resetScouterAnalytics();
     expect(replay.active).toBe(true);

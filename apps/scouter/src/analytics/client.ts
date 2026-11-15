@@ -16,19 +16,17 @@ const scouterBasePath = '/recruit';
 /** Scouter 페이지의 라우팅이 완료됐을 때 발생해요. */
 const scouterPageViewEventName = 'scouter_page_view';
 
-if (mixpanelToken) {
+export const bootstrapScouterAnalytics = async () => {
+  if (!mixpanelToken) {
+    return;
+  }
+
   mixpanel.init(mixpanelToken, {
     autocapture: false,
     debug: true,
     persistence: 'localStorage',
     record_sessions_percent: 0,
   });
-}
-
-export const bootstrapScouterAnalytics = async () => {
-  if (!mixpanelToken) {
-    return;
-  }
 
   const cleanup = () => {
     mixpanel.set_config({ record_sessions_percent: 0 });

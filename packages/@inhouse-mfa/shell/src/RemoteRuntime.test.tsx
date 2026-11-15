@@ -3,7 +3,7 @@
 import type { RemoteGlobal, RemoteGlobalProps } from '@inhouse-mfa/core';
 
 import {
-  defineRemotePlugin,
+  createRuntimeRemotePlugin,
   findPluginEntryRoute,
   REMOTE_GLOBAL_UPDATE_EVENT,
   RouteRegistry,
@@ -51,7 +51,7 @@ const makePlugin = (name: string) => {
   });
   branch.update({ id: `/${name}`, path: `/${name}`, getParentRoute: () => auth } as never);
   root.addChildren([auth.addChildren([branch])]);
-  return defineRemotePlugin({
+  return createRuntimeRemotePlugin({
     name,
     routes: { basePath: `/${name}`, entry: '/_auth', routeTree: root },
   });
