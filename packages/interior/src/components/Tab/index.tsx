@@ -2,8 +2,9 @@ import { Slot } from '@radix-ui/react-slot';
 import { assert } from 'es-toolkit';
 import { useId, useState } from 'react';
 
-import { TabContext, useTabContext } from './context';
+import { TabContext, TabListContext, useTabContext, useTabListContext } from './context';
 import * as styles from './Tab.css';
+import { useTabListA11y } from './useTabListA11y';
 
 export { Tab as LegacyTab } from './LegacyTab';
 
@@ -70,22 +71,30 @@ const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRoot
 };
 
 const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
+  const { value } = useTabContext();
+  const { fallbackTabId, handleKeyDown, listRef } = useTabListA11y(value, children);
+
   const Comp = asChild ? Slot : 'div';
 
   return (
-    <Comp aria-label={ariaLabel} role="tablist">
-      {children}
-    </Comp>
+    <TabListContext.Provider value={{ fallbackTabId }}>
+      <Comp aria-label={ariaLabel} onKeyDown={handleKeyDown} ref={listRef} role="tablist">
+        {children}
+      </Comp>
+    </TabListContext.Provider>
   );
 };
 
 const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
   const { baseId, onValueChange, value: selectedValue } = useTabContext();
-  const isSelected = value === selectedValue;
+  const { fallbackTabId } = useTabListContext();
+
+  const selected = value === selectedValue;
   const tabId = getTabId(baseId, value);
 
   const handleClick = () => {
-    if (disabled) {
+    // Transition의 Pending 처리는 Tab이 하지 않고, 사용처가 value로 최신 요청을 넘기는 것으로 위임한다 (#238).
+    if (disabled || selected) {
       return;
     }
     onValueChange(value);
@@ -97,12 +106,13 @@ const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
     <Comp
       aria-controls={getPanelId(baseId, value)}
       aria-disabled={disabled}
-      aria-selected={isSelected}
+      aria-selected={selected}
       disabled={disabled}
       id={tabId}
       onClick={handleClick}
       role="tab"
-      tabIndex={isSelected ? 0 : -1}
+      // APG: 탭 목록에 포커스가 들어오면 active 탭에 포커스가 가고, Tab 키 진입점(tabIndex=0)은 하나뿐이다.
+      tabIndex={selected || tabId === fallbackTabId ? 0 : -1}
       type={asChild ? undefined : 'button'}
     >
       {children}
