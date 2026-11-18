@@ -2,6 +2,8 @@ import { api } from '@/apis/api';
 import {
   CreateInterviewMemoRequestSchema,
   type CreateInterviewMemoRequestType,
+  DeleteInterviewMemoParamsSchema,
+  type DeleteInterviewMemoParamsType,
   InterviewMemosSchema,
 } from '@/apis/interviews/memos/schema';
 
@@ -23,14 +25,9 @@ export const postApplicantInterviewMemo = async ({
   await api.post(`applicants/${applicantId}/interviews/comments`, { json: request });
 };
 
-export type DeleteInterviewMemoParams = {
-  applicantId: number;
-  commentId: number;
-};
+export type DeleteInterviewMemoParams = DeleteInterviewMemoParamsType;
 
-export const deleteApplicantInterviewMemo = async ({
-  applicantId,
-  commentId,
-}: DeleteInterviewMemoParams) => {
+export const deleteApplicantInterviewMemo = async (params: DeleteInterviewMemoParams) => {
+  const { applicantId, commentId } = DeleteInterviewMemoParamsSchema.parse(params);
   await api.delete(`applicants/${applicantId}/interviews/comments/${commentId}`);
 };
