@@ -4,11 +4,20 @@ import { defineConfig, type Options } from 'orval';
 import { nameOperation } from './scripts/name-operation';
 import { transformOpenApi } from './scripts/transform-openapi';
 
-const createSchemaConfig = (tag: string, target: string): Options => ({
+const createSchemaConfig = (pathPrefix: string, target: string): Options => ({
   input: {
     target: './schema.json',
-    filters: { tags: [tag] },
-    override: { transformer: transformOpenApi },
+    filters: { tags: ['코멘트'] },
+    override: {
+      transformer: async (source) => {
+        const document = await transformOpenApi(source);
+        // 서버가 두 코멘트 API를 같은 태그로 묶으므로 생성 범위는 경로로 나눕니다.
+        document.paths = Object.fromEntries(
+          Object.entries(document.paths ?? {}).filter(([path]) => path.startsWith(pathPrefix)),
+        );
+        return document;
+      },
+    },
   },
   output: {
     target,
@@ -30,11 +39,11 @@ const createSchemaConfig = (tag: string, target: string): Options => ({
 
 export default defineConfig({
   interviewMemos: createSchemaConfig(
-    '면접 질문 코멘트',
+    '/applicants/{applicantId}/interviews/comments',
     './src/apis/interviews/memos/generated/schema.gen.ts',
   ),
   documentComments: createSchemaConfig(
-    '서류 코멘트',
+    '/applicants/{applicantId}/documents/comments',
     './src/apis/documents/comments/generated/schema.gen.ts',
   ),
 });

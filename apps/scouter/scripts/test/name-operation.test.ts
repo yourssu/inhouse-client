@@ -12,8 +12,8 @@ test('작업 이름은 메서드·리소스·경로 변수로 만들고 현재 �
     'deleteDocumentsCommentsByApplicantIdAndCommentId',
   );
   assert.equal(
-    nameOperation('/applicants/${applicantId}/interviews/memos', 'get'),
-    'getInterviewsMemosByApplicantId',
+    nameOperation('/applicants/${applicantId}/interviews/comments', 'get'),
+    'getInterviewsCommentsByApplicantId',
   );
 
   const source: OpenApiDocument = JSON.parse(

@@ -6,15 +6,15 @@
 
 OpenAPI 명세에서 요청·응답 Zod 스키마와 타입을 생성합니다. 현재 대상은 면접 메모와
 서류 코멘트입니다.
-서류 API는 명세 태그를 기준으로 잠정적으로 아래처럼 나눕니다. 현재 생성·연결한 것은
+서류 API는 경로를 기준으로 잠정적으로 아래처럼 나눕니다. 현재 생성·연결한 것은
 코멘트뿐이며, 나머지는 기존 수동 구현을 사용합니다.
 
-| 하위 도메인 | OpenAPI 태그     | 상태   |
-| ----------- | ---------------- | ------ |
-| 코멘트      | 서류 코멘트      | 적용   |
-| 평가        | 서류 평가        | 미적용 |
-| 평가 문항   | 서류 평가 문항   | 미적용 |
-| 마감일      | 서류 평가 마감일 | 미적용 |
+| 하위 도메인 | 경로                    | 상태   |
+| ----------- | ----------------------- | ------ |
+| 코멘트      | `documents/comments`    | 적용   |
+| 평가        | `documents/evaluations` | 미적용 |
+| 평가 문항   | `documents/rubrics`     | 미적용 |
+| 마감일      | `documents/deadline`    | 미적용 |
 
 개발 도구용 API는 이 분류의 생성 대상에 포함하지 않습니다.
 
@@ -34,7 +34,7 @@ pnpm --filter @yourssu-inhouse/scouter codegen:api
 
 ### 생성 방식
 
-`orval.config.ts`에서 태그별 생성 대상을 선택하고 Orval 8.43.0으로 Zod 4 스키마와 타입을
+`orval.config.ts`에서 코멘트 태그와 경로로 생성 대상을 선택하고 Orval 8.43.0으로 Zod 4 스키마와 타입을
 생성합니다.
 
 범용 `operationId` 대신 공통 `operationName` 설정과 `scripts/name-operation.ts`에서 HTTP
@@ -46,12 +46,14 @@ src/apis/interviews/memos/generated/schema.gen.ts
 src/apis/documents/comments/generated/schema.gen.ts
 ```
 
+면접 코멘트의 `memos` 파일 경로와 공개 함수 이름은 기존 호출부 호환을 위해 유지합니다.
+
 생성 파일은 직접 수정하지 않습니다. 앱 코드는 각 도메인의 `schema.ts`를 통해 스키마와 타입을
 사용합니다. UI 입력만을 위한 nullable 등은 별도 입력 스키마로 선언합니다.
 
 명세 보정은 `scripts/transform-openapi.ts`의 Orval input transformer에서 관리합니다. 예상과
-다른 Location 헤더를 만나면 생성에 실패합니다. 태그 필터는 생성 범위만 정하고, transformer는
-전체 명세에서 보정 대상을 직접 식별합니다.
+다른 Location 헤더를 만나면 생성에 실패합니다. 서버가 면접·서류 코멘트를 같은 `코멘트` 태그로
+묶으므로 생성 범위는 경로로 구분합니다. 계약 보정은 전체 명세에서 대상을 직접 식별합니다.
 
 ### 현재 보정
 

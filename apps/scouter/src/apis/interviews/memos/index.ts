@@ -25,9 +25,7 @@ export const postApplicantInterviewMemo = async ({
   await api.post(`applicants/${applicantId}/interviews/comments`, { json: request });
 };
 
-export type DeleteInterviewMemoParams = DeleteInterviewMemoParamsType;
-
-export const deleteApplicantInterviewMemo = async (params: DeleteInterviewMemoParams) => {
+export const deleteApplicantInterviewMemo = async (params: DeleteInterviewMemoParamsType) => {
   const { applicantId, commentId } = DeleteInterviewMemoParamsSchema.parse(params);
   await api.delete(`applicants/${applicantId}/interviews/comments/${commentId}`);
 };
