@@ -1,5 +1,5 @@
 import { Button } from '@yourssu-inhouse/interior';
-import { Tab } from '@yourssu-inhouse/interior';
+import { LegacyTab as Tab } from '@yourssu-inhouse/interior';
 
 import type { VariableTypeName } from '@/apis/mails/schema';
 import type { TemplateFormData } from '@/components/TemplateEditorDialog/hooks/useTemplateFormData';
