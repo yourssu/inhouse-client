@@ -9,7 +9,6 @@ import { config } from '@/config';
 const Signin = () => {
   const { theme } = useTheme();
 
-  // 팝업은 Google 페이지의 COOP로 opener 연결이 끊길 수 있어서 리다이렉트 방식으로 로그인해요.
   const login = () => window.location.assign(config.googleOAuthURL);
 
   return (
