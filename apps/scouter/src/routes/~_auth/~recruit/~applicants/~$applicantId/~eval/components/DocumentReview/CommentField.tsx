@@ -51,10 +51,10 @@ export const CommentField = ({
         <MultilineTextField
           autoFocus
           className="min-h-fit overflow-hidden p-1.5"
-          disabled={isWritePending}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={'댓글 추가'}
+          readOnly={isWritePending}
           ref={textareaRef}
           rows={1}
           value={content}
@@ -64,6 +64,7 @@ export const CommentField = ({
           aria-label="댓글 등록"
           disabled={isWritePending || isContentEmpty}
           onClick={handleAddComment}
+          onMouseDown={(e) => e.preventDefault()}
           size="md"
         >
           <BsArrowUpCircleFill className="size-5" />
