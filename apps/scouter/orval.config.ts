@@ -7,11 +7,12 @@ import { transformOpenApi } from './scripts/transform-openapi';
 const createSchemaConfig = (pathPrefix: string, target: string): Options => ({
   input: {
     target: './schema.json',
-    filters: { tags: ['코멘트'] },
+    // 모든 태그를 허용해 Orval이 선택된 경로의 참조 모델만 생성하게 합니다.
+    filters: { tags: [/.*/] },
     override: {
       transformer: async (source) => {
         const document = await transformOpenApi(source);
-        // 서버가 두 코멘트 API를 같은 태그로 묶으므로 생성 범위는 경로로 나눕니다.
+        // 생성 범위는 태그 변경의 영향을 받지 않도록 경로로 선택합니다.
         document.paths = Object.fromEntries(
           Object.entries(document.paths ?? {}).filter(([path]) => path.startsWith(pathPrefix)),
         );

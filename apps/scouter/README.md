@@ -34,7 +34,7 @@ pnpm --filter @yourssu-inhouse/scouter codegen:api
 
 ### 생성 방식
 
-`orval.config.ts`에서 코멘트 태그와 경로로 생성 대상을 선택하고 Orval 8.43.0으로 Zod 4 스키마와 타입을
+`orval.config.ts`에서 경로로 생성 대상을 선택하고 Orval 8.43.0으로 Zod 4 스키마와 타입을
 생성합니다.
 
 범용 `operationId` 대신 공통 `operationName` 설정과 `scripts/name-operation.ts`에서 HTTP
@@ -52,8 +52,9 @@ src/apis/documents/comments/generated/schema.gen.ts
 사용합니다. UI 입력만을 위한 nullable 등은 별도 입력 스키마로 선언합니다.
 
 명세 보정은 `scripts/transform-openapi.ts`의 Orval input transformer에서 관리합니다. 예상과
-다른 Location 헤더를 만나면 생성에 실패합니다. 서버가 면접·서류 코멘트를 같은 `코멘트` 태그로
-묶으므로 생성 범위는 경로로 구분합니다. 계약 보정은 전체 명세에서 대상을 직접 식별합니다.
+다른 Location 헤더를 만나면 생성에 실패합니다. API 경로로 생성 범위를 구분하고,
+모든 태그를 허용하는 필터로 Orval이 참조 모델만 생성하게 합니다. 대상 API에 태그가
+없으면 필터에서 제외될 수 있습니다. 계약 보정은 전체 명세에서 대상을 직접 식별합니다.
 
 ### 현재 보정
 
