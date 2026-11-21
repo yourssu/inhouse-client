@@ -4,23 +4,11 @@
 
 ## API 스키마 생성
 
-OpenAPI 명세에서 요청·응답 Zod 스키마와 타입을 생성합니다. 현재 대상은 면접 메모와
-서류 코멘트입니다.
-서류 API는 경로를 기준으로 잠정적으로 아래처럼 나눕니다. 현재 생성·연결한 것은
-코멘트뿐이며, 나머지는 기존 수동 구현을 사용합니다.
-
-| 하위 도메인 | 경로                    | 상태   |
-| ----------- | ----------------------- | ------ |
-| 코멘트      | `documents/comments`    | 적용   |
-| 평가        | `documents/evaluations` | 미적용 |
-| 평가 문항   | `documents/rubrics`     | 미적용 |
-| 마감일      | `documents/deadline`    | 미적용 |
-
-개발 도구용 API는 이 분류의 생성 대상에 포함하지 않습니다.
+저장된 OpenAPI 명세(`schema.json`)에서 면접 메모와 서류 코멘트의 Zod 스키마·타입을 생성합니다.
 
 ### 실행
 
-저장소 루트에서 실행합니다.
+저장소 루트에서 명세 갱신과 생성을 각각 실행합니다. 개발 서버와 빌드에서는 자동 실행하지 않습니다.
 
 ```sh
 # 개발 서버의 명세를 schema.json에 저장
@@ -30,75 +18,27 @@ pnpm --filter @yourssu-inhouse/scouter fetch-schema
 pnpm --filter @yourssu-inhouse/scouter codegen:api
 ```
 
-명세 갱신과 코드 생성을 분리하며 개발 서버나 빌드에서는 자동으로 실행하지 않습니다.
+### 생성 범위와 연결
 
-### 생성 방식
+| 대상        | OpenAPI 경로                                    | 생성 파일                                             | 앱에서 사용하는 파일                  |
+| ----------- | ----------------------------------------------- | ----------------------------------------------------- | ------------------------------------- |
+| 면접 메모   | `/applicants/{applicantId}/interviews/comments` | `src/apis/interviews/memos/generated/schema.gen.ts`   | `src/apis/interviews/memos/schema.ts` |
+| 서류 코멘트 | `/applicants/{applicantId}/documents/comments`  | `src/apis/documents/comments/generated/schema.gen.ts` | `src/apis/documents/schema.ts`        |
 
-`orval.config.ts`에서 경로로 생성 대상을 선택하고 Orval 8.43.0으로 Zod 4 스키마와 타입을
-생성합니다.
+`orval.config.ts`에서 경로로 생성 대상을 선택합니다. `scripts/name-operation.ts`는 HTTP 메서드와 경로로 작업별 스키마 이름을 정합니다. 기존 호출부와 호환되도록 면접 메모의 `memos` 경로와 공개 이름을 유지합니다. 생성 파일은 직접 수정하지 않습니다.
 
-범용 `operationId` 대신 공통 `operationName` 설정과 `scripts/name-operation.ts`에서 HTTP
-메서드, 리소스 경로, 경로 변수로 이름을 생성합니다. 변수와 중복되는 첫 리소스는 생략합니다.
-예를 들어 코멘트 삭제는 `deleteDocumentsCommentsByApplicantIdAndCommentId`입니다.
+서류 평가·평가 문항·마감일 등은 아직 생성 대상이 아닙니다. `schema.ts`에는 기존 수동 스키마도 남아 있습니다.
 
-```text
-src/apis/interviews/memos/generated/schema.gen.ts
-src/apis/documents/comments/generated/schema.gen.ts
-```
+### 명세 보정
 
-면접 코멘트의 `memos` 파일 경로와 공개 함수 이름은 기존 호출부 호환을 위해 유지합니다.
+`scripts/transform-openapi.ts`는 POST 201 응답에서 누락된 `Location` 헤더의 `string` 스키마를 추가합니다. 현재 명세의 보정 대상은 7곳입니다. 보정 대상의 헤더 형식이 예상과 다르면 생성을 중단합니다.
 
-생성 파일은 직접 수정하지 않습니다. 앱 코드는 각 도메인의 `schema.ts`를 통해 스키마와 타입을
-사용합니다. UI 입력만을 위한 nullable 등은 별도 입력 스키마로 선언합니다.
+서류 코멘트의 `parentCommentId`를 화면에서 `undefined` 대신 `null`로 다루는 정규화는 `src/apis/documents/schema.ts`에 있습니다.
 
-명세 보정은 `scripts/transform-openapi.ts`의 Orval input transformer에서 관리합니다. 예상과
-다른 Location 헤더를 만나면 생성에 실패합니다. API 경로로 생성 범위를 구분하고,
-모든 태그를 허용하는 필터로 Orval이 참조 모델만 생성하게 합니다. 대상 API에 태그가
-없으면 필터에서 제외될 수 있습니다. 계약 보정은 전체 명세에서 대상을 직접 식별합니다.
+다음 항목은 현재 생성에 적용하지 않습니다. 해당 API를 생성 대상으로 추가할 때 서버 응답과 프런트엔드 정책을 확인합니다.
 
-### 현재 보정
+- 지원자: `division`·`part` enum, 학기·이메일·날짜 형식, 평균 점수의 nullable 여부
+- 면접 일정: 날짜·시간 형식과 UTC 검증, 장소·파트 enum, 장소의 nullable 여부
+- 파트·구분·회원: 명세의 일반 `string`과 기존 프런트엔드 제한값 차이
 
-POST 응답 7곳의 누락된 Location 헤더 schema를 추가합니다.
-
-서류 코멘트의 부모 ID를 `undefined → null`로 바꾸는 화면용 정규화는 `documents/schema.ts`에
-둡니다. 응답의 `parentCommentId`는 명세대로 생략 가능한 정수이며, `createdAt`은 필수로
-생성합니다.
-
-### 후속 생성 시 확인할 보정
-
-아래 항목은 현재 생성에 적용하지 않습니다. 해당 도메인을 생성 대상으로 추가할 때 실제 서버
-응답과 정책을 확인한 뒤 transformer에 추가합니다.
-
-- 지원자
-  - `division`·`part`의 수동 enum과 명세 `string` 차이
-  - `applicationSemester` 형식, email 검증, 평균 점수 nullable 차이
-  - 생성 요청의 잘못된 `yyyy-MM-dd` pattern
-  - 날짜·ID의 기존 프론트 수용 범위
-- 면접 일정
-  - 잘못된 `yyyy-MM-ddTHH:mm:ssZ` pattern과 기존 UTC 검증 차이
-  - 장소·파트 enum, 응답 장소 nullable, ID 수용 범위 차이
-- 파트·구분·회원
-  - 명세의 일반 `string`과 기존 `PartNameSchema`·`DivisionNameSchema`·회원 role/state 목록 차이
-
-한글 표시값, 폼 선택지, API 전송 직전 값 변환은 서버 계약 보정이 아니므로 transformer에 넣지
-않습니다.
-
-### 변경 확인
-
-명세를 갱신하고 재생성한 뒤 생성 파일의 추적 여부, diff와 정적 검사를 확인합니다.
-
-```sh
-git status --short -- apps/scouter/schema.json apps/scouter/src/apis/interviews/memos/generated apps/scouter/src/apis/documents
-git diff -- apps/scouter/schema.json apps/scouter/src/apis/interviews/memos/generated apps/scouter/src/apis/documents
-pnpm --filter @yourssu-inhouse/scouter test:codegen
-pnpm --filter @yourssu-inhouse/scouter check:type
-pnpm --filter @yourssu-inhouse/scouter check:lint
-pnpm --filter @yourssu-inhouse/scouter check:format
-```
-
-### 생성 범위를 확대할 때
-
-- 실제 생성하는 도메인의 보정만 transformer에 추가합니다.
-- 생성물은 `schema.ts`·`index.ts`·`query.ts`를 통해 공개합니다.
-- 동일한 구현은 re-export하고 인자 변환이나 검증이 필요할 때만 adapter를 둡니다.
-- API·Query 생성 시 인증, 요청·응답 검증, query key, 빈 응답과 cache 정책을 함께 검증합니다.
+해당 항목이 존재하는 도메인에 대한 codegen을 적용할 때 보정 함수를 작성합니다. (현재 생성 대상이 아닌 도메인에 대한 계약 불일치는 보정하지 않습니다.)
