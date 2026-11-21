@@ -1,5 +1,12 @@
 import z from 'zod/v4';
 
+import {
+  CreateDocumentCommentRequest,
+  ReadDocumentCommentAuthorResponse,
+  ReadDocumentCommentResponse,
+  UpdateDocumentCommentRequest,
+} from './comments/generated/schema.gen';
+
 const documentResults = ['PENDING', 'DOCUMENT_PASS', 'DOCUMENT_FAIL'] as const;
 const DocumentResultSchema = z.enum(documentResults);
 
@@ -106,34 +113,18 @@ export type DocumentEvaluatorStatusValue = z.infer<typeof DocumentEvaluatorStatu
 export type DocumentEvaluatorStatus = z.infer<typeof DocumentEvaluatorStatusSchema>;
 export type DocumentEvaluatorStatuses = z.infer<typeof DocumentEvaluatorStatusesSchema>;
 
-export const CommentAuthorSchema = z.object({
-  nickname: z.string(),
-  part: z.string(),
-  userId: z.number(),
+export const CommentAuthorSchema = ReadDocumentCommentAuthorResponse;
+
+// 부모가 없는 코멘트는 화면에서 null로 다룹니다.
+export const CommentSchema = ReadDocumentCommentResponse.extend({
+  parentCommentId: ReadDocumentCommentResponse.shape.parentCommentId.transform(
+    (parentCommentId) => parentCommentId ?? null,
+  ),
 });
 
-export const CommentSchema = z.object({
-  author: CommentAuthorSchema,
-  commentId: z.number(),
-  content: z.string(),
-  createdAt: z.iso.datetime().optional(),
-  isEdited: z.boolean(),
-  parentCommentId: z
-    .number()
-    .nullish()
-    .transform((parentCommentId) => parentCommentId ?? null),
-  sectionId: z.number(),
-});
+export const CreateCommentRequestSchema = CreateDocumentCommentRequest;
 
-export const CreateCommentRequestSchema = z.object({
-  content: z.string().min(1),
-  parentCommentId: z.number().optional(),
-  sectionId: z.number(),
-});
-
-export const UpdateCommentRequestSchema = z.object({
-  content: z.string().min(1),
-});
+export const UpdateCommentRequestSchema = UpdateDocumentCommentRequest;
 
 export type CommentAuthorType = z.infer<typeof CommentAuthorSchema>;
 export type CommentType = z.infer<typeof CommentSchema>;
