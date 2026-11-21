@@ -4,15 +4,18 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { nameOperation } from '../name-operation';
+import { buildOperationNameFromRoute } from '../name-operation';
 
 test('작업 이름은 메서드·리소스·경로 변수로 만들고 현재 명세에서 충돌하지 않는다', () => {
   assert.equal(
-    nameOperation('/applicants/${applicantId}/documents/comments/${commentId}', 'delete'),
+    buildOperationNameFromRoute(
+      '/applicants/${applicantId}/documents/comments/${commentId}',
+      'delete',
+    ),
     'deleteDocumentsCommentsByApplicantIdAndCommentId',
   );
   assert.equal(
-    nameOperation('/applicants/${applicantId}/interviews/comments', 'get'),
+    buildOperationNameFromRoute('/applicants/${applicantId}/interviews/comments', 'get'),
     'getInterviewsCommentsByApplicantId',
   );
 
@@ -26,7 +29,7 @@ test('작업 이름은 메서드·리소스·경로 변수로 만들고 현재 �
         continue;
       }
       const route = path.replace(/\{([^}]+)\}/g, (_, parameter: string) => '${' + parameter + '}');
-      const name = nameOperation(route, verb);
+      const name = buildOperationNameFromRoute(route, verb);
       assert(!names.has(name), `${name}: ${verb.toUpperCase()} ${path}`);
       names.add(name);
     }

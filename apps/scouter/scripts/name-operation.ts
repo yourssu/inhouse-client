@@ -1,6 +1,6 @@
 import { pascalCase } from 'es-toolkit/string';
 
-export const nameOperation = (route: string, verb: string) => {
+export const buildOperationNameFromRoute = (route: string, verb: string) => {
   const segments = route.split('/').filter(Boolean);
   const resources = segments.filter((segment) => !segment.startsWith('${'));
   const parameters = segments
