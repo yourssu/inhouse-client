@@ -27,6 +27,7 @@
     "fix:format": "prettier --write ."
   },
   "dependencies": {
+    "@yourssu-inhouse/auth": "workspace:*",
     "@yourssu-inhouse/inhouse-utils": "workspace:*",
     "@yourssu-inhouse/interior": "workspace:*",
     "@yourssu-inhouse/interior-tailwind": "workspace:*",
