@@ -6,7 +6,7 @@ import {
   type RouterConstructorOptions,
   type RouterHistory,
 } from '@tanstack/react-router';
-import { type AuthConfig, AuthProvider } from '@yourssu-inhouse/auth';
+import { type AuthConfig } from '@yourssu-inhouse/auth';
 import {
   type AppRouteTree,
   createExteriorApp,
@@ -40,6 +40,7 @@ export const createRemotePreviewApp = <TRouteTree extends AppRouteTree>(
 ) => {
   const app = createExteriorApp({
     appProvidersProps: options.appProvidersProps,
+    authConfig: options.authConfig,
     beforeRender: async ({ router }) => {
       await runPluginInits([options.plugin], { mode: 'preview', router });
       await setupPluginMocks([options.plugin], 'preview');
@@ -48,7 +49,8 @@ export const createRemotePreviewApp = <TRouteTree extends AppRouteTree>(
     createRouter: (queryClient) =>
       createRouter({
         routeTree: options.routeTree,
-        context: { queryClient },
+        // auth 는 createExteriorApp이 렌더 시점에 채워요.
+        context: { auth: undefined!, queryClient },
         defaultErrorComponent: () => <PreviewAuthNotice />,
         defaultNotFoundComponent: () => <PreviewAuthNotice />,
         defaultPreloadStaleTime: 0,
@@ -57,7 +59,6 @@ export const createRemotePreviewApp = <TRouteTree extends AppRouteTree>(
     queryClientConfig: options.queryClientConfig,
     rootElement: options.rootElement,
     rootElementId: options.rootElementId,
-    wrapRouter: (node) => <AuthProvider config={options.authConfig}>{node}</AuthProvider>,
   });
 
   void app.mount();

@@ -18,7 +18,12 @@ import { runPluginInits, setupPluginMocks } from './lifecycle';
 
 type SharedShellOptions = Pick<
   CreateExteriorAppOptions<unknown>,
-  'appProvidersProps' | 'queryClientConfig' | 'rootElement' | 'rootElementId'
+  | 'appProvidersProps'
+  | 'authClient'
+  | 'authConfig'
+  | 'queryClientConfig'
+  | 'rootElement'
+  | 'rootElementId'
 >;
 
 interface BootstrapShellOptions extends SharedShellOptions {
@@ -56,6 +61,8 @@ export const bootstrapShell = async (
 
   const app = createExteriorApp({
     appProvidersProps: options.appProvidersProps,
+    authClient: options.authClient,
+    authConfig: options.authConfig,
     beforeRender: async ({ router }) => {
       await runPluginInits(plugins, { mode: 'shell', router });
       await setupPluginMocks(plugins, 'shell');
@@ -67,7 +74,8 @@ export const bootstrapShell = async (
     createRouter: (queryClient) =>
       createRouter({
         routeTree: options.routeTree,
-        context: { queryClient },
+        // auth 는 createExteriorApp이 렌더 시점에 채워요.
+        context: { auth: undefined!, queryClient },
         defaultPreloadStaleTime: 0,
         ...options.routerOptions,
       }),
