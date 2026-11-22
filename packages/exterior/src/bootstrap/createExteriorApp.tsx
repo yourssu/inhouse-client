@@ -8,6 +8,7 @@ import { createRoot } from 'react-dom/client';
 
 import { AppProviders, type AppProvidersProps } from '../providers/AppProviders';
 import { createQueryClient } from './createQueryClient';
+import { type RouteContext } from './types';
 
 /*
   exterior 는 layout/providers/router 만 책임지는 순수 app shell 이에요. 이전에는
@@ -18,7 +19,7 @@ import { createQueryClient } from './createQueryClient';
   beforeRender 와 createRouter 빌더로 주입해요.
 
   - beforeRender: mount 직전에 실행되는 훅. orchestrator 가 여기서 plugin lifecycle 을 태워요.
-  - createRouter: queryClient 를 받아 router 인스턴스를 만드는 빌더. createExteriorApp 은
+  - createRouter: 기본 router context 를 받아 router 인스턴스를 만드는 빌더. createExteriorApp 은
     dist 로 router 타입을 펼칠 수 없기 때문에, caller 가 concrete routeTree 로 createRouter
     를 직접 호출해 typed router 를 넘겨야 해요(JIT 소스에서만 typed 가 보존돼요).
   - authConfig/authClient: AppProviders 가 RouterProvider 바깥에서 AuthProvider 를 렌더하고,
@@ -42,11 +43,11 @@ export interface CreateExteriorAppOptions<TRouter> {
   beforeRender?: (context: CreateExteriorAppContext<TRouter>) => Promise<void> | void;
   children?: ((context: CreateExteriorAppContext<TRouter>) => ReactNode) | ReactNode;
   /**
-    queryClient 를 받아 router 를 만드는 빌더. createExteriorApp 은 dist 로 router
+    기본 router context 를 받아 router 를 만드는 빌더. createExteriorApp 은 dist 로 router
     타입을 펼칠 수 없으므로, caller 가 concrete routeTree 로 createRouter 를 직접
     호출해 typed router 를 넘겨야 해요(JIT 소스에서만 typed 가 보존돼요).
   */
-  createRouter: (queryClient: QueryClient) => TRouter;
+  createRouter: (context: RouteContext) => TRouter;
   queryClientConfig?: QueryClientConfig;
   rootElement?: HTMLElement | null;
   rootElementId?: string;
@@ -69,7 +70,8 @@ export const createExteriorApp = <TRouter extends AnyRouter>({
   rootElementId = 'root',
 }: CreateExteriorAppOptions<TRouter>) => {
   const queryClient = createQueryClient({ queryClientConfig });
-  const router = createRouter(queryClient);
+  // auth 는 AuthRouterProvider 가 렌더 시점에 채워요.
+  const router = createRouter({ auth: undefined!, queryClient });
 
   const renderChildren = () => {
     if (typeof children === 'function') {
