@@ -1,6 +1,7 @@
 import type { QueryClient, QueryClientConfig } from '@tanstack/react-query';
 
 import { type AnyRouter, RouterProvider } from '@tanstack/react-router';
+import { type AuthApiClient, type AuthConfig, useAuth } from '@yourssu-inhouse/auth';
 import { initializeTheme } from '@yourssu-inhouse/interior';
 import { type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -20,7 +21,8 @@ import { createQueryClient } from './createQueryClient';
   - createRouter: queryClient 를 받아 router 인스턴스를 만드는 빌더. createExteriorApp 은
     dist 로 router 타입을 펼칠 수 없기 때문에, caller 가 concrete routeTree 로 createRouter
     를 직접 호출해 typed router 를 넘겨야 해요(JIT 소스에서만 typed 가 보존돼요).
-  - wrapRouter: RouterProvider 를 감싸는 wrapper(예: preview 가 AuthProvider 로 감쌀 때).
+  - authConfig/authClient: AppProviders 가 RouterProvider 바깥에서 AuthProvider 를 렌더하고,
+    useAuth 값을 router context 의 auth 로 넘겨 beforeLoad·loader 에서도 쓰게 해요.
   - children: AppProviders 안, RouterProvider 와 나란히 렌더되는 슬롯(예: shell 의 unavailable UI,
     preview 의 PreviewBanner).
 */
@@ -30,7 +32,13 @@ interface CreateExteriorAppContext<TRouter> {
 }
 
 export interface CreateExteriorAppOptions<TRouter> {
-  appProvidersProps?: Omit<AppProvidersProps, 'children' | 'queryClient'>;
+  appProvidersProps?: Omit<
+    AppProvidersProps,
+    'authClient' | 'authConfig' | 'children' | 'queryClient'
+  >;
+  /** 전달하지 않으면 AuthProvider 가 authConfig 로 새로 만들어요. */
+  authClient?: AuthApiClient;
+  authConfig: AuthConfig;
   beforeRender?: (context: CreateExteriorAppContext<TRouter>) => Promise<void> | void;
   children?: ((context: CreateExteriorAppContext<TRouter>) => ReactNode) | ReactNode;
   /**
@@ -42,11 +50,16 @@ export interface CreateExteriorAppOptions<TRouter> {
   queryClientConfig?: QueryClientConfig;
   rootElement?: HTMLElement | null;
   rootElementId?: string;
-  /** RouterProvider 를 감싸는 wrapper. preview 가 AuthProvider 로 감쌀 때 써요. */
-  wrapRouter?: (node: ReactNode) => ReactNode;
 }
 
+const AuthRouterProvider = ({ queryClient, router }: CreateExteriorAppContext<AnyRouter>) => {
+  const auth = useAuth();
+  return <RouterProvider context={{ auth, queryClient }} router={router} />;
+};
+
 export const createExteriorApp = <TRouter extends AnyRouter>({
+  authClient,
+  authConfig,
   queryClientConfig,
   createRouter,
   beforeRender,
@@ -54,7 +67,6 @@ export const createExteriorApp = <TRouter extends AnyRouter>({
   appProvidersProps,
   rootElement,
   rootElementId = 'root',
-  wrapRouter,
 }: CreateExteriorAppOptions<TRouter>) => {
   const queryClient = createQueryClient({ queryClientConfig });
   const router = createRouter(queryClient);
@@ -66,8 +78,6 @@ export const createExteriorApp = <TRouter extends AnyRouter>({
 
     return children;
   };
-
-  const routerNode = <RouterProvider context={{ queryClient }} router={router} />;
 
   const mount = async () => {
     initializeTheme();
@@ -82,8 +92,13 @@ export const createExteriorApp = <TRouter extends AnyRouter>({
     const root = createRoot(container);
 
     root.render(
-      <AppProviders {...appProvidersProps} queryClient={queryClient}>
-        {wrapRouter ? wrapRouter(routerNode) : routerNode}
+      <AppProviders
+        {...appProvidersProps}
+        authClient={authClient}
+        authConfig={authConfig}
+        queryClient={queryClient}
+      >
+        <AuthRouterProvider queryClient={queryClient} router={router} />
         {renderChildren()}
       </AppProviders>,
     );
