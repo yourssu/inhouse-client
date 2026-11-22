@@ -1,5 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
 import type { AnyRoute } from '@tanstack/react-router';
+import type { AuthContextValue } from '@yourssu-inhouse/auth';
 
 /**
   exterior/mfa-shell 이 다루는 routeTree 의 최소 계약. concrete routeTree 타입을
@@ -13,5 +14,6 @@ export type AppRouteTree = AnyRoute & {
 };
 
 export interface RouteContext {
+  auth: AuthContextValue;
   queryClient: QueryClient;
 }
