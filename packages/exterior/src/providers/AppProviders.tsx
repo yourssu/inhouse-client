@@ -1,8 +1,11 @@
 import { type QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type AuthApiClient, type AuthConfig, AuthProvider } from '@yourssu-inhouse/auth';
 import { ThemeProvider, ToastProvider } from '@yourssu-inhouse/interior';
 import { type ReactNode, StrictMode } from 'react';
 
 export interface AppProvidersProps {
+  authClient?: AuthApiClient;
+  authConfig: AuthConfig;
   children: ReactNode;
   queryClient: QueryClient;
   strictMode?: boolean;
@@ -10,6 +13,8 @@ export interface AppProvidersProps {
 }
 
 export const AppProviders = ({
+  authClient,
+  authConfig,
   queryClient,
   toastDuration = 3000,
   strictMode = true,
@@ -18,7 +23,11 @@ export const AppProviders = ({
   const providers = (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <ToastProvider duration={toastDuration}>{children}</ToastProvider>
+        <ToastProvider duration={toastDuration}>
+          <AuthProvider client={authClient} config={authConfig}>
+            {children}
+          </AuthProvider>
+        </ToastProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
