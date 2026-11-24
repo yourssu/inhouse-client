@@ -1,14 +1,17 @@
-import type { RemotePlugin } from './types';
+import type { RemotePlugin, RemotePluginDefinition } from './types';
 
 import { validatePlugin } from './validation';
 
-interface DefineRemotePluginOptions {
+interface RuntimeRemotePluginOptions {
   global?: RemotePlugin['global'];
   name: string;
   routes: RemotePlugin['routes'];
 }
 
-export const defineRemotePlugin = (options: DefineRemotePluginOptions): RemotePlugin => {
+export const defineRemotePlugin = (definition: RemotePluginDefinition): RemotePluginDefinition =>
+  definition;
+
+export const createRuntimeRemotePlugin = (options: RuntimeRemotePluginOptions): RemotePlugin => {
   const plugin: RemotePlugin = {
     global: options.global,
     name: options.name,

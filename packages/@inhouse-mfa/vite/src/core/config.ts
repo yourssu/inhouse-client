@@ -1,4 +1,5 @@
-export const DEFAULT_ROUTE_PATH = './inhouse-mfa/route.ts' as const;
+export const DEFAULT_PLUGIN_ENTRY = './remotePlugin.ts' as const;
+export const REMOTE_CONTRACT_ID = 'virtual:inhouse-mfa-remote-contract' as const;
 
 /** remoteEntry 산출물 파일명. */
 export const REMOTE_ENTRY_FILENAME = 'remoteEntry.js' as const;

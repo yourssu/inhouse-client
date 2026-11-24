@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import type { MfaRemoteEntry } from '../../core/config';
 
-import { DEFAULT_ROUTE_PATH } from '../../core/config';
+import { REMOTE_CONTRACT_ID } from '../../core/config';
 
 export const remoteConfigPlugin = (
   remote: MfaRemoteEntry,
@@ -24,7 +24,7 @@ export const remoteConfigPlugin = (
       return {
         build: {
           rolldownOptions: {
-            input: path.resolve(config.root ?? process.cwd(), DEFAULT_ROUTE_PATH),
+            input: REMOTE_CONTRACT_ID,
           },
         },
         server: {
@@ -37,20 +37,9 @@ export const remoteConfigPlugin = (
     },
     configureServer(server) {
       server.watcher.add([...watchedFiles]);
-      const restartForGlobal = (file: string) => {
-        if (watchedFiles.has(path.resolve(file)) && /[/\\]global\.tsx?$/.test(file)) {
-          void server.restart();
-        }
-      };
-      server.watcher.on('add', restartForGlobal);
-      server.watcher.on('unlink', restartForGlobal);
-      server.httpServer?.once('close', () => {
-        server.watcher.off('add', restartForGlobal);
-        server.watcher.off('unlink', restartForGlobal);
-      });
     },
     async hotUpdate({ file, server }) {
-      if (watchedFiles.has(path.resolve(file)) && !/[/\\]global\.tsx?$/.test(file)) {
+      if (watchedFiles.has(path.resolve(file))) {
         await server.restart();
         return [];
       }

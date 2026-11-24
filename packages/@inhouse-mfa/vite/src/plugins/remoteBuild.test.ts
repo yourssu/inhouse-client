@@ -1,3 +1,4 @@
+import { PLUGIN_EXPOSE_KEY } from '@inhouse-mfa/core';
 import { federation } from '@module-federation/vite';
 import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
@@ -5,6 +6,7 @@ import path from 'node:path';
 import { build, createServer } from 'vite';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
+import { REMOTE_CONTRACT_ID } from '../core/config';
 import { remoteConfigPlugin } from './mfaVitePlugin/remoteConfigPlugin';
 import { remoteAssetsPlugin } from './remoteAssetsPlugin';
 import { remoteContractPlugin } from './remoteContractPlugin';
@@ -16,13 +18,12 @@ afterEach(() => vi.unstubAllEnvs());
 const fixture = async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), 'inhouse-remote-build-'));
 
-  await mkdir(path.join(root, 'inhouse-mfa'));
   await mkdir(path.join(root, 'src/styles'), { recursive: true });
   await mkdir(path.join(root, 'public'));
   await writeFile(path.join(root, 'public/logo.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
   await writeFile(path.join(root, 'src/main.tsx'), "throw new Error('REMOTE_MAIN_MUST_NOT_RUN');");
   await writeFile(path.join(root, 'src/styles/index.css'), '.service { display: block; }');
-  await writeFile(path.join(root, 'inhouse-mfa/route.ts'), 'export const routeTree = {};');
+  await writeFile(path.join(root, 'remotePlugin.ts'), 'export default { routeTree: {} };');
 
   return root;
 };
@@ -35,7 +36,7 @@ const plugins = () => [
   federation({
     name: 'fixture',
     filename: 'remoteEntry.js',
-    exposes: { [PLUGIN_EXPOSE_KEY]: './inhouse-mfa/route.ts' },
+    exposes: { [PLUGIN_EXPOSE_KEY]: REMOTE_CONTRACT_ID },
     shared: {},
     dts: false,
   }),
@@ -100,7 +101,7 @@ test('serves remote modules and assets without synthesizing an app page', async 
     expect(entry.status, await entry.clone().text()).toBe(200);
     expect(await entry.text()).not.toContain('REMOTE_MAIN_MUST_NOT_RUN');
 
-    const contract = await server.transformRequest('/inhouse-mfa/route.ts');
+    const contract = await server.transformRequest(REMOTE_CONTRACT_ID);
     expect(contract?.code).toContain('routeTree');
     expect(contract?.code).toContain('src/styles/index.css');
     expect(contract?.code).not.toContain('src/main.tsx');
@@ -112,4 +113,3 @@ test('serves remote modules and assets without synthesizing an app page', async 
     await rm(root, { recursive: true, force: true });
   }
 });
-import { PLUGIN_EXPOSE_KEY } from '@inhouse-mfa/core';

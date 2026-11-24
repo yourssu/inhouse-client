@@ -1,7 +1,7 @@
 import type { AnyRoute } from '@tanstack/react-router';
 
 import {
-  defineRemotePlugin,
+  createRuntimeRemotePlugin,
   findRouteById,
   type RemotePlugin,
   RouteRegistry,
@@ -50,7 +50,7 @@ export const composePlugins = async (
       if (!basePath) {
         throw new Error(`[mfa-shell] '${spec.name}' has no route branch to graft`);
       }
-      const plugin = defineRemotePlugin({
+      const plugin = createRuntimeRemotePlugin({
         name: spec.name,
         global: mod.global,
         routes: { basePath, entry: '/_auth', routeTree: mod.routeTree },

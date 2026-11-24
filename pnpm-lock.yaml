@@ -173,6 +173,9 @@ importers:
       '@exterior/utils':
         specifier: workspace:*
         version: link:../../packages/@exterior/utils
+      '@inhouse-mfa/core':
+        specifier: workspace:*
+        version: link:../../packages/@inhouse-mfa/core
       '@inhouse/auth':
         specifier: workspace:*
         version: link:../../packages/@inhouse/auth

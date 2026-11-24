@@ -5,9 +5,10 @@ import { federation, type ModuleFederationOptions } from '@module-federation/vit
 import { keyBy, mapValues } from 'es-toolkit';
 
 import {
-  DEFAULT_ROUTE_PATH,
+  DEFAULT_PLUGIN_ENTRY,
   envKeyForRemote,
   type MfaConfig,
+  REMOTE_CONTRACT_ID,
   REMOTE_ENTRY_FILENAME,
   remoteEntryDevUrl,
 } from '../../core/config';
@@ -26,6 +27,11 @@ interface ShellPluginOptions {
   config: MfaConfig;
   /** loadEnv 로 읽은 env(빈 값이면 dev 기본 URL 폴백). */
   env?: Record<string, string | undefined>;
+}
+
+export interface RemotePluginOptions {
+  /** Vite root 기준 remote plugin 진입점. 기본 './remotePlugin.ts'. */
+  pluginEntry?: string;
 }
 
 const federationDefaults = {
@@ -66,7 +72,9 @@ const shell = (options: ShellPluginOptions): PluginOption => {
   ];
 };
 
-const remote = async (): Promise<PluginOption[]> => {
+const remote = async ({ pluginEntry = DEFAULT_PLUGIN_ENTRY }: RemotePluginOptions = {}): Promise<
+  PluginOption[]
+> => {
   const {
     config,
     configFiles,
@@ -77,19 +85,14 @@ const remote = async (): Promise<PluginOption[]> => {
 
   return [
     remoteAssetsPlugin(),
-    remoteContractPlugin(entry.workspace),
+    remoteContractPlugin(entry.workspace, pluginEntry),
     sharedCssPlugin(config.sharedCSS ?? []),
-    remoteConfigPlugin(entry, [
-      ...configFiles,
-      ...['route.ts', 'global.ts', 'global.tsx'].map(
-        (file) => `${process.cwd()}/inhouse-mfa/${file}`,
-      ),
-    ]),
+    remoteConfigPlugin(entry, configFiles),
     federation({
       ...federationDefaults,
       name: entry.workspace,
       filename: REMOTE_ENTRY_FILENAME,
-      exposes: { [PLUGIN_EXPOSE_KEY]: DEFAULT_ROUTE_PATH },
+      exposes: { [PLUGIN_EXPOSE_KEY]: REMOTE_CONTRACT_ID },
       shared,
     }),
     ensureGlobalModulesPlugin(shared),

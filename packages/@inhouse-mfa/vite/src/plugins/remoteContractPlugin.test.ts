@@ -5,98 +5,83 @@ import { pathToFileURL } from 'node:url';
 import { build } from 'vite';
 import { expect, test } from 'vitest';
 
+import { REMOTE_CONTRACT_ID } from '../core/config';
 import { remoteContractPlugin } from './remoteContractPlugin';
 
-test.each(['absent', 'init-only', 'bootstrap-only', 'component', 'both'])(
-  'defers the optional %s global module until its loader is called',
+test.each(['absent', 'empty', 'bootstrap-only', 'component', 'both'])(
+  'loads %s global declarations without activating the service',
   async (kind) => {
     const root = await mkdtemp(path.join(os.tmpdir(), 'mfa-contract-'));
     const key = `mfa-contract:${root}`;
-    const stylesheet = kind === 'absent' ? undefined : './styles/index.css';
     try {
-      await mkdir(path.join(root, 'src'), { recursive: true });
-      await mkdir(path.join(root, 'inhouse-mfa'));
+      await mkdir(path.join(root, 'src/styles'), { recursive: true });
       await writeFile(
         path.join(root, 'src/main.tsx'),
-        "throw new Error('Standalone main must never run through the route contract');",
+        "throw new Error('Standalone main must never run');",
       );
-      if (stylesheet) {
-        await mkdir(path.join(root, 'src/styles'));
-        await writeFile(path.join(root, 'src', stylesheet), '.contract { display: block; }');
-      }
+      await writeFile(path.join(root, 'src/styles/index.css'), '.contract { display: block; }');
       await writeFile(
         path.join(root, 'src/routes.ts'),
         `export const routeTree = ${JSON.stringify(root)};`,
       );
       await writeFile(
-        path.join(root, 'inhouse-mfa/route.ts'),
-        "export { routeTree } from '../src/routes';",
-      );
-      if (kind !== 'absent') {
-        await writeFile(
-          path.join(root, 'inhouse-mfa/global.tsx'),
-          `
-globalThis[${JSON.stringify(key)}] = { imports: 1, starts: 0, stops: 0 };
-${kind === 'component' || kind === 'both' ? 'export const Global = () => null;' : ''}
-${
-  kind === 'bootstrap-only' || kind === 'both'
-    ? `export const bootstrap = () => {
-        globalThis[${JSON.stringify(key)}].starts += 1;
-        return () => { globalThis[${JSON.stringify(key)}].stops += 1; };
-      };`
-    : ''
-}
+        path.join(root, 'src/global.ts'),
+        `
+const state = globalThis[${JSON.stringify(key)}] = { imports: 1, starts: 0, stops: 0, renders: 0 };
+export const bootstrap = () => {
+  state.starts += 1;
+  return () => { state.stops += 1; };
+};
+export const Global = ({ children }) => { state.renders += 1; return children; };
 `,
-        );
-      }
-      await writeFile(path.join(root, 'entry.ts'), "export * from './inhouse-mfa/route';");
+      );
+      const fields = [
+        ...(kind === 'bootstrap-only' || kind === 'both' ? ['bootstrap'] : []),
+        ...(kind === 'component' || kind === 'both' ? ['Global'] : []),
+      ];
+      await writeFile(
+        path.join(root, 'remotePlugin.ts'),
+        `
+import { routeTree } from './src/routes';
+${fields.length ? `import { ${fields.join(', ')} } from './src/global';` : ''}
+export default { routeTree, ${kind === 'absent' ? '' : `global: { ${fields.join(', ')} }`} };
+`,
+      );
+      await writeFile(path.join(root, 'entry.ts'), `export * from '${REMOTE_CONTRACT_ID}';`);
       const result = await build({
         root,
         configFile: false,
         logLevel: 'silent',
         plugins: [remoteContractPlugin()],
         build: {
-          write: true,
-          rolldownOptions: { output: { chunkFileNames: '[name]-[hash].mjs' } },
           minify: false,
           lib: {
             entry: path.join(root, 'entry.ts'),
             formats: ['es'],
-            fileName: () => 'contract.mjs',
             cssFileName: 'contract',
+            fileName: () => 'contract.mjs',
           },
         },
       });
       const chunks = [result].flat().flatMap((bundle) => ('output' in bundle ? bundle.output : []));
-      const chunk = chunks.find((output) => output.type === 'chunk' && output.isEntry);
-      expect(chunk?.type).toBe('chunk');
-      const url = pathToFileURL(path.join(root, 'dist', chunk!.fileName)).href;
-      const mod = await import(url);
+      expect(chunks.some((output) => output.fileName.endsWith('.css'))).toBe(true);
+      const mod = await import(pathToFileURL(path.join(root, 'dist/contract.mjs')).href);
       expect(mod.routeTree).toBe(root);
-      expect(
-        chunks.some((output) => output.type === 'asset' && output.fileName.endsWith('.css')),
-      ).toBe(Boolean(stylesheet));
+      const state = fields.length ? { imports: 1, starts: 0, stops: 0, renders: 0 } : undefined;
+      expect(Reflect.get(globalThis, key)).toEqual(state);
       if (kind === 'absent') {
         expect(mod.global).toBeUndefined();
       } else {
-        expect(Reflect.get(globalThis, key)).toBeUndefined();
-        expect(typeof mod.global).toBe('function');
-
         const global = await mod.global();
         expect(await mod.global()).toBe(global);
-        expect(Reflect.get(globalThis, key)).toEqual({ imports: 1, starts: 0, stops: 0 });
-        expect(typeof global.Global).toBe(
-          kind === 'component' || kind === 'both' ? 'function' : 'undefined',
-        );
-
+        expect(Reflect.get(globalThis, key)).toEqual(state);
+        expect(typeof global.Global).toBe(fields.includes('Global') ? 'function' : 'undefined');
         const cleanup = global.bootstrap?.();
         cleanup?.();
-        const expectedCalls = kind === 'bootstrap-only' || kind === 'both' ? 1 : 0;
-        expect(Reflect.get(globalThis, key)).toEqual({
-          imports: 1,
-          starts: expectedCalls,
-          stops: expectedCalls,
-        });
+        if (state) {
+          const calls = fields.includes('bootstrap') ? 1 : 0;
+          expect(Reflect.get(globalThis, key)).toEqual({ ...state, starts: calls, stops: calls });
+        }
       }
     } finally {
       Reflect.deleteProperty(globalThis, key);
@@ -104,3 +89,75 @@ ${
     }
   },
 );
+
+test.each(['./remotePlugin.ts', './integration/customPlugin.ts'])(
+  'resolves %s against the Vite root and includes remote CSS',
+  async (pluginEntry) => {
+    const root = await mkdtemp(path.join(os.tmpdir(), 'mfa-custom-entry-'));
+    try {
+      await mkdir(path.dirname(path.join(root, pluginEntry)), { recursive: true });
+      await mkdir(path.join(root, 'src/styles'), { recursive: true });
+      await writeFile(path.join(root, 'src/styles/index.css'), '.custom { color: red; }');
+      await writeFile(
+        path.join(root, pluginEntry),
+        'export default { routeTree: { custom: true } };',
+      );
+      await writeFile(path.join(root, 'entry.ts'), `export * from '${REMOTE_CONTRACT_ID}';`);
+      const result = await build({
+        root,
+        configFile: false,
+        logLevel: 'silent',
+        plugins: [remoteContractPlugin('custom', pluginEntry)],
+        build: {
+          lib: {
+            entry: path.join(root, 'entry.ts'),
+            formats: ['es'],
+            cssFileName: 'contract',
+            fileName: () => 'contract.mjs',
+          },
+        },
+      });
+      const chunks = [result].flat().flatMap((bundle) => ('output' in bundle ? bundle.output : []));
+      expect(chunks.some((output) => output.fileName.endsWith('.css'))).toBe(true);
+      const mod = await import(pathToFileURL(path.join(root, 'dist/contract.mjs')).href);
+      expect(mod.routeTree).toEqual({ custom: true });
+      expect(mod.global).toBeUndefined();
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  },
+);
+
+test.each([
+  ['missing entry', undefined, 'plugin entry not found'],
+  ['missing default export', 'export const routeTree = {};', 'default'],
+  ['missing routeTree', 'export default {};', 'must default-export a remote plugin with routeTree'],
+])('diagnoses %s', async (_kind, source, message) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), 'mfa-invalid-entry-'));
+  try {
+    if (source) {
+      await writeFile(path.join(root, 'remotePlugin.ts'), source);
+    }
+    const run = async () => {
+      await writeFile(path.join(root, 'entry.ts'), `export * from '${REMOTE_CONTRACT_ID}';`);
+      await build({
+        root,
+        configFile: false,
+        logLevel: 'silent',
+        plugins: [remoteContractPlugin('invalid')],
+        build: {
+          lib: {
+            entry: path.join(root, 'entry.ts'),
+            formats: ['es'],
+            cssFileName: 'contract',
+            fileName: () => 'contract.mjs',
+          },
+        },
+      });
+      await import(pathToFileURL(path.join(root, 'dist/contract.mjs')).href);
+    };
+    await expect(run()).rejects.toThrow(message);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});

@@ -5,7 +5,7 @@ import { createRootRoute, createRoute, createRouter } from '@tanstack/react-rout
 
 import {
   assertGraftCandidate,
-  defineRemotePlugin,
+  createRuntimeRemotePlugin,
   findRouteById,
   RouteRegistry,
 } from '../dist/index.mjs';
@@ -30,7 +30,7 @@ const makeRouteTree = (entryChildren) => {
 };
 
 const plugin = (name, basePath, nested = []) =>
-  defineRemotePlugin({
+  createRuntimeRemotePlugin({
     name,
     routes: {
       basePath,
@@ -57,7 +57,7 @@ test('validates remote route boundaries', () => {
   assert.equal(plugin('member', '/members').name, 'member');
   assert.throws(
     () =>
-      defineRemotePlugin({
+      createRuntimeRemotePlugin({
         name: 'broken',
         routes: {
           basePath: '/members',
@@ -101,7 +101,7 @@ test('graft candidate rejects duplicate final ids inside a plugin', () => {
   const hostTree = hostTreeWithMembersDetails();
   const hostEntry = findRouteById(hostTree, '/_auth');
 
-  const duplicateChildrenPlugin = defineRemotePlugin({
+  const duplicateChildrenPlugin = createRuntimeRemotePlugin({
     name: 'dup',
     routes: {
       basePath: '/members',
@@ -120,7 +120,7 @@ test('graft candidate rejects routes outside the declared basePath', () => {
   const hostTree = hostTreeWithMembersDetails();
   const hostEntry = findRouteById(hostTree, '/_auth');
 
-  // defineRemotePlugin의 정적 검사를 우회한 manifest를 runtime 방어로 잡는다.
+  // createRuntimeRemotePlugin의 정적 검사를 우회한 manifest를 runtime 방어로 잡는다.
   const wrongBasePathPlugin = {
     name: 'wrong',
     routes: {

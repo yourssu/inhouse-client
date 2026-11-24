@@ -21,6 +21,11 @@ export interface RemoteGlobal {
   Global?: ComponentType<RemoteGlobalProps>;
 }
 
+export interface RemotePluginDefinition {
+  global?: RemoteGlobal;
+  routeTree: AnyRoute;
+}
+
 export interface RemotePlugin {
   global?: () => Promise<RemoteGlobal>;
   /** Module Federation remote 이름. mfa.config workspace name과 일치해야 해요. */
