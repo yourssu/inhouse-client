@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { buildOperationNameFromRoute } from '../name-operation';
+import { buildOperationNameFromRoute } from '../build-operation-name-from-route';
 
 test('작업 이름은 메서드·리소스·경로 변수로 만들고 현재 명세에서 충돌하지 않는다', () => {
   assert.equal(

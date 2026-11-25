@@ -25,7 +25,7 @@ pnpm --filter @yourssu-inhouse/scouter codegen:api
 | 면접 메모   | `/applicants/{applicantId}/interviews/comments` | `src/apis/interviews/memos/generated/schema.gen.ts`   | `src/apis/interviews/memos/schema.ts` |
 | 서류 코멘트 | `/applicants/{applicantId}/documents/comments`  | `src/apis/documents/comments/generated/schema.gen.ts` | `src/apis/documents/schema.ts`        |
 
-`orval.config.ts`에서 경로로 생성 대상을 선택합니다. `scripts/name-operation.ts`는 HTTP 메서드와 경로로 작업별 스키마 이름을 정합니다. 기존 호출부와 호환되도록 면접 메모의 `memos` 경로와 공개 이름을 유지합니다. 생성 파일은 직접 수정하지 않습니다.
+`orval.config.ts`에서 경로로 생성 대상을 선택합니다. `scripts/build-operation-name-from-route.ts`는 HTTP 메서드와 경로로 작업별 스키마 이름을 정합니다. 기존 호출부와 호환되도록 면접 메모의 `memos` 경로와 공개 이름을 유지합니다. 생성 파일은 직접 수정하지 않습니다.
 
 서류 평가·평가 문항·마감일 등은 아직 생성 대상이 아닙니다. `schema.ts`에는 기존 수동 스키마도 남아 있습니다.
 

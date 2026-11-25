@@ -1,7 +1,7 @@
 // API 함수·Query는 생성하지 않고 요청·응답 스키마와 타입만 생성합니다.
 import { defineConfig, type Options } from 'orval';
 
-import { buildOperationNameFromRoute } from './scripts/name-operation';
+import { buildOperationNameFromRoute } from './scripts/build-operation-name-from-route';
 import { transformOpenApi } from './scripts/transform-openapi';
 
 const createSchemaConfig = (pathPrefix: string, target: string): Options => ({
