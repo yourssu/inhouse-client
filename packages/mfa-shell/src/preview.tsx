@@ -46,10 +46,11 @@ export const createRemotePreviewApp = <TRouteTree extends AppRouteTree>(
       await setupPluginMocks([options.plugin], 'preview');
     },
     children: (): ReactNode => <PreviewBanner />,
-    createRouter: (context) =>
+    createRouter: (queryClient) =>
       createRouter({
         routeTree: options.routeTree,
-        context,
+        // auth 는 createExteriorApp이 렌더 시점에 채워요.
+        context: { auth: undefined!, queryClient },
         defaultErrorComponent: () => <PreviewAuthNotice />,
         defaultNotFoundComponent: () => <PreviewAuthNotice />,
         defaultPreloadStaleTime: 0,

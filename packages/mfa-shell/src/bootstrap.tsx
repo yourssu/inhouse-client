@@ -71,10 +71,11 @@ export const bootstrapShell = async (
       failures.length > 0 ? (
         <RemoteUnavailable availablePlugins={plugins.map((p) => p.name)} failedPlugins={failures} />
       ) : null,
-    createRouter: (context) =>
+    createRouter: (queryClient) =>
       createRouter({
         routeTree: options.routeTree,
-        context: { auth: context.auth, queryClient: context.queryClient },
+        // auth 는 createExteriorApp이 렌더 시점에 채워요.
+        context: { auth: undefined!, queryClient },
         defaultPreloadStaleTime: 0,
         ...options.routerOptions,
       }),
