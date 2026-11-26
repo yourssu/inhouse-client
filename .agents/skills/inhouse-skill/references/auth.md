@@ -9,7 +9,7 @@
 - 토큰 저장과 삭제는 `@yourssu-inhouse/auth`가 공개한 `getAuthTokens`, `setAuthTokens`, `removeAuthTokens`를 사용한다.
 - 개별 fetcher나 컴포넌트에서 `Authorization` 헤더, 토큰 갱신, 인증 실패 redirect를 다시 구현하지 않는다.
 - 인증 API는 `createAuthApiClient`가 만든 `api`·`nativeApi`를 사용한다.
-- 컴포넌트 트리에서는 `AuthProvider`와 `useAuth`를 사용하고, 라우트 loader처럼 React Context 밖에서는 공개 storage·guard API를 사용한다.
+- 컴포넌트 트리에서는 `useAuth`를, 라우트 `beforeLoad`·loader에서는 router context의 `context.auth`를 사용한다. `AuthProvider`는 exterior의 `createExteriorApp`이 `RouterProvider` 바깥에 렌더링하고 그 값을 router context로 넘기므로, 앱 route에서 다시 감싸지 않는다.
 - 보호된 페이지의 진입 차단은 shell 라우트의 `beforeLoad`와 `requireAuth`에서 처리한다. 컴포넌트 Effect로 뒤늦게 redirect하지 않는다.
 - remote의 `~_auth`를 독립적인 인증 가드로 바꾸지 않는다. shell이 실제 인증 가드와 레이아웃을 소유한다.
 
