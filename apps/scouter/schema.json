@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "https://scouter-dev-api.yourssu.com",
-      "description": "production server"
+      "description": "dev server"
     }
   ],
   "security": [
@@ -808,7 +808,7 @@
       "put": {
         "tags": ["면접 평가"],
         "summary": "면접 평가 저장/수정",
-        "description": "로그인한 면접관 본인의 평가 정보를 저장합니다. submit이 false이면 임시저장, true이면 최종 제출입니다. 제출 시 요청된 점수가 배점을 초과하면 안 됩니다.",
+        "description": "로그인한 면접관 본인의 평가 정보를 저장합니다. 임시저장 없이 호출 시 바로 최종 제출로 처리됩니다. 요청된 점수가 배점을 초과하면 안 됩니다.",
         "operationId": "save",
         "parameters": [
           {
@@ -838,8 +838,7 @@
                   }
                 ],
                 "overallComment": "질문에 대한 답변은 구조적이고 문화 적합성은 높습니다.",
-                "result": "FINAL_PASS",
-                "submit": true
+                "result": "FINAL_PASS"
               }
             }
           },
@@ -1757,12 +1756,12 @@
         }
       }
     },
-    "/applicants/{applicantId}/interviews/memos": {
+    "/applicants/{applicantId}/interviews/comments": {
       "get": {
-        "tags": ["면접 질문 코멘트"],
-        "summary": "면접 질문 메모 목록 조회",
+        "tags": ["코멘트"],
+        "summary": "면접 질문 코멘트 목록 조회",
         "description": "지원자의 할당된 질문별로 코멘트를 그룹화하여 조회합니다.",
-        "operationId": "read_1",
+        "operationId": "readAllInterviewComments",
         "parameters": [
           {
             "name": "applicantId",
@@ -1791,9 +1790,9 @@
         }
       },
       "post": {
-        "tags": ["면접 질문 코멘트"],
-        "summary": "면접 질문 메모 작성",
-        "operationId": "create_2",
+        "tags": ["코멘트"],
+        "summary": "면접 질문 코멘트 작성",
+        "operationId": "createInterviewComment",
         "parameters": [
           {
             "name": "applicantId",
@@ -1820,7 +1819,7 @@
             "description": "CREATED",
             "headers": {
               "Location": {
-                "description": "/applicants/{applicantId}/interviews/memos/{commentId}",
+                "description": "/applicants/{applicantId}/interviews/comments/{commentId}",
                 "style": "simple"
               }
             },
@@ -1831,9 +1830,9 @@
     },
     "/applicants/{applicantId}/documents/comments": {
       "get": {
-        "tags": ["서류 코멘트"],
+        "tags": ["코멘트"],
         "summary": "인라인 코멘트 조회",
-        "operationId": "readAllByApplicantId",
+        "operationId": "readAllDocumentComments",
         "parameters": [
           {
             "name": "applicantId",
@@ -1862,9 +1861,9 @@
         }
       },
       "post": {
-        "tags": ["서류 코멘트"],
+        "tags": ["코멘트"],
         "summary": "인라인 코멘트 작성",
-        "operationId": "create_3",
+        "operationId": "createDocumentComment",
         "parameters": [
           {
             "name": "applicantId",
@@ -2051,7 +2050,7 @@
         "tags": ["메일"],
         "summary": "메일 템플릿 생성",
         "description": "제목과 양식을 지정해 새로운 메일 템플릿을 생성합니다.\n\n**변수 규칙:**\n- 모든 변수 키는 `var-{UUID}` 형식이어야 합니다 (예: `var-550e8400-e29b-41d4-a716-446655440000`)\n- 메일 본문에서 변수는 `{{var-{UUID}}}` 형식으로 사용합니다\n\n**변수 타입:**\n- **사용자 입력 변수**: PERSON, DATE, LINK, TEXT\n- **자동 채움 변수**: APPLICANT, PARTNAME",
-        "operationId": "create_4",
+        "operationId": "create_2",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2288,6 +2287,64 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/MailFileConfirmResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/roles/revoke": {
+      "post": {
+        "tags": ["admin-role-controller"],
+        "operationId": "revoke",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/roles/grant": {
+      "post": {
+        "tags": ["admin-role-controller"],
+        "operationId": "grant",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
                 }
               }
             }
@@ -2532,6 +2589,162 @@
         }
       }
     },
+    "/admin/recruiting/member-parts/unassign": {
+      "post": {
+        "tags": ["admin-member-part-controller"],
+        "operationId": "unassign",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/member-parts/assign": {
+      "post": {
+        "tags": ["admin-member-part-controller"],
+        "operationId": "assign",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/evaluations/interviews/delete": {
+      "post": {
+        "tags": ["admin-evaluation-controller"],
+        "operationId": "deleteInterviewEvaluation",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "evaluatorUserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/evaluations/documents/delete": {
+      "post": {
+        "tags": ["admin-evaluation-controller"],
+        "operationId": "deleteDocumentEvaluation",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "evaluatorUserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/recruiting/deadlines/interviews": {
       "post": {
         "tags": ["admin-deadline-controller"],
@@ -2598,6 +2811,401 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/applicants/update": {
+      "post": {
+        "tags": ["admin-applicant-controller"],
+        "operationId": "update_1",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phoneNumber",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "age",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "studentId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "applicationSemesterId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "academicSemester",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/applicants/delete": {
+      "post": {
+        "tags": ["admin-applicant-controller"],
+        "operationId": "delete_1",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/applicants/create": {
+      "post": {
+        "tags": ["admin-applicant-controller"],
+        "operationId": "create_3",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phoneNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "age",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "studentId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "partId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "applicationDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "applicationSemesterId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "academicSemester",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/applicants/answers/update": {
+      "post": {
+        "tags": ["admin-applicant-controller"],
+        "operationId": "updateAnswer",
+        "parameters": [
+          {
+            "name": "answerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "question",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "answer",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sectionId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/applicants/answers/delete": {
+      "post": {
+        "tags": ["admin-applicant-controller"],
+        "operationId": "deleteAnswer",
+        "parameters": [
+          {
+            "name": "answerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/recruiting/applicants/answers/create": {
+      "post": {
+        "tags": ["admin-applicant-controller"],
+        "operationId": "createAnswer",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "question",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "answer",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sectionId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -3142,10 +3750,10 @@
     },
     "/applicants/{applicantId}/documents/comments/{commentId}": {
       "delete": {
-        "tags": ["서류 코멘트"],
+        "tags": ["코멘트"],
         "summary": "인라인 코멘트 삭제",
         "description": "본인이 작성한 코멘트만 삭제 가능합니다.",
-        "operationId": "deleteById_1",
+        "operationId": "deleteDocumentComment",
         "parameters": [
           {
             "name": "applicantId",
@@ -3174,10 +3782,10 @@
         }
       },
       "patch": {
-        "tags": ["서류 코멘트"],
+        "tags": ["코멘트"],
         "summary": "인라인 코멘트 수정",
         "description": "본인이 작성한 코멘트만 수정 가능합니다.",
-        "operationId": "update_1",
+        "operationId": "updateDocumentComment",
         "parameters": [
           {
             "name": "applicantId",
@@ -4222,7 +4830,7 @@
         "tags": ["학과/학기/단과대"],
         "summary": "학기 삭제",
         "description": "특정 학기 정보를 삭제합니다.",
-        "operationId": "deleteById_2",
+        "operationId": "deleteById_1",
         "parameters": [
           {
             "name": "semesterId",
@@ -4385,12 +4993,12 @@
         }
       }
     },
-    "/applicants/{applicantId}/interviews/memos/{commentId}": {
+    "/applicants/{applicantId}/interviews/comments/{commentId}": {
       "delete": {
-        "tags": ["면접 질문 코멘트"],
+        "tags": ["코멘트"],
         "summary": "면접 질문 코멘트 삭제",
         "description": "본인이 작성한 코멘트만 삭제 가능합니다.",
-        "operationId": "deleteById_3",
+        "operationId": "deleteInterviewComment",
         "parameters": [
           {
             "name": "applicantId",
@@ -5038,14 +5646,9 @@
             "description": "면접 평가 결과",
             "enum": ["PENDING", "FINAL_PASS", "INTERVIEW_FAIL"],
             "example": "FINAL_PASS"
-          },
-          "submit": {
-            "type": "boolean",
-            "description": "최종 제출 여부. false는 기본 상태, true는 최종 제출입니다.",
-            "example": true
           }
         },
-        "required": ["items", "overallComment", "result", "submit"]
+        "required": ["items", "overallComment", "result"]
       },
       "SaveDocumentEvaluationItemRequest": {
         "type": "object",
@@ -7570,60 +8173,6 @@
           "studentId"
         ]
       },
-      "QuestionInterviewCommentsResponse": {
-        "type": "object",
-        "description": "질문 단위 면접 질문 코멘트 목록 응답",
-        "properties": {
-          "sectionId": {
-            "type": "integer",
-            "format": "int64",
-            "description": "할당된 면접 질문 ID (assignedQuestionId)",
-            "example": 1
-          },
-          "comments": {
-            "type": "array",
-            "description": "해당 질문에 작성된 코멘트 목록",
-            "items": {
-              "$ref": "#/components/schemas/ReadInterviewCommentResponse"
-            }
-          }
-        },
-        "required": ["comments", "sectionId"]
-      },
-      "ReadInterviewCommentResponse": {
-        "type": "object",
-        "description": "면접 질문 코멘트 항목 응답",
-        "properties": {
-          "commentId": {
-            "type": "integer",
-            "format": "int64",
-            "description": "코멘트 ID",
-            "example": 10
-          },
-          "sectionId": {
-            "type": "integer",
-            "format": "int64",
-            "description": "할당된 면접 질문 ID (assignedQuestionId)",
-            "example": 1
-          },
-          "content": {
-            "type": "string",
-            "description": "면접 질문 코멘트 내용",
-            "example": "지원자의 답변 내용, 추가 질문사항 등"
-          },
-          "author": {
-            "$ref": "#/components/schemas/ReadDocumentCommentAuthorResponse",
-            "description": "작성자 정보"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "작성 일시",
-            "example": "2026-08-19T03:00:00Z"
-          }
-        },
-        "required": ["author", "commentId", "content", "createdAt", "sectionId"]
-      },
       "ReadInterviewEvaluationGroupResponse": {
         "type": "object",
         "description": "면접 평가 루브릭 그룹별 점수 정보",
@@ -7819,6 +8368,60 @@
           "result",
           "totalScore"
         ]
+      },
+      "QuestionInterviewCommentsResponse": {
+        "type": "object",
+        "description": "질문 단위 면접 질문 코멘트 목록 응답",
+        "properties": {
+          "sectionId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "할당된 면접 질문 ID (assignedQuestionId)",
+            "example": 1
+          },
+          "comments": {
+            "type": "array",
+            "description": "해당 질문에 작성된 코멘트 목록",
+            "items": {
+              "$ref": "#/components/schemas/ReadInterviewCommentResponse"
+            }
+          }
+        },
+        "required": ["comments", "sectionId"]
+      },
+      "ReadInterviewCommentResponse": {
+        "type": "object",
+        "description": "면접 질문 코멘트 항목 응답",
+        "properties": {
+          "commentId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "코멘트 ID",
+            "example": 10
+          },
+          "sectionId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "할당된 면접 질문 ID (assignedQuestionId)",
+            "example": 1
+          },
+          "content": {
+            "type": "string",
+            "description": "면접 질문 코멘트 내용",
+            "example": "지원자의 답변 내용, 추가 질문사항 등"
+          },
+          "author": {
+            "$ref": "#/components/schemas/ReadDocumentCommentAuthorResponse",
+            "description": "작성자 정보"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "작성 일시",
+            "example": "2026-08-19T03:00:00Z"
+          }
+        },
+        "required": ["author", "commentId", "content", "createdAt", "sectionId"]
       },
       "ReadDocumentEvaluationItemResponse": {
         "type": "object",
