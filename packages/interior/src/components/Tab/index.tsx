@@ -1,70 +1,157 @@
-import clsx from 'clsx';
-import { LayoutGroup, motion } from 'motion/react';
-import { startTransition, useId, useState } from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { assert } from 'es-toolkit';
+import { useId, useState } from 'react';
 
+import { TabContext, TabListContext, useTabContext, useTabListContext } from './context';
 import * as styles from './Tab.css';
+import { useTabListA11y } from './useTabListA11y';
 
-interface TabProps<TTab extends string> {
-  children: (p: { tab: TTab }) => React.ReactNode;
-  className?: string;
-  defaultTab?: TTab;
-  onTabChange?: (value: TTab) => void;
-  right?: React.ReactNode;
-  tabs: TTab[];
-  value?: TTab;
+export { Tab as LegacyTab } from './LegacyTab';
+
+interface TabRootProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  /** `value`와 함께 쓸 수 없고, 둘 중 하나는 꼭 넘겨야 해요. */
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  /** `defaultValue`와 함께 쓸 수 없고, 둘 중 하나는 꼭 넘겨야 해요. */
+  value?: string;
 }
 
-export const Tab = <TTab extends string>({
-  defaultTab,
-  value,
-  onTabChange,
-  tabs,
-  children,
-  right,
-  className,
-}: TabProps<TTab>) => {
-  const id = useId();
-  const [internalTab, setInternalTab] = useState(defaultTab ?? tabs[0]);
-  const tab = value !== undefined ? value : internalTab;
+interface TabListProps extends Pick<React.AriaAttributes, 'aria-label'> {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  /** @default 'hug' */
+  layout?: 'fill' | 'hug';
+  /** @default 'large' */
+  size?: 'large' | 'small';
+}
+
+interface TabItemProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  disabled?: boolean;
+  value: string;
+}
+
+interface TabPanelProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  forceMount?: boolean;
+  value: string;
+}
+
+const Root = ({ asChild, children, defaultValue, onValueChange, value }: TabRootProps) => {
+  if (process.env.NODE_ENV !== 'production') {
+    assert(
+      xor(value != null, defaultValue != null),
+      'Tab.Root는 value와 defaultValue 중 하나만 사용해야해요.',
+    );
+  }
+
+  const baseId = useId();
+  const [innerValue, setInnerValue] = useState(defaultValue);
+  const isControlled = value !== undefined;
+  const selectedValue = isControlled ? value : innerValue;
+
+  const handleValueChange = (nextValue: string) => {
+    if (!isControlled) {
+      setInnerValue(nextValue);
+    }
+    onValueChange?.(nextValue);
+  };
+
+  const Comp = asChild ? Slot : 'div';
 
   return (
-    <div className={clsx(styles.root, className)}>
-      <div className={styles.header}>
-        <LayoutGroup id={id}>
-          <div className={styles.list} role="tablist">
-            {tabs.map((item) => {
-              const selected = item === tab;
-              return (
-                <button
-                  aria-selected={selected}
-                  className={styles.button}
-                  key={item}
-                  onClick={() => {
-                    startTransition(() => {
-                      if (value === undefined) {
-                        setInternalTab(item);
-                      }
-                      onTabChange?.(item);
-                    });
-                  }}
-                  role="tab"
-                >
-                  <span className={clsx(styles.label({ selected }))}>{item}</span>
-                  {selected && (
-                    <motion.div
-                      className={styles.indicator}
-                      layoutId="tab-indicator"
-                      transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </LayoutGroup>
-        {right}
-      </div>
-      {children({ tab })}
-    </div>
+    <TabContext.Provider value={{ baseId, onValueChange: handleValueChange, value: selectedValue }}>
+      <Comp>{children}</Comp>
+    </TabContext.Provider>
   );
+};
+
+const List = ({ 'aria-label': ariaLabel, asChild, children }: TabListProps) => {
+  const { value } = useTabContext();
+  const { fallbackTabId, handleKeyDown, listRef } = useTabListA11y(value, children);
+
+  const Comp = asChild ? Slot : 'div';
+
+  return (
+    <TabListContext.Provider value={{ fallbackTabId }}>
+      <Comp aria-label={ariaLabel} onKeyDown={handleKeyDown} ref={listRef} role="tablist">
+        {children}
+      </Comp>
+    </TabListContext.Provider>
+  );
+};
+
+const Item = ({ asChild, children, disabled, value }: TabItemProps) => {
+  const { baseId, onValueChange, value: selectedValue } = useTabContext();
+  const { fallbackTabId } = useTabListContext();
+
+  const selected = value === selectedValue;
+  const tabId = getTabId(baseId, value);
+
+  const handleClick = () => {
+    // Transition의 Pending 처리는 Tab이 하지 않고, 사용처가 value로 최신 요청을 넘기는 것으로 위임한다 (#238).
+    if (disabled || selected) {
+      return;
+    }
+    onValueChange(value);
+  };
+
+  const Comp = asChild ? Slot : 'button';
+
+  return (
+    <Comp
+      aria-controls={getPanelId(baseId, value)}
+      aria-disabled={disabled}
+      aria-selected={selected}
+      disabled={disabled}
+      id={tabId}
+      onClick={handleClick}
+      role="tab"
+      // APG: 탭 목록에 포커스가 들어오면 active 탭에 포커스가 가고, Tab 키 진입점(tabIndex=0)은 하나뿐이다.
+      tabIndex={selected || tabId === fallbackTabId ? 0 : -1}
+      type={asChild ? undefined : 'button'}
+    >
+      {children}
+    </Comp>
+  );
+};
+
+const Panel = ({ asChild, children, forceMount = false, value }: TabPanelProps) => {
+  const { baseId, value: selectedValue } = useTabContext();
+  const isSelected = value === selectedValue;
+
+  if (!isSelected && !forceMount) {
+    return null;
+  }
+
+  const Comp = asChild ? Slot : 'div';
+
+  return (
+    <Comp
+      aria-labelledby={getTabId(baseId, value)}
+      className={styles.panel}
+      hidden={!isSelected}
+      id={getPanelId(baseId, value)}
+      role="tabpanel"
+      tabIndex={0}
+    >
+      {children}
+    </Comp>
+  );
+};
+
+export const Tab = { Item, List, Panel, Root };
+
+// aria-controls는 공백으로 구분된 id 목록이라 value의 공백을 인코딩한다.
+const getTabId = (baseId: string, value: string) => `${baseId}-tab-${encodeURIComponent(value)}`;
+
+const getPanelId = (baseId: string, value: string) =>
+  `${baseId}-panel-${encodeURIComponent(value)}`;
+
+const xor = (a: boolean, b: boolean) => {
+  return a !== b;
 };
